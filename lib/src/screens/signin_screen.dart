@@ -250,6 +250,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         backgroundColor: Colors.white,
                         side: BorderSide(
                           color: Theme.of(context).primaryColor,
+                          width: 0.5,
                         ),
                       ),
                       onPressed: () {
