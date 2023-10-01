@@ -126,6 +126,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
@@ -177,7 +178,9 @@ class _HomeScreenState extends State<HomeScreen>
         ),
       ),
       body: WillPopScope(
-        onWillPop: () => exit(0),
+        onWillPop: () async {
+          return false;
+        },
         child: SingleChildScrollView(
           child: Container(
             padding: const EdgeInsets.symmetric(

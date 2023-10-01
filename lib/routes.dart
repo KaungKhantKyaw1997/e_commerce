@@ -1,4 +1,6 @@
 import 'package:e_commerce/src/screens/item_details.dart';
+import 'package:e_commerce/src/screens/language_screen.dart';
+import 'package:e_commerce/src/screens/profile_screen.dart';
 import 'package:e_commerce/src/screens/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce/src/screens/cart_screen.dart';
@@ -20,6 +22,8 @@ class Routes {
   static const String history = '/history';
   static const String history_details = '/history_details';
   static const String setting = '/setting';
+  static const String profile = '/profile';
+  static const String language = '/language';
 
   static final Map<String, WidgetBuilder> routes = {
     signin: (BuildContext context) => const SignInScreen(),
@@ -31,5 +35,7 @@ class Routes {
     history: (BuildContext context) => const HistoryScreen(),
     history_details: (BuildContext context) => const HistoryDetailsScreen(),
     setting: (BuildContext context) => const SettingScreen(),
+    profile: (BuildContext context) => const ProfileScreen(),
+    language: (BuildContext context) => const LanguageScreen(),
   };
 }

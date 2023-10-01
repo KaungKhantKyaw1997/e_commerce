@@ -1,11 +1,13 @@
 import 'dart:ui';
 
+import 'package:e_commerce/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/screens/bottombar_screen.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -16,7 +18,25 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   final authService = AuthService();
-  final ScrollController _itemController = ScrollController();
+  String lang = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  getData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      lang = prefs.getString('language') ?? "eng";
+    });
+  }
 
   showExitDialog() async {
     showDialog(
@@ -83,6 +103,7 @@ class _SettingScreenState extends State<SettingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
@@ -91,125 +112,195 @@ class _SettingScreenState extends State<SettingScreen> {
           style: FontConstants.title1,
         ),
       ),
-      body: SingleChildScrollView(
-        controller: _itemController,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 24,
-          ),
-          width: double.infinity,
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 8,
-                ),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    language["General Info"] ?? "General Info",
-                    style: FontConstants.smallText1,
+      body: WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 24,
+            ),
+            width: double.infinity,
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                  ),
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                  ),
+                  margin: EdgeInsets.only(
+                    bottom: 24,
+                  ),
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, Routes.profile);
+                        },
+                        child: Container(
+                          color: Colors.transparent,
+                          child: Row(
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(
+                                  right: 16,
+                                  top: 8,
+                                  bottom: 8,
+                                ),
+                                width: 60,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image:
+                                        AssetImage("assets/images/profile.png"),
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 16,
+                                    top: 16,
+                                    bottom: 16,
+                                  ),
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: "Kaung Khant Kyaw",
+                                          style: FontConstants.caption2,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 8,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      language["General Info"] ?? "General Info",
+                      style: FontConstants.smallText1,
+                    ),
+                  ),
                 ),
-                padding: const EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                ),
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        color: Colors.transparent,
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                right: 16,
-                                top: 16,
-                                bottom: 16,
-                              ),
-                              child: SvgPicture.asset(
-                                "assets/icons/global.svg",
-                                width: 24,
-                                height: 24,
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                  ),
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                  ),
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, Routes.language);
+                        },
+                        child: Container(
+                          color: Colors.transparent,
+                          child: Row(
+                            children: [
+                              Padding(
                                 padding: const EdgeInsets.only(
                                   right: 16,
                                   top: 16,
                                   bottom: 16,
                                 ),
-                                child: Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text:
-                                            language["Language"] ?? "Language",
-                                        style: FontConstants.caption2,
-                                      )
-                                    ],
+                                child: SvgPicture.asset(
+                                  "assets/icons/global.svg",
+                                  width: 24,
+                                  height: 24,
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 16,
+                                    top: 16,
+                                    bottom: 16,
+                                  ),
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: language["Language"] ??
+                                              "Language",
+                                          style: FontConstants.caption2,
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                right: 5,
-                                top: 16,
-                                bottom: 16,
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  right: 5,
+                                  top: 16,
+                                  bottom: 16,
+                                ),
+                                child: Text(
+                                  lang == "eng" ? "English" : "မြန်မာ",
+                                  style: FontConstants.caption1,
+                                ),
                               ),
-                              child: Text(
-                                "English",
-                                style: FontConstants.caption1,
-                              ),
-                            ),
-                            const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 20,
-                            )
-                          ],
+                              const Icon(
+                                Icons.arrow_forward_ios,
+                                size: 20,
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: () async {
-                  showExitDialog();
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.white,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 12,
-                  ),
-                  margin: const EdgeInsets.only(
-                    top: 24,
-                    bottom: 16,
-                  ),
-                  child: Center(
-                    child: Text(
-                      language["Sign Out"] ?? "Sign Out",
-                      style: FontConstants.caption2,
-                    ),
+                    ],
                   ),
                 ),
-              ),
-            ],
+                GestureDetector(
+                  onTap: () async {
+                    showExitDialog();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 12,
+                    ),
+                    margin: const EdgeInsets.only(
+                      top: 24,
+                      bottom: 16,
+                    ),
+                    child: Center(
+                      child: Text(
+                        language["Sign Out"] ?? "Sign Out",
+                        style: FontConstants.caption2,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

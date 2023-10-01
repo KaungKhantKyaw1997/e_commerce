@@ -165,6 +165,7 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
@@ -191,194 +192,202 @@ class _CartScreenState extends State<CartScreen> {
               : Container(),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 24,
-          ),
-          width: double.infinity,
+      body: WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: SingleChildScrollView(
           child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.white,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 24,
             ),
-            child: ListView.builder(
-              controller: _cartController,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: carts.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Slidable(
-                      key: const ValueKey(0),
-                      startActionPane: ActionPane(
-                        motion: const ScrollMotion(),
-                        children: [
-                          SlidableAction(
-                            onPressed: (BuildContext context) {
-                              Navigator.pushNamed(
-                                context,
-                                Routes.item_details,
-                                arguments: carts[index],
-                              );
-                            },
-                            backgroundColor: const Color(0xFF33A031),
-                            foregroundColor: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(index == 0 ? 10 : 0),
-                              bottomLeft: Radius.circular(
-                                  index == carts.length - 1 ? 10 : 0),
-                            ),
-                            icon: Icons.update,
-                            label: 'Update',
-                          ),
-                        ],
-                      ),
-                      endActionPane: ActionPane(
-                        motion: const BehindMotion(),
-                        children: [
-                          SlidableAction(
-                            onPressed: (BuildContext context) {
-                              CartProvider cartProvider =
-                                  Provider.of<CartProvider>(context,
-                                      listen: false);
-                              cartProvider.addCount(cartProvider.count - 1);
-
-                              carts.removeAt(index);
-                              saveListToSharedPreferences(carts);
-                            },
-                            backgroundColor: const Color(0xFFE3200F),
-                            foregroundColor: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(index == 0 ? 10 : 0),
-                              bottomRight: Radius.circular(
-                                  index == carts.length - 1 ? 10 : 0),
-                            ),
-                            icon: Icons.delete,
-                            label: 'Delete',
-                          ),
-                        ],
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          top: 8,
-                          bottom: 8,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+            width: double.infinity,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+              ),
+              child: ListView.builder(
+                controller: _cartController,
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: carts.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Slidable(
+                        key: const ValueKey(0),
+                        startActionPane: ActionPane(
+                          motion: const ScrollMotion(),
                           children: [
-                            Container(
-                              width: 80,
-                              height: 80,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage(carts[index]["image_url"]),
-                                ),
-                                borderRadius: BorderRadius.circular(10),
+                            SlidableAction(
+                              onPressed: (BuildContext context) {
+                                Navigator.pushNamed(
+                                  context,
+                                  Routes.item_details,
+                                  arguments: carts[index],
+                                );
+                              },
+                              backgroundColor: const Color(0xFF33A031),
+                              foregroundColor: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(index == 0 ? 10 : 0),
+                                bottomLeft: Radius.circular(
+                                    index == carts.length - 1 ? 10 : 0),
                               ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                margin: const EdgeInsets.only(
-                                  left: 4,
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '${carts[index]["name"].toString()} x ${carts[index]["qty"].toString()}',
-                                      style: FontConstants.body1,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 14,
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                language["Amount"] ?? "Amount",
-                                                style: FontConstants.caption1,
-                                              ),
-                                              FormattedAmount(
-                                                amount: double.parse(
-                                                    carts[index]["price"]
-                                                        .toString()),
-                                                mainTextStyle:
-                                                    FontConstants.subheadline1,
-                                                decimalTextStyle:
-                                                    FontConstants.caption3,
-                                              ),
-                                            ],
-                                          ),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                language["Total Amount"] ??
-                                                    "Total Amount",
-                                                style: FontConstants.caption1,
-                                              ),
-                                              FormattedAmount(
-                                                amount: double.parse(
-                                                        carts[index]["price"]
-                                                            .toString()) *
-                                                    double.parse(carts[index]
-                                                            ["qty"]
-                                                        .toString()),
-                                                mainTextStyle:
-                                                    FontConstants.subheadline1,
-                                                decimalTextStyle:
-                                                    FontConstants.caption3,
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              icon: Icons.update,
+                              label: 'Update',
                             ),
                           ],
                         ),
+                        endActionPane: ActionPane(
+                          motion: const BehindMotion(),
+                          children: [
+                            SlidableAction(
+                              onPressed: (BuildContext context) {
+                                CartProvider cartProvider =
+                                    Provider.of<CartProvider>(context,
+                                        listen: false);
+                                cartProvider.addCount(cartProvider.count - 1);
+
+                                carts.removeAt(index);
+                                saveListToSharedPreferences(carts);
+                              },
+                              backgroundColor: const Color(0xFFE3200F),
+                              foregroundColor: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(index == 0 ? 10 : 0),
+                                bottomRight: Radius.circular(
+                                    index == carts.length - 1 ? 10 : 0),
+                              ),
+                              icon: Icons.delete,
+                              label: 'Delete',
+                            ),
+                          ],
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            top: 8,
+                            bottom: 8,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image:
+                                        AssetImage(carts[index]["image_url"]),
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              Expanded(
+                                child: Container(
+                                  margin: const EdgeInsets.only(
+                                    left: 4,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${carts[index]["name"].toString()} x ${carts[index]["qty"].toString()}',
+                                        style: FontConstants.body1,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 14,
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  language["Amount"] ??
+                                                      "Amount",
+                                                  style: FontConstants.caption1,
+                                                ),
+                                                FormattedAmount(
+                                                  amount: double.parse(
+                                                      carts[index]["price"]
+                                                          .toString()),
+                                                  mainTextStyle: FontConstants
+                                                      .subheadline1,
+                                                  decimalTextStyle:
+                                                      FontConstants.caption3,
+                                                ),
+                                              ],
+                                            ),
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                  language["Total Amount"] ??
+                                                      "Total Amount",
+                                                  style: FontConstants.caption1,
+                                                ),
+                                                FormattedAmount(
+                                                  amount: double.parse(
+                                                          carts[index]["price"]
+                                                              .toString()) *
+                                                      double.parse(carts[index]
+                                                              ["qty"]
+                                                          .toString()),
+                                                  mainTextStyle: FontConstants
+                                                      .subheadline1,
+                                                  decimalTextStyle:
+                                                      FontConstants.caption3,
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                    index < carts.length - 1
-                        ? Container(
-                            padding: const EdgeInsets.only(
-                              left: 16,
-                              right: 16,
-                            ),
-                            child: const Divider(
-                              height: 0,
-                              color: Colors.grey,
-                            ),
-                          )
-                        : Container(),
-                  ],
-                );
-              },
+                      index < carts.length - 1
+                          ? Container(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                              ),
+                              child: const Divider(
+                                height: 0,
+                                color: Colors.grey,
+                              ),
+                            )
+                          : Container(),
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ),
