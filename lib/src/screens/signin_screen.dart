@@ -10,14 +10,14 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:provider/provider.dart';
 
-class SigninScreen extends StatefulWidget {
-  const SigninScreen({super.key});
+class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
 
   @override
-  State<SigninScreen> createState() => _SigninScreenState();
+  State<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _SigninScreenState extends State<SigninScreen> {
+class _SignInScreenState extends State<SignInScreen> {
   ScrollController _scrollController = ScrollController();
   final storage = FlutterSecureStorage();
   final _formKey = GlobalKey<FormState>();
@@ -145,7 +145,7 @@ class _SigninScreenState extends State<SigninScreen> {
                     padding: const EdgeInsets.only(
                       left: 16,
                       right: 16,
-                      bottom: 32,
+                      bottom: 24,
                     ),
                     child: TextFormField(
                       controller: password,
@@ -207,7 +207,7 @@ class _SigninScreenState extends State<SigninScreen> {
                     padding: const EdgeInsets.only(
                       left: 16,
                       right: 16,
-                      bottom: 24,
+                      bottom: 16,
                     ),
                     width: double.infinity,
                     child: ElevatedButton(
@@ -228,6 +228,36 @@ class _SigninScreenState extends State<SigninScreen> {
                       child: Text(
                         language["Sign In"] ?? "Sign In",
                         style: FontConstants.button1,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 24,
+                    ),
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        backgroundColor: Colors.white,
+                        side: BorderSide(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.pushNamed(context, Routes.signup);
+                      },
+                      child: Text(
+                        language["Sign Up"] ?? "Sign Up",
+                        style: FontConstants.button2,
                       ),
                     ),
                   ),

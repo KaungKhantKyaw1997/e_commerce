@@ -26,7 +26,7 @@ class AuthService {
     }
   }
 
-  logout(BuildContext context) async {
+  signout(BuildContext context) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
     await storage.delete(key: "token");

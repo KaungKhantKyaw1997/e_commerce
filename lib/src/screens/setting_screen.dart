@@ -30,12 +30,12 @@ class _SettingScreenState extends State<SettingScreen> {
         child: AlertDialog(
           backgroundColor: Colors.white,
           title: Text(
-            language["Logout"] ?? "Logout",
+            language["Sign Out"] ?? "Sign Out",
             style: FontConstants.body1,
           ),
           content: Text(
-            language["Are you sure you want to logout?"] ??
-                "Are you sure you want to logout?",
+            language["Are you sure you want to sign out?"] ??
+                "Are you sure you want to sign out?",
             style: FontConstants.caption2,
           ),
           actions: [
@@ -70,7 +70,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 style: FontConstants.smallText3,
               ),
               onPressed: () async {
-                authService.logout(context);
+                authService.signout(context);
               },
             ),
           ],
@@ -203,7 +203,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                   child: Center(
                     child: Text(
-                      language["Logout"] ?? "Logout",
+                      language["Sign Out"] ?? "Sign Out",
                       style: FontConstants.caption2,
                     ),
                   ),
