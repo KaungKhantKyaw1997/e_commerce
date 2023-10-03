@@ -12,6 +12,13 @@
     "Confirm Password": "Confirm Password",
     "Enter Confirm Password": "Enter Confirm Password",
     "Passwords don't match": "Passwords don't match",
+    "Name": "Name",
+    "Enter Name": "Enter Name",
+    "Email": "Email",
+    "Enter Email": "Enter Email",
+    "Phone Number": "Phone Number",
+    "Enter Phone Number": "Enter Phone Number",
+    "Invalid Phone Number": "Invalid Phone Number",
     "Sign In": "Sign In",
     "Sign Up": "Sign Up",
     "Sign Out": "Sign Out",
@@ -28,8 +35,6 @@
     "Cancel": "Cancel",
     "Ok": "Ok",
     "Are you sure you want to sign out?": "Are you sure you want to sign out?",
-    "Name": "Name",
-    "Table No.": "Table No.",
     "Order No.": "Order No.",
     "Date": "Date",
     "Time": "Time",
@@ -38,5 +43,8 @@
     "Address": "Address",
     "Enter Address": "Enter Address",
     "Brand": "Brand",
-    "Model Number": "Model Number"
+    "Model Number": "Model Number",
+    "User Credentials": "User Credentials",
+    "Personal Information": "Personal Information",
+    "Next": "Next"
 }
