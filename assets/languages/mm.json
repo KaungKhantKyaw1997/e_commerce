@@ -42,14 +42,15 @@
     "Information": "အချက်အလက်",
     "Address": "လိပ်စာ",
     "Enter Address": "လိပ်စာထည့်ပါ",
+    "Brand": "အမှတ်တံဆိပ်",
     "Model Number": "မော်ဒယ်နံပါတ်",
     "User Credentials": "အသုံးပြုသူအထောက်အထားများ",
     "Personal Information": "ကိုယ်ရေးကိုယ်တာ အချက်အလက်",
     "Next": "နောက်",
     "Categories": "အမျိုးအစားများ",
-    "Search Category": "အမျိုးအစားရှာဖွေရန်",
-    "Brand": "အမှတ်တံဆိပ်",
-    "Search Brand": "အမှတ်တံဆိပ်ရှာဖွေရန်",
+    "Search Category": "အမျိုးအစား ရှာဖွေရန်",
+    "Brands": "အမှတ်တံဆိပ်များ",
+    "Search Brand": "အမှတ်တံဆိပ် ရှာဖွေရန်",
     "See More": "ပိုမိုကြည့်ရှုရန်",
     "Shops": "ဆိုင်များ"
 }

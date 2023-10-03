@@ -320,10 +320,15 @@ class _HomeScreenState extends State<HomeScreen>
                                     bottom: 4,
                                   ),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
+                                      Text(
+                                        'Total ${total.toString()}',
+                                        style: FontConstants.caption1,
+                                      ),
                                       NumberPaginator(
                                         numberPages: pageCounts,
                                         onPageChange: (int index) {
@@ -336,10 +341,6 @@ class _HomeScreenState extends State<HomeScreen>
                                           mode: ContentDisplayMode.hidden,
                                         ),
                                       ),
-                                      Text(
-                                        'Total ${total.toString()}',
-                                        style: FontConstants.caption1,
-                                      )
                                     ],
                                   ),
                                 )
@@ -405,9 +406,17 @@ class _HomeScreenState extends State<HomeScreen>
                                   language["Brands"] ?? "Brands",
                                   style: FontConstants.body1,
                                 ),
-                                Text(
-                                  language["See More"] ?? "See More",
-                                  style: FontConstants.caption1,
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      Routes.brands,
+                                    );
+                                  },
+                                  child: Text(
+                                    language["See More"] ?? "See More",
+                                    style: FontConstants.caption1,
+                                  ),
                                 ),
                               ],
                             ),

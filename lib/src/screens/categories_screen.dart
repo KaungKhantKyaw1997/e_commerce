@@ -3,7 +3,6 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/categories_service.dart';
-import 'package:e_commerce/src/services/shops_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:number_paginator/number_paginator.dart';
@@ -74,7 +73,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             decoration: BoxDecoration(
               image: DecorationImage(
                 // image: NetworkImage(
-                //     '${ApiConstants.baseUrl}${shops[index]["cover_image"].toString()}'),
+                //     '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
                 image: AssetImage("assets/images/gshock1.png"),
                 fit: BoxFit.cover,
               ),
@@ -198,13 +197,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   itemCount: categories.length,
                   itemBuilder: (context, index) {
                     return GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          Routes.item_details,
-                          arguments: categories[index],
-                        );
-                      },
+                      onTap: () {},
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
