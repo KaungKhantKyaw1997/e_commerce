@@ -35,9 +35,9 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
     } else if (data["label"] == 'Cart') {
       Navigator.pushNamed(context, Routes.cart);
     } else if (data["label"] == 'Favourite') {
-      Navigator.pushNamed(context, Routes.cart);
+      // Navigator.pushNamed(context, Routes.cart);
     } else if (data["label"] == 'History') {
-      Navigator.pushNamed(context, Routes.history);
+      // Navigator.pushNamed(context, Routes.history);
     } else if (data["label"] == 'Setting') {
       Navigator.pushNamed(context, Routes.setting);
     }

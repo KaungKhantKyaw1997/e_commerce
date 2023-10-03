@@ -8,11 +8,12 @@ class CategoriesService {
   final Dio dio = Dio();
   CancelToken _cancelToken = CancelToken();
 
-  Future<Map<String, dynamic>?> getCategoriesData() async {
+  Future<Map<String, dynamic>?> getCategoriesData(
+      {int page = 1, int perPage = 10, String search = ''}) async {
     var token = await storage.read(key: "token");
     try {
       final response = await dio.get(
-        ApiConstants.categoriesUrl,
+        '${ApiConstants.categoriesUrl}?page=$page&per_page=$perPage&search=$search',
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
