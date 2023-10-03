@@ -400,7 +400,13 @@ class _HomeScreenState extends State<HomeScreen>
                             ),
                             itemBuilder: (context, index) {
                               return GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    Routes.shop,
+                                    arguments: shops[index],
+                                  );
+                                },
                                 child: shopCard(index),
                               );
                             },
