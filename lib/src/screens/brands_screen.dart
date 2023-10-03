@@ -63,6 +63,15 @@ class _BrandsScreenState extends State<BrandsScreen> {
         top: 8,
         bottom: 8,
       ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(index == 0 ? 10 : 0),
+          topRight: Radius.circular(index == 0 ? 10 : 0),
+          bottomLeft: Radius.circular(index == brands.length - 1 ? 10 : 0),
+          bottomRight: Radius.circular(index == brands.length - 1 ? 10 : 0),
+        ),
+        color: Colors.white,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -185,41 +194,35 @@ class _BrandsScreenState extends State<BrandsScreen> {
                       ),
                     )
                   : Container(),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
-                ),
-                child: ListView.builder(
-                  controller: _brandsController,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: brands.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {},
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          brandCard(index),
-                          index < brands.length - 1
-                              ? Container(
-                                  padding: const EdgeInsets.only(
-                                    left: 100,
-                                    right: 16,
-                                  ),
-                                  child: const Divider(
-                                    height: 0,
-                                    color: Colors.grey,
-                                  ),
-                                )
-                              : Container(),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+              ListView.builder(
+                controller: _brandsController,
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: brands.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {},
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        brandCard(index),
+                        index < brands.length - 1
+                            ? Container(
+                                padding: const EdgeInsets.only(
+                                  left: 100,
+                                  right: 16,
+                                ),
+                                child: const Divider(
+                                  height: 0,
+                                  color: Colors.grey,
+                                ),
+                              )
+                            : Container(),
+                      ],
+                    ),
+                  );
+                },
               ),
             ],
           ),

@@ -63,6 +63,15 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         top: 8,
         bottom: 8,
       ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(index == 0 ? 10 : 0),
+          topRight: Radius.circular(index == 0 ? 10 : 0),
+          bottomLeft: Radius.circular(index == categories.length - 1 ? 10 : 0),
+          bottomRight: Radius.circular(index == categories.length - 1 ? 10 : 0),
+        ),
+        color: Colors.white,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -185,41 +194,35 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       ),
                     )
                   : Container(),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
-                ),
-                child: ListView.builder(
-                  controller: _categoriesController,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: categories.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {},
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          categoryCard(index),
-                          index < categories.length - 1
-                              ? Container(
-                                  padding: const EdgeInsets.only(
-                                    left: 100,
-                                    right: 16,
-                                  ),
-                                  child: const Divider(
-                                    height: 0,
-                                    color: Colors.grey,
-                                  ),
-                                )
-                              : Container(),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+              ListView.builder(
+                controller: _categoriesController,
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {},
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        categoryCard(index),
+                        index < categories.length - 1
+                            ? Container(
+                                padding: const EdgeInsets.only(
+                                  left: 100,
+                                  right: 16,
+                                ),
+                                child: const Divider(
+                                  height: 0,
+                                  color: Colors.grey,
+                                ),
+                              )
+                            : Container(),
+                      ],
+                    ),
+                  );
+                },
               ),
             ],
           ),
