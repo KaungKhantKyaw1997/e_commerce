@@ -1,12 +1,19 @@
 import 'dart:io';
 
+import 'package:autoscale_tabbarview/autoscale_tabbarview.dart';
+import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
+import 'package:e_commerce/src/services/brands_service.dart';
+import 'package:e_commerce/src/services/categories_service.dart';
+import 'package:e_commerce/src/services/shops_service.dart';
+import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/screens/bottombar_screen.dart';
+import 'package:number_paginator/number_paginator.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,56 +24,137 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-  final ScrollController _itemController = ScrollController();
+  final shopsService = ShopsService();
+  final categoriesService = CategoriesService();
+  final brandsService = BrandsService();
+  final ScrollController _shopController = ScrollController();
   late TabController _tabController;
-  List items = [
-    {
-      "image_url": "assets/images/gshock1.png",
-      "name": "G-SHOCK",
-      "brand": "Casio",
-      "model": "GMW-B5000BPC-1",
-      "price": "100000",
-      "qty": "0",
-    },
-    {
-      "image_url": "assets/images/gshock2.png",
-      "name": "G-SHOCK",
-      "brand": "Casio",
-      "model": "GM-B2100LL-1A",
-      "price": "200000",
-      "qty": "0",
-    },
-    {
-      "image_url": "assets/images/gshock3.png",
-      "name": "G-SHOCK",
-      "brand": "Casio",
-      "model": "GA-700NC-5A",
-      "price": "300000",
-      "qty": "0",
-    },
-    {
-      "image_url": "assets/images/gshock4.png",
-      "name": "G-SHOCK",
-      "brand": "Casio",
-      "model": "GA-2100P-1A",
-      "price": "400000",
-      "qty": "0",
-    }
-  ];
+  List shops = [];
+  List categories = [];
+  List brands = [];
+  int page = 1;
+  int pageCounts = 0;
+  int total = 0;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    getShops();
+    getCategories();
+    getBrands();
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    shopsService.cancelRequest();
+    categoriesService.cancelRequest();
+    brandsService.cancelRequest();
     super.dispose();
   }
 
-  itemCard(index) {
+  getShops() async {
+    try {
+      final response = await shopsService.getShopsData(page: page);
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          shops = response["data"];
+          page = response["page"];
+          pageCounts = response["page_counts"];
+          total = response["total"];
+        }
+        setState(() {});
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  getCategories() async {
+    try {
+      final response = await categoriesService.getCategoriesData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          categories = response["data"];
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  getBrands() async {
+    try {
+      final response = await brandsService.getBrandsData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          brands = response["data"];
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  shopCard(index) {
+    return Container(
+      padding: const EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 8,
+        bottom: 8,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                // image: NetworkImage(
+                //     '${ApiConstants.baseUrl}${shops[index]["cover_image"].toString()}'),
+                image: AssetImage("assets/images/gshock1.png"),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.only(
+                left: 4,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${shops[index]["name"].toString()}',
+                    style: FontConstants.body1,
+                  ),
+                  Text(
+                    '${shops[index]["address"].toString()}',
+                    style: FontConstants.caption1,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  categoriesCard(index) {
     return Container(
       padding: EdgeInsets.only(
         top: 8,
@@ -82,7 +170,10 @@ class _HomeScreenState extends State<HomeScreen>
             height: 150,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(items[index]["image_url"]),
+                // image: NetworkImage(
+                //     '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
+                image: AssetImage("assets/images/gshock1.png"),
+                fit: BoxFit.cover,
               ),
             ),
           ),
@@ -98,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen>
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                items[index]["name"].toString(),
+                categories[index]["name"].toString(),
                 style: FontConstants.caption2,
               ),
             ),
@@ -112,8 +203,9 @@ class _HomeScreenState extends State<HomeScreen>
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                items[index]["model"].toString(),
-                style: FontConstants.body1,
+                categories[index]["description"].toString(),
+                overflow: TextOverflow.ellipsis,
+                style: FontConstants.smallText1,
               ),
             ),
           ),
@@ -121,6 +213,29 @@ class _HomeScreenState extends State<HomeScreen>
       ),
     );
   }
+
+  brandsCard(index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: 12,
+          horizontal: 16,
+        ),
+        child: Center(
+          child: Text(
+            brands[index]["name"].toString(),
+            style: FontConstants.caption2,
+          ),
+        ),
+      ),
+    );
+  }
+
+  final List<int> numbers = [1, 2, 3, 5, 8, 13, 21, 34, 55];
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +266,10 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
               ),
               onPressed: () {
-                Navigator.pushNamed(context, Routes.search);
+                Navigator.pushNamed(
+                  context,
+                  Routes.search,
+                );
               },
             ),
           ),
@@ -164,13 +282,13 @@ class _HomeScreenState extends State<HomeScreen>
           tabs: [
             Tab(
               child: Text(
-                "Shop",
+                language["Shops"] ?? "Shops",
                 style: FontConstants.subtitle1,
               ),
             ),
             Tab(
               child: Text(
-                "Categories",
+                language["Categories"] ?? "Categories",
                 style: FontConstants.subtitle1,
               ),
             ),
@@ -183,39 +301,200 @@ class _HomeScreenState extends State<HomeScreen>
         },
         child: SingleChildScrollView(
           child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 24,
+            padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              bottom: 24,
             ),
             width: double.infinity,
-            child: Column(
-              children: [
-                GridView.builder(
-                  controller: _itemController,
-                  shrinkWrap: true,
-                  itemCount: items.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    mainAxisExtent: 230,
-                    childAspectRatio: 2 / 1,
-                    crossAxisSpacing: 15,
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 15,
-                  ),
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          Routes.item_details,
-                          arguments: items[index],
-                        );
-                      },
-                      child: itemCard(index),
-                    );
-                  },
-                ),
-              ],
-            ),
+            child: shops.isNotEmpty && categories.isNotEmpty
+                ? AutoScaleTabBarView(
+                    controller: _tabController,
+                    children: [
+                      Column(
+                        children: [
+                          shops.isNotEmpty
+                              ? Container(
+                                  padding: EdgeInsets.only(
+                                    top: 4,
+                                    bottom: 4,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      NumberPaginator(
+                                        numberPages: pageCounts,
+                                        onPageChange: (int index) {
+                                          setState(() {
+                                            page = index + 1;
+                                            getShops();
+                                          });
+                                        },
+                                        config: const NumberPaginatorUIConfig(
+                                          mode: ContentDisplayMode.hidden,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Total ${total.toString()}',
+                                        style: FontConstants.caption1,
+                                      )
+                                    ],
+                                  ),
+                                )
+                              : Container(),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                            ),
+                            child: ListView.builder(
+                              controller: _shopController,
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: shops.length,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      Routes.item_details,
+                                      arguments: shops[index],
+                                    );
+                                  },
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      shopCard(index),
+                                      index < shops.length - 1
+                                          ? Container(
+                                              padding: const EdgeInsets.only(
+                                                left: 100,
+                                                right: 16,
+                                              ),
+                                              child: const Divider(
+                                                height: 0,
+                                                color: Colors.grey,
+                                              ),
+                                            )
+                                          : Container(),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.only(
+                              top: 16,
+                              bottom: 4,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Text(
+                                  language["Brands"] ?? "Brands",
+                                  style: FontConstants.body1,
+                                ),
+                                Text(
+                                  language["See More"] ?? "See More",
+                                  style: FontConstants.caption1,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            height: 110,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: (brands.length / 2).ceil(),
+                              itemBuilder: (context, pageIndex) {
+                                int startIndex = pageIndex * 2;
+                                int endIndex = (pageIndex * 2 + 1)
+                                    .clamp(0, brands.length - 1);
+
+                                return ListView.builder(
+                                  itemCount: endIndex - startIndex + 1,
+                                  itemBuilder: (context, index) {
+                                    int itemIndex = startIndex + index;
+                                    if (itemIndex < brands.length) {
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                          right: 8,
+                                          bottom: 8,
+                                        ),
+                                        child: brandsCard(itemIndex),
+                                      );
+                                    } else {
+                                      return Container();
+                                    }
+                                  },
+                                );
+                              },
+                              itemExtent:
+                                  MediaQuery.of(context).size.width / 2 - 50,
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(
+                              top: 16,
+                              bottom: 4,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Text(
+                                  language["Categories"] ?? "Categories",
+                                  style: FontConstants.body1,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      Routes.categories,
+                                    );
+                                  },
+                                  child: Text(
+                                    language["See More"] ?? "See More",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            height: 220,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: categories.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                    right: 8,
+                                  ),
+                                  child: categoriesCard(index),
+                                );
+                              },
+                              itemExtent:
+                                  MediaQuery.of(context).size.width / 2 - 25,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )
+                : Container(),
           ),
         ),
       ),

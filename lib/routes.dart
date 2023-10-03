@@ -1,4 +1,6 @@
-import 'package:e_commerce/src/screens/item_details.dart';
+import 'package:e_commerce/src/screens/categories_screen.dart';
+import 'package:e_commerce/src/screens/item_details_screen.dart';
+import 'package:e_commerce/src/screens/items_screen.dart';
 import 'package:e_commerce/src/screens/language_screen.dart';
 import 'package:e_commerce/src/screens/personal_info_screen.dart';
 import 'package:e_commerce/src/screens/profile_screen.dart';
@@ -17,7 +19,9 @@ class Routes {
   static const String personalinfo = '/personalinfo';
   static const String home = '/home';
   static const String search = '/search';
+  static const String items = '/items';
   static const String item_details = '/item_details';
+  static const String categories = '/categories';
   static const String cart = '/cart';
   static const String setting = '/setting';
   static const String profile = '/profile';
@@ -29,7 +33,9 @@ class Routes {
     personalinfo: (BuildContext context) => const PersonalInfoScreen(),
     home: (BuildContext context) => const HomeScreen(),
     search: (BuildContext context) => const SearchScreen(),
+    items: (BuildContext context) => const ItemsScreen(),
     item_details: (BuildContext context) => const ItemDetails(),
+    categories: (BuildContext context) => const CategoriesScreen(),
     cart: (BuildContext context) => const CartScreen(),
     setting: (BuildContext context) => const SettingScreen(),
     profile: (BuildContext context) => const ProfileScreen(),
