@@ -342,6 +342,10 @@ class _HomeScreenState extends State<HomeScreen>
                                         style: FontConstants.caption1,
                                       ),
                                       Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
                                           NumberPaginator(
                                             numberPages: pageCounts,
