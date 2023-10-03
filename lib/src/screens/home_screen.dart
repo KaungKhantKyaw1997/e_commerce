@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen>
   final shopsService = ShopsService();
   final categoriesService = CategoriesService();
   final brandsService = BrandsService();
-  final ScrollController _shopController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   late TabController _tabController;
   List shops = [];
   List categories = [];
@@ -35,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen>
   int page = 1;
   int pageCounts = 0;
   int total = 0;
+  int crossAxisCount = 1;
 
   @override
   void initState() {
@@ -105,19 +106,18 @@ class _HomeScreenState extends State<HomeScreen>
 
   shopCard(index) {
     return Container(
-      padding: const EdgeInsets.only(
-        left: 16,
-        right: 16,
+      padding: EdgeInsets.only(
         top: 8,
-        bottom: 8,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
         children: [
           Container(
-            width: 80,
-            height: 80,
+            width: 150,
+            height: 150,
             decoration: BoxDecoration(
               image: DecorationImage(
                 // image: NetworkImage(
@@ -128,24 +128,35 @@ class _HomeScreenState extends State<HomeScreen>
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.only(
-                left: 4,
+          const SizedBox(
+            height: 8,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              bottom: 4,
+            ),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                shops[index]["name"].toString(),
+                style: FontConstants.caption2,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${shops[index]["name"].toString()}',
-                    style: FontConstants.body1,
-                  ),
-                  Text(
-                    '${shops[index]["address"].toString()}',
-                    style: FontConstants.caption1,
-                  ),
-                ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              bottom: 8,
+            ),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                shops[index]["address"].toString(),
+                overflow: TextOverflow.ellipsis,
+                style: FontConstants.smallText1,
               ),
             ),
           ),
@@ -300,6 +311,7 @@ class _HomeScreenState extends State<HomeScreen>
           return false;
         },
         child: SingleChildScrollView(
+          controller: _scrollController,
           child: Container(
             padding: const EdgeInsets.only(
               left: 16,
@@ -329,64 +341,65 @@ class _HomeScreenState extends State<HomeScreen>
                                         'Total ${total.toString()}',
                                         style: FontConstants.caption1,
                                       ),
-                                      NumberPaginator(
-                                        numberPages: pageCounts,
-                                        onPageChange: (int index) {
-                                          setState(() {
-                                            page = index + 1;
-                                            getShops();
-                                          });
-                                        },
-                                        config: const NumberPaginatorUIConfig(
-                                          mode: ContentDisplayMode.hidden,
-                                        ),
+                                      Row(
+                                        children: [
+                                          NumberPaginator(
+                                            numberPages: pageCounts,
+                                            onPageChange: (int index) {
+                                              setState(() {
+                                                page = index + 1;
+                                                getShops();
+                                              });
+                                            },
+                                            config:
+                                                const NumberPaginatorUIConfig(
+                                              mode: ContentDisplayMode.hidden,
+                                            ),
+                                          ),
+                                          IconButton(
+                                            icon: SvgPicture.asset(
+                                              crossAxisCount == 1
+                                                  ? "assets/icons/grid_2.svg"
+                                                  : "assets/icons/grid_4.svg",
+                                              width: 24,
+                                              height: 24,
+                                              colorFilter:
+                                                  const ColorFilter.mode(
+                                                Colors.black,
+                                                BlendMode.srcIn,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                crossAxisCount =
+                                                    crossAxisCount == 1 ? 2 : 1;
+                                              });
+                                            },
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
                                 )
                               : Container(),
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
+                          GridView.builder(
+                            controller: _scrollController,
+                            shrinkWrap: true,
+                            itemCount: shops.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              mainAxisExtent: 220,
+                              childAspectRatio: 2 / 1,
+                              crossAxisSpacing: 8,
+                              crossAxisCount: crossAxisCount,
+                              mainAxisSpacing: 8,
                             ),
-                            child: ListView.builder(
-                              controller: _shopController,
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              itemCount: shops.length,
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      Routes.item_details,
-                                      arguments: shops[index],
-                                    );
-                                  },
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      shopCard(index),
-                                      index < shops.length - 1
-                                          ? Container(
-                                              padding: const EdgeInsets.only(
-                                                left: 100,
-                                                right: 16,
-                                              ),
-                                              child: const Divider(
-                                                height: 0,
-                                                color: Colors.grey,
-                                              ),
-                                            )
-                                          : Container(),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () {},
+                                child: shopCard(index),
+                              );
+                            },
                           ),
                         ],
                       ),
