@@ -401,7 +401,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 onTap: () {
                                   Navigator.pushNamed(
                                     context,
-                                    Routes.items,
+                                    Routes.products,
                                     arguments: shops[index],
                                   );
                                 },

@@ -9,14 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ItemDetails extends StatefulWidget {
-  const ItemDetails({super.key});
+class ProductScreen extends StatefulWidget {
+  const ProductScreen({super.key});
 
   @override
-  State<ItemDetails> createState() => _ItemDetailsState();
+  State<ProductScreen> createState() => _ProductScreenState();
 }
 
-class _ItemDetailsState extends State<ItemDetails> {
+class _ProductScreenState extends State<ProductScreen> {
   ScrollController _detailsController = ScrollController();
   final PageController _imageController = PageController();
   List<Map<String, dynamic>> carts = [];

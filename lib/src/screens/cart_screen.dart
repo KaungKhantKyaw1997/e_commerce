@@ -227,7 +227,7 @@ class _CartScreenState extends State<CartScreen> {
                               onPressed: (BuildContext context) {
                                 Navigator.pushNamed(
                                   context,
-                                  Routes.item_details,
+                                  Routes.product,
                                   arguments: carts[index],
                                 );
                               },
