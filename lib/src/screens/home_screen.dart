@@ -185,6 +185,72 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+  modelsCard(index) {
+    return Container(
+      padding: EdgeInsets.only(
+        top: 8,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 150,
+            height: 150,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                // image: NetworkImage(
+                //     '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
+                image: AssetImage("assets/images/gshock1.png"),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              bottom: 4,
+            ),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                models[index].toString(),
+                style: FontConstants.caption2,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  brandsCard(index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: 12,
+          horizontal: 16,
+        ),
+        child: Center(
+          child: Text(
+            brands[index]["name"].toString(),
+            style: FontConstants.caption2,
+          ),
+        ),
+      ),
+    );
+  }
+
   categoriesCard(index) {
     return Container(
       padding: EdgeInsets.only(
@@ -241,48 +307,6 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  brandsCard(index) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 12,
-          horizontal: 16,
-        ),
-        child: Center(
-          child: Text(
-            brands[index]["name"].toString(),
-            style: FontConstants.caption2,
-          ),
-        ),
-      ),
-    );
-  }
-
-  modelsCard(index) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 12,
-          horizontal: 16,
-        ),
-        child: Center(
-          child: Text(
-            models[index]["name"].toString(),
-            style: FontConstants.caption2,
-          ),
-        ),
       ),
     );
   }
@@ -465,6 +489,52 @@ class _HomeScreenState extends State<HomeScreen>
                               textBaseline: TextBaseline.alphabetic,
                               children: [
                                 Text(
+                                  language["Models"] ?? "Models",
+                                  style: FontConstants.body1,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      Routes.models,
+                                    );
+                                  },
+                                  child: Text(
+                                    language["See More"] ?? "See More",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            height: 220,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: models.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                    right: 8,
+                                  ),
+                                  child: modelsCard(index),
+                                );
+                              },
+                              itemExtent:
+                                  MediaQuery.of(context).size.width / 2 - 25,
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(
+                              top: 16,
+                              bottom: 4,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Text(
                                   language["Brands"] ?? "Brands",
                                   style: FontConstants.body1,
                                 ),
@@ -504,67 +574,6 @@ class _HomeScreenState extends State<HomeScreen>
                                           bottom: 8,
                                         ),
                                         child: brandsCard(itemIndex),
-                                      );
-                                    } else {
-                                      return Container();
-                                    }
-                                  },
-                                );
-                              },
-                              itemExtent:
-                                  MediaQuery.of(context).size.width / 2 - 50,
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.only(
-                              top: 16,
-                              bottom: 4,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline.alphabetic,
-                              children: [
-                                Text(
-                                  language["Models"] ?? "Models",
-                                  style: FontConstants.body1,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      Routes.models,
-                                    );
-                                  },
-                                  child: Text(
-                                    language["See More"] ?? "See More",
-                                    style: FontConstants.caption1,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            height: 110,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: (models.length / 2).ceil(),
-                              itemBuilder: (context, pageIndex) {
-                                int startIndex = pageIndex * 2;
-                                int endIndex = (pageIndex * 2 + 1)
-                                    .clamp(0, models.length - 1);
-
-                                return ListView.builder(
-                                  itemCount: endIndex - startIndex + 1,
-                                  itemBuilder: (context, index) {
-                                    int itemIndex = startIndex + index;
-                                    if (itemIndex < models.length) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                          right: 8,
-                                          bottom: 8,
-                                        ),
-                                        child: modelsCard(itemIndex),
                                       );
                                     } else {
                                       return Container();

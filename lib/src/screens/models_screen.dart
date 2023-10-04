@@ -99,13 +99,8 @@ class _ModelsScreenState extends State<ModelsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    models[index]["name"].toString(),
+                    models[index].toString(),
                     style: FontConstants.body1,
-                  ),
-                  Text(
-                    models[index]["description"].toString(),
-                    overflow: TextOverflow.ellipsis,
-                    style: FontConstants.caption1,
                   ),
                 ],
               ),

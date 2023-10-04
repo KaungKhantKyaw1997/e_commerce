@@ -51,7 +51,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         "password": password,
         "username": username,
         "email": email.text,
-        "phone": phone.text,
+        "phone": '959${phone.text}',
         "profile_image": '',
       };
 
@@ -293,35 +293,35 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   ],
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  bottom: 24,
-                ),
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: Text(
-                    language["Sign Up"] ?? "Sign Up",
-                    style: FontConstants.button1,
-                  ),
-                ),
-              ),
             ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.only(
+          left: 16,
+          right: 16,
+          bottom: 24,
+        ),
+        width: double.infinity,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 12,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              signup();
+            }
+          },
+          child: Text(
+            language["Sign Up"] ?? "Sign Up",
+            style: FontConstants.button1,
           ),
         ),
       ),

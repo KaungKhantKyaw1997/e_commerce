@@ -3,6 +3,7 @@ import 'package:e_commerce/src/screens/categories_screen.dart';
 import 'package:e_commerce/src/screens/item_details_screen.dart';
 import 'package:e_commerce/src/screens/items_screen.dart';
 import 'package:e_commerce/src/screens/language_screen.dart';
+import 'package:e_commerce/src/screens/models_screen.dart';
 import 'package:e_commerce/src/screens/personal_info_screen.dart';
 import 'package:e_commerce/src/screens/profile_screen.dart';
 import 'package:e_commerce/src/screens/shop_screen.dart';
@@ -43,7 +44,7 @@ class Routes {
     item_details: (BuildContext context) => const ItemDetails(),
     categories: (BuildContext context) => const CategoriesScreen(),
     brands: (BuildContext context) => const BrandsScreen(),
-    models: (BuildContext context) => const BrandsScreen(),
+    models: (BuildContext context) => const ModelsScreen(),
     cart: (BuildContext context) => const CartScreen(),
     setting: (BuildContext context) => const SettingScreen(),
     profile: (BuildContext context) => const ProfileScreen(),

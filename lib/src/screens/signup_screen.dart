@@ -60,7 +60,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   Container(
                     padding: EdgeInsets.only(
                       top: 24,
-                      bottom: 16,
+                      bottom: 24,
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -78,7 +78,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                   Positioned(
-                    bottom: 18,
+                    bottom: 24,
                     right: 0,
                     child: GestureDetector(
                       onTap: () {},
@@ -110,6 +110,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 padding: const EdgeInsets.only(
                   left: 16,
                   right: 16,
+                  top: 16,
                   bottom: 8,
                 ),
                 child: Align(
@@ -349,42 +350,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ],
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  bottom: 24,
-                ),
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      Navigator.pushNamed(
-                        context,
-                        Routes.personalinfo,
-                        arguments: {
-                          'username': username.text,
-                          'password': password.text,
-                        },
-                      );
-                    }
-                  },
-                  child: Text(
-                    language["Next"] ?? "Next",
-                    style: FontConstants.button1,
-                  ),
-                ),
-              ),
             ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.only(
+          left: 16,
+          right: 16,
+          bottom: 24,
+        ),
+        width: double.infinity,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 12,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              Navigator.pushNamed(
+                context,
+                Routes.personalinfo,
+                arguments: {
+                  'username': username.text,
+                  'password': password.text,
+                },
+              );
+            }
+          },
+          child: Text(
+            language["Next"] ?? "Next",
+            style: FontConstants.button1,
           ),
         ),
       ),
