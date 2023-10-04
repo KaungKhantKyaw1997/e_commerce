@@ -5,7 +5,6 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/services/brands_service.dart';
 import 'package:e_commerce/src/services/categories_service.dart';
-import 'package:e_commerce/src/services/models_service.dart';
 import 'package:e_commerce/src/services/shops_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
@@ -26,15 +25,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   final shopsService = ShopsService();
-  final categoriesService = CategoriesService();
   final brandsService = BrandsService();
-  final modelsService = ModelsService();
+  final categoriesService = CategoriesService();
   final ScrollController _scrollController = ScrollController();
   late TabController _tabController;
   List shops = [];
-  List categories = [];
   List brands = [];
-  List models = [];
+  List categories = [];
   int page = 1;
   int pageCounts = 0;
   int total = 0;
@@ -45,18 +42,16 @@ class _HomeScreenState extends State<HomeScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     getShops();
-    getCategories();
     getBrands();
-    getModels();
+    getCategories();
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     shopsService.cancelRequest();
-    categoriesService.cancelRequest();
     brandsService.cancelRequest();
-    modelsService.cancelRequest();
+    categoriesService.cancelRequest();
     super.dispose();
   }
 
@@ -71,21 +66,6 @@ class _HomeScreenState extends State<HomeScreen>
           total = response["total"];
         }
         setState(() {});
-      } else {
-        ToastUtil.showToast(response["code"], response["message"]);
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
-  getCategories() async {
-    try {
-      final response = await categoriesService.getCategoriesData();
-      if (response!["code"] == 200) {
-        if (response["data"].isNotEmpty) {
-          categories = response["data"];
-        }
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -109,12 +89,12 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
-  getModels() async {
+  getCategories() async {
     try {
-      final response = await modelsService.getModelsData();
+      final response = await categoriesService.getCategoriesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
-          models = response["data"];
+          categories = response["data"];
         }
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -177,51 +157,6 @@ class _HomeScreenState extends State<HomeScreen>
                 shops[index]["address"].toString(),
                 overflow: TextOverflow.ellipsis,
                 style: FontConstants.smallText1,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  modelsCard(index) {
-    return Container(
-      padding: EdgeInsets.only(
-        top: 8,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 150,
-            height: 150,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                // image: NetworkImage(
-                //     '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
-                image: AssetImage("assets/images/gshock1.png"),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 16,
-              right: 16,
-              bottom: 4,
-            ),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                models[index].toString(),
-                style: FontConstants.caption2,
               ),
             ),
           ),
@@ -466,7 +401,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 onTap: () {
                                   Navigator.pushNamed(
                                     context,
-                                    Routes.shop,
+                                    Routes.items,
                                     arguments: shops[index],
                                   );
                                 },
@@ -478,52 +413,6 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                       Column(
                         children: [
-                          Container(
-                            padding: EdgeInsets.only(
-                              top: 16,
-                              bottom: 4,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline.alphabetic,
-                              children: [
-                                Text(
-                                  language["Models"] ?? "Models",
-                                  style: FontConstants.body1,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      Routes.models,
-                                    );
-                                  },
-                                  child: Text(
-                                    language["See More"] ?? "See More",
-                                    style: FontConstants.caption1,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            height: 220,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: models.length,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                    right: 8,
-                                  ),
-                                  child: modelsCard(index),
-                                );
-                              },
-                              itemExtent:
-                                  MediaQuery.of(context).size.width / 2 - 25,
-                            ),
-                          ),
                           Container(
                             padding: EdgeInsets.only(
                               top: 16,
