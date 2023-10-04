@@ -5,6 +5,7 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/services/brands_service.dart';
 import 'package:e_commerce/src/services/categories_service.dart';
+import 'package:e_commerce/src/services/models_service.dart';
 import 'package:e_commerce/src/services/shops_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
@@ -27,11 +28,13 @@ class _HomeScreenState extends State<HomeScreen>
   final shopsService = ShopsService();
   final categoriesService = CategoriesService();
   final brandsService = BrandsService();
+  final modelsService = ModelsService();
   final ScrollController _scrollController = ScrollController();
   late TabController _tabController;
   List shops = [];
   List categories = [];
   List brands = [];
+  List models = [];
   int page = 1;
   int pageCounts = 0;
   int total = 0;
@@ -44,6 +47,7 @@ class _HomeScreenState extends State<HomeScreen>
     getShops();
     getCategories();
     getBrands();
+    getModels();
   }
 
   @override
@@ -52,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen>
     shopsService.cancelRequest();
     categoriesService.cancelRequest();
     brandsService.cancelRequest();
+    modelsService.cancelRequest();
     super.dispose();
   }
 
@@ -95,6 +100,21 @@ class _HomeScreenState extends State<HomeScreen>
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           brands = response["data"];
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  getModels() async {
+    try {
+      final response = await modelsService.getModelsData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          models = response["data"];
         }
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -246,7 +266,26 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  final List<int> numbers = [1, 2, 3, 5, 8, 13, 21, 34, 55];
+  modelsCard(index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: 12,
+          horizontal: 16,
+        ),
+        child: Center(
+          child: Text(
+            models[index]["name"].toString(),
+            style: FontConstants.caption2,
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -299,7 +338,7 @@ class _HomeScreenState extends State<HomeScreen>
             ),
             Tab(
               child: Text(
-                language["Categories"] ?? "Categories",
+                language["Products"] ?? "Products",
                 style: FontConstants.subtitle1,
               ),
             ),
@@ -465,6 +504,67 @@ class _HomeScreenState extends State<HomeScreen>
                                           bottom: 8,
                                         ),
                                         child: brandsCard(itemIndex),
+                                      );
+                                    } else {
+                                      return Container();
+                                    }
+                                  },
+                                );
+                              },
+                              itemExtent:
+                                  MediaQuery.of(context).size.width / 2 - 50,
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(
+                              top: 16,
+                              bottom: 4,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Text(
+                                  language["Models"] ?? "Models",
+                                  style: FontConstants.body1,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      Routes.models,
+                                    );
+                                  },
+                                  child: Text(
+                                    language["See More"] ?? "See More",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            height: 110,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: (models.length / 2).ceil(),
+                              itemBuilder: (context, pageIndex) {
+                                int startIndex = pageIndex * 2;
+                                int endIndex = (pageIndex * 2 + 1)
+                                    .clamp(0, models.length - 1);
+
+                                return ListView.builder(
+                                  itemCount: endIndex - startIndex + 1,
+                                  itemBuilder: (context, index) {
+                                    int itemIndex = startIndex + index;
+                                    if (itemIndex < models.length) {
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                          right: 8,
+                                          bottom: 8,
+                                        ),
+                                        child: modelsCard(itemIndex),
                                       );
                                     } else {
                                       return Container();

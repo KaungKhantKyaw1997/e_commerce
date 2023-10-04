@@ -99,11 +99,11 @@ class _BrandsScreenState extends State<BrandsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${brands[index]["name"].toString()}',
+                    brands[index]["name"].toString(),
                     style: FontConstants.body1,
                   ),
                   Text(
-                    '${brands[index]["description"].toString()}',
+                    brands[index]["description"].toString(),
                     overflow: TextOverflow.ellipsis,
                     style: FontConstants.caption1,
                   ),

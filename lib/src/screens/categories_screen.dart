@@ -99,11 +99,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${categories[index]["name"].toString()}',
+                    categories[index]["name"].toString(),
                     style: FontConstants.body1,
                   ),
                   Text(
-                    '${categories[index]["description"].toString()}',
+                    categories[index]["description"].toString(),
                     overflow: TextOverflow.ellipsis,
                     style: FontConstants.caption1,
                   ),

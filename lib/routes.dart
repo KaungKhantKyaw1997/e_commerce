@@ -26,6 +26,7 @@ class Routes {
   static const String item_details = '/item_details';
   static const String categories = '/categories';
   static const String brands = '/brands';
+  static const String models = '/models';
   static const String cart = '/cart';
   static const String setting = '/setting';
   static const String profile = '/profile';
@@ -42,6 +43,7 @@ class Routes {
     item_details: (BuildContext context) => const ItemDetails(),
     categories: (BuildContext context) => const CategoriesScreen(),
     brands: (BuildContext context) => const BrandsScreen(),
+    models: (BuildContext context) => const BrandsScreen(),
     cart: (BuildContext context) => const CartScreen(),
     setting: (BuildContext context) => const SettingScreen(),
     profile: (BuildContext context) => const ProfileScreen(),
