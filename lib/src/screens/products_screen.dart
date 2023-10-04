@@ -1,11 +1,13 @@
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/services/products_service.dart';
+import 'package:e_commerce/src/utils/currency_input_formatter.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/routes.dart';
+import 'package:intl/intl.dart';
 import 'package:number_paginator/number_paginator.dart';
 
 class ProductsScreen extends StatefulWidget {
@@ -18,11 +20,13 @@ class ProductsScreen extends StatefulWidget {
 class _ProductsScreenState extends State<ProductsScreen>
     with SingleTickerProviderStateMixin {
   final productsService = ProductsService();
-  final ScrollController _itemController = ScrollController();
+  final ScrollController _productController = ScrollController();
   TextEditingController search = TextEditingController(text: '');
   TextEditingController _fromPrice = TextEditingController(text: '');
   TextEditingController _toPrice = TextEditingController(text: '');
-  List items = [];
+  NumberFormat formatter = NumberFormat('###,###.00', 'en_US');
+
+  List products = [];
   int page = 1;
   int pageCounts = 0;
   int total = 0;
@@ -30,6 +34,8 @@ class _ProductsScreenState extends State<ProductsScreen>
   int categoryId = 0;
   int brandId = 0;
   List brands = [];
+  double _startValue = 0;
+  double _endValue = 0;
 
   @override
   void initState() {
@@ -57,31 +63,38 @@ class _ProductsScreenState extends State<ProductsScreen>
 
   getProducts() async {
     try {
+      double fromPrice = _fromPrice.text == ''
+          ? 0.0
+          : double.parse(_fromPrice.text.replaceAll(',', ''));
+      double toPrice = _toPrice.text == ''
+          ? 0.0
+          : double.parse(_toPrice.text.replaceAll(',', ''));
+
       final body = {
         "page": page,
         "per_page": 10,
         "search": search.text,
         "shop_id": shopId,
         "category_id": categoryId,
-        "from_price": double.parse(_fromPrice.text),
-        "to_price": double.parse(_toPrice.text),
+        "from_price": fromPrice,
+        "to_price": toPrice,
         "brands": brands,
         "models": []
       };
 
       if (shopId == 0) body.remove("shop_id");
       if (categoryId == 0) body.remove("category_id");
-      if (categoryId == 0) body.remove("from_price");
-      if (categoryId == 0) body.remove("to_price");
+      if (toPrice == 0.0) body.remove("from_price");
+      if (toPrice == 0.0) body.remove("to_price");
 
       final response = await productsService.getProductsData(body);
       if (response["code"] == 200) {
-        items = [];
+        products = [];
         page = 1;
         pageCounts = 0;
         total = 0;
         if (response["data"].isNotEmpty) {
-          items = response["data"];
+          products = response["data"];
           page = response["page"];
           pageCounts = response["page_counts"];
           total = response["total"];
@@ -96,8 +109,10 @@ class _ProductsScreenState extends State<ProductsScreen>
   }
 
   void _showFilterBottomSheet(BuildContext context) {
-    double _startValue = 0;
-    double _endValue = 200000;
+    _startValue = 0;
+    _endValue = 0;
+    _fromPrice.text = '';
+    _toPrice.text = '';
 
     showModalBottomSheet(
       context: context,
@@ -116,20 +131,31 @@ class _ProductsScreenState extends State<ProductsScreen>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 8,
+                      bottom: 4,
+                    ),
+                    child: Text(
+                      language["Price Range"] ?? "Price Range",
+                      style: FontConstants.subheadline1,
+                    ),
+                  ),
                   RangeSlider(
                     values: RangeValues(_startValue, _endValue),
                     onChanged: (RangeValues values) {
                       setState(() {
                         _startValue = values.start;
                         _endValue = values.end;
-                        _fromPrice.text = '${values.start}';
-                        _toPrice.text = '${values.end}';
+                        _fromPrice.text = '${formatter.format(_startValue)}';
+                        _toPrice.text = '${formatter.format(_endValue)}';
                       });
                     },
                     min: 0,
-                    max: 1000000,
-                    divisions: 1000000,
-                    labels: RangeLabels('$_startValue', '$_endValue'),
+                    max: 500000,
+                    divisions: 500,
+                    labels: RangeLabels('${formatter.format(_startValue)}',
+                        '${formatter.format(_endValue)}'),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -144,6 +170,7 @@ class _ProductsScreenState extends State<ProductsScreen>
                           ),
                           child: TextFormField(
                             controller: _fromPrice,
+                            inputFormatters: [CurrencyInputFormatter()],
                             keyboardType: TextInputType.number,
                             textInputAction: TextInputAction.next,
                             style: FontConstants.body1,
@@ -182,6 +209,7 @@ class _ProductsScreenState extends State<ProductsScreen>
                           ),
                           child: TextFormField(
                             controller: _toPrice,
+                            inputFormatters: [CurrencyInputFormatter()],
                             keyboardType: TextInputType.number,
                             textInputAction: TextInputAction.next,
                             style: FontConstants.body1,
@@ -249,7 +277,7 @@ class _ProductsScreenState extends State<ProductsScreen>
     );
   }
 
-  itemCard(index) {
+  productCard(index) {
     return Container(
       padding: EdgeInsets.only(
         top: 8,
@@ -266,7 +294,7 @@ class _ProductsScreenState extends State<ProductsScreen>
             decoration: BoxDecoration(
               image: DecorationImage(
                 // image: NetworkImage(
-                //     '${ApiConstants.baseUrl}${items[index]["product_images"][0].toString()}'),
+                //     '${ApiConstants.baseUrl}${products[index]["product_images"][0].toString()}'),
                 image: AssetImage("assets/images/gshock1.png"),
                 fit: BoxFit.cover,
               ),
@@ -284,7 +312,7 @@ class _ProductsScreenState extends State<ProductsScreen>
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                items[index]["brand_name"].toString(),
+                products[index]["brand_name"].toString(),
                 style: FontConstants.caption2,
               ),
             ),
@@ -298,7 +326,7 @@ class _ProductsScreenState extends State<ProductsScreen>
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                items[index]["model"].toString(),
+                products[index]["model"].toString(),
                 style: FontConstants.body1,
               ),
             ),
@@ -339,7 +367,11 @@ class _ProductsScreenState extends State<ProductsScreen>
             ),
           ),
           onChanged: (value) {
-            if (value != '') {}
+            _startValue = 0;
+            _endValue = 0;
+            _fromPrice.text = '';
+            _toPrice.text = '';
+            getProducts();
           },
         ),
         actions: [
@@ -372,7 +404,7 @@ class _ProductsScreenState extends State<ProductsScreen>
           width: double.infinity,
           child: Column(
             children: [
-              items.isNotEmpty
+              products.isNotEmpty
                   ? Container(
                       padding: EdgeInsets.only(
                         top: 4,
@@ -403,9 +435,9 @@ class _ProductsScreenState extends State<ProductsScreen>
                     )
                   : Container(),
               GridView.builder(
-                controller: _itemController,
+                controller: _productController,
                 shrinkWrap: true,
-                itemCount: items.length,
+                itemCount: products.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisExtent: 230,
                   childAspectRatio: 2 / 1,
@@ -419,10 +451,10 @@ class _ProductsScreenState extends State<ProductsScreen>
                       Navigator.pushNamed(
                         context,
                         Routes.product,
-                        arguments: items[index],
+                        arguments: products[index],
                       );
                     },
-                    child: itemCard(index),
+                    child: productCard(index),
                   );
                 },
               ),

@@ -20,8 +20,7 @@ class _ProductScreenState extends State<ProductScreen> {
   ScrollController _detailsController = ScrollController();
   final PageController _imageController = PageController();
   List<Map<String, dynamic>> carts = [];
-  Map<String, dynamic> item = {};
-  double totalamount = 0;
+  Map<String, dynamic> product = {};
 
   var images = [
     "assets/images/gshock1.png",
@@ -34,7 +33,6 @@ class _ProductScreenState extends State<ProductScreen> {
   @override
   void initState() {
     super.initState();
-    getCart();
     _imageController.addListener(() {
       setState(() {
         _currentPage = _imageController.page ?? 0;
@@ -46,9 +44,9 @@ class _ProductScreenState extends State<ProductScreen> {
 
       if (arguments != null) {
         setState(() {
-          item = arguments;
-          totalamount = double.parse(item["price"].toString()) *
-              double.parse(item["qty"].toString());
+          product = arguments;
+          product['quantity'] = product['quantity'] ?? 0;
+          product['totalamount'] = product['totalamount'] ?? 0.0;
         });
       }
     });
@@ -57,19 +55,6 @@ class _ProductScreenState extends State<ProductScreen> {
   @override
   void dispose() {
     super.dispose();
-  }
-
-  getCart() async {
-    final prefs = await SharedPreferences.getInstance();
-    final cartsJson = prefs.getString("carts");
-    if (cartsJson != null) {
-      setState(() {
-        List jsonData = jsonDecode(cartsJson) ?? [];
-        for (var item in jsonData) {
-          carts.add(item);
-        }
-      });
-    }
   }
 
   Future<void> saveListToSharedPreferences(
@@ -122,6 +107,8 @@ class _ProductScreenState extends State<ProductScreen> {
                     return Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
+                          // image: NetworkImage(
+                          //     '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'),
                           image: AssetImage(images[index]),
                           fit: BoxFit.contain,
                         ),
@@ -145,12 +132,22 @@ class _ProductScreenState extends State<ProductScreen> {
                   top: 16,
                   bottom: 4,
                 ),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    item["name"] ?? "",
-                    style: FontConstants.subheadline1,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      product["brand_name"] ?? "",
+                      style: FontConstants.subheadline1,
+                    ),
+                    SizedBox(
+                      width: 6,
+                    ),
+                    Text(
+                      '(${product["model"]})',
+                      style: FontConstants.body2,
+                    ),
+                  ],
                 ),
               ),
               Container(
@@ -170,14 +167,20 @@ class _ProductScreenState extends State<ProductScreen> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          language["Information"] ?? "Information",
-                          style: FontConstants.caption1,
+                          language["Specification"] ?? "Specification",
+                          style: FontConstants.caption2,
                         ),
                       ),
                     ),
-                    const Divider(
-                      height: 0,
-                      color: Colors.grey,
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                      ),
+                      child: const Divider(
+                        height: 0,
+                        color: Colors.grey,
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
@@ -191,11 +194,11 @@ class _ProductScreenState extends State<ProductScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            language["Brand"] ?? "Brand",
+                            language["Color"] ?? "Color",
                             style: FontConstants.caption1,
                           ),
                           Text(
-                            item["brand"] ?? "",
+                            product["color"] ?? "",
                             style: FontConstants.caption2,
                           ),
                         ],
@@ -205,18 +208,18 @@ class _ProductScreenState extends State<ProductScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
-                        bottom: 16,
+                        bottom: 4,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            language["Model Number"] ?? "Model Number",
+                            language["Strap Color"] ?? "Strap Color",
                             style: FontConstants.caption1,
                           ),
                           Text(
-                            item["model"] ?? "",
+                            product["strap_color"] ?? "",
                             style: FontConstants.caption2,
                           ),
                         ],
@@ -226,7 +229,135 @@ class _ProductScreenState extends State<ProductScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
-                        bottom: 16,
+                        bottom: 4,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            language["Dial Color"] ?? "Dial Color",
+                            style: FontConstants.caption1,
+                          ),
+                          Text(
+                            product["dial_color"] ?? "",
+                            style: FontConstants.caption2,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            language["Case Material"] ?? "Case Material",
+                            style: FontConstants.caption1,
+                          ),
+                          Text(
+                            product["case_material"] ?? "",
+                            style: FontConstants.caption2,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            language["Strap Material"] ?? "Strap Material",
+                            style: FontConstants.caption1,
+                          ),
+                          Text(
+                            product["strap_material"] ?? "",
+                            style: FontConstants.caption2,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            language["Movement Type"] ?? "Movement Type",
+                            style: FontConstants.caption1,
+                          ),
+                          Text(
+                            product["movement_type"] ?? "",
+                            style: FontConstants.caption2,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            language["Dimensions"] ?? "Dimensions",
+                            style: FontConstants.caption1,
+                          ),
+                          Text(
+                            product["dimensions"] ?? "",
+                            style: FontConstants.caption2,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 8,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            language["Water Resistance"] ?? "Water Resistance",
+                            style: FontConstants.caption1,
+                          ),
+                          Text(
+                            product["water_resistance"] ?? "",
+                            style: FontConstants.caption2,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(
+                      height: 0,
+                      color: Colors.grey,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(
+                        16,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -238,10 +369,10 @@ class _ProductScreenState extends State<ProductScreen> {
                                 "Ks",
                                 style: FontConstants.subheadline1,
                               ),
-                              item["price"] != null
+                              product["price"] != null
                                   ? FormattedAmount(
                                       amount: double.parse(
-                                          item["price"].toString()),
+                                          product["price"].toString()),
                                       mainTextStyle: FontConstants.subheadline1,
                                       decimalTextStyle: FontConstants.caption3,
                                     )
@@ -270,16 +401,14 @@ class _ProductScreenState extends State<ProductScreen> {
                                     color: Theme.of(context).primaryColor,
                                   ),
                                   onPressed: () {
-                                    setState(() {
-                                      if (int.parse(item["qty"]) > 0) {
-                                        int qty = int.parse(item["qty"]);
-                                        item["qty"] = (--qty).toString();
-                                        totalamount = double.parse(
-                                                item["price"].toString()) *
-                                            double.parse(
-                                                item["qty"].toString());
-                                      }
-                                    });
+                                    if (product['quantity'] > 0) {
+                                      setState(() {
+                                        product['quantity']--;
+                                        product['totalamount'] = double.parse(
+                                                product["price"].toString()) *
+                                            product['quantity'];
+                                      });
+                                    }
                                   },
                                 ),
                               ),
@@ -296,7 +425,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                 width: 50,
                                 height: 32,
                                 child: Text(
-                                  item["qty"].toString(),
+                                  product['quantity'].toString(),
                                   textAlign: TextAlign.center,
                                   style: FontConstants.subheadline1,
                                 ),
@@ -321,13 +450,16 @@ class _ProductScreenState extends State<ProductScreen> {
                                     color: Theme.of(context).primaryColor,
                                   ),
                                   onPressed: () {
-                                    setState(() {
-                                      int qty = int.parse(item["qty"]);
-                                      item["qty"] = (++qty).toString();
-                                      totalamount = double.parse(
-                                              item["price"].toString()) *
-                                          double.parse(item["qty"].toString());
-                                    });
+                                    if (product['quantity'] <
+                                        int.parse(product["stock_quantity"]
+                                            .toString())) {
+                                      setState(() {
+                                        product['quantity']++;
+                                        product['totalamount'] = double.parse(
+                                                product["price"].toString()) *
+                                            product['quantity'];
+                                      });
+                                    }
                                   },
                                 ),
                               ),
@@ -354,15 +486,17 @@ class _ProductScreenState extends State<ProductScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
-                        bottom: 8,
+                        bottom: 16,
                       ),
                       child: Align(
                         alignment: Alignment.center,
-                        child: FormattedAmount(
-                          amount: totalamount,
-                          mainTextStyle: FontConstants.headline1,
-                          decimalTextStyle: FontConstants.body1,
-                        ),
+                        child: product["totalamount"] != null
+                            ? FormattedAmount(
+                                amount: product['totalamount'],
+                                mainTextStyle: FontConstants.headline1,
+                                decimalTextStyle: FontConstants.body1,
+                              )
+                            : Text(""),
                       ),
                     ),
                   ],
@@ -391,8 +525,8 @@ class _ProductScreenState extends State<ProductScreen> {
             backgroundColor: Theme.of(context).primaryColor,
           ),
           onPressed: () async {
-            if (int.parse(item["qty"]) > 0) {
-              carts.add(item);
+            if (product['quantity'] > 0) {
+              carts.add(product);
               saveListToSharedPreferences(carts);
 
               CartProvider cartProvider =

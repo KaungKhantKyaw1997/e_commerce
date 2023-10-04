@@ -284,8 +284,11 @@ class _CartScreenState extends State<CartScreen> {
                                 height: 80,
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
+                                    // image: NetworkImage(
+                                    //     '${ApiConstants.baseUrl}${carts[index]["product_images"][0].toString()}'),
                                     image:
-                                        AssetImage(carts[index]["image_url"]),
+                                        AssetImage("assets/images/gshock1.png"),
+                                    fit: BoxFit.cover,
                                   ),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -300,9 +303,37 @@ class _CartScreenState extends State<CartScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        '${carts[index]["name"].toString()} x ${carts[index]["qty"].toString()}',
-                                        style: FontConstants.body1,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.baseline,
+                                            textBaseline:
+                                                TextBaseline.alphabetic,
+                                            children: [
+                                              Text(
+                                                carts[index]["brand_name"] ??
+                                                    "",
+                                                style: FontConstants.body1,
+                                              ),
+                                              SizedBox(
+                                                width: 6,
+                                              ),
+                                              Text(
+                                                '(${carts[index]["model"]})',
+                                                style: FontConstants.caption1,
+                                              ),
+                                            ],
+                                          ),
+                                          Text(
+                                            'x ${carts[index]["quantity"].toString()}',
+                                            style: FontConstants.body2,
+                                          ),
+                                        ],
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.only(
@@ -348,12 +379,8 @@ class _CartScreenState extends State<CartScreen> {
                                                   style: FontConstants.caption1,
                                                 ),
                                                 FormattedAmount(
-                                                  amount: double.parse(
-                                                          carts[index]["price"]
-                                                              .toString()) *
-                                                      double.parse(carts[index]
-                                                              ["qty"]
-                                                          .toString()),
+                                                  amount: carts[index]
+                                                      ["totalamount"],
                                                   mainTextStyle: FontConstants
                                                       .subheadline1,
                                                   decimalTextStyle:
@@ -375,7 +402,7 @@ class _CartScreenState extends State<CartScreen> {
                       index < carts.length - 1
                           ? Container(
                               padding: const EdgeInsets.only(
-                                left: 16,
+                                left: 100,
                                 right: 16,
                               ),
                               child: const Divider(
