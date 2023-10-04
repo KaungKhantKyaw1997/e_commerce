@@ -48,8 +48,22 @@ class _ProductScreenState extends State<ProductScreen> {
           product['quantity'] = product['quantity'] ?? 0;
           product['totalamount'] = product['totalamount'] ?? 0.0;
         });
+        getCart();
       }
     });
+  }
+
+  getCart() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cartsJson = prefs.getString("carts");
+    if (cartsJson != null) {
+      setState(() {
+        List jsonData = jsonDecode(cartsJson) ?? [];
+        for (var product in jsonData) {
+          carts.add(product);
+        }
+      });
+    }
   }
 
   @override
