@@ -201,7 +201,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 itemCount: categories.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        Routes.products,
+                        arguments: categories[index],
+                      );
+                    },
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,

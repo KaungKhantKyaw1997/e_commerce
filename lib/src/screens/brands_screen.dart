@@ -201,7 +201,13 @@ class _BrandsScreenState extends State<BrandsScreen> {
                 itemCount: brands.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        Routes.products,
+                        arguments: brands[index],
+                      );
+                    },
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:autoscale_tabbarview/autoscale_tabbarview.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
@@ -457,12 +455,21 @@ class _HomeScreenState extends State<HomeScreen>
                                   itemBuilder: (context, index) {
                                     int itemIndex = startIndex + index;
                                     if (itemIndex < brands.length) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                          right: 8,
-                                          bottom: 8,
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                            context,
+                                            Routes.products,
+                                            arguments: brands[itemIndex],
+                                          );
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                            right: 8,
+                                            bottom: 8,
+                                          ),
+                                          child: brandsCard(itemIndex),
                                         ),
-                                        child: brandsCard(itemIndex),
                                       );
                                     } else {
                                       return Container();
@@ -509,11 +516,20 @@ class _HomeScreenState extends State<HomeScreen>
                               scrollDirection: Axis.horizontal,
                               itemCount: categories.length,
                               itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                    right: 8,
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      Routes.products,
+                                      arguments: categories[index],
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                      right: 8,
+                                    ),
+                                    child: categoriesCard(index),
                                   ),
-                                  child: categoriesCard(index),
                                 );
                               },
                               itemExtent:

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';

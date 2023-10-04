@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/services/products_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
@@ -30,6 +28,8 @@ class _ProductsScreenState extends State<ProductsScreen>
   int total = 0;
   int shopId = 0;
   int categoryId = 0;
+  int brandId = 0;
+  List brands = [];
 
   @override
   void initState() {
@@ -41,6 +41,10 @@ class _ProductsScreenState extends State<ProductsScreen>
       if (arguments != null) {
         shopId = arguments["shop_id"] ?? 0;
         categoryId = arguments["category_id"] ?? 0;
+        brandId = arguments["brand_id"] ?? 0;
+        if (brandId != 0) {
+          brands.add(brandId);
+        }
         getProducts();
       }
     });
@@ -57,13 +61,18 @@ class _ProductsScreenState extends State<ProductsScreen>
         "page": page,
         "per_page": 10,
         "search": search.text,
-        if (shopId != 0) "shop_id": shopId,
-        if (categoryId != 0) "category_id": categoryId,
-        if (_toPrice.text != "") "from_price": double.parse(_fromPrice.text),
-        if (_toPrice.text != "") "to_price": double.parse(_toPrice.text),
-        "brands": [],
+        "shop_id": shopId,
+        "category_id": categoryId,
+        "from_price": double.parse(_fromPrice.text),
+        "to_price": double.parse(_toPrice.text),
+        "brands": brands,
         "models": []
       };
+
+      if (shopId == 0) body.remove("shop_id");
+      if (categoryId == 0) body.remove("category_id");
+      if (categoryId == 0) body.remove("from_price");
+      if (categoryId == 0) body.remove("to_price");
 
       final response = await productsService.getProductsData(body);
       if (response["code"] == 200) {

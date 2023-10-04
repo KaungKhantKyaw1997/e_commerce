@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
