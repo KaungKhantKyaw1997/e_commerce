@@ -6,6 +6,7 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
+import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -58,6 +59,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Future<void> uploadFile() async {
+    showLoadingDialog(context);
     try {
       var response = await AuthService.uploadFile(File(pickedFile!.path));
       var res = jsonDecode(response.body);
@@ -65,9 +67,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
         signup();
       } else {
         ToastUtil.showToast(res["code"], res["message"]);
+        Navigator.pop(context);
       }
     } catch (error) {
       print('Error uploading file: $error');
+      Navigator.pop(context);
     }
   }
 
@@ -88,9 +92,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
         Navigator.pushNamed(context, Routes.signin);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
+        Navigator.pop(context);
       }
     } catch (e) {
       print('Error: $e');
+      Navigator.pop(context);
     }
   }
 

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/services/orders_service.dart';
+import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -62,6 +63,7 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   createOrder() async {
+    showLoadingDialog(context);
     final prefs = await SharedPreferences.getInstance();
     List<Map<String, dynamic>> orderItems = carts.map((cartItem) {
       return {
@@ -100,9 +102,11 @@ class _CartScreenState extends State<CartScreen> {
         );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
+        Navigator.pop(context);
       }
     } catch (e) {
       print('Error: $e');
+      Navigator.pop(context);
     }
   }
 

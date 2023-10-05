@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
+import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -40,6 +41,7 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   signin() async {
+    showLoadingDialog(context);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       final body = {
@@ -64,9 +66,11 @@ class _SignInScreenState extends State<SignInScreen> {
         Navigator.pushNamed(context, Routes.home);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
+        Navigator.pop(context);
       }
     } catch (e) {
       print('Error: $e');
+      Navigator.pop(context);
     }
   }
 
