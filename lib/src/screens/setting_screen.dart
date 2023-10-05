@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:e_commerce/routes.dart';
+import 'package:e_commerce/src/constants/api_constants.dart';
+import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
@@ -18,6 +20,7 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingScreen> {
   final authService = AuthService();
   String lang = '';
+  String profileImage = '';
 
   @override
   void initState() {
@@ -34,6 +37,8 @@ class _SettingScreenState extends State<SettingScreen> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       lang = prefs.getString('language') ?? "eng";
+      profileImage = prefs.getString('profile_image') ?? "";
+      print(profileImage);
     });
   }
 
@@ -154,13 +159,22 @@ class _SettingScreenState extends State<SettingScreen> {
                                 ),
                                 width: 60,
                                 height: 60,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image:
-                                        AssetImage("assets/images/profile.png"),
-                                  ),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
+                                decoration: profileImage == ''
+                                    ? BoxDecoration(
+                                        color: ColorConstants.fillcolor,
+                                        image: DecorationImage(
+                                          image: AssetImage(
+                                              "assets/images/profile.png"),
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      )
+                                    : BoxDecoration(
+                                        image: DecorationImage(
+                                          image: NetworkImage(
+                                              '${ApiConstants.baseUrl}${profileImage.toString()}'),
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
                               ),
                               Expanded(
                                 child: Padding(

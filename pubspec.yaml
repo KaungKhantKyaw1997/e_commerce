@@ -49,6 +49,7 @@ dependencies:
   autoscale_tabbarview: ^1.0.2
   number_paginator: ^0.4.0
   custom_date_range_picker: ^1.0.10
+  image_picker: ^1.0.4
 
 dev_dependencies:
   flutter_test:

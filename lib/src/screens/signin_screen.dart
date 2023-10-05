@@ -25,8 +25,8 @@ class _SignInScreenState extends State<SignInScreen> {
   final authService = AuthService();
   final storage = FlutterSecureStorage();
   final _formKey = GlobalKey<FormState>();
-  TextEditingController username = TextEditingController(text: 'kkk');
-  TextEditingController password = TextEditingController(text: 'User@123');
+  TextEditingController username = TextEditingController(text: '');
+  TextEditingController password = TextEditingController(text: '');
   bool obscurePassword = true;
 
   @override

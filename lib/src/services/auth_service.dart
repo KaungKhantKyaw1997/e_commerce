@@ -43,27 +43,16 @@ class AuthService {
     }
   }
 
-  Future<void> imageUpload(String filename) async {
-    var request =
-        http.MultipartRequest('POST', Uri.parse(ApiConstants.imageUploadUrl));
+  static Future<http.Response> uploadFile(File file) async {
+    var uri = Uri.parse(ApiConstants.imageUploadUrl);
+    var request = http.MultipartRequest('POST', uri);
+    request.files.add(await http.MultipartFile.fromPath('file', file.path));
 
-    var file = File('path/to/your/file');
-    var stream = http.ByteStream(file.openRead());
-    var length = await file.length();
-    var multipartFile =
-        http.MultipartFile('file', stream, length, filename: filename);
-
-    request.files.add(multipartFile);
-
-    try {
-      var response = await request.send();
-      if (response.statusCode == 200) {
-        print('Uploaded successfully');
-      } else {
-        print('Upload failed with status ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Error uploading: $error');
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      return http.Response.fromStream(response);
+    } else {
+      throw Exception('Error uploading file: ${response.statusCode}');
     }
   }
 
