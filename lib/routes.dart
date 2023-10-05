@@ -1,5 +1,6 @@
 import 'package:e_commerce/src/screens/brands_screen.dart';
 import 'package:e_commerce/src/screens/categories_screen.dart';
+import 'package:e_commerce/src/screens/history_screen.dart';
 import 'package:e_commerce/src/screens/product_screen.dart';
 import 'package:e_commerce/src/screens/products_screen.dart';
 import 'package:e_commerce/src/screens/language_screen.dart';
@@ -27,6 +28,7 @@ class Routes {
   static const String brands = '/brands';
   static const String models = '/models';
   static const String cart = '/cart';
+  static const String history = '/history';
   static const String setting = '/setting';
   static const String profile = '/profile';
   static const String language = '/language';
@@ -42,6 +44,7 @@ class Routes {
     categories: (BuildContext context) => const CategoriesScreen(),
     brands: (BuildContext context) => const BrandsScreen(),
     cart: (BuildContext context) => const CartScreen(),
+    history: (BuildContext context) => const HistoryScreen(),
     setting: (BuildContext context) => const SettingScreen(),
     profile: (BuildContext context) => const ProfileScreen(),
     language: (BuildContext context) => const LanguageScreen(),

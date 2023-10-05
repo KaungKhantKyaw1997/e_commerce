@@ -18,9 +18,8 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
   List navItems = [
     {"index": 0, "icon": "assets/icons/home.svg", "label": "Home"},
     {"index": 1, "icon": "assets/icons/cart.svg", "label": "Cart"},
-    // {"index": 2, "icon": "assets/icons/favourite.svg", "label": "Favourite"},
-    // {"index": 3, "icon": "assets/icons/history.svg", "label": "History"},
-    {"index": 4, "icon": "assets/icons/setting.svg", "label": "Setting"}
+    {"index": 2, "icon": "assets/icons/history.svg", "label": "History"},
+    {"index": 3, "icon": "assets/icons/setting.svg", "label": "Setting"}
   ];
 
   Future<void> _onTabSelected(int index) async {
@@ -34,10 +33,8 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
       Navigator.pushNamed(context, Routes.home);
     } else if (data["label"] == 'Cart') {
       Navigator.pushNamed(context, Routes.cart);
-    } else if (data["label"] == 'Favourite') {
-      // Navigator.pushNamed(context, Routes.cart);
     } else if (data["label"] == 'History') {
-      // Navigator.pushNamed(context, Routes.history);
+      Navigator.pushNamed(context, Routes.history);
     } else if (data["label"] == 'Setting') {
       Navigator.pushNamed(context, Routes.setting);
     }

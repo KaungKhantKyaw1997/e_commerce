@@ -38,9 +38,16 @@ class OrderService {
       double fromAmount = 0.0,
       double toAmount = 0.0}) async {
     var token = await storage.read(key: "token");
+
+    var url = '${ApiConstants.ordersUrl}?page=$page&per_page=$perPage';
+    if (fromDate != '') url += '&from_date=$fromDate';
+    if (toDate != '') url += '&to_date=$toDate';
+    if (toAmount != 0.0) url += '&from_amount=$fromAmount';
+    if (toAmount != 0.0) url += '&to_amount=$toAmount';
+
     try {
       final response = await dio.get(
-        '${ApiConstants.ordersUrl}?page=$page&per_page=$perPage&from_date=$fromDate&to_date=$toDate&from_amount=$fromAmount&to_amount=$toAmount',
+        url,
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
