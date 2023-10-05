@@ -1,7 +1,9 @@
 import 'package:e_commerce/src/constants/color_constants.dart';
+import 'package:e_commerce/src/services/models_service.dart';
 import 'package:e_commerce/src/services/products_service.dart';
 import 'package:e_commerce/src/utils/currency_input_formatter.dart';
 import 'package:e_commerce/src/utils/toast.dart';
+import 'package:e_commerce/src/widgets/multi_select_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
@@ -19,6 +21,7 @@ class ProductsScreen extends StatefulWidget {
 
 class _ProductsScreenState extends State<ProductsScreen>
     with SingleTickerProviderStateMixin {
+  final modelsService = ModelsService();
   final productsService = ProductsService();
   final ScrollController _productController = ScrollController();
   TextEditingController search = TextEditingController(text: '');
@@ -34,12 +37,15 @@ class _ProductsScreenState extends State<ProductsScreen>
   int categoryId = 0;
   int brandId = 0;
   List brands = [];
+  List<String> models = [];
+  List<String> selectedModels = [];
   double _startValue = 0;
   double _endValue = 0;
 
   @override
   void initState() {
     super.initState();
+    getModels();
     Future.delayed(Duration.zero, () {
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
@@ -58,7 +64,26 @@ class _ProductsScreenState extends State<ProductsScreen>
 
   @override
   void dispose() {
+    modelsService.cancelRequest();
     super.dispose();
+  }
+
+  getModels() async {
+    try {
+      final response = await modelsService.getModelsData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          setState(() {
+            List<dynamic> dynamicList = response["data"];
+            models = dynamicList.map((item) => item.toString()).toList();
+          });
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   getProducts() async {
@@ -79,7 +104,7 @@ class _ProductsScreenState extends State<ProductsScreen>
         "from_price": fromPrice,
         "to_price": toPrice,
         "brands": brands,
-        "models": []
+        "models": selectedModels,
       };
 
       if (shopId == 0) body.remove("shop_id");
@@ -131,6 +156,32 @@ class _ProductsScreenState extends State<ProductsScreen>
               child: ListView(
                 shrinkWrap: true,
                 children: [
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 8,
+                        bottom: 4,
+                      ),
+                      child: Text(
+                        language["Models"] ?? "Models",
+                        style: FontConstants.subheadline1,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 12,
+                      right: 12,
+                    ),
+                    child: MultiSelectChip(
+                      models,
+                      onSelectionChanged: (selectedList) {
+                        setState(() {
+                          selectedModels = selectedList;
+                        });
+                      },
+                    ),
+                  ),
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.only(

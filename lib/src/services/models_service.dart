@@ -13,7 +13,7 @@ class ModelsService {
     var token = await storage.read(key: "token");
     try {
       final response = await dio.get(
-        '${ApiConstants.modelsUrl}?page=$page&per_page=$perPage&search=$search',
+        '${ApiConstants.modelsUrl}',
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
