@@ -21,6 +21,7 @@ class _SettingScreenState extends State<SettingScreen> {
   final authService = AuthService();
   String lang = '';
   String profileImage = '';
+  String name = '';
 
   @override
   void initState() {
@@ -38,7 +39,7 @@ class _SettingScreenState extends State<SettingScreen> {
     setState(() {
       lang = prefs.getString('language') ?? "eng";
       profileImage = prefs.getString('profile_image') ?? "";
-      print(profileImage);
+      name = prefs.getString('name') ?? "";
     });
   }
 
@@ -73,7 +74,7 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
               child: Text(
                 language["Cancel"] ?? "Cancel",
-                style: FontConstants.smallText2,
+                style: FontConstants.button2,
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -91,7 +92,7 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
               child: Text(
                 language["Ok"] ?? "Ok",
-                style: FontConstants.smallText3,
+                style: FontConstants.button1,
               ),
               onPressed: () async {
                 authService.signout(context);
@@ -159,7 +160,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                 ),
                                 width: 60,
                                 height: 60,
-                                decoration: profileImage == ''
+                                decoration: profileImage != ''
                                     ? BoxDecoration(
                                         color: ColorConstants.fillcolor,
                                         image: DecorationImage(
@@ -187,7 +188,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                     TextSpan(
                                       children: [
                                         TextSpan(
-                                          text: "Kaung Khant Kyaw",
+                                          text: name,
                                           style: FontConstants.caption2,
                                         )
                                       ],
@@ -205,7 +206,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
-                          top: 8,
+                          top: 24,
                         ),
                         child: Align(
                           alignment: Alignment.centerLeft,

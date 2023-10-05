@@ -26,15 +26,14 @@ class _CartScreenState extends State<CartScreen> {
   final ScrollController _cartController = ScrollController();
   final orderService = OrderService();
   final _formKey = GlobalKey<FormState>();
-  TextEditingController country = TextEditingController(text: 'Myanmar');
-  TextEditingController city = TextEditingController(text: 'Yangon');
-  TextEditingController state = TextEditingController(text: 'Yangon');
-  TextEditingController township = TextEditingController(text: 'Hlaing');
-  TextEditingController postalCode = TextEditingController(text: '00000');
-  TextEditingController ward = TextEditingController(text: '14');
-  TextEditingController streetAddress =
-      TextEditingController(text: 'Swe Hin Thar (4)');
-  TextEditingController homeAddress = TextEditingController(text: 'No(84)');
+  TextEditingController country = TextEditingController(text: '');
+  TextEditingController city = TextEditingController(text: '');
+  TextEditingController state = TextEditingController(text: '');
+  TextEditingController township = TextEditingController(text: '');
+  TextEditingController postalCode = TextEditingController(text: '');
+  TextEditingController ward = TextEditingController(text: '');
+  TextEditingController streetAddress = TextEditingController(text: '');
+  TextEditingController homeAddress = TextEditingController(text: '');
   TextEditingController note = TextEditingController(text: '');
   List<Map<String, dynamic>> carts = [];
 
@@ -123,6 +122,7 @@ class _CartScreenState extends State<CartScreen> {
               ),
             ),
             child: ListView(
+              shrinkWrap: true,
               children: [
                 Row(
                   children: [
@@ -530,7 +530,6 @@ class _CartScreenState extends State<CartScreen> {
                   padding: const EdgeInsets.only(
                     left: 16,
                     right: 16,
-                    bottom: 24,
                   ),
                   width: double.infinity,
                   child: ElevatedButton(

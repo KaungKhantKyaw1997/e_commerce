@@ -128,17 +128,19 @@ class _ProductsScreenState extends State<ProductsScreen>
                   topRight: Radius.circular(20),
                 ),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+              child: ListView(
+                shrinkWrap: true,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: 8,
-                      bottom: 4,
-                    ),
-                    child: Text(
-                      language["Price Range"] ?? "Price Range",
-                      style: FontConstants.subheadline1,
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 8,
+                        bottom: 4,
+                      ),
+                      child: Text(
+                        language["Price Range"] ?? "Price Range",
+                        style: FontConstants.subheadline1,
+                      ),
                     ),
                   ),
                   RangeSlider(
@@ -244,7 +246,6 @@ class _ProductsScreenState extends State<ProductsScreen>
                     padding: const EdgeInsets.only(
                       left: 16,
                       right: 16,
-                      bottom: 24,
                     ),
                     width: double.infinity,
                     child: ElevatedButton(
