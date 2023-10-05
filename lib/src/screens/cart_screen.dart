@@ -92,11 +92,13 @@ class _CartScreenState extends State<CartScreen> {
             Provider.of<CartProvider>(context, listen: false);
         cartProvider.addCount(0);
 
-        setState(() {
-          carts = [];
-          prefs.remove("carts");
-        });
-        ToastUtil.showToast(response["code"], response["message"]);
+        carts = [];
+        prefs.remove("carts");
+
+        Navigator.pushNamed(
+          context,
+          Routes.success,
+        );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -643,7 +645,7 @@ class _CartScreenState extends State<CartScreen> {
                                   arguments: carts[index],
                                 );
                               },
-                              backgroundColor: const Color(0xFF33A031),
+                              backgroundColor: Theme.of(context).primaryColor,
                               foregroundColor: Colors.white,
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(index == 0 ? 10 : 0),

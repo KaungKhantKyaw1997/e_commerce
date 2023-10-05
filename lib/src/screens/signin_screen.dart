@@ -29,6 +29,16 @@ class _SignInScreenState extends State<SignInScreen> {
   TextEditingController password = TextEditingController(text: 'User@123');
   bool obscurePassword = true;
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   signin() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
