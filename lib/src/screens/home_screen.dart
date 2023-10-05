@@ -1,6 +1,4 @@
 import 'package:autoscale_tabbarview/autoscale_tabbarview.dart';
-import 'package:e_commerce/src/constants/api_constants.dart';
-import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/services/brands_service.dart';
 import 'package:e_commerce/src/services/categories_service.dart';
 import 'package:e_commerce/src/services/shops_service.dart';
@@ -34,14 +32,15 @@ class _HomeScreenState extends State<HomeScreen>
   int pageCounts = 0;
   int total = 0;
   int crossAxisCount = 1;
+  bool shopTab = false;
+  bool productTab = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     getShops();
-    getBrands();
-    getCategories();
+    getProducts();
   }
 
   @override
@@ -58,12 +57,14 @@ class _HomeScreenState extends State<HomeScreen>
       final response = await shopsService.getShopsData(page: page);
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
-          shops = response["data"];
-          page = response["page"];
-          pageCounts = response["page_counts"];
-          total = response["total"];
+          setState(() {
+            shops = response["data"];
+            page = response["page"];
+            pageCounts = response["page_counts"];
+            total = response["total"];
+            shopTab = true;
+          });
         }
-        setState(() {});
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -72,12 +73,19 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
+  getProducts() {
+    getBrands();
+    getCategories();
+  }
+
   getBrands() async {
     try {
       final response = await brandsService.getBrandsData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
-          brands = response["data"];
+          setState(() {
+            brands = response["data"];
+          });
         }
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -92,7 +100,10 @@ class _HomeScreenState extends State<HomeScreen>
       final response = await categoriesService.getCategoriesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
-          categories = response["data"];
+          setState(() {
+            categories = response["data"];
+            productTab = true;
+          });
         }
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -319,10 +330,10 @@ class _HomeScreenState extends State<HomeScreen>
                 ? AutoScaleTabBarView(
                     controller: _tabController,
                     children: [
-                      Column(
-                        children: [
-                          shops.isNotEmpty
-                              ? Container(
+                      shopTab
+                          ? Column(
+                              children: [
+                                Container(
                                   padding: EdgeInsets.only(
                                     top: 4,
                                     bottom: 4,
@@ -380,164 +391,191 @@ class _HomeScreenState extends State<HomeScreen>
                                       ),
                                     ],
                                   ),
-                                )
-                              : Container(),
-                          GridView.builder(
-                            controller: _scrollController,
-                            shrinkWrap: true,
-                            itemCount: shops.length,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              mainAxisExtent: 220,
-                              childAspectRatio: 2 / 1,
-                              crossAxisSpacing: 8,
-                              crossAxisCount: crossAxisCount,
-                              mainAxisSpacing: 8,
-                            ),
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    Routes.products,
-                                    arguments: shops[index],
-                                  );
-                                },
-                                child: shopCard(index),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.only(
-                              top: 16,
-                              bottom: 4,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline.alphabetic,
-                              children: [
-                                Text(
-                                  language["Brands"] ?? "Brands",
-                                  style: FontConstants.body1,
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      Routes.brands,
-                                    );
-                                  },
-                                  child: Text(
-                                    language["See More"] ?? "See More",
-                                    style: FontConstants.caption1,
+                                GridView.builder(
+                                  controller: _scrollController,
+                                  shrinkWrap: true,
+                                  itemCount: shops.length,
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    mainAxisExtent: 220,
+                                    childAspectRatio: 2 / 1,
+                                    crossAxisSpacing: 8,
+                                    crossAxisCount: crossAxisCount,
+                                    mainAxisSpacing: 8,
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            height: 110,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: (brands.length / 2).ceil(),
-                              itemBuilder: (context, pageIndex) {
-                                int startIndex = pageIndex * 2;
-                                int endIndex = (pageIndex * 2 + 1)
-                                    .clamp(0, brands.length - 1);
-
-                                return ListView.builder(
-                                  itemCount: endIndex - startIndex + 1,
                                   itemBuilder: (context, index) {
-                                    int itemIndex = startIndex + index;
-                                    if (itemIndex < brands.length) {
-                                      return GestureDetector(
-                                        onTap: () {
-                                          Navigator.pushNamed(
-                                            context,
-                                            Routes.products,
-                                            arguments: brands[itemIndex],
-                                          );
-                                        },
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                            right: 8,
-                                            bottom: 8,
-                                          ),
-                                          child: brandsCard(itemIndex),
-                                        ),
-                                      );
-                                    } else {
-                                      return Container();
-                                    }
-                                  },
-                                );
-                              },
-                              itemExtent:
-                                  MediaQuery.of(context).size.width / 2 - 50,
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.only(
-                              top: 16,
-                              bottom: 4,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline.alphabetic,
-                              children: [
-                                Text(
-                                  language["Categories"] ?? "Categories",
-                                  style: FontConstants.body1,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      Routes.categories,
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          Routes.products,
+                                          arguments: shops[index],
+                                        );
+                                      },
+                                      child: shopCard(index),
                                     );
                                   },
-                                  child: Text(
-                                    language["See More"] ?? "See More",
-                                    style: FontConstants.caption1,
-                                  ),
                                 ),
                               ],
-                            ),
-                          ),
-                          Container(
-                            height: 220,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: categories.length,
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      Routes.products,
-                                      arguments: categories[index],
-                                    );
-                                  },
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                      right: 8,
-                                    ),
-                                    child: categoriesCard(index),
-                                  ),
-                                );
-                              },
-                              itemExtent:
-                                  MediaQuery.of(context).size.width / 2 - 25,
-                            ),
-                          ),
-                        ],
-                      ),
+                            )
+                          : Container(),
+                      productTab
+                          ? Column(
+                              children: [
+                                brands.isNotEmpty
+                                    ? Container(
+                                        padding: EdgeInsets.only(
+                                          top: 16,
+                                          bottom: 4,
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.baseline,
+                                          textBaseline: TextBaseline.alphabetic,
+                                          children: [
+                                            Text(
+                                              language["Brands"] ?? "Brands",
+                                              style: FontConstants.body1,
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.pushNamed(
+                                                  context,
+                                                  Routes.brands,
+                                                );
+                                              },
+                                              child: Text(
+                                                language["See More"] ??
+                                                    "See More",
+                                                style: FontConstants.caption1,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : Container(),
+                                brands.isNotEmpty
+                                    ? Container(
+                                        height: 110,
+                                        child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: (brands.length / 2).ceil(),
+                                          itemBuilder: (context, pageIndex) {
+                                            int startIndex = pageIndex * 2;
+                                            int endIndex = (pageIndex * 2 + 1)
+                                                .clamp(0, brands.length - 1);
+
+                                            return ListView.builder(
+                                              itemCount:
+                                                  endIndex - startIndex + 1,
+                                              itemBuilder: (context, index) {
+                                                int itemIndex =
+                                                    startIndex + index;
+                                                if (itemIndex < brands.length) {
+                                                  return GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.pushNamed(
+                                                        context,
+                                                        Routes.products,
+                                                        arguments:
+                                                            brands[itemIndex],
+                                                      );
+                                                    },
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                        right: 8,
+                                                        bottom: 8,
+                                                      ),
+                                                      child:
+                                                          brandsCard(itemIndex),
+                                                    ),
+                                                  );
+                                                } else {
+                                                  return Container();
+                                                }
+                                              },
+                                            );
+                                          },
+                                          itemExtent: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2 -
+                                              50,
+                                        ),
+                                      )
+                                    : Container(),
+                                categories.isNotEmpty
+                                    ? Container(
+                                        padding: EdgeInsets.only(
+                                          top: 16,
+                                          bottom: 4,
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.baseline,
+                                          textBaseline: TextBaseline.alphabetic,
+                                          children: [
+                                            Text(
+                                              language["Categories"] ??
+                                                  "Categories",
+                                              style: FontConstants.body1,
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.pushNamed(
+                                                  context,
+                                                  Routes.categories,
+                                                );
+                                              },
+                                              child: Text(
+                                                language["See More"] ??
+                                                    "See More",
+                                                style: FontConstants.caption1,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : Container(),
+                                categories.isNotEmpty
+                                    ? Container(
+                                        height: 220,
+                                        child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: categories.length,
+                                          itemBuilder: (context, index) {
+                                            return GestureDetector(
+                                              onTap: () {
+                                                Navigator.pushNamed(
+                                                  context,
+                                                  Routes.products,
+                                                  arguments: categories[index],
+                                                );
+                                              },
+                                              child: Padding(
+                                                padding: EdgeInsets.only(
+                                                  right: 8,
+                                                ),
+                                                child: categoriesCard(index),
+                                              ),
+                                            );
+                                          },
+                                          itemExtent: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2 -
+                                              25,
+                                        ),
+                                      )
+                                    : Container(),
+                              ],
+                            )
+                          : Container(),
                     ],
                   )
                 : Container(),
