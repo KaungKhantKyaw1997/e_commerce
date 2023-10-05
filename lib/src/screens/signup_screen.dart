@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:e_commerce/global.dart';
@@ -44,13 +45,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-  Future<void> _pickImage(source, maxWidth, maxHeight, quality) async {
+  Future<void> _pickImage(source) async {
     try {
       pickedFile = await _picker.pickImage(
         source: source,
-        maxWidth: maxWidth,
-        maxHeight: maxHeight,
-        imageQuality: quality,
       );
       profileImage = pickedFile!.name;
       setState(() {});
@@ -60,17 +58,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Future<void> uploadFile() async {
-    // try {
-    //   var response = await AuthService.uploadFile(File(pickedFile!.path));
-    //   var res = jsonDecode(response.body);
-    //   if (res["code"] == 200) {
-    signup();
-    //   } else {
-    //     ToastUtil.showToast(res["code"], res["message"]);
-    //   }
-    // } catch (error) {
-    //   print('Error uploading file: $error');
-    // }
+    try {
+      var response = await AuthService.uploadFile(File(pickedFile!.path));
+      var res = jsonDecode(response.body);
+      if (res["code"] == 200) {
+        signup();
+      } else {
+        ToastUtil.showToast(res["code"], res["message"]);
+      }
+    } catch (error) {
+      print('Error uploading file: $error');
+    }
   }
 
   signup() async {
@@ -134,7 +132,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     child: GestureDetector(
                       onTap: () {
-                        _pickImage(ImageSource.gallery, 100.0, 100.0, 80);
+                        _pickImage(ImageSource.gallery);
                       },
                       child: pickedFile == null
                           ? ClipOval(
@@ -160,7 +158,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     right: 0,
                     child: GestureDetector(
                       onTap: () {
-                        _pickImage(ImageSource.gallery, 100.0, 100.0, 80);
+                        _pickImage(ImageSource.gallery);
                       },
                       child: Container(
                         padding: EdgeInsets.all(8),
