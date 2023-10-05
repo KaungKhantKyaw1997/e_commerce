@@ -21,8 +21,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
   final orderService = OrderService();
   final ScrollController _orderController = ScrollController();
   List orders = [];
-  DateTime? fromDate;
-  DateTime? toDate;
+  DateTime startDate = DateTime.now();
+  DateTime endDate = DateTime.now();
 
   @override
   void initState() {
@@ -38,7 +38,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   getOrders() async {
     try {
-      final response = await orderService.getOrdersData();
+      orders = [];
+      String fromDate = DateFormat('yyyy-MM-dd').format(startDate);
+      String toDate = DateFormat('yyyy-MM-dd').format(endDate);
+      final response =
+          await orderService.getOrdersData(fromDate: fromDate, toDate: toDate);
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           List data = response["data"];
@@ -75,26 +79,25 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   _selectDateRange(BuildContext context) async {
+    endDate = DateTime.now();
+    startDate = DateTime.now();
     return showCustomDateRangePicker(
       context,
       dismissible: true,
       minimumDate: DateTime.now().subtract(const Duration(days: 30)),
       maximumDate: DateTime.now().add(const Duration(days: 30)),
-      endDate: toDate,
-      startDate: fromDate,
+      endDate: endDate,
+      startDate: startDate,
       backgroundColor: Colors.white,
-      primaryColor: Colors.black,
+      primaryColor: Theme.of(context).primaryColor,
       onApplyClick: (start, end) {
-        setState(() {
-          toDate = end;
-          fromDate = start;
-        });
+        endDate = end;
+        startDate = start;
+        getOrders();
       },
       onCancelClick: () {
-        setState(() {
-          toDate = null;
-          fromDate = null;
-        });
+        endDate = DateTime.now();
+        startDate = DateTime.now();
       },
     );
   }

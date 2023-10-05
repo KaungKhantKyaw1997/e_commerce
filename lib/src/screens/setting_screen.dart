@@ -140,7 +140,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, Routes.profile);
+                          // Navigator.pushNamed(context, Routes.profile);
                         },
                         child: Container(
                           color: Colors.transparent,
@@ -185,117 +185,100 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 8,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      language["General Info"] ?? "General Info",
-                      style: FontConstants.smallText1,
-                    ),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.white,
-                  ),
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                  ),
-                  child: Column(
-                    children: [
+                      const Divider(
+                        height: 0,
+                        color: Colors.grey,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 8,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            language["General Info"] ?? "General Info",
+                            style: FontConstants.smallText1,
+                          ),
+                        ),
+                      ),
                       GestureDetector(
                         onTap: () {
                           Navigator.pushNamed(context, Routes.language);
                         },
-                        child: Container(
-                          color: Colors.transparent,
-                          child: Row(
-                            children: [
-                              Padding(
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                right: 16,
+                                top: 16,
+                                bottom: 16,
+                              ),
+                              child: SvgPicture.asset(
+                                "assets/icons/global.svg",
+                                width: 24,
+                                height: 24,
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
                                 padding: const EdgeInsets.only(
                                   right: 16,
                                   top: 16,
                                   bottom: 16,
                                 ),
-                                child: SvgPicture.asset(
-                                  "assets/icons/global.svg",
-                                  width: 24,
-                                  height: 24,
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    right: 16,
-                                    top: 16,
-                                    bottom: 16,
-                                  ),
-                                  child: Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: language["Language"] ??
-                                              "Language",
-                                          style: FontConstants.caption2,
-                                        )
-                                      ],
-                                    ),
+                                child: Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text:
+                                            language["Language"] ?? "Language",
+                                        style: FontConstants.caption2,
+                                      )
+                                    ],
                                   ),
                                 ),
                               ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  right: 5,
-                                  top: 16,
-                                  bottom: 16,
-                                ),
-                                child: Text(
-                                  lang == "eng" ? "English" : "မြန်မာ",
-                                  style: FontConstants.caption1,
-                                ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                right: 5,
+                                top: 16,
+                                bottom: 16,
                               ),
-                              const Icon(
-                                Icons.arrow_forward_ios,
-                                size: 20,
-                              )
-                            ],
+                              child: Text(
+                                lang == "eng" ? "English" : "မြန်မာ",
+                                style: FontConstants.caption1,
+                              ),
+                            ),
+                            const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 20,
+                            )
+                          ],
+                        ),
+                      ),
+                      const Divider(
+                        height: 0,
+                        color: Colors.grey,
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          showExitDialog();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                          ),
+                          color: Colors.transparent,
+                          child: Center(
+                            child: Text(
+                              language["Sign Out"] ?? "Sign Out",
+                              style: FontConstants.caption2,
+                            ),
                           ),
                         ),
                       ),
                     ],
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    showExitDialog();
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.white,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 12,
-                    ),
-                    margin: const EdgeInsets.only(
-                      top: 24,
-                      bottom: 16,
-                    ),
-                    child: Center(
-                      child: Text(
-                        language["Sign Out"] ?? "Sign Out",
-                        style: FontConstants.caption2,
-                      ),
-                    ),
                   ),
                 ),
               ],

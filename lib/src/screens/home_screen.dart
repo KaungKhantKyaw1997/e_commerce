@@ -256,31 +256,31 @@ class _HomeScreenState extends State<HomeScreen>
           language["Home"] ?? "Home",
           style: FontConstants.title1,
         ),
-        actions: [
-          Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: ColorConstants.fillcolor,
-            ),
-            child: IconButton(
-              icon: SvgPicture.asset(
-                "assets/icons/search.svg",
-                width: 24,
-                height: 24,
-                colorFilter: const ColorFilter.mode(
-                  Colors.black,
-                  BlendMode.srcIn,
-                ),
-              ),
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  Routes.search,
-                );
-              },
-            ),
-          ),
-        ],
+        // actions: [
+        //   Container(
+        //     decoration: BoxDecoration(
+        //       shape: BoxShape.circle,
+        //       color: ColorConstants.fillcolor,
+        //     ),
+        //     child: IconButton(
+        //       icon: SvgPicture.asset(
+        //         "assets/icons/search.svg",
+        //         width: 24,
+        //         height: 24,
+        //         colorFilter: const ColorFilter.mode(
+        //           Colors.black,
+        //           BlendMode.srcIn,
+        //         ),
+        //       ),
+        //       onPressed: () {
+        //         Navigator.pushNamed(
+        //           context,
+        //           Routes.search,
+        //         );
+        //       },
+        //     ),
+        //   ),
+        // ],
         bottom: TabBar(
           controller: _tabController,
           indicatorPadding: EdgeInsets.symmetric(
