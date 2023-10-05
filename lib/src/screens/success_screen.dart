@@ -1,7 +1,9 @@
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SuccessScreen extends StatefulWidget {
   const SuccessScreen({super.key});
@@ -87,6 +89,9 @@ class _SuccessScreenState extends State<SuccessScreen>
             backgroundColor: Theme.of(context).primaryColor,
           ),
           onPressed: () async {
+            BottomProvider bottomProvider =
+                Provider.of<BottomProvider>(context, listen: false);
+            bottomProvider.selectIndex(0);
             Navigator.pushNamed(
               context,
               Routes.home,
