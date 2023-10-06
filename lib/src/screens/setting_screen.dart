@@ -21,7 +21,7 @@ class _SettingScreenState extends State<SettingScreen> {
   final authService = AuthService();
   String lang = '';
   String profileImage = '';
-  String name = '';
+  String profileName = '';
 
   @override
   void initState() {
@@ -39,7 +39,7 @@ class _SettingScreenState extends State<SettingScreen> {
     setState(() {
       lang = prefs.getString('language') ?? "eng";
       profileImage = prefs.getString('profile_image') ?? "";
-      name = prefs.getString('name') ?? "";
+      profileName = prefs.getString('name') ?? "";
     });
   }
 
@@ -190,7 +190,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                     TextSpan(
                                       children: [
                                         TextSpan(
-                                          text: name,
+                                          text: profileName,
                                           style: FontConstants.caption2,
                                         )
                                       ],

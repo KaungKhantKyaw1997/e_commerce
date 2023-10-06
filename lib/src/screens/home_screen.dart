@@ -1,4 +1,9 @@
+import 'dart:ui';
+
 import 'package:autoscale_tabbarview/autoscale_tabbarview.dart';
+import 'package:e_commerce/src/constants/api_constants.dart';
+import 'package:e_commerce/src/constants/color_constants.dart';
+import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/brands_service.dart';
 import 'package:e_commerce/src/services/categories_service.dart';
 import 'package:e_commerce/src/services/shops_service.dart';
@@ -10,6 +15,7 @@ import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/screens/bottombar_screen.dart';
 import 'package:number_paginator/number_paginator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,6 +26,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
+  final authService = AuthService();
   final shopsService = ShopsService();
   final brandsService = BrandsService();
   final categoriesService = CategoriesService();
@@ -34,11 +41,14 @@ class _HomeScreenState extends State<HomeScreen>
   int crossAxisCount = 1;
   bool shopTab = false;
   bool productTab = false;
+  String profileImage = '';
+  String profileName = '';
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    getProfile();
     getShops();
     getProducts();
   }
@@ -50,6 +60,12 @@ class _HomeScreenState extends State<HomeScreen>
     brandsService.cancelRequest();
     categoriesService.cancelRequest();
     super.dispose();
+  }
+
+  getProfile() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    profileImage = prefs.getString('profile_image') ?? "";
+    profileName = prefs.getString('name') ?? "";
   }
 
   getShops() async {
@@ -255,43 +271,157 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+  showExitDialog() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (c) => BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: 5,
+          sigmaY: 5,
+        ),
+        child: AlertDialog(
+          backgroundColor: Colors.white,
+          title: Text(
+            language["Sign Out"] ?? "Sign Out",
+            style: FontConstants.body1,
+          ),
+          content: Text(
+            language["Are you sure you want to sign out?"] ??
+                "Are you sure you want to sign out?",
+            style: FontConstants.caption2,
+          ),
+          actions: [
+            TextButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+              ),
+              child: Text(
+                language["Cancel"] ?? "Cancel",
+                style: FontConstants.button2,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Theme.of(context).primaryColor),
+              ),
+              child: Text(
+                language["Ok"] ?? "Ok",
+                style: FontConstants.button1,
+              ),
+              onPressed: () async {
+                authService.signout(context);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Stream<DateTime> dateTimeStream =
+      Stream.periodic(Duration.zero, (_) => DateTime.now());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
-        centerTitle: true,
         elevation: 0,
-        title: Text(
-          language["Home"] ?? "Home",
-          style: FontConstants.title1,
+        title: Align(
+          alignment: Alignment.centerLeft,
+          child: StreamBuilder<DateTime>(
+            stream: dateTimeStream,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final time = snapshot.data;
+                final hour = time!.hour;
+
+                String greeting;
+
+                if (hour >= 0 && hour < 12) {
+                  greeting = 'Good Morning,';
+                } else if (hour >= 12 && hour < 17) {
+                  greeting = 'Good Afternoon,';
+                } else {
+                  greeting = 'Good Evening,';
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      greeting,
+                      style: FontConstants.body1,
+                    ),
+                    Text(
+                      profileName,
+                      style: FontConstants.caption2,
+                    ),
+                  ],
+                );
+              } else {
+                return Text(
+                  'Loading...',
+                  style: FontConstants.body1,
+                );
+              }
+            },
+          ),
         ),
-        // actions: [
-        //   Container(
-        //     decoration: BoxDecoration(
-        //       shape: BoxShape.circle,
-        //       color: ColorConstants.fillcolor,
-        //     ),
-        //     child: IconButton(
-        //       icon: SvgPicture.asset(
-        //         "assets/icons/search.svg",
-        //         width: 24,
-        //         height: 24,
-        //         colorFilter: const ColorFilter.mode(
-        //           Colors.black,
-        //           BlendMode.srcIn,
-        //         ),
-        //       ),
-        //       onPressed: () {
-        //         Navigator.pushNamed(
-        //           context,
-        //           Routes.search,
-        //         );
-        //       },
-        //     ),
-        //   ),
-        // ],
+        leading: Container(
+          margin: const EdgeInsets.only(
+            left: 16,
+            top: 8,
+            bottom: 8,
+          ),
+          decoration: profileImage == ''
+              ? BoxDecoration(
+                  color: ColorConstants.fillcolor,
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/profile.png"),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(50),
+                )
+              : BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(
+                        '${ApiConstants.baseUrl}${profileImage.toString()}'),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(50),
+                ),
+        ),
+        actions: [
+          IconButton(
+            icon: SvgPicture.asset(
+              "assets/icons/sign_out.svg",
+              width: 24,
+              height: 24,
+              colorFilter: const ColorFilter.mode(
+                Colors.black,
+                BlendMode.srcIn,
+              ),
+            ),
+            onPressed: () {
+              showExitDialog();
+            },
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           indicatorPadding: EdgeInsets.symmetric(
