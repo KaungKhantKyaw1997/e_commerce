@@ -23,6 +23,8 @@ class _ProductsScreenState extends State<ProductsScreen>
     with SingleTickerProviderStateMixin {
   final modelsService = ModelsService();
   final productsService = ProductsService();
+  FocusNode _fromFocusNode = FocusNode();
+  FocusNode _toFocusNode = FocusNode();
   final ScrollController _productController = ScrollController();
   TextEditingController search = TextEditingController(text: '');
   TextEditingController _fromPrice = TextEditingController(text: '');
@@ -142,187 +144,249 @@ class _ProductsScreenState extends State<ProductsScreen>
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                _fromFocusNode.unfocus();
+                _toFocusNode.unfocus();
+              },
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
                 ),
-              ),
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  Center(
-                    child: Padding(
+                height:
+                    MediaQuery.of(context).orientation == Orientation.landscape
+                        ? MediaQuery.of(context).size.height - 10
+                        : MediaQuery.of(context).size.height - 300,
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: DraggableScrollableSheet(
+                        initialChildSize: 1.0,
+                        maxChildSize: 1.0,
+                        minChildSize: 0.2,
+                        builder: (BuildContext context,
+                            ScrollController scrollController) {
+                          return ListView(
+                            controller: scrollController,
+                            physics: NeverScrollableScrollPhysics(),
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 10,
+                                  left: 180,
+                                  right: 180,
+                                ),
+                                child: const Divider(
+                                  height: 0,
+                                  color: Colors.grey,
+                                  thickness: 4,
+                                ),
+                              ),
+                              Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 8,
+                                  ),
+                                  child: Text(
+                                    language["Models"] ?? "Models",
+                                    style: FontConstants.subheadline1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 12,
+                                  right: 12,
+                                ),
+                                child: MultiSelectChip(
+                                  models,
+                                  onSelectionChanged: (selectedList) {
+                                    setState(() {
+                                      selectedModels = selectedList;
+                                    });
+                                  },
+                                ),
+                              ),
+                              Center(
+                                child: Text(
+                                  language["Price Range"] ?? "Price Range",
+                                  style: FontConstants.subheadline1,
+                                ),
+                              ),
+                              RangeSlider(
+                                values: RangeValues(_startValue, _endValue),
+                                onChanged: (RangeValues values) {
+                                  setState(() {
+                                    _startValue = values.start;
+                                    _endValue = values.end;
+                                    _fromPrice.text =
+                                        '${formatter.format(_startValue)}';
+                                    _toPrice.text =
+                                        '${formatter.format(_endValue)}';
+                                  });
+                                },
+                                min: 0,
+                                max: 500000,
+                                divisions: 500,
+                                labels: RangeLabels(
+                                    '${formatter.format(_startValue)}',
+                                    '${formatter.format(_endValue)}'),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 16,
+                                        right: 4,
+                                        top: 8,
+                                        bottom: 24,
+                                      ),
+                                      child: TextFormField(
+                                        controller: _fromPrice,
+                                        focusNode: _fromFocusNode,
+                                        inputFormatters: [
+                                          CurrencyInputFormatter()
+                                        ],
+                                        keyboardType: TextInputType.number,
+                                        textInputAction: TextInputAction.next,
+                                        style: FontConstants.body1,
+                                        cursorColor: Colors.black,
+                                        decoration: InputDecoration(
+                                          hintText: language["From"] ?? "From",
+                                          filled: true,
+                                          fillColor: ColorConstants.fillcolor,
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 14,
+                                          ),
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: BorderSide.none,
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: BorderSide.none,
+                                          ),
+                                          focusedErrorBorder:
+                                              OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: BorderSide.none,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 4,
+                                        right: 16,
+                                        top: 8,
+                                        bottom: 24,
+                                      ),
+                                      child: TextFormField(
+                                        controller: _toPrice,
+                                        focusNode: _toFocusNode,
+                                        inputFormatters: [
+                                          CurrencyInputFormatter()
+                                        ],
+                                        keyboardType: TextInputType.number,
+                                        textInputAction: TextInputAction.next,
+                                        style: FontConstants.body1,
+                                        cursorColor: Colors.black,
+                                        decoration: InputDecoration(
+                                          hintText: language["To"] ?? "To",
+                                          filled: true,
+                                          fillColor: ColorConstants.fillcolor,
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 14,
+                                          ),
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: BorderSide.none,
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: BorderSide.none,
+                                          ),
+                                          focusedErrorBorder:
+                                              OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: BorderSide.none,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                    Padding(
                       padding: const EdgeInsets.only(
-                        top: 8,
-                        bottom: 4,
+                        top: 10,
+                        bottom: 10,
                       ),
-                      child: Text(
-                        language["Models"] ?? "Models",
-                        style: FontConstants.subheadline1,
+                      child: const Divider(
+                        height: 0,
+                        color: Colors.grey,
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 12,
-                      right: 12,
-                    ),
-                    child: MultiSelectChip(
-                      models,
-                      onSelectionChanged: (selectedList) {
-                        setState(() {
-                          selectedModels = selectedList;
-                        });
-                      },
-                    ),
-                  ),
-                  Center(
-                    child: Padding(
+                    Container(
                       padding: const EdgeInsets.only(
-                        top: 8,
-                        bottom: 4,
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
                       ),
-                      child: Text(
-                        language["Price Range"] ?? "Price Range",
-                        style: FontConstants.subheadline1,
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          backgroundColor: Theme.of(context).primaryColor,
+                        ),
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          getProducts();
+                        },
+                        child: Text(
+                          language["Search"] ?? "Search",
+                          style: FontConstants.button1,
+                        ),
                       ),
                     ),
-                  ),
-                  RangeSlider(
-                    values: RangeValues(_startValue, _endValue),
-                    onChanged: (RangeValues values) {
-                      setState(() {
-                        _startValue = values.start;
-                        _endValue = values.end;
-                        _fromPrice.text = '${formatter.format(_startValue)}';
-                        _toPrice.text = '${formatter.format(_endValue)}';
-                      });
-                    },
-                    min: 0,
-                    max: 500000,
-                    divisions: 500,
-                    labels: RangeLabels('${formatter.format(_startValue)}',
-                        '${formatter.format(_endValue)}'),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 16,
-                            right: 4,
-                            top: 8,
-                            bottom: 24,
-                          ),
-                          child: TextFormField(
-                            controller: _fromPrice,
-                            inputFormatters: [CurrencyInputFormatter()],
-                            keyboardType: TextInputType.number,
-                            textInputAction: TextInputAction.next,
-                            style: FontConstants.body1,
-                            cursorColor: Colors.black,
-                            decoration: InputDecoration(
-                              hintText: language["From"] ?? "From",
-                              filled: true,
-                              fillColor: ColorConstants.fillcolor,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 14,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide.none,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide.none,
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide.none,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 4,
-                            right: 16,
-                            top: 8,
-                            bottom: 24,
-                          ),
-                          child: TextFormField(
-                            controller: _toPrice,
-                            inputFormatters: [CurrencyInputFormatter()],
-                            keyboardType: TextInputType.number,
-                            textInputAction: TextInputAction.next,
-                            style: FontConstants.body1,
-                            cursorColor: Colors.black,
-                            decoration: InputDecoration(
-                              hintText: language["To"] ?? "To",
-                              filled: true,
-                              fillColor: ColorConstants.fillcolor,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 14,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide.none,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide.none,
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide.none,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
-                    ),
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        backgroundColor: Theme.of(context).primaryColor,
-                      ),
-                      onPressed: () async {
-                        Navigator.pop(context);
-                        getProducts();
-                      },
-                      child: Text(
-                        language["Search"] ?? "Search",
-                        style: FontConstants.button1,
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           },
