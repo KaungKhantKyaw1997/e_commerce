@@ -83,10 +83,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               image: DecorationImage(
                 // image: NetworkImage(
                 //     '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
-                image: AssetImage("assets/images/gshock1.png"),
-                fit: BoxFit.cover,
+                image: AssetImage("assets/images/watch.png"),
+                fit: BoxFit.fill,
               ),
               borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: Colors.transparent,
+              ),
             ),
           ),
           Expanded(
@@ -100,6 +103,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 children: [
                   Text(
                     categories[index]["name"].toString(),
+                    overflow: TextOverflow.ellipsis,
                     style: FontConstants.body1,
                   ),
                   Text(

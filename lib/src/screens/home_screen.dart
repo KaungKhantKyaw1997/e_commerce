@@ -131,9 +131,6 @@ class _HomeScreenState extends State<HomeScreen>
 
   shopCard(index) {
     return Container(
-      padding: EdgeInsets.only(
-        top: 8,
-      ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -141,16 +138,22 @@ class _HomeScreenState extends State<HomeScreen>
       child: Column(
         children: [
           Container(
-            width: 150,
-            height: 150,
+            width: double.infinity,
+            height: crossAxisCount == 1 ? 190 : 150,
             decoration: BoxDecoration(
               image: DecorationImage(
                 // image: NetworkImage(
                 //     '${ApiConstants.baseUrl}${shops[index]["cover_image"].toString()}'),
-                image: AssetImage("assets/images/gshock1.png"),
-                fit: BoxFit.cover,
+                image: AssetImage("assets/images/watch.png"),
+                fit: BoxFit.fill,
               ),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+              border: Border.all(
+                color: Colors.transparent,
+              ),
             ),
           ),
           const SizedBox(
@@ -158,23 +161,24 @@ class _HomeScreenState extends State<HomeScreen>
           ),
           Padding(
             padding: const EdgeInsets.only(
-              left: 16,
-              right: 16,
+              left: 8,
+              right: 8,
               bottom: 4,
             ),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 shops[index]["name"].toString(),
+                overflow: TextOverflow.ellipsis,
                 style: FontConstants.caption2,
               ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(
-              left: 16,
-              right: 16,
-              bottom: 8,
+              left: 8,
+              right: 8,
+              bottom: 4,
             ),
             child: Align(
               alignment: Alignment.centerLeft,
@@ -204,6 +208,7 @@ class _HomeScreenState extends State<HomeScreen>
         child: Center(
           child: Text(
             brands[index]["name"].toString(),
+            overflow: TextOverflow.ellipsis,
             style: FontConstants.caption2,
           ),
         ),
@@ -213,9 +218,6 @@ class _HomeScreenState extends State<HomeScreen>
 
   categoriesCard(index) {
     return Container(
-      padding: EdgeInsets.only(
-        top: 8,
-      ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -223,14 +225,21 @@ class _HomeScreenState extends State<HomeScreen>
       child: Column(
         children: [
           Container(
-            width: 150,
+            width: double.infinity,
             height: 150,
             decoration: BoxDecoration(
               image: DecorationImage(
                 // image: NetworkImage(
                 //     '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
-                image: AssetImage("assets/images/gshock1.png"),
-                fit: BoxFit.cover,
+                image: AssetImage("assets/images/watch.png"),
+                fit: BoxFit.fill,
+              ),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+              border: Border.all(
+                color: Colors.transparent,
               ),
             ),
           ),
@@ -239,23 +248,24 @@ class _HomeScreenState extends State<HomeScreen>
           ),
           Padding(
             padding: const EdgeInsets.only(
-              left: 16,
-              right: 16,
+              left: 8,
+              right: 8,
               bottom: 4,
             ),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 categories[index]["name"].toString(),
+                overflow: TextOverflow.ellipsis,
                 style: FontConstants.caption2,
               ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(
-              left: 16,
-              right: 16,
-              bottom: 8,
+              left: 8,
+              right: 8,
+              bottom: 4,
             ),
             child: Align(
               alignment: Alignment.centerLeft,
@@ -497,26 +507,26 @@ class _HomeScreenState extends State<HomeScreen>
                                               mode: ContentDisplayMode.hidden,
                                             ),
                                           ),
-                                          IconButton(
-                                            icon: SvgPicture.asset(
-                                              crossAxisCount == 1
-                                                  ? "assets/icons/grid_2.svg"
-                                                  : "assets/icons/grid_4.svg",
-                                              width: 24,
-                                              height: 24,
-                                              colorFilter:
-                                                  const ColorFilter.mode(
-                                                Colors.black,
-                                                BlendMode.srcIn,
-                                              ),
-                                            ),
-                                            onPressed: () {
-                                              setState(() {
-                                                crossAxisCount =
-                                                    crossAxisCount == 1 ? 2 : 1;
-                                              });
-                                            },
-                                          ),
+                                          // IconButton(
+                                          //   icon: SvgPicture.asset(
+                                          //     crossAxisCount == 1
+                                          //         ? "assets/icons/grid_2.svg"
+                                          //         : "assets/icons/grid_4.svg",
+                                          //     width: 24,
+                                          //     height: 24,
+                                          //     colorFilter:
+                                          //         const ColorFilter.mode(
+                                          //       Colors.black,
+                                          //       BlendMode.srcIn,
+                                          //     ),
+                                          //   ),
+                                          //   onPressed: () {
+                                          //     setState(() {
+                                          //       crossAxisCount =
+                                          //           crossAxisCount == 1 ? 2 : 1;
+                                          //     });
+                                          //   },
+                                          // ),
                                         ],
                                       ),
                                     ],
@@ -528,7 +538,8 @@ class _HomeScreenState extends State<HomeScreen>
                                   itemCount: shops.length,
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
-                                    mainAxisExtent: 220,
+                                    mainAxisExtent:
+                                        crossAxisCount == 1 ? 250 : 210,
                                     childAspectRatio: 2 / 1,
                                     crossAxisSpacing: 8,
                                     crossAxisCount: crossAxisCount,
@@ -674,7 +685,7 @@ class _HomeScreenState extends State<HomeScreen>
                                     : Container(),
                                 categories.isNotEmpty
                                     ? Container(
-                                        height: 220,
+                                        height: 210,
                                         child: ListView.builder(
                                           scrollDirection: Axis.horizontal,
                                           itemCount: categories.length,

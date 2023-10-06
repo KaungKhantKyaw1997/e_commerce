@@ -21,13 +21,6 @@ class _ProductScreenState extends State<ProductScreen> {
   final PageController _imageController = PageController();
   List<Map<String, dynamic>> carts = [];
   Map<String, dynamic> product = {};
-
-  var images = [
-    "assets/images/gshock1.png",
-    "assets/images/gshock2.png",
-    "assets/images/gshock3.png",
-    "assets/images/gshock4.png",
-  ];
   double _currentPage = 0;
 
   @override
@@ -112,35 +105,45 @@ class _ProductScreenState extends State<ProductScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(
-                child: PageView.builder(
-                  scrollDirection: Axis.horizontal,
-                  controller: _imageController,
-                  itemCount: images.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          // image: NetworkImage(
-                          //     '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'),
-                          image: AssetImage(images[index]),
-                          fit: BoxFit.contain,
-                        ),
+              product.containsKey("product_images") &&
+                      product["product_images"].isNotEmpty
+                  ? Expanded(
+                      child: PageView.builder(
+                        scrollDirection: Axis.horizontal,
+                        controller: _imageController,
+                        itemCount: product["product_images"].length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                // image: NetworkImage(
+                                //     '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'),
+                                image: AssetImage("assets/images/watch.png"),
+                                fit: BoxFit.fill,
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: Colors.transparent,
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              ),
-              DotsIndicator(
-                dotsCount: images.length,
-                position: _currentPage.toInt(),
-                decorator: DotsDecorator(
-                  size: Size.square(10),
-                  activeSize: Size(16, 20),
-                  color: Colors.grey,
-                  activeColor: Theme.of(context).primaryColorDark,
-                ),
-              ),
+                    )
+                  : Container(),
+              product.containsKey("product_images") &&
+                      product["product_images"].isNotEmpty
+                  ? DotsIndicator(
+                      dotsCount: product["product_images"].length,
+                      position: _currentPage.toInt(),
+                      decorator: DotsDecorator(
+                        size: Size.square(10),
+                        activeSize: Size(16, 20),
+                        color: Colors.grey,
+                        activeColor: Theme.of(context).primaryColorDark,
+                      ),
+                    )
+                  : Container(),
               Padding(
                 padding: const EdgeInsets.only(
                   top: 16,

@@ -68,6 +68,31 @@ class OrderService {
     }
   }
 
+  Future<Map<String, dynamic>?> getOrderDetailsData(int id) async {
+    var token = await storage.read(key: "token");
+    try {
+      final response = await dio.get(
+        '${ApiConstants.orderUrl}?order_id=$id',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+        cancelToken: _cancelToken,
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception('Failed to get items: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+      return null;
+    }
+  }
+
   void cancelRequest() {
     _cancelToken.cancel('Request canceled');
   }

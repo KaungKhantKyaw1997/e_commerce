@@ -297,6 +297,7 @@ class _ProductsScreenState extends State<ProductsScreen>
                     padding: const EdgeInsets.only(
                       left: 16,
                       right: 16,
+                      bottom: 16,
                     ),
                     width: double.infinity,
                     child: ElevatedButton(
@@ -331,9 +332,6 @@ class _ProductsScreenState extends State<ProductsScreen>
 
   productCard(index) {
     return Container(
-      padding: EdgeInsets.only(
-        top: 8,
-      ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -341,14 +339,21 @@ class _ProductsScreenState extends State<ProductsScreen>
       child: Column(
         children: [
           Container(
-            width: 150,
+            width: double.infinity,
             height: 150,
             decoration: BoxDecoration(
               image: DecorationImage(
                 // image: NetworkImage(
                 //     '${ApiConstants.baseUrl}${products[index]["product_images"][0].toString()}'),
-                image: AssetImage("assets/images/gshock1.png"),
-                fit: BoxFit.cover,
+                image: AssetImage("assets/images/watch.png"),
+                fit: BoxFit.fill,
+              ),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+              border: Border.all(
+                color: Colors.transparent,
               ),
             ),
           ),
@@ -357,29 +362,31 @@ class _ProductsScreenState extends State<ProductsScreen>
           ),
           Padding(
             padding: const EdgeInsets.only(
-              left: 16,
-              right: 16,
+              left: 8,
+              right: 8,
               bottom: 4,
             ),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 products[index]["brand_name"].toString(),
+                overflow: TextOverflow.ellipsis,
                 style: FontConstants.caption2,
               ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(
-              left: 16,
-              right: 16,
-              bottom: 8,
+              left: 8,
+              right: 8,
+              bottom: 4,
             ),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 products[index]["model"].toString(),
-                style: FontConstants.body1,
+                overflow: TextOverflow.ellipsis,
+                style: FontConstants.smallText1,
               ),
             ),
           ),
@@ -491,7 +498,7 @@ class _ProductsScreenState extends State<ProductsScreen>
                 shrinkWrap: true,
                 itemCount: products.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  mainAxisExtent: 230,
+                  mainAxisExtent: 210,
                   childAspectRatio: 2 / 1,
                   crossAxisSpacing: 15,
                   crossAxisCount: 2,

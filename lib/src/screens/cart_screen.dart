@@ -534,6 +534,7 @@ class _CartScreenState extends State<CartScreen> {
                   padding: const EdgeInsets.only(
                     left: 16,
                     right: 16,
+                    bottom: 16,
                   ),
                   width: double.infinity,
                   child: ElevatedButton(
@@ -704,10 +705,13 @@ class _CartScreenState extends State<CartScreen> {
                                     // image: NetworkImage(
                                     //     '${ApiConstants.baseUrl}${carts[index]["product_images"][0].toString()}'),
                                     image:
-                                        AssetImage("assets/images/gshock1.png"),
-                                    fit: BoxFit.cover,
+                                        AssetImage("assets/images/watch.png"),
+                                    fit: BoxFit.fill,
                                   ),
                                   borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: Colors.transparent,
+                                  ),
                                 ),
                               ),
                               Expanded(

@@ -193,13 +193,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       itemBuilder: (context, i) {
                         return GestureDetector(
                           onTap: () {
-                            // Navigator.pushNamed(
-                            //   context,
-                            //   Routes.history_details,
-                            //   arguments: {
-                            //     "id": orders[index]["items"][i]["id"],
-                            //   },
-                            // );
+                            Navigator.pushNamed(
+                              context,
+                              Routes.history_details,
+                              arguments: {
+                                "id": orders[index]["items"][i]["order_id"],
+                              },
+                            );
                           },
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,

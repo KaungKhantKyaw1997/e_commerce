@@ -83,10 +83,13 @@ class _BrandsScreenState extends State<BrandsScreen> {
               image: DecorationImage(
                 // image: NetworkImage(
                 //     '${ApiConstants.baseUrl}${brands[index]["logo_url"].toString()}'),
-                image: AssetImage("assets/images/gshock1.png"),
-                fit: BoxFit.cover,
+                image: AssetImage("assets/images/watch.png"),
+                fit: BoxFit.fill,
               ),
               borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: Colors.transparent,
+              ),
             ),
           ),
           Expanded(
@@ -100,6 +103,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
                 children: [
                   Text(
                     brands[index]["name"].toString(),
+                    overflow: TextOverflow.ellipsis,
                     style: FontConstants.body1,
                   ),
                   Text(
