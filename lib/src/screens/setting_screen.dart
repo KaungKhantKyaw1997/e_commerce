@@ -8,6 +8,7 @@ import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/screens/bottombar_screen.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
+import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -22,6 +23,7 @@ class _SettingScreenState extends State<SettingScreen> {
   String lang = '';
   String profileImage = '';
   String profileName = '';
+  String version = '';
 
   @override
   void initState() {
@@ -35,6 +37,9 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   getData() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    version = packageInfo.version;
+
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       lang = prefs.getString('language') ?? "eng";
@@ -278,6 +283,88 @@ class _SettingScreenState extends State<SettingScreen> {
                                 Icons.arrow_forward_ios,
                                 size: 20,
                               )
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                        ),
+                        child: const Divider(
+                          height: 0,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          top: 16,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            language["Help & Support"] ?? "Help & Support",
+                            style: FontConstants.smallText1,
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, Routes.language);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                          ),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  right: 16,
+                                  top: 16,
+                                  bottom: 16,
+                                ),
+                                child: SvgPicture.asset(
+                                  "assets/icons/version.svg",
+                                  width: 24,
+                                  height: 24,
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 16,
+                                    top: 16,
+                                    bottom: 16,
+                                  ),
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: language["App Version"] ??
+                                              "App Version",
+                                          style: FontConstants.caption2,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  right: 5,
+                                  top: 16,
+                                  bottom: 16,
+                                ),
+                                child: Text(
+                                  'v$version',
+                                  style: FontConstants.caption1,
+                                ),
+                              ),
                             ],
                           ),
                         ),

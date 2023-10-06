@@ -5,6 +5,8 @@
     "Details": "အသေးစိတ်",
     "Setting": "ဆက်တင်",
     "General Info": "အချက်အလက်များ",
+    "Help & Support": "အကူအညီရယူရန်",
+    "App Version": "အက်ပ်ဗားရှင်း",
     "User Name": "အသုံးပြုသူအမည်",
     "Enter User Name": "အသုံးပြုသူအမည်ထည့်ပါ",
     "Password": "စကားဝှက်",
@@ -56,7 +58,7 @@
     "Shops": "ဆိုင်များ",
     "From": "မှ",
     "To": "သို့",
-    "Specification": "သတ်မှတ်ချက်",
+    "Specifications": "သတ်မှတ်ချက်များ",
     "Update": "ပြင်ဆင်မည်",
     "Delete": "ဖျက်မည်",
     "Price Range": "စျေးနှုန်း အပိုင်းအခြား"

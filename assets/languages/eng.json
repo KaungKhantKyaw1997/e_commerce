@@ -5,6 +5,8 @@
     "Details": "Details",
     "Setting": "Setting",
     "General Info": "General Info",
+    "Help & Support": "Help & Support",
+    "App Version": "App Version",
     "User Name": "User Name",
     "Enter User Name": "Enter User Name",
     "Password": "Password",
@@ -56,7 +58,7 @@
     "Shops": "Shops",
     "From": "From",
     "To": "To",
-    "Specification": "Specification",
+    "Specifications": "Specifications",
     "Update": "Update",
     "Delete": "Delete",
     "Price Range": "Price Range"

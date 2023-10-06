@@ -181,7 +181,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          language["Specification"] ?? "Specification",
+                          language["Specifications"] ?? "Specifications",
                           style: FontConstants.caption2,
                         ),
                       ),
