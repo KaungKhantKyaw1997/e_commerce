@@ -5,6 +5,7 @@ import 'package:e_commerce/src/utils/currency_input_formatter.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:e_commerce/src/widgets/multi_select_chip.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
@@ -169,6 +170,19 @@ class _ProductsScreenState extends State<ProductsScreen>
                         : MediaQuery.of(context).size.height - 300,
                 child: Column(
                   children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: 10,
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        width: 45,
+                        height: 4,
+                      ),
+                    ),
                     Expanded(
                       child: DraggableScrollableSheet(
                         initialChildSize: 1.0,
@@ -180,18 +194,6 @@ class _ProductsScreenState extends State<ProductsScreen>
                             controller: scrollController,
                             physics: NeverScrollableScrollPhysics(),
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 10,
-                                  left: 180,
-                                  right: 180,
-                                ),
-                                child: const Divider(
-                                  height: 0,
-                                  color: Colors.grey,
-                                  thickness: 4,
-                                ),
-                              ),
                               Center(
                                 child: Padding(
                                   padding: const EdgeInsets.only(

@@ -26,6 +26,8 @@ class _SignInScreenState extends State<SignInScreen> {
   final authService = AuthService();
   final storage = FlutterSecureStorage();
   final _formKey = GlobalKey<FormState>();
+  FocusNode _userFocusNode = FocusNode();
+  FocusNode _passwordFocusNode = FocusNode();
   TextEditingController username = TextEditingController(text: '');
   TextEditingController password = TextEditingController(text: '');
   bool obscurePassword = true;
@@ -39,6 +41,12 @@ class _SignInScreenState extends State<SignInScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _handleSubmitted(String value) {
+    if (value.isNotEmpty) {
+      signin();
+    }
   }
 
   signin() async {
@@ -81,233 +89,245 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () => exit(0),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SingleChildScrollView(
-          controller: _scrollController,
-          child: Container(
-            height: MediaQuery.of(context).orientation == Orientation.landscape
-                ? MediaQuery.of(context).size.width
-                : MediaQuery.of(context).size.height,
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 300,
-                    height: 300,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/signin.png'),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          _userFocusNode.unfocus();
+          _passwordFocusNode.unfocus();
+        },
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: SingleChildScrollView(
+            controller: _scrollController,
+            child: Container(
+              height:
+                  MediaQuery.of(context).orientation == Orientation.landscape
+                      ? MediaQuery.of(context).size.width
+                      : MediaQuery.of(context).size.height,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 300,
+                      height: 300,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/signin.png'),
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      top: 16,
-                      bottom: 8,
-                    ),
-                    child: Text(
-                      "Welcome to Watch",
-                      textAlign: TextAlign.center,
-                      style: FontConstants.headline1,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 4,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 16,
+                        bottom: 8,
+                      ),
                       child: Text(
-                        language["User Name"] ?? "User Name",
-                        style: FontConstants.caption1,
+                        "Welcome to Watch",
+                        textAlign: TextAlign.center,
+                        style: FontConstants.headline1,
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
-                    ),
-                    child: TextFormField(
-                      controller: username,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.next,
-                      style: FontConstants.body1,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: ColorConstants.fillcolor,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["User Name"] ?? "User Name",
+                          style: FontConstants.caption1,
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return language["Enter User Name"] ??
-                              "Enter User Name";
-                        }
-                        return null;
-                      },
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 4,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        language["Password"] ?? "Password",
-                        style: FontConstants.caption1,
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 24,
-                    ),
-                    child: TextFormField(
-                      controller: password,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.done,
-                      obscureText: obscurePassword,
-                      style: FontConstants.body1,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: ColorConstants.fillcolor,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: IconButton(
-                          padding: const EdgeInsets.symmetric(
+                      child: TextFormField(
+                        controller: username,
+                        focusNode: _userFocusNode,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.next,
+                        style: FontConstants.body1,
+                        cursorColor: Colors.black,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: ColorConstants.fillcolor,
+                          contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
+                            vertical: 14,
                           ),
-                          onPressed: () {
-                            setState(() {
-                              obscurePassword = !obscurePassword;
-                            });
-                          },
-                          icon: SvgPicture.asset(
-                            obscurePassword
-                                ? "assets/icons/eye-close.svg"
-                                : "assets/icons/eye.svg",
-                            width: 24,
-                            height: 24,
-                            colorFilter: ColorFilter.mode(
-                              Theme.of(context).primaryColor,
-                              BlendMode.srcIn,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return language["Enter User Name"] ??
+                                "Enter User Name";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["Password"] ?? "Password",
+                          style: FontConstants.caption1,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 24,
+                      ),
+                      child: TextFormField(
+                        controller: password,
+                        focusNode: _passwordFocusNode,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.done,
+                        obscureText: obscurePassword,
+                        style: FontConstants.body1,
+                        cursorColor: Colors.black,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: ColorConstants.fillcolor,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          suffixIcon: IconButton(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                obscurePassword = !obscurePassword;
+                              });
+                            },
+                            icon: SvgPicture.asset(
+                              obscurePassword
+                                  ? "assets/icons/eye-close.svg"
+                                  : "assets/icons/eye.svg",
+                              width: 24,
+                              height: 24,
+                              colorFilter: ColorFilter.mode(
+                                Theme.of(context).primaryColor,
+                                BlendMode.srcIn,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return language["Enter Password"] ?? "Enter Password";
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
-                    ),
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          signin();
-                        }
-                      },
-                      child: Text(
-                        language["Sign In"] ?? "Sign In",
-                        style: FontConstants.button1,
+                        onFieldSubmitted: _handleSubmitted,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return language["Enter Password"] ??
+                                "Enter Password";
+                          }
+                          return null;
+                        },
                       ),
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 24,
-                    ),
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 12,
+                    Container(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        backgroundColor: Colors.white,
-                        side: BorderSide(
-                          color: Theme.of(context).primaryColor,
-                          width: 0.5,
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            signin();
+                          }
+                        },
+                        child: Text(
+                          language["Sign In"] ?? "Sign In",
+                          style: FontConstants.button1,
                         ),
                       ),
-                      onPressed: () {
-                        Navigator.pushNamed(context, Routes.signup);
-                      },
-                      child: Text(
-                        language["Sign Up"] ?? "Sign Up",
-                        style: FontConstants.button2,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 24,
+                      ),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          backgroundColor: Colors.white,
+                          side: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 0.5,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pushNamed(context, Routes.signup);
+                        },
+                        child: Text(
+                          language["Sign Up"] ?? "Sign Up",
+                          style: FontConstants.button2,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

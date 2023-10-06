@@ -467,9 +467,7 @@ class _HomeScreenState extends State<HomeScreen>
               bottom: 24,
             ),
             width: double.infinity,
-            height: MediaQuery.of(context).orientation == Orientation.landscape
-                ? MediaQuery.of(context).size.width
-                : MediaQuery.of(context).size.height,
+            height: double.maxFinite,
             child: shops.isNotEmpty && categories.isNotEmpty
                 ? AutoScaleTabBarView(
                     controller: _tabController,

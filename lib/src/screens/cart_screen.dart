@@ -157,15 +157,16 @@ class _CartScreenState extends State<CartScreen> {
               child: Column(
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.only(
+                    padding: EdgeInsets.only(
                       top: 10,
-                      left: 180,
-                      right: 180,
                     ),
-                    child: const Divider(
-                      height: 0,
-                      color: Colors.grey,
-                      thickness: 4,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      width: 45,
+                      height: 4,
                     ),
                   ),
                   Expanded(
