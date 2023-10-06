@@ -133,7 +133,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           controller: search,
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.done,
-          autofocus: true,
           style: FontConstants.body1,
           cursorColor: Colors.black,
           decoration: InputDecoration(

@@ -407,7 +407,6 @@ class _ProductsScreenState extends State<ProductsScreen>
           controller: search,
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.done,
-          autofocus: true,
           style: FontConstants.body1,
           cursorColor: Colors.black,
           decoration: InputDecoration(

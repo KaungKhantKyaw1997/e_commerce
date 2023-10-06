@@ -462,10 +462,12 @@ class _ProductScreenState extends State<ProductScreen> {
                                 ),
                                 width: 50,
                                 height: 32,
-                                child: Text(
-                                  product['quantity'].toString(),
-                                  textAlign: TextAlign.center,
-                                  style: FontConstants.subheadline1,
+                                child: Center(
+                                  child: Text(
+                                    product['quantity'].toString(),
+                                    textAlign: TextAlign.center,
+                                    style: FontConstants.subheadline1,
+                                  ),
                                 ),
                               ),
                               Container(

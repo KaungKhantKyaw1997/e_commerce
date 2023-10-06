@@ -61,63 +61,70 @@ class _LanguageScreenState extends State<LanguageScreen> {
           },
         ),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          margin: EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 24,
-          ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Column(
-            children: [
-              ListTile(
-                title: Text(
-                  language["English"] ?? "English",
-                  style: FontConstants.caption2,
+      body: WillPopScope(
+        onWillPop: () async {
+          Navigator.of(context).pop();
+          Navigator.pushNamed(context, Routes.setting);
+          return true;
+        },
+        child: SingleChildScrollView(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            margin: EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 24,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              children: [
+                ListTile(
+                  title: Text(
+                    language["English"] ?? "English",
+                    style: FontConstants.caption2,
+                  ),
+                  trailing: Icon(
+                    Icons.done,
+                    color: selectedLangIndex == 0
+                        ? Theme.of(context).primaryColor
+                        : Colors.white,
+                    size: 20,
+                  ),
+                  onTap: () async {
+                    selectedLangIndex = 0;
+                    changeLanguage("eng");
+                  },
                 ),
-                trailing: Icon(
-                  Icons.done,
-                  color: selectedLangIndex == 0
-                      ? Theme.of(context).primaryColor
-                      : Colors.white,
-                  size: 20,
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                  ),
+                  child: Divider(
+                    height: 0,
+                    color: Colors.grey,
+                  ),
                 ),
-                onTap: () async {
-                  selectedLangIndex = 0;
-                  changeLanguage("eng");
-                },
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16,
+                ListTile(
+                  title: Text(
+                    language["Myanmar"] ?? "Myanmar",
+                    style: FontConstants.caption2,
+                  ),
+                  trailing: Icon(
+                    Icons.done,
+                    color: selectedLangIndex == 1
+                        ? Theme.of(context).primaryColor
+                        : Colors.white,
+                    size: 20,
+                  ),
+                  onTap: () async {
+                    selectedLangIndex = 1;
+                    changeLanguage("mm");
+                  },
                 ),
-                child: Divider(
-                  height: 0,
-                  color: Colors.grey,
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  language["Myanmar"] ?? "Myanmar",
-                  style: FontConstants.caption2,
-                ),
-                trailing: Icon(
-                  Icons.done,
-                  color: selectedLangIndex == 1
-                      ? Theme.of(context).primaryColor
-                      : Colors.white,
-                  size: 20,
-                ),
-                onTap: () async {
-                  selectedLangIndex = 1;
-                  changeLanguage("mm");
-                },
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
