@@ -80,7 +80,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
         centerTitle: true,
         elevation: 0,
         title: Text(
-          language["Details"] ?? "Details",
+          details["order_id"] != null ? formatNumber(details["order_id"]) : "",
           style: FontConstants.title1,
         ),
         iconTheme: IconThemeData(
@@ -106,133 +106,172 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
             ),
             child: Column(
               children: [
-                Text(
-                  language["Total Amount"] ?? "Total Amount",
-                  style: FontConstants.caption1,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    FormattedAmount(
-                      amount: double.parse(details["amount"].toString()),
-                      mainTextStyle: FontConstants.headline1,
-                      decimalTextStyle: FontConstants.body1,
+                Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      // image: NetworkImage(
+                      //     '${ApiConstants.baseUrl}${carts[index]["product_images"][0].toString()}'),
+                      image: AssetImage("assets/images/watch.png"),
+                      fit: BoxFit.fill,
                     ),
-                    Text(
-                      " Ks",
-                      style: FontConstants.body2,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: Colors.transparent,
                     ),
-                  ],
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
                     top: 8,
-                    bottom: 8,
+                  ),
+                  child: Text(
+                    language["Total Amount"] ?? "Total Amount",
+                    style: FontConstants.caption1,
+                  ),
+                ),
+                details["amount"] != null
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          FormattedAmount(
+                            amount: double.parse(details["amount"].toString()),
+                            mainTextStyle: FontConstants.headline1,
+                            decimalTextStyle: FontConstants.body1,
+                          ),
+                          Text(
+                            " Ks",
+                            style: FontConstants.body2,
+                          ),
+                        ],
+                      )
+                    : Text(""),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 8,
                   ),
                   child: const Divider(
                     height: 0,
                     color: Colors.grey,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      language["Date"] ?? "Date",
-                      style: FontConstants.caption1,
-                    ),
-                    Text(
-                      details["created_at"] != null
-                          ? formatDate(details["created_at"])
-                          : "",
-                      style: FontConstants.caption2,
-                    ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 8,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        language["Date"] ?? "Date",
+                        style: FontConstants.caption1,
+                      ),
+                      Text(
+                        details["created_at"] != null
+                            ? formatDate(details["created_at"])
+                            : "",
+                        style: FontConstants.caption2,
+                      ),
+                    ],
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      language["Time"] ?? "Time",
-                      style: FontConstants.caption1,
-                    ),
-                    Text(
-                      details["created_at"] != null
-                          ? formatTimestamp(details["created_at"])
-                          : "",
-                      style: FontConstants.caption2,
-                    ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 8,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        language["Time"] ?? "Time",
+                        style: FontConstants.caption1,
+                      ),
+                      Text(
+                        details["created_at"] != null
+                            ? formatTimestamp(details["created_at"])
+                            : "",
+                        style: FontConstants.caption2,
+                      ),
+                    ],
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      language["Order No."] ?? "Order No.",
-                      style: FontConstants.caption1,
-                    ),
-                    Text(
-                      details["order_id"] != null
-                          ? formatNumber(details["order_id"])
-                          : "",
-                      style: FontConstants.caption2,
-                    ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 8,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        language["Brand"] ?? "Brand",
+                        style: FontConstants.caption1,
+                      ),
+                      Text(
+                        details["brand"].toString(),
+                        style: FontConstants.caption2,
+                      ),
+                    ],
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      language["Brand"] ?? "Brand",
-                      style: FontConstants.caption1,
-                    ),
-                    Text(
-                      details["brand"].toString(),
-                      style: FontConstants.caption2,
-                    ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 8,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        language["Model"] ?? "Model",
+                        style: FontConstants.caption1,
+                      ),
+                      Text(
+                        details["model"].toString(),
+                        style: FontConstants.caption2,
+                      ),
+                    ],
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      language["Model"] ?? "Model",
-                      style: FontConstants.caption1,
-                    ),
-                    Text(
-                      details["model"].toString(),
-                      style: FontConstants.caption2,
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      language["Amount"] ?? "Amount",
-                      style: FontConstants.caption1,
-                    ),
-                    FormattedAmount(
-                      amount: double.parse(details["price"].toString()),
-                      mainTextStyle: FontConstants.caption2,
-                      decimalTextStyle: FontConstants.caption2,
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      language["Quantity"] ?? "Quantity",
-                      style: FontConstants.caption1,
-                    ),
-                    Text(
-                      details["quantity"].toString(),
-                      style: FontConstants.caption2,
-                    ),
-                  ],
+                details["price"] != null
+                    ? Padding(
+                        padding: const EdgeInsets.only(
+                          top: 8,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              language["Amount"] ?? "Amount",
+                              style: FontConstants.caption1,
+                            ),
+                            FormattedAmount(
+                              amount: double.parse(details["price"].toString()),
+                              mainTextStyle: FontConstants.caption2,
+                              decimalTextStyle: FontConstants.caption2,
+                            ),
+                          ],
+                        ),
+                      )
+                    : Container(),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 8,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        language["Quantity"] ?? "Quantity",
+                        style: FontConstants.caption1,
+                      ),
+                      Text(
+                        details["quantity"].toString(),
+                        style: FontConstants.caption2,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

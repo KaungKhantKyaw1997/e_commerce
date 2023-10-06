@@ -204,7 +204,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         left: 16,
                         right: 16,
                         top: 8,
-                        bottom: 4,
+                        bottom: 8,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -225,7 +225,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
-                        bottom: 4,
+                        bottom: 8,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -246,7 +246,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
-                        bottom: 4,
+                        bottom: 8,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -267,7 +267,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
-                        bottom: 4,
+                        bottom: 8,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -288,7 +288,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
-                        bottom: 4,
+                        bottom: 8,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -309,7 +309,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
-                        bottom: 4,
+                        bottom: 8,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -330,7 +330,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
-                        bottom: 4,
+                        bottom: 8,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

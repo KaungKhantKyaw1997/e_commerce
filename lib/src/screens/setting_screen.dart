@@ -282,7 +282,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               const Icon(
                                 Icons.arrow_forward_ios,
                                 size: 20,
-                              )
+                              ),
                             ],
                           ),
                         ),
