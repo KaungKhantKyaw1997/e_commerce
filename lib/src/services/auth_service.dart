@@ -46,7 +46,12 @@ class AuthService {
   static Future<http.Response> uploadFile(File file) async {
     var uri = Uri.parse(ApiConstants.imageUploadUrl);
     var request = http.MultipartRequest('POST', uri);
-    request.files.add(await http.MultipartFile.fromPath('file', file.path));
+
+    var fileStream = http.ByteStream(file.openRead());
+    var length = await file.length();
+    var multipartFile = http.MultipartFile('file', fileStream, length,
+        filename: file.path.split("/").last);
+    request.files.add(multipartFile);
 
     var response = await request.send();
     if (response.statusCode == 200) {
@@ -54,6 +59,11 @@ class AuthService {
     } else {
       throw Exception('Error uploading file: ${response.statusCode}');
     }
+  }
+
+  imageToBase64(File image) async {
+    List<int> imageBytes = await image.readAsBytes();
+    return base64Encode(imageBytes);
   }
 
   signout(BuildContext context) async {

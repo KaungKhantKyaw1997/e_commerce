@@ -51,7 +51,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       pickedFile = await _picker.pickImage(
         source: source,
       );
-      profileImage = pickedFile!.name;
+      uploadFile();
       setState(() {});
     } catch (e) {
       print(e);
@@ -64,6 +64,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       var response = await AuthService.uploadFile(File(pickedFile!.path));
       var res = jsonDecode(response.body);
       if (res["code"] == 200) {
+        profileImage = res["url"];
         signup();
       } else {
         ToastUtil.showToast(res["code"], res["message"]);
@@ -83,7 +84,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         "username": username.text,
         "email": email.text,
         "phone": '959${phone.text}',
-        "profile_image": '/images/$profileImage',
+        "profile_image": profileImage,
       };
 
       final response = await authService.signupData(body);

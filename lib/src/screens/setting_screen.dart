@@ -160,12 +160,13 @@ class _SettingScreenState extends State<SettingScreen> {
                                 ),
                                 width: 60,
                                 height: 60,
-                                decoration: profileImage != ''
+                                decoration: profileImage == ''
                                     ? BoxDecoration(
                                         color: ColorConstants.fillcolor,
                                         image: DecorationImage(
                                           image: AssetImage(
                                               "assets/images/profile.png"),
+                                          fit: BoxFit.cover,
                                         ),
                                         borderRadius: BorderRadius.circular(10),
                                       )
@@ -173,6 +174,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         image: DecorationImage(
                                           image: NetworkImage(
                                               '${ApiConstants.baseUrl}${profileImage.toString()}'),
+                                          fit: BoxFit.cover,
                                         ),
                                         borderRadius: BorderRadius.circular(10),
                                       ),
