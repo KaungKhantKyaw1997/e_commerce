@@ -100,7 +100,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                             ),
                             child: Text(
                               '${cartProvider.count}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: Colors.white,
                                 fontSize: FontConstants.bottom,
                               ),

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/palette.dart';
@@ -64,20 +65,28 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Watch',
-      theme: ThemeData(
-        primarySwatch: Palette.kToDark,
-        scaffoldBackgroundColor: Color(0xFFF1F3F6),
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
-        dialogTheme: DialogTheme(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+    return ScreenUtilInit(
+      designSize: const Size(360, 690),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (_, child) {
+        return MaterialApp(
+          title: 'Watch',
+          theme: ThemeData(
+            primarySwatch: Palette.kToDark,
+            scaffoldBackgroundColor: Color(0xFFF1F3F6),
+            textTheme:
+                GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+            dialogTheme: DialogTheme(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
           ),
-        ),
-      ),
-      initialRoute: Routes.signin,
-      routes: Routes.routes,
+          initialRoute: Routes.signin,
+          routes: Routes.routes,
+        );
+      },
     );
   }
 }

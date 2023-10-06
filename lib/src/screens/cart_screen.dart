@@ -751,7 +751,7 @@ class _CartScreenState extends State<CartScreen> {
                                         style: FontConstants.caption1,
                                       ),
                                       SizedBox(
-                                        height: 14,
+                                        height: 12,
                                       ),
                                       FormattedAmount(
                                         amount: carts[index]["totalamount"],
