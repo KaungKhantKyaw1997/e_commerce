@@ -402,6 +402,9 @@ class _ProductScreenState extends State<ProductScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
                             children: [
                               Text(
                                 "Ks",
