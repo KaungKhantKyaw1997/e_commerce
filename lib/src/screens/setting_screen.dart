@@ -135,10 +135,6 @@ class _SettingScreenState extends State<SettingScreen> {
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.white,
                   ),
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                  ),
                   margin: EdgeInsets.only(
                     bottom: 24,
                   ),
@@ -149,6 +145,10 @@ class _SettingScreenState extends State<SettingScreen> {
                           // Navigator.pushNamed(context, Routes.profile);
                         },
                         child: Container(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                          ),
                           color: Colors.transparent,
                           child: Row(
                             children: [
@@ -208,7 +208,9 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
-                          top: 24,
+                          left: 16,
+                          right: 16,
+                          top: 16,
                         ),
                         child: Align(
                           alignment: Alignment.centerLeft,
@@ -222,61 +224,73 @@ class _SettingScreenState extends State<SettingScreen> {
                         onTap: () {
                           Navigator.pushNamed(context, Routes.language);
                         },
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                right: 16,
-                                top: 16,
-                                bottom: 16,
-                              ),
-                              child: SvgPicture.asset(
-                                "assets/icons/global.svg",
-                                width: 24,
-                                height: 24,
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                          ),
+                          child: Row(
+                            children: [
+                              Padding(
                                 padding: const EdgeInsets.only(
                                   right: 16,
                                   top: 16,
                                   bottom: 16,
                                 ),
-                                child: Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text:
-                                            language["Language"] ?? "Language",
-                                        style: FontConstants.caption2,
-                                      )
-                                    ],
+                                child: SvgPicture.asset(
+                                  "assets/icons/global.svg",
+                                  width: 24,
+                                  height: 24,
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 16,
+                                    top: 16,
+                                    bottom: 16,
+                                  ),
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: language["Language"] ??
+                                              "Language",
+                                          style: FontConstants.caption2,
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                right: 5,
-                                top: 16,
-                                bottom: 16,
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  right: 5,
+                                  top: 16,
+                                  bottom: 16,
+                                ),
+                                child: Text(
+                                  lang == "eng" ? "English" : "မြန်မာ",
+                                  style: FontConstants.caption1,
+                                ),
                               ),
-                              child: Text(
-                                lang == "eng" ? "English" : "မြန်မာ",
-                                style: FontConstants.caption1,
-                              ),
-                            ),
-                            const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 20,
-                            )
-                          ],
+                              const Icon(
+                                Icons.arrow_forward_ios,
+                                size: 20,
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                      const Divider(
-                        height: 0,
-                        color: Colors.grey,
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                        ),
+                        child: const Divider(
+                          height: 0,
+                          color: Colors.grey,
+                        ),
                       ),
                       GestureDetector(
                         onTap: () async {
