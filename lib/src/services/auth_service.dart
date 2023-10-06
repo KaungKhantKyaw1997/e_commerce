@@ -66,10 +66,14 @@ class AuthService {
     return base64Encode(imageBytes);
   }
 
-  signout(BuildContext context) async {
+  signout(BuildContext context) {
+    clearData();
+    Navigator.pushNamed(context, Routes.signin);
+  }
+
+  clearData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
     await storage.delete(key: "token");
-    Navigator.pushNamed(context, Routes.signin);
   }
 }

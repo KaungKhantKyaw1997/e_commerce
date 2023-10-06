@@ -224,7 +224,6 @@ class _CartScreenState extends State<CartScreen> {
                 Row(
                   children: [
                     Expanded(
-                      flex: 4,
                       child: Padding(
                         padding: const EdgeInsets.only(
                           left: 16,
@@ -268,7 +267,6 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     ),
                     Expanded(
-                      flex: 5,
                       child: Padding(
                         padding: const EdgeInsets.only(
                           left: 4,
@@ -312,12 +310,15 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                       ),
                     ),
+                  ],
+                ),
+                Row(
+                  children: [
                     Expanded(
-                      flex: 3,
                       child: Padding(
                         padding: const EdgeInsets.only(
-                          left: 4,
-                          right: 16,
+                          left: 16,
+                          right: 4,
                           bottom: 8,
                         ),
                         child: TextFormField(
@@ -357,16 +358,11 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                       ),
                     ),
-                  ],
-                ),
-                Row(
-                  children: [
                     Expanded(
-                      flex: 4,
                       child: Padding(
                         padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 4,
+                          left: 4,
+                          right: 16,
                           bottom: 8,
                         ),
                         child: TextFormField(
@@ -376,7 +372,7 @@ class _CartScreenState extends State<CartScreen> {
                           style: FontConstants.body1,
                           cursorColor: Colors.black,
                           decoration: InputDecoration(
-                            hintText: language["Home"] ?? "Home",
+                            hintText: language["House No."] ?? "House No.",
                             filled: true,
                             fillColor: ColorConstants.fillcolor,
                             contentPadding: const EdgeInsets.symmetric(
@@ -398,18 +394,22 @@ class _CartScreenState extends State<CartScreen> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return language["Enter Home"] ?? "Enter Home";
+                              return language["Enter House No."] ??
+                                  "Enter House No.";
                             }
                             return null;
                           },
                         ),
                       ),
                     ),
+                  ],
+                ),
+                Row(
+                  children: [
                     Expanded(
-                      flex: 5,
                       child: Padding(
                         padding: const EdgeInsets.only(
-                          left: 4,
+                          left: 16,
                           right: 4,
                           bottom: 8,
                         ),
@@ -450,7 +450,6 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     ),
                     Expanded(
-                      flex: 3,
                       child: Padding(
                         padding: const EdgeInsets.only(
                           left: 4,
@@ -507,6 +506,7 @@ class _CartScreenState extends State<CartScreen> {
                     textInputAction: TextInputAction.next,
                     style: FontConstants.body1,
                     cursorColor: Colors.black,
+                    maxLines: 2,
                     decoration: InputDecoration(
                       hintText: language["Note"] ?? "Note",
                       filled: true,

@@ -42,6 +42,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
   signin() async {
     showLoadingDialog(context);
+    authService.clearData();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       final body = {
@@ -50,6 +51,7 @@ class _SignInScreenState extends State<SignInScreen> {
       };
 
       final response = await authService.signinData(body);
+
       if (response["code"] == 200) {
         prefs.setString("name", response["data"]["name"]);
         prefs.setString("profile_image", response["data"]["profile_image"]);

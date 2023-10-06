@@ -10,7 +10,7 @@ showLoadingDialog(BuildContext context) {
         onWillPop: () async => false,
         child: Center(
           child: LoadingAnimationWidget.newtonCradle(
-            color: Colors.white,
+            color: Color(0xffd3d6d7),
             size: 200,
           ),
         ),

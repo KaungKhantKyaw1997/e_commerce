@@ -61,5 +61,22 @@
     "Specifications": "သတ်မှတ်ချက်များ",
     "Update": "ပြင်ဆင်မည်",
     "Delete": "ဖျက်မည်",
-    "Price Range": "စျေးနှုန်း အပိုင်းအခြား"
+    "Price Range": "စျေးနှုန်း အပိုင်းအခြား",
+    "Country": "နိုင်ငံ",
+    "Enter Country": "နိုင်ငံထည့်ပါ",
+    "City": "မြို့",
+    "Enter City": "မြို့ထည့်ပါ",
+    "State": "ပြည်နယ်",
+    "Enter State": "ပြည်နယ်ထည့်ပါ",
+    "Township": "မြို့နယ်",
+    "Enter Township": "မြို့နယ်ထည့်ပါ",
+    "Postal Code": "စာတိုက်ကုဒ်",
+    "Enter Postal Code": "စာတိုက်ကုဒ်ထည့်ပါ",
+    "House No.": "အိမ်နံပါတ်",
+    "Enter House No.": "အိမ်နံပါတ်ထည့်ပါ",
+    "Street": "လမ်း",
+    "Enter Street": "လမ်းထည့်ပါ",
+    "Ward": "ရပ်ကွက်",
+    "Enter Ward": "ရပ်ကွက်ထည့်ပါ",
+    "Note": "မှတ်ချက်"
 }

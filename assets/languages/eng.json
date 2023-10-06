@@ -61,5 +61,22 @@
     "Specifications": "Specifications",
     "Update": "Update",
     "Delete": "Delete",
-    "Price Range": "Price Range"
+    "Price Range": "Price Range",
+    "Country": "Country",
+    "Enter Country": "Enter Country",
+    "City": "City",
+    "Enter City": "Enter City",
+    "State": "State",
+    "Enter State": "Enter State",
+    "Township": "Township",
+    "Enter Township": "Enter Township",
+    "Postal Code": "Postal Code",
+    "Enter Postal Code": "Enter Postal Code",
+    "House No.": "House No.",
+    "Enter House No.": "Enter House No.",
+    "Street": "Street",
+    "Enter Street": "Enter Street",
+    "Ward": "Ward",
+    "Enter Ward": "Enter Ward",
+    "Note": "Note"
 }
