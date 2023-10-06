@@ -32,11 +32,7 @@ class AuthService {
       body: jsonEncode(body),
     );
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to log in: ${response.statusCode}');
-    }
+    return jsonDecode(response.body);
   }
 
   static Future<http.Response> uploadFile(File file) async {

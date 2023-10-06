@@ -5,7 +5,6 @@ import 'package:e_commerce/src/utils/currency_input_formatter.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:e_commerce/src/widgets/multi_select_chip.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';

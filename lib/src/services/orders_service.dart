@@ -23,11 +23,7 @@ class OrderService {
       body: jsonEncode(body),
     );
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to log in: ${response.statusCode}');
-    }
+    return jsonDecode(response.body);
   }
 
   Future<Map<String, dynamic>?> getOrdersData(
@@ -57,11 +53,7 @@ class OrderService {
         cancelToken: _cancelToken,
       );
 
-      if (response.statusCode == 200) {
-        return response.data;
-      } else {
-        throw Exception('Failed to get items: ${response.statusCode}');
-      }
+      return response.data;
     } catch (e) {
       print('Error: $e');
       return null;
@@ -82,11 +74,7 @@ class OrderService {
         cancelToken: _cancelToken,
       );
 
-      if (response.statusCode == 200) {
-        return response.data;
-      } else {
-        throw Exception('Failed to get items: ${response.statusCode}');
-      }
+      return response.data;
     } catch (e) {
       print('Error: $e');
       return null;

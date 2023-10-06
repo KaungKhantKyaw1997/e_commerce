@@ -23,11 +23,7 @@ class CategoriesService {
         cancelToken: _cancelToken,
       );
 
-      if (response.statusCode == 200) {
-        return response.data;
-      } else {
-        throw Exception('Failed to get items: ${response.statusCode}');
-      }
+      return response.data;
     } catch (e) {
       print('Error: $e');
       return null;
