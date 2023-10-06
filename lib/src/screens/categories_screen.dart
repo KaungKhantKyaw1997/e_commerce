@@ -32,6 +32,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   @override
   void dispose() {
     categoriesService.cancelRequest();
+    _categoriesController.dispose();
     super.dispose();
   }
 

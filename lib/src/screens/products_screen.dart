@@ -65,6 +65,7 @@ class _ProductsScreenState extends State<ProductsScreen>
   @override
   void dispose() {
     modelsService.cancelRequest();
+    _productController.dispose();
     super.dispose();
   }
 

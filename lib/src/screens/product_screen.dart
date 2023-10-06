@@ -73,6 +73,7 @@ class _ProductScreenState extends State<ProductScreen> {
 
   @override
   void dispose() {
+    _detailsController.dispose();
     super.dispose();
   }
 

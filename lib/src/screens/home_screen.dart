@@ -56,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void dispose() {
     _tabController.dispose();
+    _scrollController.dispose();
     shopsService.cancelRequest();
     brandsService.cancelRequest();
     categoriesService.cancelRequest();
@@ -507,26 +508,26 @@ class _HomeScreenState extends State<HomeScreen>
                                               mode: ContentDisplayMode.hidden,
                                             ),
                                           ),
-                                          // IconButton(
-                                          //   icon: SvgPicture.asset(
-                                          //     crossAxisCount == 1
-                                          //         ? "assets/icons/grid_2.svg"
-                                          //         : "assets/icons/grid_4.svg",
-                                          //     width: 24,
-                                          //     height: 24,
-                                          //     colorFilter:
-                                          //         const ColorFilter.mode(
-                                          //       Colors.black,
-                                          //       BlendMode.srcIn,
-                                          //     ),
-                                          //   ),
-                                          //   onPressed: () {
-                                          //     setState(() {
-                                          //       crossAxisCount =
-                                          //           crossAxisCount == 1 ? 2 : 1;
-                                          //     });
-                                          //   },
-                                          // ),
+                                          IconButton(
+                                            icon: SvgPicture.asset(
+                                              crossAxisCount == 1
+                                                  ? "assets/icons/grid_2.svg"
+                                                  : "assets/icons/grid_4.svg",
+                                              width: 24,
+                                              height: 24,
+                                              colorFilter:
+                                                  const ColorFilter.mode(
+                                                Colors.black,
+                                                BlendMode.srcIn,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                crossAxisCount =
+                                                    crossAxisCount == 1 ? 2 : 1;
+                                              });
+                                            },
+                                          ),
                                         ],
                                       ),
                                     ],

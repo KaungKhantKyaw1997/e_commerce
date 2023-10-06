@@ -33,6 +33,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   void dispose() {
     orderService.cancelRequest();
+    _orderController.dispose();
     super.dispose();
   }
 

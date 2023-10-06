@@ -46,6 +46,7 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   void dispose() {
+    _cartController.dispose();
     super.dispose();
   }
 
