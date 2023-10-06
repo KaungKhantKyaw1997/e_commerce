@@ -134,7 +134,7 @@ class _ProductScreenState extends State<ProductScreen> {
                               image: DecorationImage(
                                 // image: NetworkImage(
                                 //     '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'),
-                                image: AssetImage("assets/images/watch.png"),
+                                image: AssetImage("assets/images/logo.png"),
                                 fit: BoxFit.fill,
                               ),
                               borderRadius: BorderRadius.circular(10),
@@ -164,7 +164,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 padding: const EdgeInsets.only(
                   left: 4,
                   right: 4,
-                  top: 16,
+                  top: 8,
                   bottom: 4,
                 ),
                 child: Row(

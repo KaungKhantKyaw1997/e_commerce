@@ -114,7 +114,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                     image: DecorationImage(
                       // image: NetworkImage(
                       //     '${ApiConstants.baseUrl}${carts[index]["product_images"][0].toString()}'),
-                      image: AssetImage("assets/images/watch.png"),
+                      image: AssetImage("assets/images/logo.png"),
                       fit: BoxFit.fill,
                     ),
                     borderRadius: BorderRadius.circular(10),

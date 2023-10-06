@@ -145,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen>
               image: DecorationImage(
                 // image: NetworkImage(
                 //     '${ApiConstants.baseUrl}${shops[index]["cover_image"].toString()}'),
-                image: AssetImage("assets/images/watch.png"),
+                image: AssetImage("assets/images/logo.png"),
                 fit: BoxFit.fill,
               ),
               borderRadius: BorderRadius.only(
@@ -232,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen>
               image: DecorationImage(
                 // image: NetworkImage(
                 //     '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
-                image: AssetImage("assets/images/watch.png"),
+                image: AssetImage("assets/images/logo.png"),
                 fit: BoxFit.fill,
               ),
               borderRadius: BorderRadius.only(

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:e_commerce/routes.dart';
+import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/services/orders_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
@@ -705,8 +706,7 @@ class _CartScreenState extends State<CartScreen> {
                                   image: DecorationImage(
                                     // image: NetworkImage(
                                     //     '${ApiConstants.baseUrl}${carts[index]["product_images"][0].toString()}'),
-                                    image:
-                                        AssetImage("assets/images/watch.png"),
+                                    image: AssetImage("assets/images/logo.png"),
                                     fit: BoxFit.fill,
                                   ),
                                   borderRadius: BorderRadius.circular(10),
@@ -728,21 +728,16 @@ class _CartScreenState extends State<CartScreen> {
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.baseline,
+                                        textBaseline: TextBaseline.alphabetic,
                                         children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.baseline,
-                                            textBaseline:
-                                                TextBaseline.alphabetic,
-                                            children: [
-                                              Text(
-                                                carts[index]["brand_name"] ??
-                                                    "",
-                                                style: FontConstants.body1,
-                                              ),
-                                            ],
+                                          Expanded(
+                                            child: Text(
+                                              carts[index]["brand_name"] ?? "",
+                                              overflow: TextOverflow.ellipsis,
+                                              style: FontConstants.body1,
+                                            ),
                                           ),
                                           Text(
                                             'x ${carts[index]["quantity"].toString()}',
@@ -751,11 +746,12 @@ class _CartScreenState extends State<CartScreen> {
                                         ],
                                       ),
                                       Text(
-                                        carts[index]["model"].toString(),
+                                        carts[index]["model"] ?? "",
+                                        overflow: TextOverflow.ellipsis,
                                         style: FontConstants.caption1,
                                       ),
                                       SizedBox(
-                                        height: 16,
+                                        height: 14,
                                       ),
                                       FormattedAmount(
                                         amount: carts[index]["totalamount"],

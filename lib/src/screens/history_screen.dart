@@ -179,7 +179,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             : yesterdayDate == formattedDate
                                 ? "Yesterday"
                                 : formattedDate,
-                        style: FontConstants.body1,
+                        style: FontConstants.caption2,
                       ),
                     ),
                     const Divider(
@@ -224,10 +224,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                           CrossAxisAlignment.baseline,
                                       textBaseline: TextBaseline.alphabetic,
                                       children: [
-                                        Text(
-                                          formatNumber(orders[index]["items"][i]
-                                              ["order_id"]),
-                                          style: FontConstants.body1,
+                                        Expanded(
+                                          child: Text(
+                                            formatNumber(orders[index]["items"]
+                                                [i]["order_id"]),
+                                            overflow: TextOverflow.ellipsis,
+                                            style: FontConstants.body1,
+                                          ),
                                         ),
                                         Text(
                                           orders[index]["items"][i]["status"],

@@ -75,7 +75,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 80,
@@ -84,7 +84,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               image: DecorationImage(
                 // image: NetworkImage(
                 //     '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
-                image: AssetImage("assets/images/watch.png"),
+                image: AssetImage("assets/images/logo.png"),
                 fit: BoxFit.fill,
               ),
               borderRadius: BorderRadius.circular(10),
@@ -109,6 +109,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   ),
                   Text(
                     categories[index]["description"].toString(),
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: FontConstants.caption1,
                   ),

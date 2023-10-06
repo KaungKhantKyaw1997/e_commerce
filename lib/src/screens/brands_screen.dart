@@ -1,5 +1,6 @@
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
+import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/brands_service.dart';
@@ -75,7 +76,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 80,
@@ -84,7 +85,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
               image: DecorationImage(
                 // image: NetworkImage(
                 //     '${ApiConstants.baseUrl}${brands[index]["logo_url"].toString()}'),
-                image: AssetImage("assets/images/watch.png"),
+                image: AssetImage("assets/images/logo.png"),
                 fit: BoxFit.fill,
               ),
               borderRadius: BorderRadius.circular(10),
@@ -109,6 +110,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
                   ),
                   Text(
                     brands[index]["description"].toString(),
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: FontConstants.caption1,
                   ),

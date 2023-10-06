@@ -346,7 +346,7 @@ class _ProductsScreenState extends State<ProductsScreen>
               image: DecorationImage(
                 // image: NetworkImage(
                 //     '${ApiConstants.baseUrl}${products[index]["product_images"][0].toString()}'),
-                image: AssetImage("assets/images/watch.png"),
+                image: AssetImage("assets/images/logo.png"),
                 fit: BoxFit.fill,
               ),
               borderRadius: BorderRadius.only(
