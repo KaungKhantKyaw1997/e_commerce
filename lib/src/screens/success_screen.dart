@@ -54,7 +54,7 @@ class _SuccessScreenState extends State<SuccessScreen>
             child: Text(
               "Your order was successful!",
               textAlign: TextAlign.center,
-              style: FontConstants.subheadline1,
+              style: FontConstants.headline1,
             ),
           ),
           Padding(
