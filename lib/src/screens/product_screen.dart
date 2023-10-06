@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:e_commerce/global.dart';
+import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:e_commerce/src/utils/format_amount.dart';
 import 'package:flutter/material.dart';
@@ -22,10 +24,12 @@ class _ProductScreenState extends State<ProductScreen> {
   List<Map<String, dynamic>> carts = [];
   Map<String, dynamic> product = {};
   double _currentPage = 0;
+  bool updateCart = false;
 
   @override
   void initState() {
     super.initState();
+    getCart();
     _imageController.addListener(() {
       setState(() {
         _currentPage = _imageController.page ?? 0;
@@ -38,10 +42,18 @@ class _ProductScreenState extends State<ProductScreen> {
       if (arguments != null) {
         setState(() {
           product = arguments;
-          product['quantity'] = product['quantity'] ?? 0;
-          product['totalamount'] = product['totalamount'] ?? 0.0;
+          product["quantity"] = 0;
+          product["totalamount"] = 0.0;
+
+          for (var cart in carts) {
+            if (cart["product_id"] == product['product_id']) {
+              product["quantity"] = cart["quantity"] ?? 0;
+              product["totalamount"] = cart["totalamount"] ?? 0.0;
+              updateCart = true;
+              break;
+            }
+          }
         });
-        getCart();
       }
     });
   }
@@ -475,16 +487,16 @@ class _ProductScreenState extends State<ProductScreen> {
                                     color: Theme.of(context).primaryColor,
                                   ),
                                   onPressed: () {
-                                    if (product['quantity'] <
-                                        int.parse(product["stock_quantity"]
-                                            .toString())) {
-                                      setState(() {
-                                        product['quantity']++;
-                                        product['totalamount'] = double.parse(
-                                                product["price"].toString()) *
-                                            product['quantity'];
-                                      });
-                                    }
+                                    // if (product['quantity'] <
+                                    //     int.parse(product["stock_quantity"]
+                                    //         .toString())) {
+                                    setState(() {
+                                      product['quantity']++;
+                                      product['totalamount'] = double.parse(
+                                              product["price"].toString()) *
+                                          product['quantity'];
+                                    });
+                                    // }
                                   },
                                 ),
                               ),
@@ -551,14 +563,29 @@ class _ProductScreenState extends State<ProductScreen> {
           ),
           onPressed: () async {
             if (product['quantity'] > 0) {
-              carts.add(product);
+              if (updateCart) {
+                for (var cart in carts) {
+                  if (cart["product_id"] == product["product_id"]) {
+                    cart["quantity"] = product["quantity"] ?? 0;
+                    cart["totalamount"] = product["totalamount"] ?? 0.0;
+                    break;
+                  }
+                }
+              } else {
+                carts.add(product);
+              }
+
               saveListToSharedPreferences(carts);
 
               CartProvider cartProvider =
                   Provider.of<CartProvider>(context, listen: false);
               cartProvider.addCount(carts.length);
 
-              Navigator.pop(context);
+              BottomProvider bottomProvider =
+                  Provider.of<BottomProvider>(context, listen: false);
+              bottomProvider.selectIndex(1);
+
+              Navigator.pushNamed(context, Routes.cart);
             }
           },
           child: Text(
