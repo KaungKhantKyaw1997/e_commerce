@@ -467,6 +467,9 @@ class _HomeScreenState extends State<HomeScreen>
               bottom: 24,
             ),
             width: double.infinity,
+            height: MediaQuery.of(context).orientation == Orientation.landscape
+                ? MediaQuery.of(context).size.width
+                : MediaQuery.of(context).size.height,
             child: shops.isNotEmpty && categories.isNotEmpty
                 ? AutoScaleTabBarView(
                     controller: _tabController,
@@ -603,6 +606,8 @@ class _HomeScreenState extends State<HomeScreen>
                                     ? Container(
                                         height: 110,
                                         child: ListView.builder(
+                                          controller: _scrollController,
+                                          shrinkWrap: true,
                                           scrollDirection: Axis.horizontal,
                                           itemCount: (brands.length / 2).ceil(),
                                           itemBuilder: (context, pageIndex) {
@@ -611,6 +616,8 @@ class _HomeScreenState extends State<HomeScreen>
                                                 .clamp(0, brands.length - 1);
 
                                             return ListView.builder(
+                                              controller: _scrollController,
+                                              shrinkWrap: true,
                                               itemCount:
                                                   endIndex - startIndex + 1,
                                               itemBuilder: (context, index) {
@@ -652,7 +659,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 categories.isNotEmpty
                                     ? Container(
                                         padding: EdgeInsets.only(
-                                          top: 16,
+                                          top: 8,
                                           bottom: 4,
                                         ),
                                         child: Row(
@@ -688,6 +695,8 @@ class _HomeScreenState extends State<HomeScreen>
                                     ? Container(
                                         height: 210,
                                         child: ListView.builder(
+                                          controller: _scrollController,
+                                          shrinkWrap: true,
                                           scrollDirection: Axis.horizontal,
                                           itemCount: categories.length,
                                           itemBuilder: (context, index) {
