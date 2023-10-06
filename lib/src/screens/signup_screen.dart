@@ -51,7 +51,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       pickedFile = await _picker.pickImage(
         source: source,
       );
-      uploadFile();
       setState(() {});
     } catch (e) {
       print(e);
