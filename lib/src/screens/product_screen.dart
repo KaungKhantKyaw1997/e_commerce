@@ -94,7 +94,7 @@ class _ProductScreenState extends State<ProductScreen> {
         scrollDirection: Axis.vertical,
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: 16,
+            horizontal: 12,
             vertical: 24,
           ),
           width: double.infinity,
@@ -114,6 +114,9 @@ class _ProductScreenState extends State<ProductScreen> {
                         itemCount: product["product_images"].length,
                         itemBuilder: (context, index) {
                           return Container(
+                            margin: EdgeInsets.symmetric(
+                              horizontal: 4,
+                            ),
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 // image: NetworkImage(
@@ -146,6 +149,8 @@ class _ProductScreenState extends State<ProductScreen> {
                   : Container(),
               Padding(
                 padding: const EdgeInsets.only(
+                  left: 4,
+                  right: 4,
                   top: 16,
                   bottom: 4,
                 ),
@@ -168,6 +173,9 @@ class _ProductScreenState extends State<ProductScreen> {
                 ),
               ),
               Container(
+                margin: EdgeInsets.symmetric(
+                  horizontal: 4,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   color: Colors.white,
