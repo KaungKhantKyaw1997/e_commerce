@@ -1,5 +1,6 @@
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
+import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/categories_service.dart';
@@ -82,9 +83,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             height: 80,
             decoration: BoxDecoration(
               image: DecorationImage(
-                // image: NetworkImage(
-                //     '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
-                image: AssetImage("assets/images/logo.png"),
+                image: NetworkImage(
+                    '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
                 fit: BoxFit.fill,
               ),
               borderRadius: BorderRadius.circular(10),

@@ -1,3 +1,4 @@
+import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:e_commerce/global.dart';
@@ -46,7 +47,6 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           details = response["data"][0];
-          print(details);
         }
         setState(() {});
       } else {
@@ -107,22 +107,24 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
             ),
             child: Column(
               children: [
-                Container(
-                  width: 150,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      // image: NetworkImage(
-                      //     '${ApiConstants.baseUrl}${carts[index]["product_images"][0].toString()}'),
-                      image: AssetImage("assets/images/logo.png"),
-                      fit: BoxFit.fill,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: Colors.transparent,
-                    ),
-                  ),
-                ),
+                details.containsKey("product_images") &&
+                        details["product_images"].isNotEmpty
+                    ? Container(
+                        width: 200,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(
+                                '${ApiConstants.baseUrl}${details["product_images"][0].toString()}'),
+                            fit: BoxFit.fill,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.transparent,
+                          ),
+                        ),
+                      )
+                    : Container(),
                 Padding(
                   padding: const EdgeInsets.only(
                     top: 8,

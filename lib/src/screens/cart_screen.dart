@@ -821,9 +821,8 @@ class _CartScreenState extends State<CartScreen> {
                                 height: 80,
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
-                                    // image: NetworkImage(
-                                    //     '${ApiConstants.baseUrl}${carts[index]["product_images"][0].toString()}'),
-                                    image: AssetImage("assets/images/logo.png"),
+                                    image: NetworkImage(
+                                        '${ApiConstants.baseUrl}${carts[index]["product_images"][0].toString()}'),
                                     fit: BoxFit.fill,
                                   ),
                                   borderRadius: BorderRadius.circular(10),

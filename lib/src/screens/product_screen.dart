@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
+import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
@@ -132,9 +133,9 @@ class _ProductScreenState extends State<ProductScreen> {
                             ),
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                // image: NetworkImage(
-                                //     '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'),
-                                image: AssetImage("assets/images/logo.png"),
+                                image: NetworkImage(
+                                    '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'),
+                                // image: AssetImage("assets/images/logo.png"),
                                 fit: BoxFit.fill,
                               ),
                               borderRadius: BorderRadius.circular(10),

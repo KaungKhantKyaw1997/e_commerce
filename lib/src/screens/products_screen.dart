@@ -1,3 +1,4 @@
+import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/services/models_service.dart';
 import 'package:e_commerce/src/services/products_service.dart';
@@ -406,12 +407,11 @@ class _ProductsScreenState extends State<ProductsScreen>
         children: [
           Container(
             width: double.infinity,
-            height: 150,
+            height: 200,
             decoration: BoxDecoration(
               image: DecorationImage(
-                // image: NetworkImage(
-                //     '${ApiConstants.baseUrl}${products[index]["product_images"][0].toString()}'),
-                image: AssetImage("assets/images/logo.png"),
+                image: NetworkImage(
+                    '${ApiConstants.baseUrl}${products[index]["product_images"][0].toString()}'),
                 fit: BoxFit.fill,
               ),
               borderRadius: BorderRadius.only(
@@ -563,7 +563,7 @@ class _ProductsScreenState extends State<ProductsScreen>
                 shrinkWrap: true,
                 itemCount: products.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  mainAxisExtent: 210,
+                  mainAxisExtent: 250,
                   childAspectRatio: 2 / 1,
                   crossAxisSpacing: 15,
                   crossAxisCount: 2,

@@ -143,9 +143,8 @@ class _HomeScreenState extends State<HomeScreen>
             height: crossAxisCount == 1 ? 190 : 150,
             decoration: BoxDecoration(
               image: DecorationImage(
-                // image: NetworkImage(
-                //     '${ApiConstants.baseUrl}${shops[index]["cover_image"].toString()}'),
-                image: AssetImage("assets/images/logo.png"),
+                image: NetworkImage(
+                    '${ApiConstants.baseUrl}${shops[index]["cover_image"].toString()}'),
                 fit: BoxFit.fill,
               ),
               borderRadius: BorderRadius.only(
@@ -227,12 +226,12 @@ class _HomeScreenState extends State<HomeScreen>
         children: [
           Container(
             width: double.infinity,
-            height: 150,
+            height: 200,
             decoration: BoxDecoration(
               image: DecorationImage(
-                // image: NetworkImage(
-                //     '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
-                image: AssetImage("assets/images/logo.png"),
+                image: NetworkImage(
+                    '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
+                // image: AssetImage("assets/images/logo.png"),
                 fit: BoxFit.fill,
               ),
               borderRadius: BorderRadius.only(
@@ -691,7 +690,7 @@ class _HomeScreenState extends State<HomeScreen>
                                     : Container(),
                                 categories.isNotEmpty
                                     ? Container(
-                                        height: 210,
+                                        height: 250,
                                         child: ListView.builder(
                                           controller: _scrollController,
                                           shrinkWrap: true,

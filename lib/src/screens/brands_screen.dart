@@ -83,9 +83,8 @@ class _BrandsScreenState extends State<BrandsScreen> {
             height: 80,
             decoration: BoxDecoration(
               image: DecorationImage(
-                // image: NetworkImage(
-                //     '${ApiConstants.baseUrl}${brands[index]["logo_url"].toString()}'),
-                image: AssetImage("assets/images/logo.png"),
+                image: NetworkImage(
+                    '${ApiConstants.baseUrl}${brands[index]["logo_url"].toString()}'),
                 fit: BoxFit.fill,
               ),
               borderRadius: BorderRadius.circular(10),

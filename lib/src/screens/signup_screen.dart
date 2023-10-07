@@ -59,30 +59,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
         source: source,
       );
       setState(() {});
+      uploadFile();
     } catch (e) {
       print(e);
     }
   }
 
   Future<void> uploadFile() async {
-    showLoadingDialog(context);
     try {
       var response = await AuthService.uploadFile(File(pickedFile!.path));
       var res = jsonDecode(response.body);
       if (res["code"] == 200) {
         profileImage = res["url"];
-        signup();
       } else {
         ToastUtil.showToast(res["code"], res["message"]);
-        Navigator.pop(context);
       }
     } catch (error) {
       print('Error uploading file: $error');
-      Navigator.pop(context);
     }
   }
 
   signup() async {
+    showLoadingDialog(context);
     try {
       final body = {
         "name": name.text,
@@ -619,7 +617,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                uploadFile();
+                signup();
               }
             },
             child: Text(
