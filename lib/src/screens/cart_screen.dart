@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
+import 'package:e_commerce/src/services/address_service.dart';
 import 'package:e_commerce/src/services/orders_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
@@ -26,6 +27,7 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   final ScrollController _cartController = ScrollController();
+  final addressService = AddressService();
   final orderService = OrderService();
   FocusNode _countryFocusNode = FocusNode();
   FocusNode _cityFocusNode = FocusNode();
@@ -51,6 +53,7 @@ class _CartScreenState extends State<CartScreen> {
   @override
   void initState() {
     super.initState();
+    getAddress();
     getCart();
   }
 
@@ -58,6 +61,19 @@ class _CartScreenState extends State<CartScreen> {
   void dispose() {
     _cartController.dispose();
     super.dispose();
+  }
+
+  getAddress() async {
+    try {
+      final response = await addressService.getAddressData();
+      if (response!["code"] == 200) {
+        setState(() {});
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   getCart() async {
@@ -340,7 +356,7 @@ class _CartScreenState extends State<CartScreen> {
                                   child: Padding(
                                     padding: const EdgeInsets.only(
                                       left: 4,
-                                      right: 4,
+                                      right: 16,
                                       bottom: 8,
                                     ),
                                     child: TextFormField(
@@ -757,29 +773,6 @@ class _CartScreenState extends State<CartScreen> {
                     children: [
                       Slidable(
                         key: const ValueKey(0),
-                        startActionPane: ActionPane(
-                          motion: const ScrollMotion(),
-                          children: [
-                            SlidableAction(
-                              onPressed: (BuildContext context) {
-                                Navigator.pushNamed(
-                                  context,
-                                  Routes.product,
-                                  arguments: carts[index],
-                                );
-                              },
-                              backgroundColor: Theme.of(context).primaryColor,
-                              foregroundColor: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(index == 0 ? 10 : 0),
-                                bottomLeft: Radius.circular(
-                                    index == carts.length - 1 ? 10 : 0),
-                              ),
-                              icon: Icons.update,
-                              label: language["Update"] ?? "Update",
-                            ),
-                          ],
-                        ),
                         endActionPane: ActionPane(
                           motion: const BehindMotion(),
                           children: [
@@ -869,12 +862,152 @@ class _CartScreenState extends State<CartScreen> {
                                       SizedBox(
                                         height: 12,
                                       ),
-                                      FormattedAmount(
-                                        amount: carts[index]["totalamount"],
-                                        mainTextStyle:
-                                            FontConstants.subheadline1,
-                                        decimalTextStyle:
-                                            FontConstants.caption3,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.baseline,
+                                            textBaseline:
+                                                TextBaseline.alphabetic,
+                                            children: [
+                                              Text(
+                                                "Ks",
+                                                style:
+                                                    FontConstants.subheadline1,
+                                              ),
+                                              FormattedAmount(
+                                                amount: double.parse(
+                                                    carts[index]["totalamount"]
+                                                        .toString()),
+                                                mainTextStyle:
+                                                    FontConstants.subheadline1,
+                                                decimalTextStyle:
+                                                    FontConstants.caption3,
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    topLeft: Radius.circular(8),
+                                                    bottomLeft:
+                                                        Radius.circular(8),
+                                                  ),
+                                                  border: Border.all(
+                                                    color: Theme.of(context)
+                                                        .primaryColorLight,
+                                                    width: 1,
+                                                  ),
+                                                ),
+                                                width: 32,
+                                                height: 32,
+                                                child: IconButton(
+                                                  icon: Icon(
+                                                    Icons.remove,
+                                                    size: 15,
+                                                    color: Theme.of(context)
+                                                        .primaryColor,
+                                                  ),
+                                                  onPressed: () {
+                                                    if (carts[index]
+                                                            ['quantity'] >
+                                                        0) {
+                                                      setState(() {
+                                                        carts[index]
+                                                            ['quantity']--;
+                                                        carts[index][
+                                                                'totalamount'] =
+                                                            double.parse(carts[
+                                                                            index]
+                                                                        [
+                                                                        "price"]
+                                                                    .toString()) *
+                                                                carts[index][
+                                                                    'quantity'];
+                                                      });
+                                                    }
+                                                  },
+                                                ),
+                                              ),
+                                              Container(
+                                                margin: EdgeInsets.symmetric(
+                                                  horizontal: 4,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                    color: Theme.of(context)
+                                                        .primaryColorLight,
+                                                    width: 1,
+                                                  ),
+                                                ),
+                                                width: 50,
+                                                height: 32,
+                                                child: Center(
+                                                  child: Text(
+                                                    carts[index]['quantity']
+                                                        .toString(),
+                                                    textAlign: TextAlign.center,
+                                                    style: FontConstants
+                                                        .subheadline1,
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    topRight:
+                                                        Radius.circular(8),
+                                                    bottomRight:
+                                                        Radius.circular(8),
+                                                  ),
+                                                  border: Border.all(
+                                                    color: Theme.of(context)
+                                                        .primaryColorLight,
+                                                    width: 1,
+                                                  ),
+                                                ),
+                                                width: 32,
+                                                height: 32,
+                                                child: IconButton(
+                                                  icon: Icon(
+                                                    Icons.add,
+                                                    size: 15,
+                                                    color: Theme.of(context)
+                                                        .primaryColor,
+                                                  ),
+                                                  onPressed: () {
+                                                    // if (product['quantity'] <
+                                                    //     int.parse(product["stock_quantity"]
+                                                    //         .toString())) {
+                                                    setState(() {
+                                                      carts[index]
+                                                          ['quantity']++;
+                                                      carts[index]
+                                                              ['totalamount'] =
+                                                          double.parse(carts[
+                                                                          index]
+                                                                      ["price"]
+                                                                  .toString()) *
+                                                              carts[index]
+                                                                  ['quantity'];
+                                                    });
+                                                    // }
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
