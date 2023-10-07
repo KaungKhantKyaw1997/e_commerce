@@ -140,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen>
         children: [
           Container(
             width: double.infinity,
-            height: crossAxisCount == 1 ? 190 : 150,
+            height: crossAxisCount == 1 ? 240 : 150,
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: NetworkImage(
@@ -170,7 +170,9 @@ class _HomeScreenState extends State<HomeScreen>
               child: Text(
                 shops[index]["name"].toString(),
                 overflow: TextOverflow.ellipsis,
-                style: FontConstants.caption2,
+                style: crossAxisCount == 1
+                    ? FontConstants.body1
+                    : FontConstants.caption2,
               ),
             ),
           ),
@@ -185,7 +187,9 @@ class _HomeScreenState extends State<HomeScreen>
               child: Text(
                 shops[index]["address"].toString(),
                 overflow: TextOverflow.ellipsis,
-                style: FontConstants.smallText1,
+                style: crossAxisCount == 1
+                    ? FontConstants.caption1
+                    : FontConstants.smallText1,
               ),
             ),
           ),
@@ -540,11 +544,11 @@ class _HomeScreenState extends State<HomeScreen>
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
                                     mainAxisExtent:
-                                        crossAxisCount == 1 ? 250 : 210,
+                                        crossAxisCount == 1 ? 300 : 210,
                                     childAspectRatio: 2 / 1,
-                                    crossAxisSpacing: 8,
+                                    crossAxisSpacing: 16,
                                     crossAxisCount: crossAxisCount,
-                                    mainAxisSpacing: 8,
+                                    mainAxisSpacing: 16,
                                   ),
                                   itemBuilder: (context, index) {
                                     return GestureDetector(

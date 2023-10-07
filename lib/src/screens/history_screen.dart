@@ -27,7 +27,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   void initState() {
     super.initState();
-    getOrders();
+    getOrders(type: 'init');
   }
 
   @override
@@ -37,11 +37,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
     super.dispose();
   }
 
-  getOrders() async {
+  getOrders({String type = ''}) async {
     try {
       orders = [];
       String fromDate = DateFormat('yyyy-MM-dd').format(startDate);
       String toDate = DateFormat('yyyy-MM-dd').format(endDate);
+      if (type == 'init') {
+        fromDate = '';
+        toDate = '';
+      }
       final response =
           await orderService.getOrdersData(fromDate: fromDate, toDate: toDate);
       if (response!["code"] == 200) {
@@ -49,8 +53,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
           List data = response["data"];
 
           final groupedItemsMap = groupBy(data, (item) {
-            final createdAt = item["created_at"].toString();
-            return createdAt.split('T')[0];
+            DateTime dateTime = DateTime.parse(item["created_at"]).toLocal();
+            String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
+            return formattedDate;
           });
 
           groupedItemsMap.forEach((date, items) {
@@ -74,7 +79,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   String formatTimestamp(String timestamp) {
-    final dateTime = DateTime.parse(timestamp);
+    final dateTime = DateTime.parse('${timestamp}Z').toLocal();
     final formattedTime = DateFormat("hh:mm a").format(dateTime);
     return formattedTime;
   }
