@@ -462,17 +462,17 @@ class _HomeScreenState extends State<HomeScreen>
           onWillPop: () async {
             return false;
           },
-          child: Container(
-            padding: const EdgeInsets.only(
-              left: 16,
-              right: 16,
-              bottom: 24,
-            ),
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                shopTab
-                    ? SingleChildScrollView(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              shopTab
+                  ? SingleChildScrollView(
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          bottom: 24,
+                        ),
                         child: Column(
                           children: [
                             Container(
@@ -557,10 +557,17 @@ class _HomeScreenState extends State<HomeScreen>
                             ),
                           ],
                         ),
-                      )
-                    : Container(),
-                productTab
-                    ? SingleChildScrollView(
+                      ),
+                    )
+                  : Container(),
+              productTab
+                  ? SingleChildScrollView(
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          bottom: 24,
+                        ),
                         child: Column(
                           children: [
                             brands.isNotEmpty
@@ -714,10 +721,10 @@ class _HomeScreenState extends State<HomeScreen>
                                 : Container(),
                           ],
                         ),
-                      )
-                    : Container(),
-              ],
-            ),
+                      ),
+                    )
+                  : Container(),
+            ],
           ),
         ),
         bottomNavigationBar: const BottomBarScreen(),
