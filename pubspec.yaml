@@ -46,7 +46,6 @@ dependencies:
   collection: ^1.17.2
   flutter_launcher_icons: ^0.13.1
   dots_indicator: ^3.0.0
-  autoscale_tabbarview: ^1.0.2
   number_paginator: ^0.4.0
   custom_date_range_picker: ^1.0.10
   image_picker: ^1.0.4
