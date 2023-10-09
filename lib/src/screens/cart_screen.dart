@@ -932,21 +932,33 @@ class _CartScreenState extends State<CartScreen> {
                                                   onPressed: () {
                                                     if (carts[index]
                                                             ['quantity'] >
-                                                        0) {
-                                                      setState(() {
-                                                        carts[index]
-                                                            ['quantity']--;
-                                                        carts[index][
-                                                                'totalamount'] =
-                                                            double.parse(carts[
-                                                                            index]
-                                                                        [
-                                                                        "price"]
-                                                                    .toString()) *
-                                                                carts[index][
-                                                                    'quantity'];
-                                                      });
+                                                        1) {
+                                                      carts[index]
+                                                          ['quantity']--;
+                                                      carts[index]
+                                                              ['totalamount'] =
+                                                          double.parse(carts[
+                                                                          index]
+                                                                      ["price"]
+                                                                  .toString()) *
+                                                              carts[index]
+                                                                  ['quantity'];
+                                                    } else {
+                                                      CartProvider
+                                                          cartProvider =
+                                                          Provider.of<
+                                                                  CartProvider>(
+                                                              context,
+                                                              listen: false);
+                                                      cartProvider.addCount(
+                                                          cartProvider.count -
+                                                              1);
+
+                                                      carts.removeAt(index);
                                                     }
+
+                                                    saveListToSharedPreferences(
+                                                        carts);
                                                   },
                                                 ),
                                               ),
@@ -1001,18 +1013,18 @@ class _CartScreenState extends State<CartScreen> {
                                                     // if (product['quantity'] <
                                                     //     int.parse(product["stock_quantity"]
                                                     //         .toString())) {
-                                                    setState(() {
-                                                      carts[index]
-                                                          ['quantity']++;
-                                                      carts[index]
-                                                              ['totalamount'] =
-                                                          double.parse(carts[
-                                                                          index]
-                                                                      ["price"]
-                                                                  .toString()) *
-                                                              carts[index]
-                                                                  ['quantity'];
-                                                    });
+                                                    carts[index]['quantity']++;
+                                                    carts[index]
+                                                        ['totalamount'] = double
+                                                            .parse(carts[index]
+                                                                    ["price"]
+                                                                .toString()) *
+                                                        carts[index]
+                                                            ['quantity'];
+                                                    saveListToSharedPreferences(
+                                                        carts);
+                                                    saveListToSharedPreferences(
+                                                        carts);
                                                     // }
                                                   },
                                                 ),
