@@ -380,11 +380,11 @@ class _HomeScreenState extends State<HomeScreen>
                     children: [
                       Text(
                         greeting,
-                        style: FontConstants.body1,
+                        style: FontConstants.subheadline1,
                       ),
                       Text(
                         profileName,
-                        style: FontConstants.caption2,
+                        style: FontConstants.body1,
                       ),
                     ],
                   );
@@ -397,29 +397,40 @@ class _HomeScreenState extends State<HomeScreen>
               },
             ),
           ),
-          leading: Container(
-            margin: const EdgeInsets.only(
-              left: 16,
-              top: 8,
-              bottom: 8,
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                Routes.profile,
+                arguments: {
+                  'from': 'home',
+                },
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.only(
+                left: 16,
+                top: 8,
+                bottom: 8,
+              ),
+              decoration: profileImage == ''
+                  ? BoxDecoration(
+                      color: ColorConstants.fillcolor,
+                      image: DecorationImage(
+                        image: AssetImage("assets/images/profile.png"),
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(50),
+                    )
+                  : BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(
+                            '${ApiConstants.baseUrl}${profileImage.toString()}'),
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
             ),
-            decoration: profileImage == ''
-                ? BoxDecoration(
-                    color: ColorConstants.fillcolor,
-                    image: DecorationImage(
-                      image: AssetImage("assets/images/profile.png"),
-                      fit: BoxFit.cover,
-                    ),
-                    borderRadius: BorderRadius.circular(50),
-                  )
-                : BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          '${ApiConstants.baseUrl}${profileImage.toString()}'),
-                      fit: BoxFit.cover,
-                    ),
-                    borderRadius: BorderRadius.circular(50),
-                  ),
           ),
           actions: [
             IconButton(
@@ -538,9 +549,9 @@ class _HomeScreenState extends State<HomeScreen>
                                   SliverGridDelegateWithFixedCrossAxisCount(
                                 mainAxisExtent: crossAxisCount == 1 ? 300 : 210,
                                 childAspectRatio: 2 / 1,
-                                crossAxisSpacing: 16,
+                                crossAxisSpacing: 8,
                                 crossAxisCount: crossAxisCount,
-                                mainAxisSpacing: 16,
+                                mainAxisSpacing: 8,
                               ),
                               itemBuilder: (context, index) {
                                 return GestureDetector(

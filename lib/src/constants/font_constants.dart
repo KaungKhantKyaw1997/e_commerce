@@ -85,6 +85,12 @@ class FontConstants {
     color: Colors.black,
   );
 
+  static TextStyle title2 = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w400,
+    color: Colors.black,
+  );
+
   static TextStyle subtitle1 = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w400,

@@ -9,12 +9,10 @@ class ProductsService {
 
   Future<Map<String, dynamic>> getProductsData(
       Map<String, dynamic> body) async {
-    var token = await storage.read(key: "token");
     final response = await http.post(
       Uri.parse(ApiConstants.productsUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token',
       },
       body: jsonEncode(body),
     );

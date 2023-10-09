@@ -127,7 +127,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         bottom: 8,
                       ),
                       child: Text(
-                        "Welcome to Watch",
+                        "Welcome to Watch Vault",
                         textAlign: TextAlign.center,
                         style: FontConstants.headline1,
                       ),

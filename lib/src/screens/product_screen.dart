@@ -20,7 +20,7 @@ class ProductScreen extends StatefulWidget {
 }
 
 class _ProductScreenState extends State<ProductScreen> {
-  ScrollController _detailsController = ScrollController();
+  ScrollController _scrollController = ScrollController();
   final PageController _imageController = PageController();
   List<Map<String, dynamic>> carts = [];
   Map<String, dynamic> product = {};
@@ -74,7 +74,7 @@ class _ProductScreenState extends State<ProductScreen> {
 
   @override
   void dispose() {
-    _detailsController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -104,7 +104,7 @@ class _ProductScreenState extends State<ProductScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        controller: _detailsController,
+        controller: _scrollController,
         scrollDirection: Axis.vertical,
         child: Container(
           padding: const EdgeInsets.symmetric(

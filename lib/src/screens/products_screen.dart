@@ -26,7 +26,7 @@ class _ProductsScreenState extends State<ProductsScreen>
   final productsService = ProductsService();
   FocusNode _fromFocusNode = FocusNode();
   FocusNode _toFocusNode = FocusNode();
-  final ScrollController _productController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   TextEditingController search = TextEditingController(text: '');
   TextEditingController _fromPrice = TextEditingController(text: '');
   TextEditingController _toPrice = TextEditingController(text: '');
@@ -68,7 +68,7 @@ class _ProductsScreenState extends State<ProductsScreen>
   @override
   void dispose() {
     modelsService.cancelRequest();
-    _productController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -559,7 +559,7 @@ class _ProductsScreenState extends State<ProductsScreen>
                     )
                   : Container(),
               GridView.builder(
-                controller: _productController,
+                controller: _scrollController,
                 shrinkWrap: true,
                 itemCount: products.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

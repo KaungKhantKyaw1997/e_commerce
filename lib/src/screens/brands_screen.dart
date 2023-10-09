@@ -18,7 +18,7 @@ class BrandsScreen extends StatefulWidget {
 class _BrandsScreenState extends State<BrandsScreen> {
   final brandsService = BrandsService();
   TextEditingController search = TextEditingController(text: '');
-  final ScrollController _brandsController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   List brands = [];
   int page = 1;
   int pageCounts = 0;
@@ -33,7 +33,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
   @override
   void dispose() {
     brandsService.cancelRequest();
-    _brandsController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -200,7 +200,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
                     )
                   : Container(),
               ListView.builder(
-                controller: _brandsController,
+                controller: _scrollController,
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 itemCount: brands.length,

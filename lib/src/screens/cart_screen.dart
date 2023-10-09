@@ -26,7 +26,7 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  final ScrollController _cartController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   final addressService = AddressService();
   final orderService = OrderService();
   FocusNode _countryFocusNode = FocusNode();
@@ -59,7 +59,7 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   void dispose() {
-    _cartController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -67,7 +67,16 @@ class _CartScreenState extends State<CartScreen> {
     try {
       final response = await addressService.getAddressData();
       if (response!["code"] == 200) {
-        setState(() {});
+        setState(() {
+          country.text = response["data"]["country"] ?? "";
+          city.text = response["data"]["city"] ?? "";
+          state.text = response["data"]["state"] ?? "";
+          township.text = response["data"]["township"] ?? "";
+          postalCode.text = response["data"]["postal_code"] ?? "";
+          ward.text = response["data"]["ward"] ?? "";
+          streetAddress.text = response["data"]["street_address"] ?? "";
+          homeAddress.text = response["data"]["home_address"] ?? "";
+        });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -722,9 +731,12 @@ class _CartScreenState extends State<CartScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
-        title: Text(
-          language["Cart"] ?? "Cart",
-          style: FontConstants.title1,
+        title: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            language["Cart"] ?? "Cart",
+            style: FontConstants.title2,
+          ),
         ),
         actions: [
           carts.isNotEmpty
@@ -762,7 +774,7 @@ class _CartScreenState extends State<CartScreen> {
                 color: Colors.white,
               ),
               child: ListView.builder(
-                controller: _cartController,
+                controller: _scrollController,
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 itemCount: carts.length,

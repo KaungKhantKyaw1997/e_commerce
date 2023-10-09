@@ -14,6 +14,8 @@ class LanguageScreen extends StatefulWidget {
 }
 
 class _LanguageScreenState extends State<LanguageScreen> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -21,6 +23,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -68,6 +71,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
           return true;
         },
         child: SingleChildScrollView(
+          controller: _scrollController,
           child: Container(
             width: MediaQuery.of(context).size.width,
             margin: EdgeInsets.symmetric(

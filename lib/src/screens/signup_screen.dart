@@ -22,25 +22,27 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   final authService = AuthService();
+  ScrollController _scrollController = ScrollController();
   FocusNode _userFocusNode = FocusNode();
   FocusNode _passwordFocusNode = FocusNode();
   FocusNode _confirmPasswordFocusNode = FocusNode();
   FocusNode _nameFocusNode = FocusNode();
   FocusNode _emailFocusNode = FocusNode();
   FocusNode _phoneFocusNode = FocusNode();
-  ScrollController _scrollController = ScrollController();
-  final ImagePicker _picker = ImagePicker();
-  XFile? pickedFile;
-  String profileImage = '';
+
   TextEditingController username = TextEditingController(text: '');
   TextEditingController password = TextEditingController(text: '');
   TextEditingController confirmpassword = TextEditingController(text: '');
-
   TextEditingController name = TextEditingController(text: '');
   TextEditingController email = TextEditingController(text: '');
   TextEditingController phone = TextEditingController(text: '');
+
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
+
+  final ImagePicker _picker = ImagePicker();
+  XFile? pickedFile;
+  String profileImage = '';
 
   @override
   void initState() {

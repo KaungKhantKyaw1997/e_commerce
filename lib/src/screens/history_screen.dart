@@ -19,7 +19,7 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> {
   final orderService = OrderService();
-  final ScrollController _orderController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   List orders = [];
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
@@ -33,7 +33,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   void dispose() {
     orderService.cancelRequest();
-    _orderController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -122,9 +122,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
-        title: Text(
-          language["History"] ?? "History",
-          style: FontConstants.title1,
+        title: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            language["History"] ?? "History",
+            style: FontConstants.title2,
+          ),
         ),
         actions: [
           IconButton(
@@ -151,7 +154,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ),
           width: double.infinity,
           child: ListView.builder(
-            controller: _orderController,
+            controller: _scrollController,
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
             itemCount: orders.length,
@@ -192,7 +195,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       color: Colors.grey,
                     ),
                     ListView.builder(
-                      controller: _orderController,
+                      controller: _scrollController,
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
                       itemCount: orders[index]["items"].length,

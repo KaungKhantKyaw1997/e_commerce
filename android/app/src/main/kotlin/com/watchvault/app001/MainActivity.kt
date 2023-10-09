@@ -1,4 +1,4 @@
-package com.kkk.app001
+package com.watchvault.app001
 
 import io.flutter.embedding.android.FlutterActivity
 

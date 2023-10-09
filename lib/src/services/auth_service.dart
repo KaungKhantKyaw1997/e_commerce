@@ -58,6 +58,21 @@ class AuthService {
     return base64Encode(imageBytes);
   }
 
+  Future<Map<String, dynamic>> changePasswordData(
+      Map<String, dynamic> body) async {
+    var token = await storage.read(key: "token");
+    final response = await http.post(
+      Uri.parse(ApiConstants.changepasswordUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+
+    return jsonDecode(response.body);
+  }
+
   signout(BuildContext context) {
     clearData();
     Navigator.pushNamed(context, Routes.signin);

@@ -17,7 +17,7 @@ class HistoryDetailsScreen extends StatefulWidget {
 class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
   int id = 0;
   final orderService = OrderService();
-  final ScrollController _orderController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   Map<String, dynamic> details = {};
 
   @override
@@ -37,7 +37,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
   @override
   void dispose() {
     orderService.cancelRequest();
-    _orderController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -89,7 +89,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        controller: _orderController,
+        controller: _scrollController,
         child: Container(
           padding: const EdgeInsets.symmetric(
             horizontal: 16,

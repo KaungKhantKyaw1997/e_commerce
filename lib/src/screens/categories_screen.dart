@@ -18,7 +18,7 @@ class CategoriesScreen extends StatefulWidget {
 class _CategoriesScreenState extends State<CategoriesScreen> {
   final categoriesService = CategoriesService();
   TextEditingController search = TextEditingController(text: '');
-  final ScrollController _categoriesController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   List categories = [];
   int page = 1;
   int pageCounts = 0;
@@ -33,7 +33,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   @override
   void dispose() {
     categoriesService.cancelRequest();
-    _categoriesController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -200,7 +200,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     )
                   : Container(),
               ListView.builder(
-                controller: _categoriesController,
+                controller: _scrollController,
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 itemCount: categories.length,

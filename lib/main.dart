@@ -65,7 +65,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Watch',
+      title: 'Watch Vault',
       theme: ThemeData(
         primarySwatch: Palette.kToDark,
         scaffoldBackgroundColor: Color(0xFFF1F3F6),

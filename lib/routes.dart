@@ -1,5 +1,6 @@
 import 'package:e_commerce/src/screens/brands_screen.dart';
 import 'package:e_commerce/src/screens/categories_screen.dart';
+import 'package:e_commerce/src/screens/change_password_screen.dart';
 import 'package:e_commerce/src/screens/history_details_screen.dart';
 import 'package:e_commerce/src/screens/history_screen.dart';
 import 'package:e_commerce/src/screens/product_screen.dart';
@@ -30,6 +31,7 @@ class Routes {
   static const String setting = '/setting';
   static const String profile = '/profile';
   static const String language = '/language';
+  static const String change_password = '/change_password';
 
   static final Map<String, WidgetBuilder> routes = {
     signin: (BuildContext context) => const SignInScreen(),
@@ -46,5 +48,6 @@ class Routes {
     setting: (BuildContext context) => const SettingScreen(),
     profile: (BuildContext context) => const ProfileScreen(),
     language: (BuildContext context) => const LanguageScreen(),
+    change_password: (BuildContext context) => const ChangePasswordScreen(),
   };
 }

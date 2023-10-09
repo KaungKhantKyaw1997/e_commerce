@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.kkk.app001">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.watchvault.app001">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />  
@@ -6,7 +6,7 @@
 
     <application
         android:requestLegacyExternalStorage="true"
-        android:label="Watch"
+        android:label="Watch Vault"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

@@ -19,7 +19,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
     {"index": 0, "icon": "assets/icons/home.svg", "label": "Home"},
     {"index": 1, "icon": "assets/icons/cart.svg", "label": "Cart"},
     {"index": 2, "icon": "assets/icons/history.svg", "label": "History"},
-    {"index": 3, "icon": "assets/icons/setting.svg", "label": "Setting"}
+    {"index": 3, "icon": "assets/icons/setting.svg", "label": "Settings"}
   ];
 
   Future<void> _onTabSelected(int index) async {
@@ -35,7 +35,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
       Navigator.pushNamed(context, Routes.cart);
     } else if (data["label"] == 'History') {
       Navigator.pushNamed(context, Routes.history);
-    } else if (data["label"] == 'Setting') {
+    } else if (data["label"] == 'Settings') {
       Navigator.pushNamed(context, Routes.setting);
     }
   }

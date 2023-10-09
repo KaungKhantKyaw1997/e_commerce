@@ -10,14 +10,12 @@ class BrandsService {
 
   Future<Map<String, dynamic>?> getBrandsData(
       {int page = 1, int perPage = 10, String search = ''}) async {
-    var token = await storage.read(key: "token");
     try {
       final response = await dio.get(
         '${ApiConstants.brandsUrl}?page=$page&per_page=$perPage&search=$search',
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
-            'Authorization': 'Bearer $token',
           },
         ),
         cancelToken: _cancelToken,

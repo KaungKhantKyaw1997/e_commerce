@@ -20,6 +20,7 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   final authService = AuthService();
+  final ScrollController _scrollController = ScrollController();
   String lang = '';
   String profileImage = '';
   String profileName = '';
@@ -33,6 +34,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -115,11 +117,13 @@ class _SettingScreenState extends State<SettingScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
-        centerTitle: true,
         elevation: 0,
-        title: Text(
-          language["Setting"] ?? "Setting",
-          style: FontConstants.title1,
+        title: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            language["Settings"] ?? "Settings",
+            style: FontConstants.title2,
+          ),
         ),
       ),
       body: WillPopScope(
@@ -127,6 +131,7 @@ class _SettingScreenState extends State<SettingScreen> {
           return false;
         },
         child: SingleChildScrollView(
+          controller: _scrollController,
           child: Container(
             padding: const EdgeInsets.symmetric(
               horizontal: 16,
@@ -147,7 +152,13 @@ class _SettingScreenState extends State<SettingScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          // Navigator.pushNamed(context, Routes.profile);
+                          Navigator.pushNamed(
+                            context,
+                            Routes.profile,
+                            arguments: {
+                              'from': 'setting',
+                            },
+                          );
                         },
                         child: Container(
                           padding: const EdgeInsets.only(
@@ -160,11 +171,11 @@ class _SettingScreenState extends State<SettingScreen> {
                               Container(
                                 margin: const EdgeInsets.only(
                                   right: 16,
-                                  top: 8,
-                                  bottom: 8,
+                                  top: 16,
+                                  bottom: 16,
                                 ),
-                                width: 60,
-                                height: 60,
+                                width: 40,
+                                height: 40,
                                 decoration: profileImage == ''
                                     ? BoxDecoration(
                                         color: ColorConstants.fillcolor,
@@ -173,7 +184,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                               "assets/images/profile.png"),
                                           fit: BoxFit.cover,
                                         ),
-                                        borderRadius: BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(50),
                                       )
                                     : BoxDecoration(
                                         image: DecorationImage(
@@ -181,7 +192,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                               '${ApiConstants.baseUrl}${profileImage.toString()}'),
                                           fit: BoxFit.cover,
                                         ),
-                                        borderRadius: BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(50),
                                       ),
                               ),
                               Expanded(
@@ -196,7 +207,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                       children: [
                                         TextSpan(
                                           text: profileName,
-                                          style: FontConstants.caption2,
+                                          style: FontConstants.subheadline1,
                                         )
                                       ],
                                     ),
@@ -220,7 +231,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            language["General Info"] ?? "General Info",
+                            language["General"] ?? "General",
                             style: FontConstants.smallText1,
                           ),
                         ),
@@ -277,6 +288,81 @@ class _SettingScreenState extends State<SettingScreen> {
                                 child: Text(
                                   lang == "eng" ? "English" : "မြန်မာ",
                                   style: FontConstants.caption1,
+                                ),
+                              ),
+                              const Icon(
+                                Icons.arrow_forward_ios,
+                                size: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                        ),
+                        child: const Divider(
+                          height: 0,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          top: 16,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            language["Security"] ?? "Security",
+                            style: FontConstants.smallText1,
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, Routes.change_password);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                          ),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  right: 16,
+                                  top: 16,
+                                  bottom: 16,
+                                ),
+                                child: SvgPicture.asset(
+                                  "assets/icons/lock.svg",
+                                  width: 24,
+                                  height: 24,
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 16,
+                                    top: 16,
+                                    bottom: 16,
+                                  ),
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: language["Change Password"] ??
+                                              "Change Password",
+                                          style: FontConstants.caption2,
+                                        )
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
                               const Icon(
