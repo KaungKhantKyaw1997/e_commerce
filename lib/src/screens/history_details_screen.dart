@@ -142,12 +142,12 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                         children: [
                           FormattedAmount(
                             amount: double.parse(details["amount"].toString()),
-                            mainTextStyle: FontConstants.headline1,
-                            decimalTextStyle: FontConstants.body1,
+                            mainTextStyle: FontConstants.title2,
+                            decimalTextStyle: FontConstants.subheadline1,
                           ),
                           Text(
                             " Ks",
-                            style: FontConstants.body2,
+                            style: FontConstants.subheadline2,
                           ),
                         ],
                       )

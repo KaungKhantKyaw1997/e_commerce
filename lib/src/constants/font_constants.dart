@@ -49,6 +49,12 @@ class FontConstants {
     color: Colors.black,
   );
 
+  static TextStyle caption4 = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    color: Colors.white,
+  );
+
   static TextStyle smallText1 = TextStyle(
     fontSize: 10,
     fontWeight: FontWeight.w400,

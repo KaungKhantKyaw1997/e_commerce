@@ -22,8 +22,8 @@ class _MultiSelectChipState extends State<MultiSelectChip> {
               label: Text(
                 item,
                 style: selectedChoices.contains(item)
-                    ? FontConstants.smallText3
-                    : FontConstants.smallText2,
+                    ? FontConstants.caption4
+                    : FontConstants.caption2,
               ),
               selected: selectedChoices.contains(item),
               selectedColor: Theme.of(context).primaryColor,

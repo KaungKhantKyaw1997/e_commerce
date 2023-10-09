@@ -200,29 +200,9 @@ class _ProductsScreenState extends State<ProductsScreen>
                                     top: 8,
                                   ),
                                   child: Text(
-                                    language["Models"] ?? "Models",
+                                    language["Price Range"] ?? "Price Range",
                                     style: FontConstants.subheadline1,
                                   ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 12,
-                                  right: 12,
-                                ),
-                                child: MultiSelectChip(
-                                  models,
-                                  onSelectionChanged: (selectedList) {
-                                    setState(() {
-                                      selectedModels = selectedList;
-                                    });
-                                  },
-                                ),
-                              ),
-                              Center(
-                                child: Text(
-                                  language["Price Range"] ?? "Price Range",
-                                  style: FontConstants.subheadline1,
                                 ),
                               ),
                               RangeSlider(
@@ -254,7 +234,6 @@ class _ProductsScreenState extends State<ProductsScreen>
                                         left: 16,
                                         right: 4,
                                         top: 8,
-                                        bottom: 24,
                                       ),
                                       child: TextFormField(
                                         controller: _fromPrice,
@@ -301,7 +280,6 @@ class _ProductsScreenState extends State<ProductsScreen>
                                         left: 4,
                                         right: 16,
                                         top: 8,
-                                        bottom: 24,
                                       ),
                                       child: TextFormField(
                                         controller: _toPrice,
@@ -343,6 +321,31 @@ class _ProductsScreenState extends State<ProductsScreen>
                                     ),
                                   ),
                                 ],
+                              ),
+                              Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 8,
+                                  ),
+                                  child: Text(
+                                    language["Models"] ?? "Models",
+                                    style: FontConstants.subheadline1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 12,
+                                  right: 12,
+                                ),
+                                child: MultiSelectChip(
+                                  models,
+                                  onSelectionChanged: (selectedList) {
+                                    setState(() {
+                                      selectedModels = selectedList;
+                                    });
+                                  },
+                                ),
                               ),
                             ],
                           );
