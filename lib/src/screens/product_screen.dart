@@ -108,87 +108,123 @@ class _ProductScreenState extends State<ProductScreen> {
         scrollDirection: Axis.vertical,
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: 12,
+            horizontal: 16,
             vertical: 24,
           ),
           width: double.infinity,
-          height: MediaQuery.of(context).orientation == Orientation.landscape
-              ? MediaQuery.of(context).size.width
-              : MediaQuery.of(context).size.height,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              product.containsKey("product_images") &&
-                      product["product_images"].isNotEmpty
-                  ? Expanded(
-                      child: PageView.builder(
-                        scrollDirection: Axis.horizontal,
-                        controller: _imageController,
-                        itemCount: product["product_images"].length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            margin: EdgeInsets.symmetric(
-                              horizontal: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                    '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'),
-                                // image: AssetImage("assets/images/logo.png"),
-                                fit: BoxFit.fill,
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: Colors.transparent,
-                              ),
-                            ),
-                          );
-                        },
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 4,
+                    child: SizedBox(
+                      height: 200,
+                      child: Column(
+                        children: [
+                          product.containsKey("product_images") &&
+                                  product["product_images"].isNotEmpty
+                              ? Expanded(
+                                  child: PageView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    controller: _imageController,
+                                    itemCount: product["product_images"].length,
+                                    itemBuilder: (context, index) {
+                                      return Container(
+                                        margin: EdgeInsets.symmetric(
+                                          horizontal: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: NetworkImage(
+                                                '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'),
+                                            fit: BoxFit.fill,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: Colors.transparent,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                )
+                              : Container(),
+                          product.containsKey("product_images") &&
+                                  product["product_images"].isNotEmpty
+                              ? DotsIndicator(
+                                  dotsCount: product["product_images"].length,
+                                  position: _currentPage.toInt(),
+                                  decorator: DotsDecorator(
+                                    size: Size.square(8),
+                                    activeSize: Size(12, 16),
+                                    color: Colors.grey,
+                                    activeColor:
+                                        Theme.of(context).primaryColorDark,
+                                  ),
+                                )
+                              : Container(),
+                        ],
                       ),
-                    )
-                  : Container(),
-              product.containsKey("product_images") &&
-                      product["product_images"].isNotEmpty
-                  ? DotsIndicator(
-                      dotsCount: product["product_images"].length,
-                      position: _currentPage.toInt(),
-                      decorator: DotsDecorator(
-                        size: Size.square(10),
-                        activeSize: Size(16, 20),
-                        color: Colors.grey,
-                        activeColor: Theme.of(context).primaryColorDark,
-                      ),
-                    )
-                  : Container(),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 4,
-                  right: 4,
-                  top: 8,
-                  bottom: 4,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      product["brand_name"] ?? "",
-                      style: FontConstants.subheadline1,
                     ),
-                    SizedBox(
-                      width: 6,
+                  ),
+                  Expanded(
+                    flex: 6,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 4,
+                            bottom: 4,
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              product["brand_name"] ?? "",
+                              overflow: TextOverflow.ellipsis,
+                              style: FontConstants.headline1,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 4,
+                            bottom: 16,
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              product["model"] ?? "",
+                              overflow: TextOverflow.ellipsis,
+                              style: FontConstants.body2,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 4,
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              product["description"] ?? "",
+                              maxLines: 5,
+                              overflow: TextOverflow.ellipsis,
+                              style: FontConstants.body1,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      '(${product["model"]})',
-                      style: FontConstants.body2,
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               Container(
-                margin: EdgeInsets.symmetric(
-                  horizontal: 4,
+                margin: EdgeInsets.only(
+                  top: 16,
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
