@@ -111,12 +111,13 @@ class _SignInScreenState extends State<SignInScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      width: 300,
-                      height: 300,
-                      decoration: const BoxDecoration(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage('assets/images/signin.png'),
                         ),
+                        borderRadius: BorderRadius.circular(100),
                       ),
                     ),
                     Padding(
@@ -124,12 +125,24 @@ class _SignInScreenState extends State<SignInScreen> {
                         left: 16,
                         right: 16,
                         top: 16,
-                        bottom: 8,
+                        bottom: 16,
                       ),
-                      child: Text(
-                        "Welcome to Watch Vault",
-                        textAlign: TextAlign.center,
-                        style: FontConstants.headline1,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            "Watch Vault",
+                            textAlign: TextAlign.center,
+                            style: FontConstants.title2,
+                          ),
+                          Text(
+                            " BY DIGGIE",
+                            textAlign: TextAlign.center,
+                            style: FontConstants.subheadline2,
+                          ),
+                        ],
                       ),
                     ),
                     Padding(

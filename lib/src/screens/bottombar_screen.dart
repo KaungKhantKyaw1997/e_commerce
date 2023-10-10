@@ -53,9 +53,9 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
         ),
         child: BottomNavigationBar(
           currentIndex: bottomProvider.currentIndex,
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Theme.of(context).primaryColor,
-          selectedItemColor: Colors.white,
+          type: BottomNavigationBarType.shifting,
+          backgroundColor: Colors.white,
+          selectedItemColor: Theme.of(context).primaryColor,
           unselectedItemColor: Colors.grey,
           selectedFontSize: FontConstants.bottom,
           unselectedFontSize: FontConstants.bottom,
@@ -78,7 +78,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                             navItem["icon"],
                             colorFilter: ColorFilter.mode(
                               navItem["index"] == bottomProvider.currentIndex
-                                  ? Colors.white
+                                  ? Theme.of(context).primaryColor
                                   : Colors.grey,
                               BlendMode.srcIn,
                             ),
@@ -120,7 +120,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                         navItem["icon"],
                         colorFilter: ColorFilter.mode(
                           navItem["index"] == bottomProvider.currentIndex
-                              ? Colors.white
+                              ? Theme.of(context).primaryColor
                               : Colors.grey,
                           BlendMode.srcIn,
                         ),
