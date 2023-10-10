@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:e_commerce/src/providers/bottom_provider.dart';
+import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
@@ -88,6 +91,14 @@ class AuthService {
 
   logout(BuildContext context) {
     clearData();
+    CartProvider cartProvider =
+        Provider.of<CartProvider>(context, listen: false);
+    cartProvider.addCount(0);
+
+    BottomProvider bottomProvider =
+        Provider.of<BottomProvider>(context, listen: false);
+    bottomProvider.selectIndex(0);
+
     Navigator.pushNamed(context, Routes.home);
   }
 

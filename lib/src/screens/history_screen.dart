@@ -1,6 +1,8 @@
 import 'package:collection/collection.dart';
+import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/widgets/custom_date_range.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:e_commerce/global.dart';
@@ -19,15 +21,18 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> {
   final orderService = OrderService();
+  final authService = AuthService();
+  final storage = FlutterSecureStorage();
   final ScrollController _scrollController = ScrollController();
   List orders = [];
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
+  bool validtoken = true;
 
   @override
   void initState() {
     super.initState();
-    getOrders(type: 'init');
+    verifyToken();
   }
 
   @override
@@ -35,6 +40,32 @@ class _HistoryScreenState extends State<HistoryScreen> {
     orderService.cancelRequest();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  verifyToken() async {
+    var token = await storage.read(key: "token") ?? "";
+    if (token == "") {
+      setState(() {
+        validtoken = false;
+      });
+      return;
+    }
+    try {
+      final body = {
+        "token": token,
+      };
+      final response = await authService.verifyTokenData(body);
+      if (response["code"] != 200) {
+        setState(() {
+          validtoken = false;
+        });
+        authService.clearData();
+      } else {
+        getOrders(type: 'init');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   getOrders({String type = ''}) async {
@@ -130,20 +161,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: SvgPicture.asset(
-              "assets/icons/calendar.svg",
-              width: 24,
-              height: 24,
-              colorFilter: const ColorFilter.mode(
-                Colors.black,
-                BlendMode.srcIn,
-              ),
-            ),
-            onPressed: () {
-              _selectDateRange(context);
-            },
-          ),
+          validtoken
+              ? IconButton(
+                  icon: SvgPicture.asset(
+                    "assets/icons/calendar.svg",
+                    width: 24,
+                    height: 24,
+                    colorFilter: const ColorFilter.mode(
+                      Colors.black,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  onPressed: () {
+                    _selectDateRange(context);
+                  },
+                )
+              : Container(),
         ],
       ),
       body: SingleChildScrollView(

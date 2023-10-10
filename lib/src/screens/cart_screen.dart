@@ -5,11 +5,13 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/providers/payment_provider.dart';
 import 'package:e_commerce/src/services/address_service.dart';
+import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/orders_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
@@ -31,6 +33,8 @@ class _CartScreenState extends State<CartScreen> {
   final ScrollController _scrollController = ScrollController();
   final addressService = AddressService();
   final orderService = OrderService();
+  final authService = AuthService();
+  final storage = FlutterSecureStorage();
   FocusNode _countryFocusNode = FocusNode();
   FocusNode _cityFocusNode = FocusNode();
   FocusNode _stateFocusNode = FocusNode();
@@ -55,11 +59,12 @@ class _CartScreenState extends State<CartScreen> {
     'Preorder',
     'Cash on Delivery',
   ];
+  bool validtoken = true;
 
   @override
   void initState() {
     super.initState();
-    getAddress();
+    verifyToken();
     getCart();
   }
 
@@ -67,6 +72,30 @@ class _CartScreenState extends State<CartScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  verifyToken() async {
+    var token = await storage.read(key: "token") ?? "";
+    if (token == "") {
+      validtoken = false;
+      return;
+    }
+    try {
+      final body = {
+        "token": token,
+      };
+      final response = await authService.verifyTokenData(body);
+      if (response["code"] != 200) {
+        setState(() {
+          validtoken = false;
+        });
+        authService.clearData();
+      } else {
+        getAddress();
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   getAddress() async {
@@ -781,7 +810,9 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                   ),
                   onPressed: () {
-                    _showOrderBottomSheet(context);
+                    !validtoken
+                        ? Navigator.pushNamed(context, Routes.login)
+                        : _showOrderBottomSheet(context);
                   },
                 )
               : Container(),

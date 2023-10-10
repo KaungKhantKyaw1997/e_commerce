@@ -57,6 +57,7 @@ class _SettingScreenState extends State<SettingScreen> {
         setState(() {
           validtoken = false;
         });
+        authService.clearData();
       }
     } catch (e) {
       print('Error: $e');

@@ -1,5 +1,4 @@
 import 'package:e_commerce/src/constants/color_constants.dart';
-import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
@@ -9,8 +8,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/routes.dart';
-import 'package:e_commerce/src/providers/bottom_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LogInScreen extends StatefulWidget {
@@ -50,7 +47,6 @@ class _LogInScreenState extends State<LogInScreen> {
 
   login() async {
     showLoadingDialog(context);
-    authService.clearData();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       final body = {
@@ -64,14 +60,6 @@ class _LogInScreenState extends State<LogInScreen> {
         prefs.setString("name", response["data"]["name"]);
         prefs.setString("profile_image", response["data"]["profile_image"]);
         await storage.write(key: "token", value: response["data"]["token"]);
-
-        CartProvider cartProvider =
-            Provider.of<CartProvider>(context, listen: false);
-        cartProvider.addCount(0);
-
-        BottomProvider bottomProvider =
-            Provider.of<BottomProvider>(context, listen: false);
-        bottomProvider.selectIndex(0);
 
         Navigator.pop(context);
         Navigator.pushNamed(context, Routes.home);
