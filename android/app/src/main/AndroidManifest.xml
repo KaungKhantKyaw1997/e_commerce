@@ -6,7 +6,7 @@
 
     <application
         android:requestLegacyExternalStorage="true"
-        android:label="Watch Vault By Diggie"
+        android:label="Watch Vault by Diggie"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

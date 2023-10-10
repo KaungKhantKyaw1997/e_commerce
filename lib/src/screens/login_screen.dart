@@ -142,7 +142,7 @@ class _LogInScreenState extends State<LogInScreen> {
                         style: FontConstants.title2,
                       ),
                       Text(
-                        " BY DIGGIE",
+                        " by Diggie",
                         textAlign: TextAlign.center,
                         style: FontConstants.subheadline2,
                       ),
