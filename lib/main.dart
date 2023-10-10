@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:e_commerce/src/providers/payment_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,13 +11,16 @@ import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  int cartCount = prefs.getInt('cartCount') ?? 0;
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => BottomProvider()),
-        ChangeNotifierProvider(create: (context) => CartProvider()),
-        ChangeNotifierProvider(create: (context) => PaymentProvider()),
+        ChangeNotifierProvider(create: (context) => CartProvider(cartCount)),
       ],
       child: MyApp(),
     ),

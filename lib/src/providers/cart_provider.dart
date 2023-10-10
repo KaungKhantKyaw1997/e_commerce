@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CartProvider extends ChangeNotifier {
-  int _count = 0;
+  int _count;
+
+  CartProvider(this._count);
 
   int get count => _count;
 
-  void addCount(int count) {
+  Future<void> addCount(int count) async {
     _count = count;
     notifyListeners();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('cartCount', _count);
   }
 }
