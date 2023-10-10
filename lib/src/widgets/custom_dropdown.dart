@@ -1,0 +1,60 @@
+import 'package:e_commerce/src/constants/color_constants.dart';
+import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+
+class CustomDropDown extends StatelessWidget {
+  final String value;
+  final List<String> items;
+  final Function(String?)? onChanged;
+
+  CustomDropDown({
+    required this.value,
+    required this.items,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InputDecorator(
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: ColorConstants.fillcolor,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 4,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide.none,
+        ),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: value,
+          onChanged: onChanged,
+          style: FontConstants.body1,
+          borderRadius: BorderRadius.circular(8),
+          icon: SvgPicture.asset(
+            "assets/icons/down_arrow.svg",
+            width: 24,
+            height: 24,
+            colorFilter: const ColorFilter.mode(
+              Colors.black,
+              BlendMode.srcIn,
+            ),
+          ),
+          items: items.map((item) {
+            return DropdownMenuItem<String>(
+              value: item,
+              child: Text(
+                item,
+                style: FontConstants.body1,
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+}

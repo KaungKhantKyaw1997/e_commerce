@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:e_commerce/src/providers/payment_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,6 +18,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (context) => BottomProvider()),
         ChangeNotifierProvider(create: (context) => CartProvider()),
+        ChangeNotifierProvider(create: (context) => PaymentProvider()),
       ],
       child: MyApp(),
     ),
@@ -63,7 +65,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Watch Vault',
+      title: 'Watch Vault By Diggie',
       theme: ThemeData(
         primarySwatch: Palette.kToDark,
         scaffoldBackgroundColor: Color(0xFFF1F3F6),

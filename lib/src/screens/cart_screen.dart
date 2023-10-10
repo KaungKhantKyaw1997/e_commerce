@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
+import 'package:e_commerce/src/providers/payment_provider.dart';
 import 'package:e_commerce/src/services/address_service.dart';
 import 'package:e_commerce/src/services/orders_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
+import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/svg.dart';
@@ -49,6 +51,10 @@ class _CartScreenState extends State<CartScreen> {
   TextEditingController homeAddress = TextEditingController(text: '');
   TextEditingController note = TextEditingController(text: '');
   List<Map<String, dynamic>> carts = [];
+  List<String> paymenttypes = [
+    'Preorder',
+    'Cash on Delivery',
+  ];
 
   @override
   void initState() {
@@ -122,6 +128,8 @@ class _CartScreenState extends State<CartScreen> {
           "home_address": homeAddress.text,
           "note": note.text,
         },
+        "payment_type": "",
+        "payslip_screenshot_path": ""
       };
       final response = await orderService.createOrderData(body);
       if (response["code"] == 200) {
@@ -152,6 +160,9 @@ class _CartScreenState extends State<CartScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
+        PaymentProvider paymentProvider =
+            Provider.of<PaymentProvider>(context, listen: true);
+
         return GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
@@ -625,7 +636,7 @@ class _CartScreenState extends State<CartScreen> {
                               padding: const EdgeInsets.only(
                                 left: 16,
                                 right: 16,
-                                bottom: 24,
+                                bottom: 8,
                               ),
                               child: TextFormField(
                                 controller: note,
@@ -656,6 +667,21 @@ class _CartScreenState extends State<CartScreen> {
                                     borderSide: BorderSide.none,
                                   ),
                                 ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                                bottom: 24,
+                              ),
+                              child: CustomDropDown(
+                                value: paymentProvider.paymentType,
+                                onChanged: (newValue) {
+                                  paymentProvider
+                                      .selectPayment(newValue ?? "Preorder");
+                                },
+                                items: paymenttypes,
                               ),
                             ),
                           ],
@@ -709,7 +735,11 @@ class _CartScreenState extends State<CartScreen> {
           ),
         );
       },
-    );
+    ).whenComplete(() {
+      PaymentProvider paymentProvider =
+          Provider.of<PaymentProvider>(context, listen: false);
+      paymentProvider.selectPayment("Preorder");
+    });
   }
 
   Future<void> saveListToSharedPreferences(
