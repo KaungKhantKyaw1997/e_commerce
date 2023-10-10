@@ -16,10 +16,10 @@
     "Confirm Password": "အတည်ပြုစကားဝှက်",
     "Enter Confirm Password": "အတည်ပြုစကားဝှက်ထည့်ပါ",
     "Passwords don't match": "စကားဝှက်များ မတိုက်ဆိုင်ပါ",
-    "Current Password": "Current Password",
-    "Enter Current Password": "Enter Current Password",
-    "New Password": "New Password",
-    "Enter New Password": "Enter New Password",
+    "Current Password": "လက်ရှိစကားဝှက်",
+    "Enter Current Password": "လက်ရှိစကားဝှက်ထည့်ပါ",
+    "New Password": "စကားဝှက်အသစ်",
+    "Enter New Password": "စကားဝှက်အသစ်ထည့်ပါ",
     "Name": "နာမည်",
     "Enter Name": "နာမည်ထည့်ပါ",
     "Email": "အီးမေးလ်",
@@ -85,5 +85,7 @@
     "Enter Street": "လမ်းထည့်ပါ",
     "Ward": "ရပ်ကွက်",
     "Enter Ward": "ရပ်ကွက်ထည့်ပါ",
-    "Note": "မှတ်ချက်"
+    "Note": "မှတ်ချက်",
+    "Upload Image": "ပုံတင်ပါ",
+    "Choose Image": "ပုံကိုရွေးပါ"
 }
