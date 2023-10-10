@@ -8,6 +8,7 @@ import 'package:e_commerce/src/services/categories_service.dart';
 import 'package:e_commerce/src/services/shops_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
@@ -29,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen>
   final shopsService = ShopsService();
   final brandsService = BrandsService();
   final categoriesService = CategoriesService();
+  final storage = FlutterSecureStorage();
   final ScrollController _scrollController = ScrollController();
   late TabController _tabController;
   List shops = [];
@@ -42,11 +44,13 @@ class _HomeScreenState extends State<HomeScreen>
   bool productTab = false;
   String profileImage = '';
   String profileName = '';
+  bool validtoken = true;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    verifyToken();
     getProfile();
     getShops();
     getProducts();
@@ -60,6 +64,28 @@ class _HomeScreenState extends State<HomeScreen>
     brandsService.cancelRequest();
     categoriesService.cancelRequest();
     super.dispose();
+  }
+
+  verifyToken() async {
+    var token = await storage.read(key: "token") ?? "";
+    if (token == "") {
+      validtoken = false;
+      return;
+    }
+    try {
+      final body = {
+        "token": token,
+      };
+      final response = await authService.verifyTokenData(body);
+      if (response["code"] != 200) {
+        setState(() {
+          validtoken = false;
+        });
+        authService.clearData();
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   getProfile() async {
@@ -399,13 +425,15 @@ class _HomeScreenState extends State<HomeScreen>
           ),
           leading: GestureDetector(
             onTap: () {
-              Navigator.pushNamed(
-                context,
-                Routes.profile,
-                arguments: {
-                  'from': 'home',
-                },
-              );
+              if (validtoken) {
+                Navigator.pushNamed(
+                  context,
+                  Routes.profile,
+                  arguments: {
+                    'from': 'home',
+                  },
+                );
+              }
             },
             child: Container(
               margin: const EdgeInsets.only(

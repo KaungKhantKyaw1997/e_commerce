@@ -178,13 +178,15 @@ class _SettingScreenState extends State<SettingScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            Routes.profile,
-                            arguments: {
-                              'from': 'setting',
-                            },
-                          );
+                          if (validtoken) {
+                            Navigator.pushNamed(
+                              context,
+                              Routes.profile,
+                              arguments: {
+                                'from': 'setting',
+                              },
+                            );
+                          }
                         },
                         child: Container(
                           padding: const EdgeInsets.only(
