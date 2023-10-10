@@ -11,6 +11,7 @@ import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:store_redirect/store_redirect.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -27,6 +28,7 @@ class _SettingScreenState extends State<SettingScreen> {
   String profileImage = '';
   String profileName = '';
   String version = '';
+  String packageName = '';
   bool validtoken = true;
 
   @override
@@ -67,6 +69,7 @@ class _SettingScreenState extends State<SettingScreen> {
   getData() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     version = packageInfo.version;
+    packageName = packageInfo.packageName;
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -484,7 +487,11 @@ class _SettingScreenState extends State<SettingScreen> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          StoreRedirect.redirect(
+                            androidAppId: packageName,
+                          );
+                        },
                         child: Padding(
                           padding: const EdgeInsets.only(
                             left: 16,
