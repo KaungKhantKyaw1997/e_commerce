@@ -76,7 +76,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
-      initialRoute: Routes.login,
+      initialRoute: Routes.home,
       routes: Routes.routes,
     );
   }

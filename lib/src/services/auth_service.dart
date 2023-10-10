@@ -73,25 +73,22 @@ class AuthService {
     return jsonDecode(response.body);
   }
 
-  Future<Map<String, dynamic>> verifyTokenData() async {
-    var token = await storage.read(key: "token");
-
+  Future<Map<String, dynamic>> verifyTokenData(
+      Map<String, dynamic> body) async {
     final response = await http.post(
       Uri.parse(ApiConstants.verifyTokenUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode({
-        "token": token,
-      }),
+      body: jsonEncode(body),
     );
 
     return jsonDecode(response.body);
   }
 
-  signout(BuildContext context) {
+  logout(BuildContext context) {
     clearData();
-    Navigator.pushNamed(context, Routes.login);
+    Navigator.pushNamed(context, Routes.home);
   }
 
   clearData() async {

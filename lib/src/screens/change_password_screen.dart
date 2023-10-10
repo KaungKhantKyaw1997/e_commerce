@@ -49,12 +49,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       };
 
       final response = await authService.changePasswordData(body);
+      Navigator.pop(context);
       if (response["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
-        Navigator.pushNamed(context, Routes.login);
+        Navigator.pop(context);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
-        Navigator.pop(context);
       }
     } catch (e) {
       print('Error: $e');

@@ -336,7 +336,7 @@ class _HomeScreenState extends State<HomeScreen>
                 style: FontConstants.button1,
               ),
               onPressed: () async {
-                authService.signout(context);
+                authService.logout(context);
               },
             ),
           ],

@@ -10,6 +10,7 @@ import 'package:e_commerce/src/screens/bottombar_screen.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -21,6 +22,7 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingScreen> {
   final authService = AuthService();
   final ScrollController _scrollController = ScrollController();
+  final storage = FlutterSecureStorage();
   String lang = '';
   String profileImage = '';
   String profileName = '';
@@ -41,8 +43,16 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   verifyToken() async {
+    var token = await storage.read(key: "token") ?? "";
+    if (token == "") {
+      validtoken = false;
+      return;
+    }
     try {
-      final response = await authService.verifyTokenData();
+      final body = {
+        "token": token,
+      };
+      final response = await authService.verifyTokenData(body);
       if (response["code"] != 200) {
         setState(() {
           validtoken = false;
@@ -117,7 +127,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 style: FontConstants.button1,
               ),
               onPressed: () async {
-                authService.signout(context);
+                authService.logout(context);
               },
             ),
           ],
@@ -252,13 +262,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         ),
                                       ),
                                     )
-                                  : Container(
-                                      padding: const EdgeInsets.only(
-                                        left: 16,
-                                        right: 16,
-                                        bottom: 16,
-                                      ),
-                                      width: double.infinity,
+                                  : Expanded(
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           padding: const EdgeInsets.symmetric(
@@ -269,12 +273,21 @@ class _SettingScreenState extends State<SettingScreen> {
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                           ),
+                                          backgroundColor: Colors.white,
+                                          side: BorderSide(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            width: 0.5,
+                                          ),
                                         ),
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          Navigator.pushNamed(
+                                              context, Routes.login);
+                                        },
                                         child: Text(
                                           language["Register or Log In"] ??
                                               "Register or Log In",
-                                          style: FontConstants.button1,
+                                          style: FontConstants.button2,
                                         ),
                                       ),
                                     ),
@@ -523,36 +536,32 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                        ),
-                        child: const Divider(
-                          height: 0,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () async {
-                          showExitDialog();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                          ),
-                          color: Colors.transparent,
-                          child: Center(
-                            child: Text(
-                              language["Log Out"] ?? "Log Out",
-                              style: FontConstants.caption2,
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
+                validtoken
+                    ? Container(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          onPressed: () {
+                            showExitDialog();
+                          },
+                          child: Text(
+                            language["Log Out"] ?? "Log Out",
+                            style: FontConstants.button1,
+                          ),
+                        ),
+                      )
+                    : Container(),
               ],
             ),
           ),
