@@ -25,10 +25,12 @@ class _SettingScreenState extends State<SettingScreen> {
   String profileImage = '';
   String profileName = '';
   String version = '';
+  bool validtoken = true;
 
   @override
   void initState() {
     super.initState();
+    verifyToken();
     getData();
   }
 
@@ -36,6 +38,19 @@ class _SettingScreenState extends State<SettingScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  verifyToken() async {
+    try {
+      final response = await authService.verifyTokenData();
+      if (response["code"] != 200) {
+        setState(() {
+          validtoken = false;
+        });
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   getData() async {
@@ -62,12 +77,12 @@ class _SettingScreenState extends State<SettingScreen> {
         child: AlertDialog(
           backgroundColor: Colors.white,
           title: Text(
-            language["Sign Out"] ?? "Sign Out",
+            language["Log Out"] ?? "Log Out",
             style: FontConstants.body1,
           ),
           content: Text(
-            language["Are you sure you want to sign out?"] ??
-                "Are you sure you want to sign out?",
+            language["Are you sure you want to log out?"] ??
+                "Are you sure you want to log out?",
             style: FontConstants.caption2,
           ),
           actions: [
@@ -168,16 +183,45 @@ class _SettingScreenState extends State<SettingScreen> {
                           color: Colors.transparent,
                           child: Row(
                             children: [
-                              Container(
-                                margin: const EdgeInsets.only(
-                                  right: 16,
-                                  top: 16,
-                                  bottom: 16,
-                                ),
-                                width: 40,
-                                height: 40,
-                                decoration: profileImage == ''
-                                    ? BoxDecoration(
+                              validtoken
+                                  ? Container(
+                                      margin: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      width: 40,
+                                      height: 40,
+                                      decoration: profileImage == ''
+                                          ? BoxDecoration(
+                                              color: ColorConstants.fillcolor,
+                                              image: DecorationImage(
+                                                image: AssetImage(
+                                                    "assets/images/profile.png"),
+                                                fit: BoxFit.cover,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            )
+                                          : BoxDecoration(
+                                              image: DecorationImage(
+                                                image: NetworkImage(
+                                                    '${ApiConstants.baseUrl}${profileImage.toString()}'),
+                                                fit: BoxFit.cover,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            ),
+                                    )
+                                  : Container(
+                                      margin: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
                                         color: ColorConstants.fillcolor,
                                         image: DecorationImage(
                                           image: AssetImage(
@@ -185,35 +229,55 @@ class _SettingScreenState extends State<SettingScreen> {
                                           fit: BoxFit.cover,
                                         ),
                                         borderRadius: BorderRadius.circular(50),
-                                      )
-                                    : BoxDecoration(
-                                        image: DecorationImage(
-                                          image: NetworkImage(
-                                              '${ApiConstants.baseUrl}${profileImage.toString()}'),
-                                          fit: BoxFit.cover,
-                                        ),
-                                        borderRadius: BorderRadius.circular(50),
                                       ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    right: 16,
-                                    top: 16,
-                                    bottom: 16,
-                                  ),
-                                  child: Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: profileName,
-                                          style: FontConstants.subheadline1,
-                                        )
-                                      ],
                                     ),
-                                  ),
-                                ),
-                              ),
+                              validtoken
+                                  ? Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 16,
+                                          top: 16,
+                                          bottom: 16,
+                                        ),
+                                        child: Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: profileName,
+                                                style:
+                                                    FontConstants.subheadline1,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      padding: const EdgeInsets.only(
+                                        left: 16,
+                                        right: 16,
+                                        bottom: 16,
+                                      ),
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 14,
+                                            vertical: 12,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                        onPressed: () {},
+                                        child: Text(
+                                          language["Register or Log In"] ??
+                                              "Register or Log In",
+                                          style: FontConstants.button1,
+                                        ),
+                                      ),
+                                    ),
                             ],
                           ),
                         ),
@@ -308,71 +372,77 @@ class _SettingScreenState extends State<SettingScreen> {
                           color: Colors.grey,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          top: 16,
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            language["Security"] ?? "Security",
-                            style: FontConstants.smallText1,
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, Routes.change_password);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                          ),
-                          child: Row(
-                            children: [
-                              Padding(
+                      validtoken
+                          ? Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                                top: 16,
+                              ),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  language["Security"] ?? "Security",
+                                  style: FontConstants.smallText1,
+                                ),
+                              ),
+                            )
+                          : Container(),
+                      validtoken
+                          ? GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, Routes.change_password);
+                              },
+                              child: Padding(
                                 padding: const EdgeInsets.only(
+                                  left: 16,
                                   right: 16,
-                                  top: 16,
-                                  bottom: 16,
                                 ),
-                                child: SvgPicture.asset(
-                                  "assets/icons/lock.svg",
-                                  width: 24,
-                                  height: 24,
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    right: 16,
-                                    top: 16,
-                                    bottom: 16,
-                                  ),
-                                  child: Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: language["Change Password"] ??
-                                              "Change Password",
-                                          style: FontConstants.caption2,
-                                        )
-                                      ],
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: SvgPicture.asset(
+                                        "assets/icons/lock.svg",
+                                        width: 24,
+                                        height: 24,
+                                      ),
                                     ),
-                                  ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 16,
+                                          top: 16,
+                                          bottom: 16,
+                                        ),
+                                        child: Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: language[
+                                                        "Change Password"] ??
+                                                    "Change Password",
+                                                style: FontConstants.caption2,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 20,
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const Icon(
-                                Icons.arrow_forward_ios,
-                                size: 20,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                            )
+                          : Container(),
                       Padding(
                         padding: const EdgeInsets.only(
                           left: 16,
@@ -474,7 +544,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           color: Colors.transparent,
                           child: Center(
                             child: Text(
-                              language["Sign Out"] ?? "Sign Out",
+                              language["Log Out"] ?? "Log Out",
                               style: FontConstants.caption2,
                             ),
                           ),

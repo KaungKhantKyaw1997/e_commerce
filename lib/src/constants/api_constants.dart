@@ -1,8 +1,9 @@
 class ApiConstants {
   static const String baseUrl = 'http://150.95.82.125:8001';
-  static const String signinUrl = '$baseUrl/api/auth/login';
-  static const String signupUrl = '$baseUrl/api/auth/register';
+  static const String loginUrl = '$baseUrl/api/auth/login';
+  static const String registerUrl = '$baseUrl/api/auth/register';
   static const String changepasswordUrl = '$baseUrl/api/auth/change-password';
+  static const String verifyTokenUrl = '$baseUrl/api/auth/verify-token';
   static const String imageUploadUrl = '$baseUrl/api/image/upload';
   static const String shopsUrl = '$baseUrl/api/shops';
   static const String categoriesUrl = '$baseUrl/api/categories';

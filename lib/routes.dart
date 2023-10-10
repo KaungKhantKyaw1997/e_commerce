@@ -7,18 +7,18 @@ import 'package:e_commerce/src/screens/product_screen.dart';
 import 'package:e_commerce/src/screens/products_screen.dart';
 import 'package:e_commerce/src/screens/language_screen.dart';
 import 'package:e_commerce/src/screens/profile_screen.dart';
-import 'package:e_commerce/src/screens/signup_screen.dart';
+import 'package:e_commerce/src/screens/register_screen.dart';
 import 'package:e_commerce/src/screens/success_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce/src/screens/cart_screen.dart';
 import 'package:e_commerce/src/screens/home_screen.dart';
-import 'package:e_commerce/src/screens/signin_screen.dart';
+import 'package:e_commerce/src/screens/login_screen.dart';
 import 'package:e_commerce/src/screens/setting_screen.dart';
 
 class Routes {
   static const String splash = '/splash';
-  static const String signin = '/signin';
-  static const String signup = '/signup';
+  static const String login = '/login';
+  static const String register = '/register';
   static const String home = '/home';
   static const String products = '/products';
   static const String product = '/product';
@@ -34,8 +34,8 @@ class Routes {
   static const String change_password = '/change_password';
 
   static final Map<String, WidgetBuilder> routes = {
-    signin: (BuildContext context) => const SignInScreen(),
-    signup: (BuildContext context) => const SignUpScreen(),
+    login: (BuildContext context) => const LogInScreen(),
+    register: (BuildContext context) => const RegisterScreen(),
     home: (BuildContext context) => const HomeScreen(),
     products: (BuildContext context) => const ProductsScreen(),
     product: (BuildContext context) => const ProductScreen(),

@@ -296,12 +296,12 @@ class _HomeScreenState extends State<HomeScreen>
         child: AlertDialog(
           backgroundColor: Colors.white,
           title: Text(
-            language["Sign Out"] ?? "Sign Out",
+            language["Log Out"] ?? "Log Out",
             style: FontConstants.body1,
           ),
           content: Text(
-            language["Are you sure you want to sign out?"] ??
-                "Are you sure you want to sign out?",
+            language["Are you sure you want to log out?"] ??
+                "Are you sure you want to log out?",
             style: FontConstants.caption2,
           ),
           actions: [

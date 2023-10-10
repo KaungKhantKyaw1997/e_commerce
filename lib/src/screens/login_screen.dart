@@ -14,14 +14,14 @@ import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+class LogInScreen extends StatefulWidget {
+  const LogInScreen({super.key});
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  State<LogInScreen> createState() => _LogInScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _LogInScreenState extends State<LogInScreen> {
   ScrollController _scrollController = ScrollController();
   final authService = AuthService();
   final storage = FlutterSecureStorage();
@@ -45,11 +45,11 @@ class _SignInScreenState extends State<SignInScreen> {
 
   void _handleSubmitted(String value) {
     if (value.isNotEmpty) {
-      signin();
+      login();
     }
   }
 
-  signin() async {
+  login() async {
     showLoadingDialog(context);
     authService.clearData();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -59,7 +59,7 @@ class _SignInScreenState extends State<SignInScreen> {
         "password": password.text,
       };
 
-      final response = await authService.signinData(body);
+      final response = await authService.loginData(body);
 
       if (response["code"] == 200) {
         prefs.setString("name", response["data"]["name"]);
@@ -115,7 +115,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       height: 200,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage('assets/images/signin.png'),
+                          image: AssetImage('assets/images/login.png'),
                         ),
                         borderRadius: BorderRadius.circular(100),
                       ),
@@ -299,11 +299,11 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            signin();
+                            login();
                           }
                         },
                         child: Text(
-                          language["Sign In"] ?? "Sign In",
+                          language["Log In"] ?? "Log In",
                           style: FontConstants.button1,
                         ),
                       ),
@@ -331,10 +331,10 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.pushNamed(context, Routes.signup);
+                          Navigator.pushNamed(context, Routes.register);
                         },
                         child: Text(
-                          language["Sign Up"] ?? "Sign Up",
+                          language["Register"] ?? "Register",
                           style: FontConstants.button2,
                         ),
                       ),

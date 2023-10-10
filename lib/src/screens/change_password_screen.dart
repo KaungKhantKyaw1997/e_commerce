@@ -51,7 +51,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       final response = await authService.changePasswordData(body);
       if (response["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
-        Navigator.pushNamed(context, Routes.signin);
+        Navigator.pushNamed(context, Routes.login);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);

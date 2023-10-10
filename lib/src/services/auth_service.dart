@@ -11,9 +11,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthService {
   final storage = FlutterSecureStorage();
 
-  Future<Map<String, dynamic>> signinData(Map<String, dynamic> body) async {
+  Future<Map<String, dynamic>> loginData(Map<String, dynamic> body) async {
     final response = await http.post(
-      Uri.parse(ApiConstants.signinUrl),
+      Uri.parse(ApiConstants.loginUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -23,9 +23,9 @@ class AuthService {
     return jsonDecode(response.body);
   }
 
-  Future<Map<String, dynamic>> signupData(Map<String, dynamic> body) async {
+  Future<Map<String, dynamic>> registerData(Map<String, dynamic> body) async {
     final response = await http.post(
-      Uri.parse(ApiConstants.signupUrl),
+      Uri.parse(ApiConstants.registerUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -73,9 +73,25 @@ class AuthService {
     return jsonDecode(response.body);
   }
 
+  Future<Map<String, dynamic>> verifyTokenData() async {
+    var token = await storage.read(key: "token");
+
+    final response = await http.post(
+      Uri.parse(ApiConstants.verifyTokenUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        "token": token,
+      }),
+    );
+
+    return jsonDecode(response.body);
+  }
+
   signout(BuildContext context) {
     clearData();
-    Navigator.pushNamed(context, Routes.signin);
+    Navigator.pushNamed(context, Routes.login);
   }
 
   clearData() async {

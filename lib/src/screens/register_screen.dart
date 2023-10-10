@@ -12,14 +12,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final authService = AuthService();
   ScrollController _scrollController = ScrollController();
@@ -78,7 +78,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
-  signup() async {
+  register() async {
     try {
       final body = {
         "name": name.text,
@@ -89,10 +89,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         "profile_image": profileImage,
       };
 
-      final response = await authService.signupData(body);
+      final response = await authService.registerData(body);
       if (response["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
-        Navigator.pushNamed(context, Routes.signin);
+        Navigator.pushNamed(context, Routes.login);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
@@ -121,7 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           centerTitle: true,
           elevation: 0,
           title: Text(
-            language["Sign Up"] ?? "Sign Up",
+            language["Register"] ?? "Register",
             style: FontConstants.title1,
           ),
           iconTheme: IconThemeData(
@@ -619,11 +619,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 if (pickedFile != null) {
                   await uploadFile();
                 }
-                signup();
+                register();
               }
             },
             child: Text(
-              language["Sign Up"] ?? "Sign Up",
+              language["Register"] ?? "Register",
               style: FontConstants.button1,
             ),
           ),
