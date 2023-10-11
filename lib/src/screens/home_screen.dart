@@ -401,19 +401,24 @@ class _HomeScreenState extends State<HomeScreen>
                     greeting = 'Good Evening,';
                   }
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        greeting,
-                        style: FontConstants.subheadline1,
-                      ),
-                      Text(
-                        profileName,
-                        style: FontConstants.body1,
-                      ),
-                    ],
-                  );
+                  return profileName == ""
+                      ? Text(
+                          greeting,
+                          style: FontConstants.body1,
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              greeting,
+                              style: FontConstants.body1,
+                            ),
+                            Text(
+                              profileName,
+                              style: FontConstants.caption2,
+                            ),
+                          ],
+                        );
                 } else {
                   return Text(
                     'Loading...',
@@ -464,8 +469,8 @@ class _HomeScreenState extends State<HomeScreen>
             IconButton(
               icon: SvgPicture.asset(
                 "assets/icons/sign_out.svg",
-                width: 24,
-                height: 24,
+                width: 28,
+                height: 28,
                 colorFilter: const ColorFilter.mode(
                   Colors.black,
                   BlendMode.srcIn,
