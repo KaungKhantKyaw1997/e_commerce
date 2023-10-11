@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "274063087309",
+    "project_id": "watch-vault-16b43",
+    "storage_bucket": "watch-vault-16b43.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:274063087309:android:aff3f7291ad669a81fbb84",
+        "android_client_info": {
+          "package_name": "com.watchvault.app001"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQjIhrPokVu1kMcy2qVc_pGSoz62sML_I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -14,4 +14,5 @@ class ApiConstants {
   static const String ordersUrl = '$baseUrl/api/orders';
   static const String orderUrl = '$baseUrl/api/order-items';
   static const String profleUrl = '$baseUrl/api/profile';
+  static const String usersUrl = '$baseUrl/api/users';
 }

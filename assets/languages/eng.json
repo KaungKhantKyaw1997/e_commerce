@@ -56,11 +56,8 @@
     "Next": "Next",
     "Categories": "Categories",
     "Products": "Products",
-    "Search Category": "Search Category",
     "Brands": "Brands",
-    "Search Brand": "Search Brand",
     "Models": "Models",
-    "Search Model": "Search Model",
     "See More": "See More",
     "Shops": "Shops",
     "From": "From",
@@ -87,5 +84,9 @@
     "Enter Ward": "Enter Ward",
     "Note": "Note",
     "Upload Image": "Upload Image",
-    "Choose Image": "Choose Image"
+    "Choose Image": "Choose Image",
+    "User": "User",
+    "Shop": "Shop",
+    "Category": "Category",
+    "Product": "Product"
 }

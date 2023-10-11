@@ -136,7 +136,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
           style: FontConstants.body1,
           cursorColor: Colors.black,
           decoration: InputDecoration(
-            hintText: language["Search Brand"] ?? "Search Brand",
+            hintText: language["Search"] ?? "Search",
             filled: true,
             fillColor: ColorConstants.fillcolor,
             contentPadding: const EdgeInsets.symmetric(

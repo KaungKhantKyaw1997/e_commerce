@@ -1,25 +1,25 @@
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
-import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
-import 'package:e_commerce/src/services/categories_service.dart';
+import 'package:e_commerce/src/services/user_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:number_paginator/number_paginator.dart';
 
-class CategoriesScreen extends StatefulWidget {
-  const CategoriesScreen({super.key});
+class UsersSetupScreen extends StatefulWidget {
+  const UsersSetupScreen({super.key});
 
   @override
-  State<CategoriesScreen> createState() => _CategoriesScreenState();
+  State<UsersSetupScreen> createState() => _UsersSetupScreenState();
 }
 
-class _CategoriesScreenState extends State<CategoriesScreen> {
-  final categoriesService = CategoriesService();
+class _UsersSetupScreenState extends State<UsersSetupScreen> {
+  final userService = UserService();
   TextEditingController search = TextEditingController(text: '');
   final ScrollController _scrollController = ScrollController();
-  List categories = [];
+  List users = [];
   int page = 1;
   int pageCounts = 0;
   int total = 0;
@@ -27,23 +27,23 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   @override
   void initState() {
     super.initState();
-    getCategories();
+    getUsers();
   }
 
   @override
   void dispose() {
-    categoriesService.cancelRequest();
+    userService.cancelRequest();
     _scrollController.dispose();
     super.dispose();
   }
 
-  getCategories() async {
+  getUsers() async {
     try {
-      final response = await categoriesService.getCategoriesData(
-          page: page, search: search.text);
+      final response =
+          await userService.getUsersData(page: page, search: search.text);
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
-          categories = response["data"];
+          users = response["data"];
           page = response["page"];
           pageCounts = response["page_counts"];
           total = response["total"];
@@ -57,7 +57,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     }
   }
 
-  categoryCard(index) {
+  userCard(index) {
     return Container(
       padding: const EdgeInsets.only(
         left: 16,
@@ -69,8 +69,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(index == 0 ? 10 : 0),
           topRight: Radius.circular(index == 0 ? 10 : 0),
-          bottomLeft: Radius.circular(index == categories.length - 1 ? 10 : 0),
-          bottomRight: Radius.circular(index == categories.length - 1 ? 10 : 0),
+          bottomLeft: Radius.circular(index == users.length - 1 ? 10 : 0),
+          bottomRight: Radius.circular(index == users.length - 1 ? 10 : 0),
         ),
         color: Colors.white,
       ),
@@ -78,44 +78,22 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                    '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
-                fit: BoxFit.fill,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                users[index]["username"].toString(),
+                overflow: TextOverflow.ellipsis,
+                style: FontConstants.body1,
               ),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: Colors.transparent,
+              Text(
+                Jiffy.parse(users[index]["created_at"])
+                    .format(pattern: 'dd/MM/yyyy, hh:mm a'),
+                overflow: TextOverflow.ellipsis,
+                style: FontConstants.caption1,
               ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.only(
-                left: 4,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    categories[index]["name"].toString(),
-                    overflow: TextOverflow.ellipsis,
-                    style: FontConstants.body1,
-                  ),
-                  Text(
-                    categories[index]["description"].toString(),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: FontConstants.caption1,
-                  ),
-                ],
-              ),
-            ),
+            ],
           ),
         ],
       ),
@@ -152,7 +130,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             ),
           ),
           onChanged: (value) {
-            getCategories();
+            getUsers();
           },
         ),
         iconTheme: IconThemeData(
@@ -169,7 +147,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           width: double.infinity,
           child: Column(
             children: [
-              categories.isNotEmpty
+              users.isNotEmpty
                   ? Container(
                       padding: EdgeInsets.only(
                         top: 4,
@@ -188,7 +166,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                             onPageChange: (int index) {
                               setState(() {
                                 page = index + 1;
-                                getCategories();
+                                getUsers();
                               });
                             },
                             config: const NumberPaginatorUIConfig(
@@ -203,25 +181,27 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 controller: _scrollController,
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
-                itemCount: categories.length,
+                itemCount: users.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
                       Navigator.pushNamed(
                         context,
-                        Routes.products,
-                        arguments: categories[index],
+                        Routes.user_setup,
+                        arguments: {
+                          "id": users[index]["user_id"],
+                        },
                       );
                     },
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        categoryCard(index),
-                        index < categories.length - 1
+                        userCard(index),
+                        index < users.length - 1
                             ? Container(
                                 padding: const EdgeInsets.only(
-                                  left: 100,
+                                  left: 16,
                                   right: 16,
                                 ),
                                 child: const Divider(
@@ -237,6 +217,20 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               ),
             ],
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(
+            context,
+            Routes.user_setup,
+            arguments: {
+              "id": 0,
+            },
+          );
+        },
+        child: Icon(
+          Icons.add,
         ),
       ),
     );

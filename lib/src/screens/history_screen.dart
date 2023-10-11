@@ -4,13 +4,14 @@ import 'package:e_commerce/src/widgets/custom_date_range.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/screens/bottombar_screen.dart';
 import 'package:e_commerce/src/services/orders_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
+import 'package:intl/intl.dart';
+import 'package:jiffy/jiffy.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -73,6 +74,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       orders = [];
       String fromDate = DateFormat('yyyy-MM-dd').format(startDate);
       String toDate = DateFormat('yyyy-MM-dd').format(endDate);
+
       if (type == 'init') {
         fromDate = '';
         toDate = '';
@@ -84,9 +86,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
           List data = response["data"];
 
           final groupedItemsMap = groupBy(data, (item) {
-            DateTime dateTime = DateTime.parse(item["created_at"]).toLocal();
-            String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
-            return formattedDate;
+            return Jiffy.parse(item["created_at"])
+                .format(pattern: 'yyyy-MM-dd');
           });
 
           groupedItemsMap.forEach((date, items) {
@@ -107,12 +108,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   String formatNumber(int number) {
     return 'ORD-${number.toString().padLeft(6, '0')}';
-  }
-
-  String formatTimestamp(String timestamp) {
-    final dateTime = DateTime.parse('${timestamp}Z').toLocal();
-    final formattedTime = DateFormat("hh:mm a").format(dateTime);
-    return formattedTime;
   }
 
   _selectDateRange(BuildContext context) async {
@@ -192,8 +187,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
             shrinkWrap: true,
             itemCount: orders.length,
             itemBuilder: (context, index) {
-              String formattedDate = DateFormat("dd/MM/yyyy")
-                  .format(DateTime.parse(orders[index]["date"].toString()));
+              String formattedDate = Jiffy.parse(orders[index]["date"])
+                  .format(pattern: 'dd/MM/yyyy');
 
               return Container(
                 margin: const EdgeInsets.only(
@@ -280,9 +275,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                       ],
                                     ),
                                     Text(
-                                      formatTimestamp(orders[index]["items"][i]
-                                              ["created_at"]
-                                          .toString()),
+                                      Jiffy.parse(orders[index]["items"][i]
+                                              ["created_at"])
+                                          .format(pattern: 'hh:mm a'),
                                       style: FontConstants.caption1,
                                     ),
                                   ],

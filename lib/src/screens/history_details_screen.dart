@@ -1,11 +1,11 @@
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/orders_service.dart';
 import 'package:e_commerce/src/utils/format_amount.dart';
 import 'package:e_commerce/src/utils/toast.dart';
+import 'package:jiffy/jiffy.dart';
 
 class HistoryDetailsScreen extends StatefulWidget {
   const HistoryDetailsScreen({super.key});
@@ -59,18 +59,6 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
 
   String formatNumber(int number) {
     return 'ORD-${number.toString().padLeft(6, '0')}';
-  }
-
-  String formatDate(String date) {
-    final dateTime = DateTime.parse(date);
-    final formattedTime = DateFormat("dd/MM/yyyy").format(dateTime);
-    return formattedTime;
-  }
-
-  String formatTimestamp(String timestamp) {
-    final dateTime = DateTime.parse(timestamp);
-    final formattedTime = DateFormat("hh:mm a").format(dateTime);
-    return formattedTime;
   }
 
   @override
@@ -174,7 +162,8 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                       ),
                       Text(
                         details["created_at"] != null
-                            ? formatDate(details["created_at"])
+                            ? Jiffy.parse(details["created_at"])
+                                .format(pattern: 'dd/MM/yyyy')
                             : "",
                         style: FontConstants.caption2,
                       ),
@@ -194,7 +183,8 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                       ),
                       Text(
                         details["created_at"] != null
-                            ? formatTimestamp(details["created_at"])
+                            ? Jiffy.parse(details["created_at"])
+                                .format(pattern: 'hh:mm a')
                             : "",
                         style: FontConstants.caption2,
                       ),

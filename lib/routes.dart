@@ -1,15 +1,18 @@
+import 'package:e_commerce/src/screens/user_setup_screen.dart';
+import 'package:e_commerce/src/screens/users_setup_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:e_commerce/src/screens/brands_screen.dart';
 import 'package:e_commerce/src/screens/categories_screen.dart';
 import 'package:e_commerce/src/screens/change_password_screen.dart';
 import 'package:e_commerce/src/screens/history_details_screen.dart';
 import 'package:e_commerce/src/screens/history_screen.dart';
+import 'package:e_commerce/src/screens/notification_screen.dart';
 import 'package:e_commerce/src/screens/product_screen.dart';
 import 'package:e_commerce/src/screens/products_screen.dart';
 import 'package:e_commerce/src/screens/language_screen.dart';
 import 'package:e_commerce/src/screens/profile_screen.dart';
 import 'package:e_commerce/src/screens/register_screen.dart';
 import 'package:e_commerce/src/screens/success_screen.dart';
-import 'package:flutter/material.dart';
 import 'package:e_commerce/src/screens/cart_screen.dart';
 import 'package:e_commerce/src/screens/home_screen.dart';
 import 'package:e_commerce/src/screens/login_screen.dart';
@@ -28,10 +31,13 @@ class Routes {
   static const String success = '/success';
   static const String history = '/history';
   static const String history_details = '/history_details';
+  static const String noti = '/noti';
   static const String setting = '/setting';
   static const String profile = '/profile';
   static const String language = '/language';
   static const String change_password = '/change_password';
+  static const String user_setup = '/user_setup';
+  static const String users_setup = '/users_setup';
 
   static final Map<String, WidgetBuilder> routes = {
     login: (BuildContext context) => const LogInScreen(),
@@ -45,9 +51,12 @@ class Routes {
     success: (BuildContext context) => const SuccessScreen(),
     history: (BuildContext context) => const HistoryScreen(),
     history_details: (BuildContext context) => const HistoryDetailsScreen(),
+    noti: (BuildContext context) => const NotificationScreen(),
     setting: (BuildContext context) => const SettingScreen(),
     profile: (BuildContext context) => const ProfileScreen(),
     language: (BuildContext context) => const LanguageScreen(),
     change_password: (BuildContext context) => const ChangePasswordScreen(),
+    user_setup: (BuildContext context) => const UserSetupScreen(),
+    users_setup: (BuildContext context) => const UsersSetupScreen(),
   };
 }
