@@ -4,6 +4,7 @@ class ApiConstants {
   static const String registerUrl = '$baseUrl/api/auth/register';
   static const String changepasswordUrl = '$baseUrl/api/auth/change-password';
   static const String verifyTokenUrl = '$baseUrl/api/auth/verify-token';
+  static const String fcmUrl = '$baseUrl/api/fcm/token';
   static const String imageUploadUrl = '$baseUrl/api/image/upload';
   static const String shopsUrl = '$baseUrl/api/shops';
   static const String categoriesUrl = '$baseUrl/api/categories';
@@ -14,5 +15,9 @@ class ApiConstants {
   static const String ordersUrl = '$baseUrl/api/orders';
   static const String orderUrl = '$baseUrl/api/order-items';
   static const String profleUrl = '$baseUrl/api/profile';
+  static const String getNotificationsUrl = '$baseUrl/api/get-notifications';
+  static const String unreadNotificationsUrl =
+      '$baseUrl/api/unread-notifications';
+  static const String notificationsUrl = '$baseUrl/api/notifications';
   static const String usersUrl = '$baseUrl/api/users';
 }

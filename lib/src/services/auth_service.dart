@@ -89,6 +89,18 @@ class AuthService {
     return jsonDecode(response.body);
   }
 
+  Future<Map<String, dynamic>> fcmData(Map<String, dynamic> body) async {
+    final response = await http.post(
+      Uri.parse(ApiConstants.fcmUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(body),
+    );
+
+    return jsonDecode(response.body);
+  }
+
   logout(BuildContext context) {
     clearData();
     CartProvider cartProvider =
