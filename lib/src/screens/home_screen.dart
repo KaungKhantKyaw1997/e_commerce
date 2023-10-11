@@ -394,11 +394,11 @@ class _HomeScreenState extends State<HomeScreen>
                   String greeting;
 
                   if (hour >= 0 && hour < 12) {
-                    greeting = 'Good Morning,';
+                    greeting = 'Good Morning';
                   } else if (hour >= 12 && hour < 17) {
-                    greeting = 'Good Afternoon,';
+                    greeting = 'Good Afternoon';
                   } else {
-                    greeting = 'Good Evening,';
+                    greeting = 'Good Evening';
                   }
 
                   return profileName == ""
