@@ -26,6 +26,21 @@ class OrderService {
     return jsonDecode(response.body);
   }
 
+  Future<Map<String, dynamic>> updateOrderData(
+      int id, Map<String, dynamic> body) async {
+    var token = await storage.read(key: "token");
+    final response = await http.put(
+      Uri.parse("${ApiConstants.ordersUrl}/$id"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+
+    return jsonDecode(response.body);
+  }
+
   Future<Map<String, dynamic>?> getOrdersData(
       {int page = 1,
       int perPage = 10,

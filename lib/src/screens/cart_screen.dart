@@ -240,6 +240,7 @@ class _CartScreenState extends State<CartScreen> {
                       Padding(
                         padding: EdgeInsets.only(
                           top: 10,
+                          bottom: 10,
                         ),
                         child: Container(
                           decoration: BoxDecoration(
@@ -268,7 +269,6 @@ class _CartScreenState extends State<CartScreen> {
                                         padding: const EdgeInsets.only(
                                           left: 16,
                                           right: 4,
-                                          top: 16,
                                           bottom: 8,
                                         ),
                                         child: TextFormField(
@@ -322,7 +322,6 @@ class _CartScreenState extends State<CartScreen> {
                                         padding: const EdgeInsets.only(
                                           left: 4,
                                           right: 16,
-                                          top: 16,
                                           bottom: 8,
                                         ),
                                         child: TextFormField(

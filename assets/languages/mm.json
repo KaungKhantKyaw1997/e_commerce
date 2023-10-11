@@ -85,8 +85,9 @@
     "Note": "မှတ်ချက်",
     "Upload Image": "ပုံတင်ပါ",
     "Choose Image": "ပုံကိုရွေးပါ",
-    "User": "User",
-    "Shop": "Shop",
-    "Category": "Category",
-    "Product": "Product"
+    "User": "အသုံးပြုသူ",
+    "Shop": "ဆိုင်",
+    "Category": "အမျိုးအစား",
+    "Product": "ထုတ်ကုန်",
+    "Status": "အခြေအနေ"
 }

@@ -60,6 +60,7 @@ class _LogInScreenState extends State<LogInScreen> {
 
       if (response["code"] == 200) {
         prefs.setString("name", response["data"]["name"]);
+        prefs.setString("role", response["data"]["role"]);
         prefs.setString("profile_image", response["data"]["profile_image"]);
         await storage.write(key: "token", value: response["data"]["token"]);
 

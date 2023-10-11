@@ -106,10 +106,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
     }
   }
 
-  String formatNumber(int number) {
-    return 'ORD-${number.toString().padLeft(6, '0')}';
-  }
-
   _selectDateRange(BuildContext context) async {
     endDate = DateTime.now();
     startDate = DateTime.now();
@@ -235,6 +231,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               Routes.history_details,
                               arguments: {
                                 "id": orders[index]["items"][i]["order_id"],
+                                "status": orders[index]["items"][i]["status"],
                               },
                             );
                           },
@@ -262,8 +259,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            formatNumber(orders[index]["items"]
-                                                [i]["order_id"]),
+                                            '#${orders[index]["items"][i]["order_id"]}',
                                             overflow: TextOverflow.ellipsis,
                                             style: FontConstants.body1,
                                           ),

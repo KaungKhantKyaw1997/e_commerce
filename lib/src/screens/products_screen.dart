@@ -173,6 +173,7 @@ class _ProductsScreenState extends State<ProductsScreen>
                     Padding(
                       padding: EdgeInsets.only(
                         top: 10,
+                        bottom: 10,
                       ),
                       child: Container(
                         decoration: BoxDecoration(

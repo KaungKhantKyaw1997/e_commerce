@@ -88,5 +88,6 @@
     "User": "User",
     "Shop": "Shop",
     "Category": "Category",
-    "Product": "Product"
+    "Product": "Product",
+    "Status": "Status"
 }
