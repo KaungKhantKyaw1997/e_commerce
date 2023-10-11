@@ -30,6 +30,7 @@ class _SettingScreenState extends State<SettingScreen> {
   String version = '';
   String packageName = '';
   bool validtoken = true;
+  String role = '';
 
   @override
   void initState() {
@@ -76,6 +77,7 @@ class _SettingScreenState extends State<SettingScreen> {
       lang = prefs.getString('language') ?? "eng";
       profileImage = prefs.getString('profile_image') ?? "";
       profileName = prefs.getString('name') ?? "";
+      role = prefs.getString('role') ?? "";
     });
   }
 
@@ -381,7 +383,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                         ),
                       ),
-                      validtoken
+                      validtoken && role == 'admin'
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
@@ -435,7 +437,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
-                      validtoken
+                      validtoken && role == 'admin'
                           ? GestureDetector(
                               onTap: () {},
                               child: Padding(
@@ -486,7 +488,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
-                      validtoken
+                      validtoken && role == 'admin'
                           ? GestureDetector(
                               onTap: () {},
                               child: Padding(
@@ -537,7 +539,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
-                      validtoken
+                      validtoken && role == 'admin'
                           ? GestureDetector(
                               onTap: () {},
                               child: Padding(
@@ -588,7 +590,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
-                      validtoken
+                      validtoken && role == 'admin'
                           ? GestureDetector(
                               onTap: () {},
                               child: Padding(
