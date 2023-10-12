@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,18 +16,38 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  FirebaseMessaging.onBackgroundMessage(backgroundMessageHandler);
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    // Handle the foreground notification (when the app is in the foreground)
+    print("Foreground Notification: $message");
+  });
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    // Handle the notification when the user taps it and the app is in the background
+    print("Notification Tapped: $message");
+  });
+
   SharedPreferences prefs = await SharedPreferences.getInstance();
   int cartCount = prefs.getInt('cartCount') ?? 0;
+  int notiCount = prefs.getInt('notiCount') ?? 0;
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => BottomProvider()),
         ChangeNotifierProvider(create: (context) => CartProvider(cartCount)),
+        ChangeNotifierProvider(create: (context) => NotiProvider(notiCount)),
       ],
       child: MyApp(),
     ),
   );
+}
+
+Future<void> backgroundMessageHandler(RemoteMessage message) async {
+  // Handle the background notification here
+  print("Handling background message: ${message.data}");
 }
 
 class MyApp extends StatefulWidget {

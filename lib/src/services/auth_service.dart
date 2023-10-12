@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
+import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:flutter/material.dart';
@@ -89,7 +90,7 @@ class AuthService {
     return jsonDecode(response.body);
   }
 
-  Future<Map<String, dynamic>> fcmData(Map<String, dynamic> body) async {
+  Future<Map<String, dynamic>> addFCMData(Map<String, dynamic> body) async {
     final response = await http.post(
       Uri.parse(ApiConstants.fcmUrl),
       headers: <String, String>{
@@ -106,6 +107,10 @@ class AuthService {
     CartProvider cartProvider =
         Provider.of<CartProvider>(context, listen: false);
     cartProvider.addCount(0);
+
+    NotiProvider notiProvider =
+        Provider.of<NotiProvider>(context, listen: false);
+    notiProvider.addCount(0);
 
     BottomProvider bottomProvider =
         Provider.of<BottomProvider>(context, listen: false);

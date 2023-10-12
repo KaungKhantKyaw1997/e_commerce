@@ -5,9 +5,11 @@ import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/brands_service.dart';
 import 'package:e_commerce/src/services/categories_service.dart';
+import 'package:e_commerce/src/services/notification_service.dart';
 import 'package:e_commerce/src/services/shops_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
@@ -30,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen>
   final shopsService = ShopsService();
   final brandsService = BrandsService();
   final categoriesService = CategoriesService();
+  final notificationService = NotificationService();
   final storage = FlutterSecureStorage();
   final ScrollController _scrollController = ScrollController();
   late TabController _tabController;
@@ -54,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen>
     getProfile();
     getShops();
     getProducts();
+    unreadNotifications();
   }
 
   @override
@@ -63,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen>
     shopsService.cancelRequest();
     brandsService.cancelRequest();
     categoriesService.cancelRequest();
+    notificationService.cancelRequest();
     super.dispose();
   }
 
@@ -82,6 +87,19 @@ class _HomeScreenState extends State<HomeScreen>
           validtoken = false;
         });
         authService.clearData();
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  unreadNotifications() async {
+    try {
+      final response = await notificationService.unreadNotificationsData();
+      if (response!["code"] == 200) {
+        FlutterAppBadger.updateBadgeCount(response["data"]);
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
       }
     } catch (e) {
       print('Error: $e');

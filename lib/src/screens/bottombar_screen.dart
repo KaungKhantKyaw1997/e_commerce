@@ -1,3 +1,4 @@
+import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
@@ -47,6 +48,8 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
   Widget build(BuildContext context) {
     CartProvider cartProvider =
         Provider.of<CartProvider>(context, listen: true);
+    NotiProvider notiProvider =
+        Provider.of<NotiProvider>(context, listen: true);
 
     return Consumer<BottomProvider>(builder: (context, bottomProvider, child) {
       return ClipRRect(
@@ -68,7 +71,8 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
           onTap: _onTabSelected,
           items: navItems.map((navItem) {
             return BottomNavigationBarItem(
-              icon: cartProvider.count > 0 && navItem["index"] == 1
+              icon: (cartProvider.count > 0 && navItem["index"] == 1) ||
+                      (notiProvider.count > 0 && navItem["index"] == 3)
                   ? Stack(
                       children: [
                         Padding(
@@ -102,7 +106,9 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                               minHeight: 16,
                             ),
                             child: Text(
-                              '${cartProvider.count}',
+                              navItem["index"] == 1
+                                  ? '${cartProvider.count}'
+                                  : '${notiProvider.count}',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: FontConstants.bottom,

@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
@@ -21,6 +24,8 @@ class LogInScreen extends StatefulWidget {
 
 class _LogInScreenState extends State<LogInScreen> {
   ScrollController _scrollController = ScrollController();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  String _fcmToken = '';
   final authService = AuthService();
   final storage = FlutterSecureStorage();
   final _formKey = GlobalKey<FormState>();
@@ -43,8 +48,16 @@ class _LogInScreenState extends State<LogInScreen> {
 
   void _handleSubmitted(String value) {
     if (value.isNotEmpty) {
-      login();
+      getFCMToken();
     }
+  }
+
+  getFCMToken() {
+    _firebaseMessaging.getToken().then((token) {
+      _fcmToken = token ?? 'No token available';
+      print('FCM Token: $_fcmToken');
+      login();
+    });
   }
 
   login() async {
@@ -68,8 +81,7 @@ class _LogInScreenState extends State<LogInScreen> {
             Provider.of<BottomProvider>(context, listen: false);
         bottomProvider.selectIndex(0);
 
-        Navigator.pop(context);
-        Navigator.pushNamed(context, Routes.home);
+        fcm();
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
@@ -78,6 +90,18 @@ class _LogInScreenState extends State<LogInScreen> {
       print('Error: $e');
       Navigator.pop(context);
     }
+  }
+
+  fcm() async {
+    var deviceType = Platform.isIOS ? "ios" : "android";
+    final body = {
+      "token": _fcmToken,
+      "device_type": deviceType,
+    };
+
+    await authService.addFCMData(body);
+    Navigator.pop(context);
+    Navigator.pushNamed(context, Routes.home);
   }
 
   @override
@@ -302,7 +326,7 @@ class _LogInScreenState extends State<LogInScreen> {
                     ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        login();
+                        getFCMToken();
                       }
                     },
                     child: Text(
