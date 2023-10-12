@@ -1,3 +1,5 @@
+import 'package:e_commerce/src/screens/brand_setup_screen.dart';
+import 'package:e_commerce/src/screens/brands_setup_screen.dart';
 import 'package:e_commerce/src/screens/categories_setup_screen.dart';
 import 'package:e_commerce/src/screens/category_setup_screen.dart';
 import 'package:e_commerce/src/screens/product_setup_screen.dart';
@@ -76,8 +78,8 @@ class Routes {
     shops_setup: (BuildContext context) => const ShopsSetupScreen(),
     product_setup: (BuildContext context) => const ProductSetupScreen(),
     products_setup: (BuildContext context) => const ProductsSetupScreen(),
-    brand_setup: (BuildContext context) => const ProductSetupScreen(),
-    brands_setup: (BuildContext context) => const ProductsSetupScreen(),
+    brand_setup: (BuildContext context) => const BrandSetupScreen(),
+    brands_setup: (BuildContext context) => const BrandsSetupScreen(),
     category_setup: (BuildContext context) => const CategorySetupScreen(),
     categories_setup: (BuildContext context) => const CategoriesSetupScreen(),
   };

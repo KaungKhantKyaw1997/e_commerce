@@ -90,7 +90,7 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: NetworkImage(
-                    '${ApiConstants.baseUrl}${products[index]["product_images"].toString()}'),
+                    '${ApiConstants.baseUrl}${products[index]["product_images"][0].toString()}'),
                 fit: BoxFit.fill,
               ),
               borderRadius: BorderRadius.circular(10),
