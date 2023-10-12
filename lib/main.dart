@@ -20,15 +20,6 @@ Future<void> main() async {
 
   FirebaseMessaging.onBackgroundMessage(backgroundMessageHandler);
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    // Handle the foreground notification (when the app is in the foreground)
-    print("Foreground Notification: $message");
-  });
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    // Handle the notification when the user taps it and the app is in the background
-    print("Notification Tapped: $message");
-  });
-
   SharedPreferences prefs = await SharedPreferences.getInstance();
   int cartCount = prefs.getInt('cartCount') ?? 0;
   int notiCount = prefs.getInt('notiCount') ?? 0;
@@ -61,6 +52,16 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Handle the foreground notification (when the app is in the foreground)
+      print("Foreground Notification: $message");
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      Navigator.pushNamed(context, Routes.noti);
+    });
+
     loadLanguageData();
   }
 

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:flutter/material.dart';
@@ -122,6 +123,7 @@ class AuthService {
   clearData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
+    await FirebaseMessaging.instance.deleteToken();
     await storage.delete(key: "token");
   }
 }

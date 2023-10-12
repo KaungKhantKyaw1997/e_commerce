@@ -55,7 +55,10 @@ class _LogInScreenState extends State<LogInScreen> {
   getFCMToken() {
     showLoadingDialog(context);
     _firebaseMessaging.getToken().then((token) {
-      _fcmToken = token ?? 'No token available';
+      _fcmToken = token ?? '';
+      login();
+    }).catchError((error) {
+      _fcmToken = '';
       login();
     });
   }
