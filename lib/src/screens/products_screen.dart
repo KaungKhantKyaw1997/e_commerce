@@ -117,7 +117,7 @@ class _ProductsScreenState extends State<ProductsScreen>
       if (toPrice == 0.0) body.remove("to_price");
 
       final response = await productsService.getProductsData(body);
-      if (response["code"] == 200) {
+      if (response!["code"] == 200) {
         products = [];
         page = 1;
         pageCounts = 0;

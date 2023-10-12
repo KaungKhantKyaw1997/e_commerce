@@ -10,12 +10,14 @@ class ModelsService {
 
   Future<Map<String, dynamic>?> getModelsData(
       {int page = 1, int perPage = 10, String search = ''}) async {
+    var token = await storage.read(key: "token") ?? '';
     try {
       final response = await dio.get(
         '${ApiConstants.modelsUrl}',
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
+            if (token != '') 'Authorization': 'Bearer $token',
           },
         ),
         cancelToken: _cancelToken,

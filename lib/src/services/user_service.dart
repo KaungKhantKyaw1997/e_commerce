@@ -12,12 +12,12 @@ class UserService {
   CancelToken _cancelToken = CancelToken();
 
   Future<Map<String, dynamic>> addUserData(Map<String, dynamic> body) async {
-    var token = await storage.read(key: "token");
+    var token = await storage.read(key: "token") ?? '';
     final response = await http.post(
       Uri.parse(ApiConstants.usersUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token',
+        if (token != '') 'Authorization': 'Bearer $token',
       },
       body: jsonEncode(body),
     );
@@ -27,12 +27,12 @@ class UserService {
 
   Future<Map<String, dynamic>> updateUserData(
       Map<String, dynamic> body, int id) async {
-    var token = await storage.read(key: "token");
+    var token = await storage.read(key: "token") ?? '';
     final response = await http.put(
       Uri.parse('${ApiConstants.usersUrl}/$id'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token',
+        if (token != '') 'Authorization': 'Bearer $token',
       },
       body: jsonEncode(body),
     );
@@ -41,12 +41,12 @@ class UserService {
   }
 
   Future<Map<String, dynamic>> deleteUserData(int id) async {
-    var token = await storage.read(key: "token");
+    var token = await storage.read(key: "token") ?? '';
     final response = await http.delete(
       Uri.parse('${ApiConstants.usersUrl}/$id'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token',
+        if (token != '') 'Authorization': 'Bearer $token',
       },
     );
 
@@ -55,14 +55,14 @@ class UserService {
 
   Future<Map<String, dynamic>?> getUsersData(
       {int page = 1, int perPage = 10, String search = ''}) async {
-    var token = await storage.read(key: "token");
+    var token = await storage.read(key: "token") ?? '';
     try {
       final response = await dio.get(
         '${ApiConstants.usersUrl}?page=$page&per_page=$perPage&search=$search',
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
-            'Authorization': 'Bearer $token',
+            if (token != '') 'Authorization': 'Bearer $token',
           },
         ),
         cancelToken: _cancelToken,
@@ -76,14 +76,14 @@ class UserService {
   }
 
   Future<Map<String, dynamic>?> getUserData(int id) async {
-    var token = await storage.read(key: "token");
+    var token = await storage.read(key: "token") ?? '';
     try {
       final response = await dio.get(
         '${ApiConstants.usersUrl}/$id',
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
-            'Authorization': 'Bearer $token',
+            if (token != '') 'Authorization': 'Bearer $token',
           },
         ),
         cancelToken: _cancelToken,

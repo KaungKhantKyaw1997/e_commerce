@@ -9,14 +9,14 @@ class AddressService {
   CancelToken _cancelToken = CancelToken();
 
   Future<Map<String, dynamic>?> getAddressData() async {
-    var token = await storage.read(key: "token");
+    var token = await storage.read(key: "token") ?? '';
     try {
       final response = await dio.get(
         ApiConstants.addressUrl,
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
-            'Authorization': 'Bearer $token',
+            if (token != '') 'Authorization': 'Bearer $token',
           },
         ),
         cancelToken: _cancelToken,

@@ -10,7 +10,8 @@ class ApiConstants {
   static const String categoriesUrl = '$baseUrl/api/categories';
   static const String brandsUrl = '$baseUrl/api/brands';
   static const String modelsUrl = '$baseUrl/api/models';
-  static const String productsUrl = '$baseUrl/api/get-products';
+  static const String productsUrl = '$baseUrl/api/products';
+  static const String getProductsUrl = '$baseUrl/api/get-products';
   static const String addressUrl = '$baseUrl/api/address';
   static const String ordersUrl = '$baseUrl/api/orders';
   static const String orderUrl = '$baseUrl/api/order-items';

@@ -165,7 +165,7 @@ class _CartScreenState extends State<CartScreen> {
         "payment_type": paymenttype,
         "payslip_screenshot_path": payslipImage
       };
-      final response = await orderService.createOrderData(body);
+      final response = await orderService.addOrderData(body);
       Navigator.pop(context);
       if (response["code"] == 200) {
         CartProvider cartProvider =

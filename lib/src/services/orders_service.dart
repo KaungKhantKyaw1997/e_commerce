@@ -11,14 +11,13 @@ class OrderService {
   final Dio dio = Dio();
   CancelToken _cancelToken = CancelToken();
 
-  Future<Map<String, dynamic>> createOrderData(
-      Map<String, dynamic> body) async {
-    var token = await storage.read(key: "token");
+  Future<Map<String, dynamic>> addOrderData(Map<String, dynamic> body) async {
+    var token = await storage.read(key: "token") ?? '';
     final response = await http.post(
       Uri.parse(ApiConstants.ordersUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token',
+        if (token != '') 'Authorization': 'Bearer $token',
       },
       body: jsonEncode(body),
     );
@@ -28,12 +27,12 @@ class OrderService {
 
   Future<Map<String, dynamic>> updateOrderData(
       int id, Map<String, dynamic> body) async {
-    var token = await storage.read(key: "token");
+    var token = await storage.read(key: "token") ?? '';
     final response = await http.put(
       Uri.parse("${ApiConstants.ordersUrl}/$id"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token',
+        if (token != '') 'Authorization': 'Bearer $token',
       },
       body: jsonEncode(body),
     );
@@ -48,8 +47,7 @@ class OrderService {
       String toDate = '',
       double fromAmount = 0.0,
       double toAmount = 0.0}) async {
-    var token = await storage.read(key: "token");
-
+    var token = await storage.read(key: "token") ?? '';
     var url = '${ApiConstants.ordersUrl}?page=$page&per_page=$perPage';
     if (fromDate != '') url += '&from_date=$fromDate';
     if (toDate != '') url += '&to_date=$toDate';
@@ -62,7 +60,7 @@ class OrderService {
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
-            'Authorization': 'Bearer $token',
+            if (token != '') 'Authorization': 'Bearer $token',
           },
         ),
         cancelToken: _cancelToken,
@@ -76,14 +74,14 @@ class OrderService {
   }
 
   Future<Map<String, dynamic>?> getOrderDetailsData(int id) async {
-    var token = await storage.read(key: "token");
+    var token = await storage.read(key: "token") ?? '';
     try {
       final response = await dio.get(
         '${ApiConstants.orderUrl}?order_id=$id',
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
-            'Authorization': 'Bearer $token',
+            if (token != '') 'Authorization': 'Bearer $token',
           },
         ),
         cancelToken: _cancelToken,
