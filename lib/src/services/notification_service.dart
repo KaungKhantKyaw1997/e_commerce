@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -20,7 +22,7 @@ class NotificationService {
             if (token != '') 'Authorization': 'Bearer $token',
           },
         ),
-        data: body,
+        data: jsonEncode(body),
         cancelToken: _cancelToken,
       );
 
@@ -64,7 +66,7 @@ class NotificationService {
             if (token != '') 'Authorization': 'Bearer $token',
           },
         ),
-        data: body,
+        data: jsonEncode(body),
         cancelToken: _cancelToken,
       );
 

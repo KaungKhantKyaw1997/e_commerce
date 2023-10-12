@@ -109,8 +109,8 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
                     style: FontConstants.body1,
                   ),
                   Text(
-                    shops[index]["address"].toString(),
-                    maxLines: 2,
+                    Jiffy.parse(shops[index]["created_at"])
+                        .format(pattern: 'dd/MM/yyyy, hh:mm a'),
                     overflow: TextOverflow.ellipsis,
                     style: FontConstants.caption1,
                   ),
@@ -210,7 +210,7 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
                     onTap: () {
                       Navigator.pushNamed(
                         context,
-                        Routes.user_setup,
+                        Routes.shop_setup,
                         arguments: {
                           "id": shops[index]["user_id"],
                         },
@@ -246,7 +246,7 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
         onPressed: () {
           Navigator.pushNamed(
             context,
-            Routes.user_setup,
+            Routes.shop_setup,
             arguments: {
               "id": 0,
             },

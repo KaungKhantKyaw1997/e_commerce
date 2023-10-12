@@ -1,3 +1,7 @@
+import 'package:e_commerce/src/screens/product_setup_screen.dart';
+import 'package:e_commerce/src/screens/products_setup_screen.dart';
+import 'package:e_commerce/src/screens/shop_setup_screen.dart';
+import 'package:e_commerce/src/screens/shops_setup_screen.dart';
 import 'package:e_commerce/src/screens/user_setup_screen.dart';
 import 'package:e_commerce/src/screens/users_setup_screen.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +42,10 @@ class Routes {
   static const String change_password = '/change_password';
   static const String user_setup = '/user_setup';
   static const String users_setup = '/users_setup';
+  static const String shop_setup = '/shop_setup';
+  static const String shops_setup = '/shops_setup';
+  static const String product_setup = '/product_setup';
+  static const String products_setup = '/products_setup';
 
   static final Map<String, WidgetBuilder> routes = {
     login: (BuildContext context) => const LogInScreen(),
@@ -58,5 +66,9 @@ class Routes {
     change_password: (BuildContext context) => const ChangePasswordScreen(),
     user_setup: (BuildContext context) => const UserSetupScreen(),
     users_setup: (BuildContext context) => const UsersSetupScreen(),
+    shop_setup: (BuildContext context) => const ShopSetupScreen(),
+    shops_setup: (BuildContext context) => const ShopsSetupScreen(),
+    product_setup: (BuildContext context) => const ProductSetupScreen(),
+    products_setup: (BuildContext context) => const ProductsSetupScreen(),
   };
 }

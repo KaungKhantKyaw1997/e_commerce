@@ -57,7 +57,7 @@ class ProductsService {
       Map<String, dynamic> body) async {
     var token = await storage.read(key: "token") ?? '';
     try {
-      final response = await dio.get(
+      final response = await dio.post(
         ApiConstants.getProductsUrl,
         options: Options(
           headers: {
