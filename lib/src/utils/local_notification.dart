@@ -1,6 +1,6 @@
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-// class NotificationUtils {
+// class LocalNotification {
 //   static FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 //       FlutterLocalNotificationsPlugin();
 
@@ -23,9 +23,8 @@
 
 //   static Future<void> showNotification(String title, String body, int id) async {
 //     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-//       'your_channel_id',
-//       'your_channel_name',
-//       'your_channel_description',
+//       'watch vault',
+//       'watch vault channel',
 //       importance: Importance.max,
 //       priority: Priority.high,
 //       playSound: true,
@@ -55,3 +54,4 @@
 
 //   static Future<void> scheduleNotification(
 //       String title, String body, int id, DateTime scheduledTime)
+// }
