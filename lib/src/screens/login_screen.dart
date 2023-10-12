@@ -53,15 +53,14 @@ class _LogInScreenState extends State<LogInScreen> {
   }
 
   getFCMToken() {
+    showLoadingDialog(context);
     _firebaseMessaging.getToken().then((token) {
       _fcmToken = token ?? 'No token available';
-      print('FCM Token: $_fcmToken');
       login();
     });
   }
 
   login() async {
-    showLoadingDialog(context);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       final body = {

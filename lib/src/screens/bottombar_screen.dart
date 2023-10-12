@@ -94,7 +94,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                           ),
                         ),
                         Positioned(
-                          right: 0,
+                          right: 2,
                           child: Container(
                             padding: const EdgeInsets.all(2),
                             decoration: BoxDecoration(

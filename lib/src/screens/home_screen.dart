@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
+import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/brands_service.dart';
 import 'package:e_commerce/src/services/categories_service.dart';
@@ -17,6 +18,7 @@ import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/screens/bottombar_screen.dart';
 import 'package:number_paginator/number_paginator.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -97,6 +99,9 @@ class _HomeScreenState extends State<HomeScreen>
     try {
       final response = await notificationService.unreadNotificationsData();
       if (response!["code"] == 200) {
+        NotiProvider notiProvider =
+            Provider.of<NotiProvider>(context, listen: false);
+        notiProvider.addCount(response["data"]);
         FlutterAppBadger.updateBadgeCount(response["data"]);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
