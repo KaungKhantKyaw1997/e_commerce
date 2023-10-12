@@ -108,14 +108,25 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    products[index]["brand_name"].toString(),
-                    overflow: TextOverflow.ellipsis,
-                    style: FontConstants.body1,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        products[index]["brand_name"].toString(),
+                        overflow: TextOverflow.ellipsis,
+                        style: FontConstants.body1,
+                      ),
+                      Text(
+                        Jiffy.parse(products[index]["created_at"])
+                            .format(pattern: 'dd/MM/yyyy'),
+                        overflow: TextOverflow.ellipsis,
+                        style: FontConstants.caption1,
+                      ),
+                    ],
                   ),
                   Text(
-                    Jiffy.parse(products[index]["created_at"])
-                        .format(pattern: 'dd/MM/yyyy, hh:mm a'),
+                    products[index]["description"].toString(),
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                     style: FontConstants.caption1,
                   ),
