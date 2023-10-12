@@ -83,11 +83,16 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                    '${ApiConstants.baseUrl}${users[index]["profile_image"].toString()}'),
-                fit: BoxFit.fill,
-              ),
+              image: users[index]["profile_image"] != ""
+                  ? DecorationImage(
+                      image: NetworkImage(
+                          '${ApiConstants.baseUrl}${users[index]["profile_image"].toString()}'),
+                      fit: BoxFit.fill,
+                    )
+                  : DecorationImage(
+                      image: AssetImage('assets/images/profile.png'),
+                      fit: BoxFit.fill,
+                    ),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
                 color: Colors.transparent,

@@ -83,11 +83,16 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                    '${ApiConstants.baseUrl}${shops[index]["cover_image"].toString()}'),
-                fit: BoxFit.fill,
-              ),
+              image: shops[index]["cover_image"] != ""
+                  ? DecorationImage(
+                      image: NetworkImage(
+                          '${ApiConstants.baseUrl}${shops[index]["cover_image"].toString()}'),
+                      fit: BoxFit.fill,
+                    )
+                  : DecorationImage(
+                      image: AssetImage('assets/images/logo.png'),
+                      fit: BoxFit.fill,
+                    ),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
                 color: Colors.transparent,
