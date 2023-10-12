@@ -82,11 +82,16 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                    '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
-                fit: BoxFit.fill,
-              ),
+              image: categories[index]["cover_image"] != ""
+                  ? DecorationImage(
+                      image: NetworkImage(
+                          '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
+                      fit: BoxFit.fill,
+                    )
+                  : DecorationImage(
+                      image: AssetImage('assets/images/logo.png'),
+                      fit: BoxFit.fill,
+                    ),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
                 color: Colors.transparent,

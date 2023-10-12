@@ -82,11 +82,16 @@ class _BrandsScreenState extends State<BrandsScreen> {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                    '${ApiConstants.baseUrl}${brands[index]["logo_url"].toString()}'),
-                fit: BoxFit.fill,
-              ),
+              image: brands[index]["logo_url"] != ""
+                  ? DecorationImage(
+                      image: NetworkImage(
+                          '${ApiConstants.baseUrl}${brands[index]["logo_url"].toString()}'),
+                      fit: BoxFit.fill,
+                    )
+                  : DecorationImage(
+                      image: AssetImage('assets/images/logo.png'),
+                      fit: BoxFit.fill,
+                    ),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
                 color: Colors.transparent,

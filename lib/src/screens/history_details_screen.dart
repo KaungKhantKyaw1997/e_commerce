@@ -293,11 +293,16 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                           width: 200,
                           height: 200,
                           decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                  '${ApiConstants.baseUrl}${details["product_images"][0].toString()}'),
-                              fit: BoxFit.fill,
-                            ),
+                            image: details["product_images"][0] != ""
+                                ? DecorationImage(
+                                    image: NetworkImage(
+                                        '${ApiConstants.baseUrl}${details["product_images"][0].toString()}'),
+                                    fit: BoxFit.fill,
+                                  )
+                                : DecorationImage(
+                                    image: AssetImage('assets/images/logo.png'),
+                                    fit: BoxFit.fill,
+                                  ),
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
                               color: Colors.transparent,

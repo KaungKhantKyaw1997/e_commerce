@@ -413,11 +413,16 @@ class _ProductsScreenState extends State<ProductsScreen>
             width: double.infinity,
             height: 200,
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                    '${ApiConstants.baseUrl}${products[index]["product_images"][0].toString()}'),
-                fit: BoxFit.fill,
-              ),
+              image: products[index]["product_images"][0] != ""
+                  ? DecorationImage(
+                      image: NetworkImage(
+                          '${ApiConstants.baseUrl}${products[index]["product_images"][0].toString()}'),
+                      fit: BoxFit.fill,
+                    )
+                  : DecorationImage(
+                      image: AssetImage('assets/images/logo.png'),
+                      fit: BoxFit.fill,
+                    ),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(10),
                 topRight: Radius.circular(10),

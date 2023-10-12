@@ -321,68 +321,6 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, Routes.language);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                          ),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  right: 16,
-                                  top: 16,
-                                  bottom: 16,
-                                ),
-                                child: SvgPicture.asset(
-                                  "assets/icons/global.svg",
-                                  width: 24,
-                                  height: 24,
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    right: 16,
-                                    top: 16,
-                                    bottom: 16,
-                                  ),
-                                  child: Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: language["Language"] ??
-                                              "Language",
-                                          style: FontConstants.caption2,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  right: 5,
-                                  top: 16,
-                                  bottom: 16,
-                                ),
-                                child: Text(
-                                  lang == "eng" ? "English" : "မြန်မာ",
-                                  style: FontConstants.caption1,
-                                ),
-                              ),
-                              const Icon(
-                                Icons.arrow_forward_ios,
-                                size: 20,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
                       validtoken && role == 'admin'
                           ? GestureDetector(
                               onTap: () {
@@ -653,6 +591,68 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, Routes.language);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                          ),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  right: 16,
+                                  top: 16,
+                                  bottom: 16,
+                                ),
+                                child: SvgPicture.asset(
+                                  "assets/icons/global.svg",
+                                  width: 24,
+                                  height: 24,
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 16,
+                                    top: 16,
+                                    bottom: 16,
+                                  ),
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: language["Language"] ??
+                                              "Language",
+                                          style: FontConstants.caption2,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  right: 5,
+                                  top: 16,
+                                  bottom: 16,
+                                ),
+                                child: Text(
+                                  lang == "eng" ? "English" : "မြန်မာ",
+                                  style: FontConstants.caption1,
+                                ),
+                              ),
+                              const Icon(
+                                Icons.arrow_forward_ios,
+                                size: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(
                           left: 16,

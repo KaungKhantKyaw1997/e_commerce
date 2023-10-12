@@ -190,11 +190,16 @@ class _HomeScreenState extends State<HomeScreen>
             width: double.infinity,
             height: crossAxisCount == 1 ? 240 : 150,
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                    '${ApiConstants.baseUrl}${shops[index]["cover_image"].toString()}'),
-                fit: BoxFit.fill,
-              ),
+              image: shops[index]["cover_image"] != ""
+                  ? DecorationImage(
+                      image: NetworkImage(
+                          '${ApiConstants.baseUrl}${shops[index]["cover_image"].toString()}'),
+                      fit: BoxFit.fill,
+                    )
+                  : DecorationImage(
+                      image: AssetImage('assets/images/logo.png'),
+                      fit: BoxFit.fill,
+                    ),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(10),
                 topRight: Radius.circular(10),
@@ -280,12 +285,16 @@ class _HomeScreenState extends State<HomeScreen>
             width: double.infinity,
             height: 200,
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                    '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
-                // image: AssetImage("assets/images/logo.png"),
-                fit: BoxFit.fill,
-              ),
+              image: categories[index]["cover_image"] != ""
+                  ? DecorationImage(
+                      image: NetworkImage(
+                          '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
+                      fit: BoxFit.fill,
+                    )
+                  : DecorationImage(
+                      image: AssetImage('assets/images/logo.png'),
+                      fit: BoxFit.fill,
+                    ),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(10),
                 topRight: Radius.circular(10),

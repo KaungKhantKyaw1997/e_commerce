@@ -137,11 +137,19 @@ class _ProductScreenState extends State<ProductScreen> {
                                           horizontal: 4,
                                         ),
                                         decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: NetworkImage(
-                                                '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'),
-                                            fit: BoxFit.fill,
-                                          ),
+                                          image: product["product_images"]
+                                                      [index] !=
+                                                  ""
+                                              ? DecorationImage(
+                                                  image: NetworkImage(
+                                                      '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'),
+                                                  fit: BoxFit.fill,
+                                                )
+                                              : DecorationImage(
+                                                  image: AssetImage(
+                                                      'assets/images/logo.png'),
+                                                  fit: BoxFit.fill,
+                                                ),
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           border: Border.all(

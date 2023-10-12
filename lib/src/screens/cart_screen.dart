@@ -1032,11 +1032,17 @@ class _CartScreenState extends State<CartScreen> {
                                 width: 80,
                                 height: 80,
                                 decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                        '${ApiConstants.baseUrl}${carts[index]["product_images"][0].toString()}'),
-                                    fit: BoxFit.fill,
-                                  ),
+                                  image: carts[index]["product_images"][0] != ""
+                                      ? DecorationImage(
+                                          image: NetworkImage(
+                                              '${ApiConstants.baseUrl}${carts[index]["product_images"][0].toString()}'),
+                                          fit: BoxFit.fill,
+                                        )
+                                      : DecorationImage(
+                                          image: AssetImage(
+                                              'assets/images/logo.png'),
+                                          fit: BoxFit.fill,
+                                        ),
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
                                     color: Colors.transparent,
