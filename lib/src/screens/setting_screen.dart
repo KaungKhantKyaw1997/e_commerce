@@ -439,7 +439,10 @@ class _SettingScreenState extends State<SettingScreen> {
                           : Container(),
                       validtoken && role == 'admin'
                           ? GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, Routes.shops_setup);
+                              },
                               child: Padding(
                                 padding: const EdgeInsets.only(
                                   left: 16,
@@ -490,7 +493,10 @@ class _SettingScreenState extends State<SettingScreen> {
                           : Container(),
                       validtoken && role == 'admin'
                           ? GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, Routes.categories_setup);
+                              },
                               child: Padding(
                                 padding: const EdgeInsets.only(
                                   left: 16,
@@ -541,7 +547,10 @@ class _SettingScreenState extends State<SettingScreen> {
                           : Container(),
                       validtoken && role == 'admin'
                           ? GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, Routes.brands_setup);
+                              },
                               child: Padding(
                                 padding: const EdgeInsets.only(
                                   left: 16,
@@ -592,7 +601,10 @@ class _SettingScreenState extends State<SettingScreen> {
                           : Container(),
                       validtoken && role == 'admin'
                           ? GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, Routes.products_setup);
+                              },
                               child: Padding(
                                 padding: const EdgeInsets.only(
                                   left: 16,

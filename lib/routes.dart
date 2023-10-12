@@ -1,3 +1,5 @@
+import 'package:e_commerce/src/screens/categories_setup_screen.dart';
+import 'package:e_commerce/src/screens/category_setup_screen.dart';
 import 'package:e_commerce/src/screens/product_setup_screen.dart';
 import 'package:e_commerce/src/screens/products_setup_screen.dart';
 import 'package:e_commerce/src/screens/shop_setup_screen.dart';
@@ -46,6 +48,10 @@ class Routes {
   static const String shops_setup = '/shops_setup';
   static const String product_setup = '/product_setup';
   static const String products_setup = '/products_setup';
+  static const String brand_setup = '/brand_setup';
+  static const String brands_setup = '/brands_setup';
+  static const String category_setup = '/category_setup';
+  static const String categories_setup = '/categories_setup';
 
   static final Map<String, WidgetBuilder> routes = {
     login: (BuildContext context) => const LogInScreen(),
@@ -70,5 +76,9 @@ class Routes {
     shops_setup: (BuildContext context) => const ShopsSetupScreen(),
     product_setup: (BuildContext context) => const ProductSetupScreen(),
     products_setup: (BuildContext context) => const ProductsSetupScreen(),
+    brand_setup: (BuildContext context) => const ProductSetupScreen(),
+    brands_setup: (BuildContext context) => const ProductsSetupScreen(),
+    category_setup: (BuildContext context) => const CategorySetupScreen(),
+    categories_setup: (BuildContext context) => const CategoriesSetupScreen(),
   };
 }
