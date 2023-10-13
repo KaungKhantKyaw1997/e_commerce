@@ -55,8 +55,8 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
     return Consumer<BottomProvider>(builder: (context, bottomProvider, child) {
       return ClipRRect(
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(30),
         ),
         child: BottomNavigationBar(
           currentIndex: bottomProvider.currentIndex,
