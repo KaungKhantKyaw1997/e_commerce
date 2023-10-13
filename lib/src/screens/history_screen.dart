@@ -35,6 +35,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
   String role = "";
+  bool loading = true;
 
   @override
   void initState() {
@@ -76,6 +77,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   getOrders({String type = ''}) async {
+    setState(() {
+      loading = true;
+    });
     try {
       orders = [];
       String fromDate = DateFormat('yyyy-MM-dd').format(startDate);
@@ -103,12 +107,17 @@ class _HistoryScreenState extends State<HistoryScreen> {
             });
           });
         }
-        setState(() {});
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
+      setState(() {
+        loading = false;
+      });
     } catch (e) {
       print('Error: $e');
+      setState(() {
+        loading = false;
+      });
     }
   }
 
@@ -176,192 +185,201 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ),
         ],
       ),
-      body: orders.isNotEmpty
-          ? SingleChildScrollView(
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 24,
-                ),
-                width: double.infinity,
-                child: ListView.builder(
-                  controller: _scrollController,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: orders.length,
-                  itemBuilder: (context, index) {
-                    String formattedDate = Jiffy.parse(orders[index]["date"])
-                        .format(pattern: 'dd/MM/yyyy');
+      body: !loading
+          ? orders.isNotEmpty
+              ? SingleChildScrollView(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 24,
+                    ),
+                    width: double.infinity,
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: orders.length,
+                      itemBuilder: (context, index) {
+                        String formattedDate =
+                            Jiffy.parse(orders[index]["date"])
+                                .format(pattern: 'dd/MM/yyyy');
 
-                    return Container(
-                      margin: const EdgeInsets.only(
-                        bottom: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 16,
-                              right: 16,
-                              top: 8,
-                              bottom: 4,
-                            ),
-                            child: Text(
-                              currentDate == formattedDate
-                                  ? "Today"
-                                  : yesterdayDate == formattedDate
-                                      ? "Yesterday"
-                                      : formattedDate,
-                              style: FontConstants.caption2,
-                            ),
+                        return Container(
+                          margin: const EdgeInsets.only(
+                            bottom: 8,
                           ),
-                          const Divider(
-                            height: 0,
-                            color: Colors.grey,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
                           ),
-                          ListView.builder(
-                            controller: _scrollController,
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            itemCount: orders[index]["items"].length,
-                            itemBuilder: (context, i) {
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    Routes.history_details,
-                                    arguments: {
-                                      "id": orders[index]["items"][i]
-                                          ["order_id"],
-                                      "user_name": orders[index]["items"][i]
-                                          ["user_name"],
-                                      "phone": orders[index]["items"][i]
-                                          ["phone"],
-                                      "email": orders[index]["items"][i]
-                                          ["email"],
-                                      "status": orders[index]["items"][i]
-                                          ["status"],
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 16,
+                                  top: 8,
+                                  bottom: 4,
+                                ),
+                                child: Text(
+                                  currentDate == formattedDate
+                                      ? "Today"
+                                      : yesterdayDate == formattedDate
+                                          ? "Yesterday"
+                                          : formattedDate,
+                                  style: FontConstants.caption2,
+                                ),
+                              ),
+                              const Divider(
+                                height: 0,
+                                color: Colors.grey,
+                              ),
+                              ListView.builder(
+                                controller: _scrollController,
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemCount: orders[index]["items"].length,
+                                itemBuilder: (context, i) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                        context,
+                                        Routes.history_details,
+                                        arguments: {
+                                          "id": orders[index]["items"][i]
+                                              ["order_id"],
+                                          "user_name": orders[index]["items"][i]
+                                              ["user_name"],
+                                          "phone": orders[index]["items"][i]
+                                              ["phone"],
+                                          "email": orders[index]["items"][i]
+                                              ["email"],
+                                          "status": orders[index]["items"][i]
+                                              ["status"],
+                                        },
+                                      );
                                     },
-                                  );
-                                },
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.only(
-                                        left: 16,
-                                        right: 16,
-                                        bottom: 8,
-                                        top: 8,
-                                      ),
-                                      color: Colors.transparent,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.only(
+                                            left: 16,
+                                            right: 16,
+                                            bottom: 8,
+                                            top: 8,
+                                          ),
+                                          color: Colors.transparent,
+                                          child: Column(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.baseline,
-                                            textBaseline:
-                                                TextBaseline.alphabetic,
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              Expanded(
-                                                child: Text(
-                                                  '#${orders[index]["items"][i]["order_id"]}',
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: FontConstants.body1,
-                                                ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.baseline,
+                                                textBaseline:
+                                                    TextBaseline.alphabetic,
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      '#${orders[index]["items"][i]["order_id"]}',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style:
+                                                          FontConstants.body1,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    orders[index]["items"][i]
+                                                        ["status"],
+                                                    style:
+                                                        FontConstants.caption1,
+                                                  ),
+                                                ],
                                               ),
                                               Text(
-                                                orders[index]["items"][i]
-                                                    ["status"],
+                                                Jiffy.parse(orders[index]
+                                                            ["items"][i]
+                                                        ["created_at"])
+                                                    .format(pattern: 'hh:mm a'),
                                                 style: FontConstants.caption1,
                                               ),
                                             ],
                                           ),
-                                          Text(
-                                            Jiffy.parse(orders[index]["items"]
-                                                    [i]["created_at"])
-                                                .format(pattern: 'hh:mm a'),
-                                            style: FontConstants.caption1,
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                        i < orders[index]["items"].length - 1
+                                            ? Container(
+                                                padding: const EdgeInsets.only(
+                                                  left: 16,
+                                                  right: 16,
+                                                ),
+                                                child: const Divider(
+                                                  height: 0,
+                                                  color: Colors.grey,
+                                                ),
+                                              )
+                                            : Container(),
+                                      ],
                                     ),
-                                    i < orders[index]["items"].length - 1
-                                        ? Container(
-                                            padding: const EdgeInsets.only(
-                                              left: 16,
-                                              right: 16,
-                                            ),
-                                            child: const Divider(
-                                              height: 0,
-                                              color: Colors.grey,
-                                            ),
-                                          )
-                                        : Container(),
-                                  ],
-                                ),
-                              );
-                            },
+                                  );
+                                },
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Center(
-                  child: Container(
-                    width: 300,
-                    height: 300,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/no_data.png'),
-                      ),
+                        );
+                      },
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 8,
-                  ),
-                  child: Text(
-                    "Empty History",
-                    textAlign: TextAlign.center,
-                    style: FontConstants.title2,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                  ),
-                  child: Text(
-                    "There is no data...",
-                    textAlign: TextAlign.center,
-                    style: FontConstants.headline2,
-                  ),
-                ),
-              ],
-            ),
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 300,
+                        height: 300,
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/no_data.png'),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Text(
+                        "Empty History",
+                        textAlign: TextAlign.center,
+                        style: FontConstants.title2,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                      ),
+                      child: Text(
+                        "There is no data...",
+                        textAlign: TextAlign.center,
+                        style: FontConstants.subheadline2,
+                      ),
+                    ),
+                  ],
+                )
+          : Container(),
       bottomNavigationBar: const BottomBarScreen(),
     );
   }

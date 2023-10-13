@@ -50,7 +50,7 @@ class _SuccessScreenState extends State<SuccessScreen>
             padding: const EdgeInsets.only(
               left: 16,
               right: 16,
-              bottom: 8,
+              bottom: 4,
             ),
             child: Text(
               "Your order was successful!",
@@ -66,7 +66,7 @@ class _SuccessScreenState extends State<SuccessScreen>
             child: Text(
               "Thank you for your purchase.",
               textAlign: TextAlign.center,
-              style: FontConstants.headline2,
+              style: FontConstants.subheadline2,
             ),
           ),
         ],

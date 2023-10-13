@@ -1327,7 +1327,7 @@ class _CartScreenState extends State<CartScreen> {
                     padding: const EdgeInsets.only(
                       left: 16,
                       right: 16,
-                      bottom: 8,
+                      bottom: 4,
                     ),
                     child: Text(
                       "Empty Cart",
@@ -1343,7 +1343,7 @@ class _CartScreenState extends State<CartScreen> {
                     child: Text(
                       "Looks like you haven't made your choice yet...",
                       textAlign: TextAlign.center,
-                      style: FontConstants.headline2,
+                      style: FontConstants.subheadline2,
                     ),
                   ),
                 ],

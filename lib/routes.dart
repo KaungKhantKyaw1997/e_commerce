@@ -6,6 +6,7 @@ import 'package:e_commerce/src/screens/product_setup_screen.dart';
 import 'package:e_commerce/src/screens/products_setup_screen.dart';
 import 'package:e_commerce/src/screens/shop_setup_screen.dart';
 import 'package:e_commerce/src/screens/shops_setup_screen.dart';
+import 'package:e_commerce/src/screens/splash_screen.dart';
 import 'package:e_commerce/src/screens/user_setup_screen.dart';
 import 'package:e_commerce/src/screens/users_setup_screen.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +57,7 @@ class Routes {
   static const String categories_setup = '/categories_setup';
 
   static final Map<String, WidgetBuilder> routes = {
+    splash: (BuildContext context) => const SplashScreen(),
     login: (BuildContext context) => const LogInScreen(),
     register: (BuildContext context) => const RegisterScreen(),
     home: (BuildContext context) => const HomeScreen(),

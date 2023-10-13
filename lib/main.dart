@@ -1,12 +1,8 @@
-import 'dart:convert';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:e_commerce/global.dart';
 import 'package:e_commerce/palette.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
@@ -64,31 +60,6 @@ class _MyAppState extends State<MyApp> {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       Navigator.pushNamed(context, Routes.noti);
     });
-
-    loadLanguageData();
-  }
-
-  Future<void> loadLanguageData() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var lang = prefs.getString("language") ?? "eng";
-    if (lang == 'eng') {
-      selectedLangIndex = 0;
-    } else {
-      selectedLangIndex = 1;
-    }
-
-    try {
-      final response =
-          await rootBundle.loadString('assets/languages/$lang.json');
-      final dynamic data = json.decode(response);
-      if (data is Map<String, dynamic>) {
-        setState(() {
-          language = data.cast<String, String>();
-        });
-      }
-    } catch (e) {
-      print('Error loading language data: $e');
-    }
   }
 
   @override
@@ -105,7 +76,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
-      initialRoute: Routes.home,
+      initialRoute: Routes.splash,
       routes: Routes.routes,
     );
   }
