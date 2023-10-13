@@ -194,11 +194,11 @@ class _HomeScreenState extends State<HomeScreen>
                   ? DecorationImage(
                       image: NetworkImage(
                           '${ApiConstants.baseUrl}${shops[index]["cover_image"].toString()}'),
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                     )
                   : DecorationImage(
                       image: AssetImage('assets/images/logo.png'),
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                     ),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(10),
@@ -289,11 +289,11 @@ class _HomeScreenState extends State<HomeScreen>
                   ? DecorationImage(
                       image: NetworkImage(
                           '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                     )
                   : DecorationImage(
                       image: AssetImage('assets/images/logo.png'),
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                     ),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(10),
