@@ -224,6 +224,7 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
+                      Navigator.pop(context);
                       Navigator.pushNamed(
                         context,
                         Routes.category_setup,
@@ -260,6 +261,7 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          Navigator.pop(context);
           Navigator.pushNamed(
             context,
             Routes.category_setup,
@@ -268,6 +270,7 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
             },
           );
         },
+        backgroundColor: Theme.of(context).primaryColor,
         child: Icon(
           Icons.add,
         ),
