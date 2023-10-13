@@ -224,6 +224,7 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
+                      Navigator.pop(context);
                       Navigator.pushNamed(
                         context,
                         Routes.brand_setup,
@@ -260,6 +261,7 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          Navigator.pop(context);
           Navigator.pushNamed(
             context,
             Routes.brand_setup,
@@ -268,6 +270,7 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
             },
           );
         },
+        backgroundColor: Theme.of(context).primaryColor,
         child: Icon(
           Icons.add,
         ),

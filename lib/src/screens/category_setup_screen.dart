@@ -174,7 +174,7 @@ class _CategorySetupScreenState extends State<CategorySetupScreen> {
           centerTitle: true,
           elevation: 0,
           title: Text(
-            language["Shop"] ?? "Shop",
+            language["Category"] ?? "Category",
             style: FontConstants.title1,
           ),
           leading: BackButton(
