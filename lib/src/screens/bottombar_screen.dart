@@ -1,3 +1,4 @@
+import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -98,7 +99,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                           child: Container(
                             padding: const EdgeInsets.all(2),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFE3200F),
+                              color: ColorConstants.redcolor,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             constraints: const BoxConstraints(

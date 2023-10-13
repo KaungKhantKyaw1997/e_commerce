@@ -1005,7 +1005,7 @@ class _CartScreenState extends State<CartScreen> {
                                 carts.removeAt(index);
                                 saveListToSharedPreferences(carts);
                               },
-                              backgroundColor: const Color(0xFFE3200F),
+                              backgroundColor: ColorConstants.redcolor,
                               foregroundColor: Colors.white,
                               borderRadius: BorderRadius.only(
                                 topRight: Radius.circular(index == 0 ? 10 : 0),

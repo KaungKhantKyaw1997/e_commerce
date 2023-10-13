@@ -228,6 +228,7 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
+                      Navigator.pop(context);
                       Navigator.pushNamed(
                         context,
                         Routes.user_setup,
@@ -264,6 +265,7 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          Navigator.pop(context);
           Navigator.pushNamed(
             context,
             Routes.user_setup,
@@ -272,6 +274,7 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
             },
           );
         },
+        backgroundColor: Theme.of(context).primaryColor,
         child: Icon(
           Icons.add,
         ),

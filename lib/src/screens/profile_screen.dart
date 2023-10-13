@@ -138,317 +138,325 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        elevation: 0,
-        title: Text(
-          language["Profile"] ?? "Profile",
-          style: FontConstants.title1,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        _nameFocusNode.unfocus();
+        _emailFocusNode.unfocus();
+        _phoneFocusNode.unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          centerTitle: true,
+          elevation: 0,
+          title: Text(
+            language["Profile"] ?? "Profile",
+            style: FontConstants.title1,
+          ),
+          leading: BackButton(
+            color: Theme.of(context).primaryColor,
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.pushNamed(
+                context,
+                from == 'home' ? Routes.home : Routes.setting,
+              );
+            },
+          ),
+          actions: [
+            IconButton(
+              icon: SvgPicture.asset(
+                "assets/icons/check.svg",
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  Colors.black,
+                  BlendMode.srcIn,
+                ),
+              ),
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  showLoadingDialog(context);
+                  if (pickedFile != null) {
+                    await uploadFile();
+                  }
+                  updateProfile();
+                }
+              },
+            ),
+          ],
         ),
-        leading: BackButton(
-          color: Theme.of(context).primaryColor,
-          onPressed: () {
+        backgroundColor: Colors.white,
+        body: WillPopScope(
+          onWillPop: () async {
             Navigator.of(context).pop();
             Navigator.pushNamed(
               context,
               from == 'home' ? Routes.home : Routes.setting,
             );
+            return true;
           },
-        ),
-        actions: [
-          IconButton(
-            icon: SvgPicture.asset(
-              "assets/icons/check.svg",
-              width: 24,
-              height: 24,
-              colorFilter: const ColorFilter.mode(
-                Colors.black,
-                BlendMode.srcIn,
-              ),
-            ),
-            onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                showLoadingDialog(context);
-                if (pickedFile != null) {
-                  await uploadFile();
-                }
-                updateProfile();
-              }
-            },
-          ),
-        ],
-      ),
-      backgroundColor: Colors.white,
-      body: WillPopScope(
-        onWillPop: () async {
-          Navigator.of(context).pop();
-          Navigator.pushNamed(
-            context,
-            from == 'home' ? Routes.home : Routes.setting,
-          );
-          return true;
-        },
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.only(
-                        top: 24,
-                        bottom: 24,
-                      ),
-                      decoration: BoxDecoration(
-                        color: ColorConstants.fillcolor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: GestureDetector(
-                        onTap: () {
-                          _pickImage(ImageSource.gallery);
-                        },
-                        child: profileImage != ""
-                            ? ClipOval(
-                                child: Image.network(
-                                  '${ApiConstants.baseUrl}${profileImage.toString()}',
-                                  width: 100,
-                                  height: 100,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : pickedFile != null
-                                ? ClipOval(
-                                    child: Image.file(
-                                      File(pickedFile!.path),
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                                : ClipOval(
-                                    child: Image.asset(
-                                      'assets/images/profile.png',
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                    ),
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(
+                          top: 24,
+                          bottom: 24,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ColorConstants.fillcolor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: GestureDetector(
+                          onTap: () {
+                            _pickImage(ImageSource.gallery);
+                          },
+                          child: profileImage != ""
+                              ? ClipOval(
+                                  child: Image.network(
+                                    '${ApiConstants.baseUrl}${profileImage.toString()}',
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
                                   ),
+                                )
+                              : pickedFile != null
+                                  ? ClipOval(
+                                      child: Image.file(
+                                        File(pickedFile!.path),
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                  : ClipOval(
+                                      child: Image.asset(
+                                        'assets/images/profile.png',
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                        ),
                       ),
-                    ),
-                    Positioned(
-                      bottom: 24,
-                      right: 0,
-                      child: GestureDetector(
-                        onTap: () {
-                          _pickImage(ImageSource.gallery);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 3,
+                      Positioned(
+                        bottom: 24,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: () {
+                            _pickImage(ImageSource.gallery);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 3,
+                              ),
+                              color: Theme.of(context).primaryColorLight,
                             ),
-                            color: Theme.of(context).primaryColorLight,
-                          ),
-                          child: SvgPicture.asset(
-                            "assets/icons/camera.svg",
-                            width: 16,
-                            height: 16,
-                            colorFilter: ColorFilter.mode(
-                              Theme.of(context).primaryColor,
-                              BlendMode.srcIn,
+                            child: SvgPicture.asset(
+                              "assets/icons/camera.svg",
+                              width: 16,
+                              height: 16,
+                              colorFilter: ColorFilter.mode(
+                                Theme.of(context).primaryColor,
+                                BlendMode.srcIn,
+                              ),
                             ),
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 4,
                     ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 4,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      language["Name"] ?? "Name",
-                      style: FontConstants.caption1,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 16,
-                  ),
-                  child: TextFormField(
-                    controller: name,
-                    focusNode: _nameFocusNode,
-                    keyboardType: TextInputType.text,
-                    textInputAction: TextInputAction.next,
-                    style: FontConstants.body1,
-                    cursorColor: Colors.black,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: ColorConstants.fillcolor,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        language["Name"] ?? "Name",
+                        style: FontConstants.caption1,
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return language["Enter Name"] ?? "Enter Name";
-                      }
-                      return null;
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 4,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      language["Email"] ?? "Email",
-                      style: FontConstants.caption1,
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 16,
+                    ),
+                    child: TextFormField(
+                      controller: name,
+                      focusNode: _nameFocusNode,
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.next,
+                      style: FontConstants.body1,
+                      cursorColor: Colors.black,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: ColorConstants.fillcolor,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return language["Enter Name"] ?? "Enter Name";
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 16,
-                  ),
-                  child: TextFormField(
-                    controller: email,
-                    focusNode: _emailFocusNode,
-                    keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
-                    style: FontConstants.body1,
-                    cursorColor: Colors.black,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: ColorConstants.fillcolor,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 4,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        language["Email"] ?? "Email",
+                        style: FontConstants.caption1,
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return language["Enter Email"] ?? "Enter Email";
-                      }
-                      return null;
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 4,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      language["Phone Number"] ?? "Phone Number",
-                      style: FontConstants.caption1,
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 16,
+                    ),
+                    child: TextFormField(
+                      controller: email,
+                      focusNode: _emailFocusNode,
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      style: FontConstants.body1,
+                      cursorColor: Colors.black,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: ColorConstants.fillcolor,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return language["Enter Email"] ?? "Enter Email";
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 24,
-                  ),
-                  child: TextFormField(
-                    controller: phone,
-                    focusNode: _phoneFocusNode,
-                    keyboardType: TextInputType.phone,
-                    textInputAction: TextInputAction.done,
-                    style: FontConstants.body1,
-                    cursorColor: Colors.black,
-                    decoration: InputDecoration(
-                      prefixText: '+959',
-                      prefixStyle: FontConstants.body2,
-                      filled: true,
-                      fillColor: ColorConstants.fillcolor,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 4,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        language["Phone Number"] ?? "Phone Number",
+                        style: FontConstants.caption1,
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return language["Enter Phone Number"] ??
-                            "Enter Phone Number";
-                      }
-                      final RegExp phoneRegExp =
-                          RegExp(r"^[+]{0,1}[0-9]{7,9}$");
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 24,
+                    ),
+                    child: TextFormField(
+                      controller: phone,
+                      focusNode: _phoneFocusNode,
+                      keyboardType: TextInputType.phone,
+                      textInputAction: TextInputAction.done,
+                      style: FontConstants.body1,
+                      cursorColor: Colors.black,
+                      decoration: InputDecoration(
+                        prefixText: '+959',
+                        prefixStyle: FontConstants.body2,
+                        filled: true,
+                        fillColor: ColorConstants.fillcolor,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return language["Enter Phone Number"] ??
+                              "Enter Phone Number";
+                        }
+                        final RegExp phoneRegExp =
+                            RegExp(r"^[+]{0,1}[0-9]{7,9}$");
 
-                      if (!phoneRegExp.hasMatch(value)) {
-                        return language["Invalid Phone Number"] ??
-                            "Invalid Phone Number";
-                      }
-                      return null;
-                    },
+                        if (!phoneRegExp.hasMatch(value)) {
+                          return language["Invalid Phone Number"] ??
+                              "Invalid Phone Number";
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
