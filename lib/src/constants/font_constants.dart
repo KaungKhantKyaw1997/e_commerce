@@ -7,6 +7,12 @@ class FontConstants {
     color: Colors.black,
   );
 
+  static TextStyle headline2 = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+    color: Color.fromARGB(31, 90, 89, 89),
+  );
+
   static TextStyle subheadline1 = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w500,
