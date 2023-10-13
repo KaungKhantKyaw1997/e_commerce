@@ -298,11 +298,11 @@ class _ProductScreenState extends State<ProductScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            language["Strap Color"] ?? "Strap Color",
+                            language["Strap Material"] ?? "Strap Material",
                             style: FontConstants.caption1,
                           ),
                           Text(
-                            product["strap_color"] ?? "",
+                            product["strap_material"] ?? "",
                             style: FontConstants.caption2,
                           ),
                         ],
@@ -319,11 +319,11 @@ class _ProductScreenState extends State<ProductScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            language["Dial Color"] ?? "Dial Color",
+                            language["Strap Color"] ?? "Strap Color",
                             style: FontConstants.caption1,
                           ),
                           Text(
-                            product["dial_color"] ?? "",
+                            product["strap_color"] ?? "",
                             style: FontConstants.caption2,
                           ),
                         ],
@@ -361,11 +361,11 @@ class _ProductScreenState extends State<ProductScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            language["Strap Material"] ?? "Strap Material",
+                            language["Dial Color"] ?? "Dial Color",
                             style: FontConstants.caption1,
                           ),
                           Text(
-                            product["strap_material"] ?? "",
+                            product["dial_color"] ?? "",
                             style: FontConstants.caption2,
                           ),
                         ],
