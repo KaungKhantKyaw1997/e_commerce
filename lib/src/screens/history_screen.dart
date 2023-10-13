@@ -16,6 +16,7 @@ import 'package:e_commerce/src/utils/toast.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -33,11 +34,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
   List orders = [];
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
+  String role = "";
 
   @override
   void initState() {
     super.initState();
     unreadNotifications();
+    getData();
     getOrders(type: 'init');
   }
 
@@ -47,6 +50,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
     notificationService.cancelRequest();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  getData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      role = prefs.getString('role') ?? "";
+    });
   }
 
   unreadNotifications() async {
@@ -143,7 +153,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
         title: Align(
           alignment: Alignment.centerLeft,
           child: Text(
-            language["History"] ?? "History",
+            role == "admin"
+                ? language["Order"] ?? "Order"
+                : language["History"] ?? "History",
             style: FontConstants.title2,
           ),
         ),
@@ -227,6 +239,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                     arguments: {
                                       "id": orders[index]["items"][i]
                                           ["order_id"],
+                                      "user_name": orders[index]["items"][i]
+                                          ["user_name"],
+                                      "phone": orders[index]["items"][i]
+                                          ["phone"],
+                                      "email": orders[index]["items"][i]
+                                          ["email"],
                                       "status": orders[index]["items"][i]
                                           ["status"],
                                     },

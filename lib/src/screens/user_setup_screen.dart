@@ -83,6 +83,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
           password.text = response["data"]["password"] ?? "";
           confirmpassword.text = response["data"]["password"] ?? "";
           confirmpassword.text = response["data"]["password"] ?? "";
+          role = response["data"]["role"] ?? "";
           name.text = response["data"]["name"] ?? "";
           email.text = response["data"]["email"] ?? "";
           phone.text = response["data"]["phone"] ?? "";

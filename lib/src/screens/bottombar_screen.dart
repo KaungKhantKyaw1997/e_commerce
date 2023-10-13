@@ -28,7 +28,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
       navItems = [];
       if (role == 'admin') {
         navItems = [
-          {"index": 0, "icon": "assets/icons/history.svg", "label": "History"},
+          {"index": 0, "icon": "assets/icons/order.svg", "label": "Order"},
           {
             "index": 1,
             "icon": "assets/icons/noti.svg",
@@ -64,7 +64,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
       Navigator.pushNamed(context, Routes.home);
     } else if (data["label"] == 'Cart') {
       Navigator.pushNamed(context, Routes.cart);
-    } else if (data["label"] == 'History') {
+    } else if (data["label"] == 'History' || data["label"] == 'Order') {
       Navigator.pushNamed(context, Routes.history);
     } else if (data["label"] == 'Notification') {
       Navigator.pushNamed(context, Routes.noti);

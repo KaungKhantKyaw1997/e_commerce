@@ -10,7 +10,7 @@ class FontConstants {
   static TextStyle headline2 = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w500,
-    color: Color.fromARGB(31, 90, 89, 89),
+    color: Color(0xff3D3D3D),
   );
 
   static TextStyle subheadline1 = TextStyle(

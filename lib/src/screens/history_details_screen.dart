@@ -36,6 +36,9 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
     "Backordered",
     "Returned"
   ];
+  String username = "";
+  String phone = "";
+  String email = "";
   String status = "";
   String role = "";
 
@@ -49,6 +52,9 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
 
       if (arguments != null) {
         id = arguments["id"];
+        username = arguments["user_name"];
+        phone = arguments["phone"];
+        email = arguments["email"];
         status = arguments["status"];
         getData();
         getOrderDetails();
@@ -389,6 +395,66 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                       ],
                     ),
                   ),
+                  role == 'admin'
+                      ? Padding(
+                          padding: const EdgeInsets.only(
+                            top: 8,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                language["User Name"] ?? "User Name",
+                                style: FontConstants.caption1,
+                              ),
+                              Text(
+                                username,
+                                style: FontConstants.caption2,
+                              ),
+                            ],
+                          ),
+                        )
+                      : Container(),
+                  role == 'admin'
+                      ? Padding(
+                          padding: const EdgeInsets.only(
+                            top: 8,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                language["Phone"] ?? "Phone",
+                                style: FontConstants.caption1,
+                              ),
+                              Text(
+                                phone,
+                                style: FontConstants.caption2,
+                              ),
+                            ],
+                          ),
+                        )
+                      : Container(),
+                  role == 'admin'
+                      ? Padding(
+                          padding: const EdgeInsets.only(
+                            top: 8,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                language["Email"] ?? "Email",
+                                style: FontConstants.caption1,
+                              ),
+                              Text(
+                                email,
+                                style: FontConstants.caption2,
+                              ),
+                            ],
+                          ),
+                        )
+                      : Container(),
                   Padding(
                     padding: const EdgeInsets.only(
                       top: 8,

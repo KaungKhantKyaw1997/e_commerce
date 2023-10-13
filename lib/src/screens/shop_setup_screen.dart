@@ -27,9 +27,11 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
   final shopsService = ShopsService();
   FocusNode _nameFocusNode = FocusNode();
   FocusNode _descriptionFocusNode = FocusNode();
+  FocusNode _addressFocusNode = FocusNode();
 
   TextEditingController name = TextEditingController(text: '');
   TextEditingController description = TextEditingController(text: '');
+  TextEditingController address = TextEditingController(text: '');
 
   final ImagePicker _picker = ImagePicker();
   XFile? pickedFile;
@@ -64,6 +66,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
         setState(() {
           name.text = response["data"]["name"] ?? "";
           description.text = response["data"]["description"] ?? "";
+          address.text = response["data"]["address"] ?? "";
           coverImage = response["data"]["cover_image"] ?? "";
         });
       } else {
@@ -104,7 +107,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
         "name": name.text,
         "description": description.text,
         "cover_image": coverImage,
-        "address": "",
+        "address": address.text,
         "city": "",
         "state": "",
         "postal_code": "",
@@ -135,7 +138,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
         "name": name.text,
         "description": description.text,
         "cover_image": coverImage,
-        "address": "",
+        "address": address.text,
         "city": "",
         "state": "",
         "postal_code": "",
@@ -372,12 +375,13 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
+                        bottom: 16,
                       ),
                       child: TextFormField(
                         controller: description,
                         focusNode: _descriptionFocusNode,
                         keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.done,
+                        textInputAction: TextInputAction.next,
                         style: FontConstants.body1,
                         cursorColor: Colors.black,
                         maxLines: 2,
@@ -405,6 +409,61 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
                           if (value == null || value.isEmpty) {
                             return language["Enter Description"] ??
                                 "Enter Description";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["Address"] ?? "Address",
+                          style: FontConstants.caption1,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                      ),
+                      child: TextFormField(
+                        controller: address,
+                        focusNode: _addressFocusNode,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.done,
+                        style: FontConstants.body1,
+                        cursorColor: Colors.black,
+                        maxLines: 2,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: ColorConstants.fillcolor,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return language["Enter Address"] ?? "Enter Address";
                           }
                           return null;
                         },
