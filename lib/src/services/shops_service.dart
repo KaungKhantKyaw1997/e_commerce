@@ -26,7 +26,7 @@ class ShopsService {
   }
 
   Future<Map<String, dynamic>> updateShopData(
-      int id, Map<String, dynamic> body) async {
+      Map<String, dynamic> body, int id) async {
     var token = await storage.read(key: "token") ?? '';
     final response = await http.put(
       Uri.parse("${ApiConstants.shopsUrl}/$id"),
@@ -79,7 +79,7 @@ class ShopsService {
     var token = await storage.read(key: "token") ?? '';
     try {
       final response = await dio.get(
-        '${ApiConstants.shopsUrl}?shop_id=$id',
+        '${ApiConstants.shopsUrl}/$id',
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',

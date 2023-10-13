@@ -224,11 +224,12 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
+                      Navigator.pop(context);
                       Navigator.pushNamed(
                         context,
                         Routes.shop_setup,
                         arguments: {
-                          "id": shops[index]["user_id"],
+                          "id": shops[index]["shop_id"],
                         },
                       );
                     },
@@ -260,6 +261,7 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          Navigator.pop(context);
           Navigator.pushNamed(
             context,
             Routes.shop_setup,
@@ -268,6 +270,7 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
             },
           );
         },
+        backgroundColor: Theme.of(context).primaryColor,
         child: Icon(
           Icons.add,
         ),

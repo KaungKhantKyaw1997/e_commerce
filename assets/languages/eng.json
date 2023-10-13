@@ -64,6 +64,8 @@
     "From": "From",
     "To": "To",
     "Specifications": "Specifications",
+    "Role": "Role",
+    "Save": "Save",
     "Update": "Update",
     "Delete": "Delete",
     "Price Range": "Price Range",
@@ -90,5 +92,6 @@
     "Shop": "Shop",
     "Category": "Category",
     "Product": "Product",
-    "Status": "Status"
+    "Status": "Status",
+    "Description": "Description"
 }

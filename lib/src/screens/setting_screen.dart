@@ -325,7 +325,9 @@ class _SettingScreenState extends State<SettingScreen> {
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
-                                    context, Routes.users_setup);
+                                  context,
+                                  Routes.users_setup,
+                                );
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(
