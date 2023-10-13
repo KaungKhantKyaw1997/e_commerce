@@ -83,7 +83,7 @@ class _LogInScreenState extends State<LogInScreen> {
             Provider.of<BottomProvider>(context, listen: false);
         bottomProvider.selectIndex(0);
 
-        fcm();
+        fcm(response["data"]["role"] ?? "");
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
@@ -94,7 +94,7 @@ class _LogInScreenState extends State<LogInScreen> {
     }
   }
 
-  fcm() async {
+  fcm(role) async {
     var deviceType = Platform.isIOS ? "ios" : "android";
     final body = {
       "token": _fcmToken,
@@ -103,7 +103,9 @@ class _LogInScreenState extends State<LogInScreen> {
 
     await authService.addFCMData(body);
     Navigator.pop(context);
-    Navigator.pushNamed(context, Routes.home);
+
+    Navigator.pushNamed(
+        context, role == 'admin' ? Routes.history : Routes.home);
   }
 
   @override

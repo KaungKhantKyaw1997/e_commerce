@@ -8,6 +8,7 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BottomBarScreen extends StatefulWidget {
   const BottomBarScreen({super.key});
@@ -17,13 +18,40 @@ class BottomBarScreen extends StatefulWidget {
 }
 
 class _BottomBarScreenState extends State<BottomBarScreen> {
-  List navItems = [
-    {"index": 0, "icon": "assets/icons/home.svg", "label": "Home"},
-    {"index": 1, "icon": "assets/icons/cart.svg", "label": "Cart"},
-    {"index": 2, "icon": "assets/icons/history.svg", "label": "History"},
-    {"index": 3, "icon": "assets/icons/noti.svg", "label": "Notification"},
-    {"index": 4, "icon": "assets/icons/setting.svg", "label": "Settings"}
-  ];
+  List navItems = [];
+  String role = "";
+
+  getData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      role = prefs.getString('role') ?? "";
+      navItems = [];
+      if (role == 'admin') {
+        navItems = [
+          {"index": 0, "icon": "assets/icons/history.svg", "label": "History"},
+          {
+            "index": 1,
+            "icon": "assets/icons/noti.svg",
+            "label": "Notification"
+          },
+          {"index": 2, "icon": "assets/icons/setting.svg", "label": "Settings"}
+        ];
+      } else if (role != '') {
+        navItems = [
+          {"index": 0, "icon": "assets/icons/home.svg", "label": "Home"},
+          {"index": 1, "icon": "assets/icons/cart.svg", "label": "Cart"},
+          {"index": 2, "icon": "assets/icons/history.svg", "label": "History"},
+          {"index": 3, "icon": "assets/icons/setting.svg", "label": "Settings"}
+        ];
+      } else {
+        navItems = [
+          {"index": 0, "icon": "assets/icons/home.svg", "label": "Home"},
+          {"index": 1, "icon": "assets/icons/cart.svg", "label": "Cart"},
+          {"index": 2, "icon": "assets/icons/setting.svg", "label": "Settings"}
+        ];
+      }
+    });
+  }
 
   Future<void> _onTabSelected(int index) async {
     BottomProvider bottomProvider =
@@ -47,6 +75,8 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    getData();
+
     CartProvider cartProvider =
         Provider.of<CartProvider>(context, listen: true);
     NotiProvider notiProvider =
@@ -58,90 +88,95 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
           topLeft: Radius.circular(30),
           topRight: Radius.circular(30),
         ),
-        child: BottomNavigationBar(
-          currentIndex: bottomProvider.currentIndex,
-          type: BottomNavigationBarType.shifting,
-          backgroundColor: Colors.white,
-          selectedItemColor: Theme.of(context).primaryColor,
-          unselectedItemColor: Colors.grey,
-          selectedFontSize: FontConstants.bottom,
-          unselectedFontSize: FontConstants.bottom,
-          selectedLabelStyle: const TextStyle(
-            fontWeight: FontWeight.w400,
-          ),
-          onTap: _onTabSelected,
-          items: navItems.map((navItem) {
-            return BottomNavigationBarItem(
-              icon: (cartProvider.count > 0 && navItem["index"] == 1) ||
-                      (notiProvider.count > 0 && navItem["index"] == 3)
-                  ? Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 8,
-                            top: 8,
-                            right: 8,
-                          ),
-                          child: SvgPicture.asset(
-                            navItem["icon"],
-                            colorFilter: ColorFilter.mode(
-                              navItem["index"] == bottomProvider.currentIndex
-                                  ? Theme.of(context).primaryColor
-                                  : Colors.grey,
-                              BlendMode.srcIn,
-                            ),
-                            width: 24,
-                            height: 24,
-                          ),
-                        ),
-                        Positioned(
-                          right: 2,
-                          child: Container(
-                            padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              color: ColorConstants.redcolor,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            constraints: const BoxConstraints(
-                              minWidth: 16,
-                              minHeight: 16,
-                            ),
-                            child: Text(
-                              navItem["index"] == 1
-                                  ? '${cartProvider.count}'
-                                  : '${notiProvider.count}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: FontConstants.bottom,
+        child: navItems.isNotEmpty
+            ? BottomNavigationBar(
+                currentIndex: bottomProvider.currentIndex,
+                type: BottomNavigationBarType.shifting,
+                backgroundColor: Colors.white,
+                selectedItemColor: Theme.of(context).primaryColor,
+                unselectedItemColor: Colors.grey,
+                selectedFontSize: FontConstants.bottom,
+                unselectedFontSize: FontConstants.bottom,
+                selectedLabelStyle: const TextStyle(
+                  fontWeight: FontWeight.w400,
+                ),
+                onTap: _onTabSelected,
+                items: navItems.map((navItem) {
+                  return BottomNavigationBarItem(
+                    icon: (cartProvider.count > 0 && navItem["index"] == 1) ||
+                            (notiProvider.count > 0 &&
+                                navItem["index"] == 3 &&
+                                role == 'admin')
+                        ? Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 8,
+                                  top: 8,
+                                  right: 8,
+                                ),
+                                child: SvgPicture.asset(
+                                  navItem["icon"],
+                                  colorFilter: ColorFilter.mode(
+                                    navItem["index"] ==
+                                            bottomProvider.currentIndex
+                                        ? Theme.of(context).primaryColor
+                                        : Colors.grey,
+                                    BlendMode.srcIn,
+                                  ),
+                                  width: 24,
+                                  height: 24,
+                                ),
                               ),
-                              textAlign: TextAlign.center,
+                              Positioned(
+                                right: 2,
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: ColorConstants.redcolor,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 16,
+                                    minHeight: 16,
+                                  ),
+                                  child: Text(
+                                    navItem["index"] == 1
+                                        ? '${cartProvider.count}'
+                                        : '${notiProvider.count}',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: FontConstants.bottom,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(
+                              left: 8,
+                              top: 8,
+                              right: 8,
+                            ),
+                            child: SvgPicture.asset(
+                              navItem["icon"],
+                              colorFilter: ColorFilter.mode(
+                                navItem["index"] == bottomProvider.currentIndex
+                                    ? Theme.of(context).primaryColor
+                                    : Colors.grey,
+                                BlendMode.srcIn,
+                              ),
+                              width: 24,
+                              height: 24,
                             ),
                           ),
-                        ),
-                      ],
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.only(
-                        left: 8,
-                        top: 8,
-                        right: 8,
-                      ),
-                      child: SvgPicture.asset(
-                        navItem["icon"],
-                        colorFilter: ColorFilter.mode(
-                          navItem["index"] == bottomProvider.currentIndex
-                              ? Theme.of(context).primaryColor
-                              : Colors.grey,
-                          BlendMode.srcIn,
-                        ),
-                        width: 24,
-                        height: 24,
-                      ),
-                    ),
-              label: language[navItem["label"]] ?? navItem["label"],
-            );
-          }).toList(),
-        ),
+                    label: language[navItem["label"]] ?? navItem["label"],
+                  );
+                }).toList(),
+              )
+            : Container(),
       );
     });
   }

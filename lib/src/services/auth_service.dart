@@ -105,7 +105,12 @@ class AuthService {
     return jsonDecode(response.body);
   }
 
-  logout(BuildContext context) {
+  logout(BuildContext context) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String role = prefs.getString('role') ?? "";
+    Navigator.pushNamed(
+        context, role == 'admin' || role != '' ? Routes.home : Routes.history);
+
     clearData();
     CartProvider cartProvider =
         Provider.of<CartProvider>(context, listen: false);
@@ -118,8 +123,6 @@ class AuthService {
     BottomProvider bottomProvider =
         Provider.of<BottomProvider>(context, listen: false);
     bottomProvider.selectIndex(0);
-
-    Navigator.pushNamed(context, Routes.home);
   }
 
   clearData() async {

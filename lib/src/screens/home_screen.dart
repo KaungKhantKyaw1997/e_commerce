@@ -2,15 +2,12 @@ import 'dart:ui';
 
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
-import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/brands_service.dart';
 import 'package:e_commerce/src/services/categories_service.dart';
-import 'package:e_commerce/src/services/notification_service.dart';
 import 'package:e_commerce/src/services/shops_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
@@ -18,7 +15,6 @@ import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/screens/bottombar_screen.dart';
 import 'package:number_paginator/number_paginator.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -34,7 +30,6 @@ class _HomeScreenState extends State<HomeScreen>
   final shopsService = ShopsService();
   final brandsService = BrandsService();
   final categoriesService = CategoriesService();
-  final notificationService = NotificationService();
   final storage = FlutterSecureStorage();
   final ScrollController _scrollController = ScrollController();
   late TabController _tabController;
@@ -59,7 +54,6 @@ class _HomeScreenState extends State<HomeScreen>
     getProfile();
     getShops();
     getProducts();
-    unreadNotifications();
   }
 
   @override
@@ -69,7 +63,6 @@ class _HomeScreenState extends State<HomeScreen>
     shopsService.cancelRequest();
     brandsService.cancelRequest();
     categoriesService.cancelRequest();
-    notificationService.cancelRequest();
     super.dispose();
   }
 
@@ -89,22 +82,6 @@ class _HomeScreenState extends State<HomeScreen>
           validtoken = false;
         });
         authService.clearData();
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
-  unreadNotifications() async {
-    try {
-      final response = await notificationService.unreadNotificationsData();
-      if (response!["code"] == 200) {
-        NotiProvider notiProvider =
-            Provider.of<NotiProvider>(context, listen: false);
-        notiProvider.addCount(response["data"]);
-        FlutterAppBadger.updateBadgeCount(response["data"]);
-      } else {
-        ToastUtil.showToast(response["code"], response["message"]);
       }
     } catch (e) {
       print('Error: $e');
@@ -342,67 +319,6 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  showExitDialog() async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (c) => BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: 5,
-          sigmaY: 5,
-        ),
-        child: AlertDialog(
-          backgroundColor: Colors.white,
-          title: Text(
-            language["Log Out"] ?? "Log Out",
-            style: FontConstants.body1,
-          ),
-          content: Text(
-            language["Are you sure you want to log out?"] ??
-                "Are you sure you want to log out?",
-            style: FontConstants.caption2,
-          ),
-          actions: [
-            TextButton(
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
-              ),
-              child: Text(
-                language["Cancel"] ?? "Cancel",
-                style: FontConstants.button2,
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    Theme.of(context).primaryColor),
-              ),
-              child: Text(
-                language["Ok"] ?? "Ok",
-                style: FontConstants.button1,
-              ),
-              onPressed: () async {
-                authService.logout(context);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Stream<DateTime> dateTimeStream =
       Stream.periodic(Duration.zero, (_) => DateTime.now());
 
@@ -498,20 +414,18 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ),
           actions: [
-            IconButton(
-              icon: SvgPicture.asset(
-                "assets/icons/sign_out.svg",
-                width: 22,
-                height: 22,
-                colorFilter: const ColorFilter.mode(
-                  Colors.black,
-                  BlendMode.srcIn,
-                ),
-              ),
-              onPressed: () {
-                showExitDialog();
-              },
-            ),
+            // IconButton(
+            //   icon: SvgPicture.asset(
+            //     "assets/icons/sign_out.svg",
+            //     width: 22,
+            //     height: 22,
+            //     colorFilter: const ColorFilter.mode(
+            //       Colors.black,
+            //       BlendMode.srcIn,
+            //     ),
+            //   ),
+            //   onPressed: () {},
+            // ),
           ],
           bottom: TabBar(
             controller: _tabController,

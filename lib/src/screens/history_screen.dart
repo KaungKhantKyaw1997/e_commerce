@@ -1,7 +1,10 @@
 import 'package:collection/collection.dart';
+import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
+import 'package:e_commerce/src/services/notification_service.dart';
 import 'package:e_commerce/src/widgets/custom_date_range.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
@@ -12,6 +15,7 @@ import 'package:e_commerce/src/services/orders_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:provider/provider.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -23,46 +27,38 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen> {
   final orderService = OrderService();
   final authService = AuthService();
+  final notificationService = NotificationService();
   final storage = FlutterSecureStorage();
   final ScrollController _scrollController = ScrollController();
   List orders = [];
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
-  bool validtoken = true;
 
   @override
   void initState() {
     super.initState();
-    verifyToken();
+    unreadNotifications();
+    getOrders(type: 'init');
   }
 
   @override
   void dispose() {
     orderService.cancelRequest();
+    notificationService.cancelRequest();
     _scrollController.dispose();
     super.dispose();
   }
 
-  verifyToken() async {
-    var token = await storage.read(key: "token") ?? "";
-    if (token == "") {
-      setState(() {
-        validtoken = false;
-      });
-      return;
-    }
+  unreadNotifications() async {
     try {
-      final body = {
-        "token": token,
-      };
-      final response = await authService.verifyTokenData(body);
-      if (response["code"] != 200) {
-        setState(() {
-          validtoken = false;
-        });
-        authService.clearData();
+      final response = await notificationService.unreadNotificationsData();
+      if (response!["code"] == 200) {
+        NotiProvider notiProvider =
+            Provider.of<NotiProvider>(context, listen: false);
+        notiProvider.addCount(response["data"]);
+        FlutterAppBadger.updateBadgeCount(response["data"]);
       } else {
-        getOrders(type: 'init');
+        ToastUtil.showToast(response["code"], response["message"]);
       }
     } catch (e) {
       print('Error: $e');
@@ -152,22 +148,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ),
         ),
         actions: [
-          validtoken
-              ? IconButton(
-                  icon: SvgPicture.asset(
-                    "assets/icons/calendar.svg",
-                    width: 24,
-                    height: 24,
-                    colorFilter: const ColorFilter.mode(
-                      Colors.black,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  onPressed: () {
-                    _selectDateRange(context);
-                  },
-                )
-              : Container(),
+          IconButton(
+            icon: SvgPicture.asset(
+              "assets/icons/calendar.svg",
+              width: 24,
+              height: 24,
+              colorFilter: const ColorFilter.mode(
+                Colors.black,
+                BlendMode.srcIn,
+              ),
+            ),
+            onPressed: () {
+              _selectDateRange(context);
+            },
+          ),
         ],
       ),
       body: SingleChildScrollView(
