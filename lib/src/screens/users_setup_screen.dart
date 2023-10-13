@@ -80,18 +80,18 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 80,
-            height: 80,
+            width: 75,
+            height: 75,
             decoration: BoxDecoration(
               image: users[index]["profile_image"] != ""
                   ? DecorationImage(
                       image: NetworkImage(
                           '${ApiConstants.baseUrl}${users[index]["profile_image"].toString()}'),
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                     )
                   : DecorationImage(
                       image: AssetImage('assets/images/profile.png'),
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                     ),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
@@ -102,7 +102,7 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
           Expanded(
             child: Container(
               margin: const EdgeInsets.only(
-                left: 4,
+                left: 15,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,

@@ -282,7 +282,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
-                        top: 16,
+                        top: 24,
                         bottom: 4,
                       ),
                       child: Align(

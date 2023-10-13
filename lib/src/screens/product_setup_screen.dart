@@ -407,7 +407,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       ),
                       onPressed: _pickMultiImage,
                       child: Text(
-                        language["Pick images"] ?? "Pick images",
+                        language["Pick Images"] ?? "Pick Images",
                         style: FontConstants.button1,
                       ),
                     ),
@@ -416,7 +416,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                         left: 16,
                         right: 16,
                         bottom: 4,
-                        top: 16,
+                        top: 24,
                       ),
                       child: Align(
                         alignment: Alignment.centerLeft,

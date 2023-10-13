@@ -85,18 +85,18 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 80,
-            height: 80,
+            width: 75,
+            height: 75,
             decoration: BoxDecoration(
               image: products[index]["product_images"][0] != ""
                   ? DecorationImage(
                       image: NetworkImage(
                           '${ApiConstants.baseUrl}${products[index]["product_images"][0].toString()}'),
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                     )
                   : DecorationImage(
                       image: AssetImage('assets/images/logo.png'),
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                     ),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
@@ -107,7 +107,7 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
           Expanded(
             child: Container(
               margin: const EdgeInsets.only(
-                left: 4,
+                left: 15,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,

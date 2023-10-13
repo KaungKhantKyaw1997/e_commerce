@@ -302,7 +302,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
-                        top: 16,
+                        top: 24,
                         bottom: 4,
                       ),
                       child: Align(
