@@ -283,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen>
         children: [
           Container(
             width: double.infinity,
-            height: 200,
+            height: 150,
             decoration: BoxDecoration(
               image: categories[index]["cover_image"] != ""
                   ? DecorationImage(
@@ -765,7 +765,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 : Container(),
                             categories.isNotEmpty
                                 ? Container(
-                                    height: 250,
+                                    height: 200,
                                     child: ListView.builder(
                                       controller: _scrollController,
                                       shrinkWrap: true,
@@ -780,8 +780,8 @@ class _HomeScreenState extends State<HomeScreen>
                                               arguments: categories[index],
                                             );
                                           },
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
+                                          child: Container(
+                                            margin: EdgeInsets.only(
                                               right: 8,
                                             ),
                                             child: categoriesCard(index),
