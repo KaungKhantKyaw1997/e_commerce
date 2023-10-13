@@ -414,18 +414,18 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ),
           actions: [
-            // IconButton(
-            //   icon: SvgPicture.asset(
-            //     "assets/icons/sign_out.svg",
-            //     width: 22,
-            //     height: 22,
-            //     colorFilter: const ColorFilter.mode(
-            //       Colors.black,
-            //       BlendMode.srcIn,
-            //     ),
-            //   ),
-            //   onPressed: () {},
-            // ),
+            IconButton(
+              icon: SvgPicture.asset(
+                "assets/icons/scan.svg",
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  Colors.black,
+                  BlendMode.srcIn,
+                ),
+              ),
+              onPressed: () {},
+            ),
           ],
           bottom: TabBar(
             controller: _tabController,
