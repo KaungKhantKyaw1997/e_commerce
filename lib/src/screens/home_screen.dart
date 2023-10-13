@@ -501,8 +501,8 @@ class _HomeScreenState extends State<HomeScreen>
             IconButton(
               icon: SvgPicture.asset(
                 "assets/icons/sign_out.svg",
-                width: 28,
-                height: 28,
+                width: 22,
+                height: 22,
                 colorFilter: const ColorFilter.mode(
                   Colors.black,
                   BlendMode.srcIn,
