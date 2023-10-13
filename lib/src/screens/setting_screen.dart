@@ -381,7 +381,9 @@ class _SettingScreenState extends State<SettingScreen> {
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
-                                    context, Routes.shops_setup);
+                                  context,
+                                  Routes.shops_setup,
+                                );
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(
@@ -435,7 +437,9 @@ class _SettingScreenState extends State<SettingScreen> {
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
-                                    context, Routes.categories_setup);
+                                  context,
+                                  Routes.categories_setup,
+                                );
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(
@@ -489,7 +493,9 @@ class _SettingScreenState extends State<SettingScreen> {
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
-                                    context, Routes.brands_setup);
+                                  context,
+                                  Routes.brands_setup,
+                                );
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(
@@ -543,7 +549,9 @@ class _SettingScreenState extends State<SettingScreen> {
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
-                                    context, Routes.products_setup);
+                                  context,
+                                  Routes.products_setup,
+                                );
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(
@@ -595,7 +603,10 @@ class _SettingScreenState extends State<SettingScreen> {
                           : Container(),
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, Routes.language);
+                          Navigator.pushNamed(
+                            context,
+                            Routes.language,
+                          );
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(
@@ -685,7 +696,9 @@ class _SettingScreenState extends State<SettingScreen> {
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
-                                    context, Routes.change_password);
+                                  context,
+                                  Routes.change_password,
+                                );
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(

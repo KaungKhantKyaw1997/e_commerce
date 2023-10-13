@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
+import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
@@ -10,8 +11,8 @@ import 'package:e_commerce/src/services/products_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
 
 class ProductSetupScreen extends StatefulWidget {
   const ProductSetupScreen({super.key});
@@ -38,9 +39,12 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   FocusNode _priceFocusNode = FocusNode();
   FocusNode _stockQuantityFocusNode = FocusNode();
 
-  TextEditingController shopId = TextEditingController(text: '');
-  TextEditingController categoryId = TextEditingController(text: '');
-  TextEditingController brandId = TextEditingController(text: '');
+  TextEditingController shopName = TextEditingController(text: '');
+  int shopId = 0;
+  TextEditingController categoryName = TextEditingController(text: '');
+  int categoryId = 0;
+  TextEditingController brandName = TextEditingController(text: '');
+  int brandId = 0;
   TextEditingController model = TextEditingController(text: '');
   TextEditingController description = TextEditingController(text: '');
   TextEditingController color = TextEditingController(text: '');
@@ -55,7 +59,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   TextEditingController price = TextEditingController(text: '');
   TextEditingController stockQuantity = TextEditingController(text: '');
   bool isTopModel = false;
-  List<Asset> productImages = <Asset>[];
+  List productImages = [];
+  List<XFile> pickedMultiFile = <XFile>[];
 
   int id = 0;
 
@@ -84,6 +89,12 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
       final response = await productsService.getProductData(id);
       if (response!["code"] == 200) {
         setState(() {
+          shopName.text = response["data"]["shop_name"] ?? "";
+          shopId = response["data"]["shop_id"] ?? 0;
+          categoryName.text = response["data"]["category_name"] ?? "";
+          categoryId = response["data"]["category_id"] ?? 0;
+          brandName.text = response["data"]["brand_name"] ?? "";
+          brandId = response["data"]["brand_id"] ?? 0;
           model.text = response["data"]["model"] ?? "";
           description.text = response["data"]["description"] ?? "";
           color.text = response["data"]["color"] ?? "";
@@ -95,9 +106,11 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           waterResistance.text = response["data"]["water_resistance"] ?? "";
           warrantyPeriod.text = response["data"]["warranty_period"] ?? "";
           dimensions.text = response["data"]["dimensions"] ?? "";
-          price.text = response["data"]["price"] ?? "";
-          stockQuantity.text = response["data"]["stock_quantity"] ?? "";
+          price.text = response["data"]["price"].toString() ?? "";
+          stockQuantity.text =
+              response["data"]["stock_quantity"].toString() ?? "";
           isTopModel = response["data"]["is_top_model"] ?? false;
+          productImages = response["data"]["product_images"] ?? [];
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -108,32 +121,27 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   }
 
   Future<void> _pickMultiImage() async {
-    List<Asset> resultList = <Asset>[];
     try {
-      resultList = await MultiImagePicker.pickImages(
-        maxImages: 5,
-        enableCamera: true,
-        selectedAssets: productImages,
-      );
+      pickedMultiFile = await ImagePicker().pickMultiImage();
+      productImages = [];
+      setState(() {});
     } on Exception catch (e) {
       print(e.toString());
     }
-    if (!mounted) return;
-    setState(() {
-      productImages = resultList;
-    });
   }
 
   Future<void> uploadFile() async {
-    // try {
-    //   var response = await AuthService.uploadFile(File(pickedFile!.path));
-    //   var res = jsonDecode(response.body);
-    //   if (res["code"] == 200) {
-    //     coverImage = res["url"];
-    //   }
-    // } catch (error) {
-    //   print('Error uploading file: $error');
-    // }
+    for (var pickedFile in pickedMultiFile) {
+      try {
+        var response = await AuthService.uploadFile(File(pickedFile.path));
+        var res = jsonDecode(response.body);
+        if (res["code"] == 200) {
+          productImages.add(res["url"]);
+        }
+      } catch (error) {
+        print('Error uploading file: $error');
+      }
+    }
   }
 
   addProduct() async {
@@ -142,9 +150,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           price.text == '' ? 0.0 : double.parse(price.text.replaceAll(',', ''));
 
       final body = {
-        "shop_id": int.parse(shopId.text),
-        "category_id": int.parse(categoryId.text),
-        "brand_id": int.parse(brandId.text),
+        "shop_id": shopId,
+        "category_id": categoryId,
+        "brand_id": brandId,
         "model": model.text,
         "description": description.text,
         "color": color.text,
@@ -181,9 +189,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           price.text == '' ? 0.0 : double.parse(price.text.replaceAll(',', ''));
 
       final body = {
-        "shop_id": int.parse(shopId.text),
-        "category_id": int.parse(categoryId.text),
-        "brand_id": int.parse(brandId.text),
+        "shop_id": shopId,
+        "category_id": categoryId,
+        "brand_id": brandId,
         "model": model.text,
         "description": description.text,
         "color": color.text,
@@ -231,6 +239,57 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     } catch (e) {
       print('Error: $e');
       Navigator.pop(context);
+    }
+  }
+
+  Future<void> fetchShopData() async {
+    var result = await Navigator.pushNamed(
+      context,
+      Routes.shops_setup,
+      arguments: {
+        "from": "product",
+      },
+    );
+
+    if (result != null && result is Map<String, dynamic>) {
+      setState(() {
+        shopId = result["shop_id"] ?? 0;
+        shopName.text = result["name"] ?? "";
+      });
+    }
+  }
+
+  Future<void> fetchCategoryData() async {
+    var result = await Navigator.pushNamed(
+      context,
+      Routes.categories_setup,
+      arguments: {
+        "from": "product",
+      },
+    );
+
+    if (result != null && result is Map<String, dynamic>) {
+      setState(() {
+        categoryId = result["category_id"] ?? 0;
+        categoryName.text = result["name"] ?? "";
+      });
+    }
+  }
+
+  Future<void> fetchBrandData() async {
+    var result = await Navigator.pushNamed(
+      context,
+      Routes.brands_setup,
+      arguments: {
+        "from": "product",
+      },
+    );
+
+    if (result != null && result is Map<String, dynamic>) {
+      setState(() {
+        brandId = result["brand_id"] ?? 0;
+        brandName.text = result["name"] ?? "";
+      });
     }
   }
 
@@ -301,18 +360,40 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                         right: 16,
                         bottom: 4,
                       ),
-                      child: GridView.count(
-                        shrinkWrap: true,
-                        crossAxisCount: 3,
-                        children: List.generate(productImages.length, (index) {
-                          Asset asset = productImages[index];
-                          return AssetThumb(
-                            asset: asset,
-                            width: 300,
-                            height: 300,
-                          );
-                        }),
-                      ),
+                      child: productImages.isNotEmpty
+                          ? GridView.count(
+                              shrinkWrap: true,
+                              crossAxisCount: 3,
+                              children:
+                                  List.generate(productImages.length, (index) {
+                                return Image.network(
+                                  '${ApiConstants.baseUrl}${productImages[index].toString()}',
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                );
+                              }),
+                            )
+                          : pickedMultiFile.isNotEmpty
+                              ? GridView.count(
+                                  shrinkWrap: true,
+                                  crossAxisCount: 3,
+                                  children: List.generate(
+                                      pickedMultiFile.length, (index) {
+                                    return Image.file(
+                                      File(pickedMultiFile[index]!.path),
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    );
+                                  }),
+                                )
+                              : Image.asset(
+                                  'assets/images/logo.png',
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                ),
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -340,6 +421,198 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
+                          language["Shop"] ?? "Shop",
+                          style: FontConstants.caption1,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      child: TextFormField(
+                        controller: shopName,
+                        readOnly: true,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.next,
+                        style: FontConstants.body2,
+                        cursorColor: Colors.black,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: ColorConstants.fillcolor,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          suffixIcon: IconButton(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                            ),
+                            onPressed: fetchShopData,
+                            icon: SvgPicture.asset(
+                              "assets/icons/shop.svg",
+                              width: 24,
+                              height: 24,
+                              colorFilter: ColorFilter.mode(
+                                Theme.of(context).primaryColor,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["Category"] ?? "Category",
+                          style: FontConstants.caption1,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      child: TextFormField(
+                        controller: categoryName,
+                        readOnly: true,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.next,
+                        style: FontConstants.body2,
+                        cursorColor: Colors.black,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: ColorConstants.fillcolor,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          suffixIcon: IconButton(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                            ),
+                            onPressed: fetchCategoryData,
+                            icon: SvgPicture.asset(
+                              "assets/icons/category.svg",
+                              width: 24,
+                              height: 24,
+                              colorFilter: ColorFilter.mode(
+                                Theme.of(context).primaryColor,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["Brand"] ?? "Brand",
+                          style: FontConstants.caption1,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      child: TextFormField(
+                        controller: brandName,
+                        readOnly: true,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.next,
+                        style: FontConstants.body2,
+                        cursorColor: Colors.black,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: ColorConstants.fillcolor,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          suffixIcon: IconButton(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                            ),
+                            onPressed: fetchBrandData,
+                            icon: SvgPicture.asset(
+                              "assets/icons/brand.svg",
+                              width: 24,
+                              height: 24,
+                              colorFilter: ColorFilter.mode(
+                                Theme.of(context).primaryColor,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
                           language["Model"] ?? "Model",
                           style: FontConstants.caption1,
                         ),
@@ -355,7 +628,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                         controller: model,
                         focusNode: _modelFocusNode,
                         keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.done,
+                        textInputAction: TextInputAction.next,
                         style: FontConstants.body1,
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
@@ -410,7 +683,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                         controller: description,
                         focusNode: _descriptionFocusNode,
                         keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.done,
+                        textInputAction: TextInputAction.next,
                         style: FontConstants.body1,
                         cursorColor: Colors.black,
                         maxLines: 2,
@@ -473,7 +746,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                   controller: color,
                                   focusNode: _colorFocusNode,
                                   keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.done,
+                                  textInputAction: TextInputAction.next,
                                   style: FontConstants.body1,
                                   cursorColor: Colors.black,
                                   decoration: InputDecoration(
@@ -536,7 +809,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                   controller: movementType,
                                   focusNode: _movementTypeFocusNode,
                                   keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.done,
+                                  textInputAction: TextInputAction.next,
                                   style: FontConstants.body1,
                                   cursorColor: Colors.black,
                                   decoration: InputDecoration(
@@ -604,7 +877,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                   controller: strapMaterial,
                                   focusNode: _strapMaterialFocusNode,
                                   keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.done,
+                                  textInputAction: TextInputAction.next,
                                   style: FontConstants.body1,
                                   cursorColor: Colors.black,
                                   decoration: InputDecoration(
@@ -666,7 +939,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                   controller: strapColor,
                                   focusNode: _strapColorFocusNode,
                                   keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.done,
+                                  textInputAction: TextInputAction.next,
                                   style: FontConstants.body1,
                                   cursorColor: Colors.black,
                                   decoration: InputDecoration(
@@ -734,7 +1007,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                   controller: caseMaterial,
                                   focusNode: _caseMaterialFocusNode,
                                   keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.done,
+                                  textInputAction: TextInputAction.next,
                                   style: FontConstants.body1,
                                   cursorColor: Colors.black,
                                   decoration: InputDecoration(
@@ -796,7 +1069,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                   controller: dialColor,
                                   focusNode: _dialColorFocusNode,
                                   keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.done,
+                                  textInputAction: TextInputAction.next,
                                   style: FontConstants.body1,
                                   cursorColor: Colors.black,
                                   decoration: InputDecoration(
@@ -863,7 +1136,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                   controller: dimensions,
                                   focusNode: _dimensionsFocusNode,
                                   keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.done,
+                                  textInputAction: TextInputAction.next,
                                   style: FontConstants.body1,
                                   cursorColor: Colors.black,
                                   decoration: InputDecoration(
@@ -926,7 +1199,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                   controller: waterResistance,
                                   focusNode: _waterResistanceFocusNode,
                                   keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.done,
+                                  textInputAction: TextInputAction.next,
                                   style: FontConstants.body1,
                                   cursorColor: Colors.black,
                                   decoration: InputDecoration(
@@ -995,7 +1268,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                   controller: stockQuantity,
                                   focusNode: _stockQuantityFocusNode,
                                   keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.done,
+                                  textInputAction: TextInputAction.next,
                                   style: FontConstants.body1,
                                   cursorColor: Colors.black,
                                   decoration: InputDecoration(
@@ -1143,7 +1416,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       showLoadingDialog(context);
-                      if (productImages.isNotEmpty) {
+                      if (pickedMultiFile.isNotEmpty) {
                         await uploadFile();
                       }
                       addProduct();
@@ -1213,7 +1486,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               showLoadingDialog(context);
-                              if (productImages.isNotEmpty) {
+                              if (pickedMultiFile.isNotEmpty) {
                                 await uploadFile();
                               }
                               updateProduct();

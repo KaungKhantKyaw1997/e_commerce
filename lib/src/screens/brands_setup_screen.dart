@@ -24,10 +24,19 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
   int page = 1;
   int pageCounts = 0;
   int total = 0;
+  String from = "";
 
   @override
   void initState() {
     super.initState();
+    Future.delayed(Duration.zero, () {
+      final arguments =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
+      if (arguments != null) {
+        from = arguments["from"];
+      }
+    });
     getBrands();
   }
 
@@ -224,14 +233,18 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      Navigator.pop(context);
-                      Navigator.pushNamed(
-                        context,
-                        Routes.brand_setup,
-                        arguments: {
-                          "id": brands[index]["brand_id"],
-                        },
-                      );
+                      if (from != "product") {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(
+                          context,
+                          Routes.brand_setup,
+                          arguments: {
+                            "id": brands[index]["brand_id"],
+                          },
+                        );
+                      } else {
+                        Navigator.of(context).pop(brands[index]);
+                      }
                     },
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -259,22 +272,24 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pop(context);
-          Navigator.pushNamed(
-            context,
-            Routes.brand_setup,
-            arguments: {
-              "id": 0,
-            },
-          );
-        },
-        backgroundColor: Theme.of(context).primaryColor,
-        child: Icon(
-          Icons.add,
-        ),
-      ),
+      floatingActionButton: from != "product"
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(
+                  context,
+                  Routes.brand_setup,
+                  arguments: {
+                    "id": 0,
+                  },
+                );
+              },
+              backgroundColor: Theme.of(context).primaryColor,
+              child: Icon(
+                Icons.add,
+              ),
+            )
+          : null,
     );
   }
 }
