@@ -533,84 +533,86 @@ class _ProductsScreenState extends State<ProductsScreen>
           color: Theme.of(context).primaryColor,
         ),
       ),
-      body: !loading && products.isNotEmpty
-          ? SingleChildScrollView(
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 24,
-                ),
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    GridView.builder(
-                      controller: _scrollController,
-                      shrinkWrap: true,
-                      itemCount: products.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        mainAxisExtent: 250,
-                        childAspectRatio: 2 / 1,
-                        crossAxisSpacing: 15,
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 15,
-                      ),
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              Routes.product,
-                              arguments: products[index],
+      body: !loading
+          ? products.isNotEmpty
+              ? SingleChildScrollView(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 24,
+                    ),
+                    width: double.infinity,
+                    child: Column(
+                      children: [
+                        GridView.builder(
+                          controller: _scrollController,
+                          shrinkWrap: true,
+                          itemCount: products.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            mainAxisExtent: 250,
+                            childAspectRatio: 2 / 1,
+                            crossAxisSpacing: 15,
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 15,
+                          ),
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  Routes.product,
+                                  arguments: products[index],
+                                );
+                              },
+                              child: productCard(index),
                             );
                           },
-                          child: productCard(index),
-                        );
-                      },
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Center(
-                  child: Container(
-                    width: 300,
-                    height: 300,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/no_data.png'),
+                  ),
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 300,
+                        height: 300,
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/no_data.png'),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 10,
-                  ),
-                  child: Text(
-                    "Empty Product",
-                    textAlign: TextAlign.center,
-                    style: FontConstants.title2,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 40,
-                  ),
-                  child: Text(
-                    "There is no data...",
-                    textAlign: TextAlign.center,
-                    style: FontConstants.subheadline2,
-                  ),
-                ),
-              ],
-            ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 10,
+                      ),
+                      child: Text(
+                        "Empty Product",
+                        textAlign: TextAlign.center,
+                        style: FontConstants.title2,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 40,
+                      ),
+                      child: Text(
+                        "There is no data...",
+                        textAlign: TextAlign.center,
+                        style: FontConstants.subheadline2,
+                      ),
+                    ),
+                  ],
+                )
+          : Container(),
     );
   }
 }
