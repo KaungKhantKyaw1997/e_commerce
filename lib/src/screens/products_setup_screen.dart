@@ -130,8 +130,7 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
                     ],
                   ),
                   Text(
-                    products[index]["description"].toString(),
-                    maxLines: 3,
+                    products[index]["model"].toString(),
                     overflow: TextOverflow.ellipsis,
                     style: FontConstants.caption1,
                   ),

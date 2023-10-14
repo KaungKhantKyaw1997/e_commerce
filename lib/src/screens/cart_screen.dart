@@ -968,9 +968,9 @@ class _CartScreenState extends State<CartScreen> {
         onWillPop: () async {
           return false;
         },
-        child: carts.isNotEmpty
-            ? SingleChildScrollView(
-                child: Container(
+        child: SingleChildScrollView(
+          child: carts.isNotEmpty
+              ? Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 24,
@@ -1306,48 +1306,48 @@ class _CartScreenState extends State<CartScreen> {
                       },
                     ),
                   ),
-                ),
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 300,
-                      height: 300,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/no_data.png'),
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 300,
+                        height: 300,
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/no_data.png'),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 4,
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Text(
+                        "Empty Cart",
+                        textAlign: TextAlign.center,
+                        style: FontConstants.title2,
+                      ),
                     ),
-                    child: Text(
-                      "Empty Cart",
-                      textAlign: TextAlign.center,
-                      style: FontConstants.title2,
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                      ),
+                      child: Text(
+                        "Looks like you haven't made your choice yet...",
+                        textAlign: TextAlign.center,
+                        style: FontConstants.subheadline2,
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                    ),
-                    child: Text(
-                      "Looks like you haven't made your choice yet...",
-                      textAlign: TextAlign.center,
-                      style: FontConstants.subheadline2,
-                    ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+        ),
       ),
       bottomNavigationBar: const BottomBarScreen(),
     );
