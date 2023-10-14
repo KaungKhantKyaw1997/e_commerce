@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/notification_service.dart';
+import 'package:e_commerce/src/utils/format_amount.dart';
 import 'package:e_commerce/src/widgets/custom_date_range.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
@@ -256,6 +257,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                               ["phone"],
                                           "email": orders[index]["items"][i]
                                               ["email"],
+                                          "address":
+                                              '${orders[index]["items"][i]["home_address"]}, ${orders[index]["items"][i]["street_address"]}, ${orders[index]["items"][i]["ward"]}, ${orders[index]["items"][i]["state"]}, ${orders[index]["items"][i]["city"]}, ${orders[index]["items"][i]["township"]}, ${orders[index]["items"][i]["country"]}, ${orders[index]["items"][i]["postal_code"]}',
                                           "status": orders[index]["items"][i]
                                               ["status"],
                                         },
@@ -305,12 +308,39 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                   ),
                                                 ],
                                               ),
-                                              Text(
-                                                Jiffy.parse(orders[index]
-                                                            ["items"][i]
-                                                        ["created_at"])
-                                                    .format(pattern: 'hh:mm a'),
-                                                style: FontConstants.caption1,
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.baseline,
+                                                textBaseline:
+                                                    TextBaseline.alphabetic,
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      Jiffy.parse(orders[index]
+                                                                  ["items"][i]
+                                                              ["created_at"])
+                                                          .format(
+                                                              pattern:
+                                                                  'hh:mm a'),
+                                                      style: FontConstants
+                                                          .caption1,
+                                                    ),
+                                                  ),
+                                                  FormattedAmount(
+                                                    amount: double.parse(
+                                                        orders[index]["items"]
+                                                                    [i]
+                                                                ["order_total"]
+                                                            .toString()),
+                                                    mainTextStyle:
+                                                        FontConstants.caption2,
+                                                    decimalTextStyle:
+                                                        FontConstants.caption2,
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),

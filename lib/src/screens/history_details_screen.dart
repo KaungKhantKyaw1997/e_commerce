@@ -41,6 +41,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
   String email = "";
   String status = "";
   String role = "";
+  String address = "";
 
   @override
   void initState() {
@@ -56,6 +57,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
         phone = arguments["phone"];
         email = arguments["email"];
         status = arguments["status"];
+        address = arguments["address"];
         getData();
         getOrderDetails();
       }
@@ -359,17 +361,21 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           language["Date"] ?? "Date",
                           style: FontConstants.caption1,
                         ),
-                        Text(
-                          details["created_at"] != null
-                              ? Jiffy.parse(details["created_at"])
-                                  .format(pattern: 'dd/MM/yyyy')
-                              : "",
-                          style: FontConstants.caption2,
+                        Expanded(
+                          child: Text(
+                            details["created_at"] != null
+                                ? Jiffy.parse(details["created_at"])
+                                    .format(pattern: 'dd/MM/yyyy')
+                                : "",
+                            textAlign: TextAlign.end,
+                            style: FontConstants.caption2,
+                          ),
                         ),
                       ],
                     ),
@@ -380,17 +386,21 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           language["Time"] ?? "Time",
                           style: FontConstants.caption1,
                         ),
-                        Text(
-                          details["created_at"] != null
-                              ? Jiffy.parse(details["created_at"])
-                                  .format(pattern: 'hh:mm a')
-                              : "",
-                          style: FontConstants.caption2,
+                        Expanded(
+                          child: Text(
+                            details["created_at"] != null
+                                ? Jiffy.parse(details["created_at"])
+                                    .format(pattern: 'hh:mm a')
+                                : "",
+                            textAlign: TextAlign.end,
+                            style: FontConstants.caption2,
+                          ),
                         ),
                       ],
                     ),
@@ -402,14 +412,18 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 language["User Name"] ?? "User Name",
                                 style: FontConstants.caption1,
                               ),
-                              Text(
-                                username,
-                                style: FontConstants.caption2,
+                              Expanded(
+                                child: Text(
+                                  username,
+                                  textAlign: TextAlign.end,
+                                  style: FontConstants.caption2,
+                                ),
                               ),
                             ],
                           ),
@@ -422,14 +436,18 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 language["Phone"] ?? "Phone",
                                 style: FontConstants.caption1,
                               ),
-                              Text(
-                                phone,
-                                style: FontConstants.caption2,
+                              Expanded(
+                                child: Text(
+                                  phone,
+                                  textAlign: TextAlign.end,
+                                  style: FontConstants.caption2,
+                                ),
                               ),
                             ],
                           ),
@@ -442,14 +460,42 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 language["Email"] ?? "Email",
                                 style: FontConstants.caption1,
                               ),
+                              Expanded(
+                                child: Text(
+                                  email,
+                                  textAlign: TextAlign.end,
+                                  style: FontConstants.caption2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Container(),
+                  role == 'admin'
+                      ? Padding(
+                          padding: const EdgeInsets.only(
+                            top: 8,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               Text(
-                                email,
-                                style: FontConstants.caption2,
+                                language["Address"] ?? "Address",
+                                style: FontConstants.caption1,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  address,
+                                  textAlign: TextAlign.end,
+                                  style: FontConstants.caption2,
+                                ),
                               ),
                             ],
                           ),
@@ -461,14 +507,18 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           language["Brand"] ?? "Brand",
                           style: FontConstants.caption1,
                         ),
-                        Text(
-                          details["brand"].toString(),
-                          style: FontConstants.caption2,
+                        Expanded(
+                          child: Text(
+                            details["brand"].toString(),
+                            textAlign: TextAlign.end,
+                            style: FontConstants.caption2,
+                          ),
                         ),
                       ],
                     ),
@@ -479,14 +529,18 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           language["Model"] ?? "Model",
                           style: FontConstants.caption1,
                         ),
-                        Text(
-                          details["model"].toString(),
-                          style: FontConstants.caption2,
+                        Expanded(
+                          child: Text(
+                            details["model"].toString(),
+                            textAlign: TextAlign.end,
+                            style: FontConstants.caption2,
+                          ),
                         ),
                       ],
                     ),
@@ -498,6 +552,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 language["Amount"] ?? "Amount",
@@ -519,14 +574,18 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           language["Quantity"] ?? "Quantity",
                           style: FontConstants.caption1,
                         ),
-                        Text(
-                          details["quantity"].toString(),
-                          style: FontConstants.caption2,
+                        Expanded(
+                          child: Text(
+                            details["quantity"].toString(),
+                            textAlign: TextAlign.end,
+                            style: FontConstants.caption2,
+                          ),
                         ),
                       ],
                     ),
@@ -538,14 +597,18 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 language["Status"] ?? "Status",
                                 style: FontConstants.caption1,
                               ),
-                              Text(
-                                status,
-                                style: FontConstants.caption2,
+                              Expanded(
+                                child: Text(
+                                  status,
+                                  textAlign: TextAlign.end,
+                                  style: FontConstants.caption2,
+                                ),
                               ),
                             ],
                           ),
