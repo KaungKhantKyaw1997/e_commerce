@@ -97,7 +97,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
           List data = response["data"];
 
           final groupedItemsMap = groupBy(data, (item) {
-            return Jiffy.parse(item["created_at"])
+            return Jiffy.parseFromDateTime(
+                    DateTime.parse(item["created_at"] + "Z").toLocal())
                 .format(pattern: 'yyyy-MM-dd');
           });
 
@@ -321,10 +322,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                   children: [
                                                     Expanded(
                                                       child: Text(
-                                                        Jiffy.parse(orders[
-                                                                        index]
-                                                                    ["items"][i]
-                                                                ["created_at"])
+                                                        Jiffy.parseFromDateTime(
+                                                                DateTime.parse(
+                                                                        orders[index]["items"][i]["created_at"] +
+                                                                            "Z")
+                                                                    .toLocal())
                                                             .format(
                                                                 pattern:
                                                                     'hh:mm a'),
