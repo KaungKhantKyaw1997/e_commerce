@@ -422,11 +422,12 @@ class _ProductsScreenState extends State<ProductsScreen>
             width: double.infinity,
             height: 200,
             decoration: BoxDecoration(
-              image: products[index]["product_images"][0] != ""
+              image: products.length > 0 &&
+                      products[index]["product_images"][0] != ""
                   ? DecorationImage(
                       image: NetworkImage(
                           '${ApiConstants.baseUrl}${products[index]["product_images"][0].toString()}'),
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                     )
                   : DecorationImage(
                       image: AssetImage('assets/images/logo.png'),

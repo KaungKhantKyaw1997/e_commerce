@@ -143,7 +143,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                               ? DecorationImage(
                                                   image: NetworkImage(
                                                       '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'),
-                                                  fit: BoxFit.fill,
+                                                  fit: BoxFit.cover,
                                                 )
                                               : DecorationImage(
                                                   image: AssetImage(

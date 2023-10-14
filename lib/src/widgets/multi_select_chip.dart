@@ -17,7 +17,7 @@ class _MultiSelectChipState extends State<MultiSelectChip> {
       (item) {
         choices.add(
           Container(
-            padding: const EdgeInsets.all(4.0),
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: ChoiceChip(
               label: Text(
                 item,
