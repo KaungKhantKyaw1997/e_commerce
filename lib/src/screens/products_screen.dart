@@ -122,10 +122,6 @@ class _ProductsScreenState extends State<ProductsScreen>
 
       final response = await productsService.getProductsData(body);
       if (response!["code"] == 200) {
-        products = [];
-        page = 1;
-        pageCounts = 0;
-        total = 0;
         if (response["data"].isNotEmpty) {
           products = response["data"];
           page = response["page"];
@@ -540,42 +536,13 @@ class _ProductsScreenState extends State<ProductsScreen>
       body: !loading && products.isNotEmpty
           ? SingleChildScrollView(
               child: Container(
-                padding: const EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  bottom: 24,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 24,
                 ),
                 width: double.infinity,
                 child: Column(
                   children: [
-                    Container(
-                      padding: EdgeInsets.only(
-                        top: 4,
-                        bottom: 4,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Total ${total.toString()}',
-                            style: FontConstants.caption1,
-                          ),
-                          NumberPaginator(
-                            numberPages: pageCounts,
-                            onPageChange: (int index) {
-                              setState(() {
-                                page = index + 1;
-                                getProducts();
-                              });
-                            },
-                            config: const NumberPaginatorUIConfig(
-                              mode: ContentDisplayMode.hidden,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                     GridView.builder(
                       controller: _scrollController,
                       shrinkWrap: true,
