@@ -72,7 +72,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
           page++;
 
           final groupedItemsMap = groupBy(data, (item) {
-            return Jiffy.parse(item["created_at"])
+            return Jiffy.parseFromDateTime(
+                    DateTime.parse(item["created_at"] + "Z").toLocal())
                 .format(pattern: 'yyyy-MM-dd');
           });
 

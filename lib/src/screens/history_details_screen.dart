@@ -370,7 +370,9 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                         Expanded(
                           child: Text(
                             details["created_at"] != null
-                                ? Jiffy.parse(details["created_at"])
+                                ? Jiffy.parseFromDateTime(DateTime.parse(
+                                            details["created_at"] + "Z")
+                                        .toLocal())
                                     .format(pattern: 'dd/MM/yyyy')
                                 : "",
                             textAlign: TextAlign.end,
@@ -395,7 +397,9 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                         Expanded(
                           child: Text(
                             details["created_at"] != null
-                                ? Jiffy.parse(details["created_at"])
+                                ? Jiffy.parseFromDateTime(DateTime.parse(
+                                            details["created_at"] + "Z")
+                                        .toLocal())
                                     .format(pattern: 'hh:mm a')
                                 : "",
                             textAlign: TextAlign.end,

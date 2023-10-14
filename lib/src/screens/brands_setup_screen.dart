@@ -126,7 +126,9 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
                         style: FontConstants.body1,
                       ),
                       Text(
-                        Jiffy.parse(brands[index]["created_at"])
+                        Jiffy.parseFromDateTime(DateTime.parse(
+                                    brands[index]["created_at"] + "Z")
+                                .toLocal())
                             .format(pattern: 'dd/MM/yyyy'),
                         overflow: TextOverflow.ellipsis,
                         style: FontConstants.caption1,
