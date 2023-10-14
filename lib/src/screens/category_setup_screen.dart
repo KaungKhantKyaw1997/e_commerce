@@ -110,6 +110,11 @@ class _CategorySetupScreenState extends State<CategorySetupScreen> {
       Navigator.pop(context);
       if (response["code"] == 201) {
         ToastUtil.showToast(response["code"], response["message"]);
+        Navigator.pop(context);
+        Navigator.pushNamed(
+          context,
+          Routes.categories_setup,
+        );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -131,6 +136,11 @@ class _CategorySetupScreenState extends State<CategorySetupScreen> {
       Navigator.pop(context);
       if (response["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
+        Navigator.pop(context);
+        Navigator.pushNamed(
+          context,
+          Routes.categories_setup,
+        );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }

@@ -123,6 +123,11 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
       Navigator.pop(context);
       if (response["code"] == 201) {
         ToastUtil.showToast(response["code"], response["message"]);
+        Navigator.pop(context);
+        Navigator.pushNamed(
+          context,
+          Routes.shops_setup,
+        );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -154,6 +159,11 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
       Navigator.pop(context);
       if (response["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
+        Navigator.pop(context);
+        Navigator.pushNamed(
+          context,
+          Routes.shops_setup,
+        );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
