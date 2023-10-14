@@ -1,11 +1,16 @@
 import 'dart:math';
+import 'package:e_commerce/global.dart';
+import 'package:e_commerce/routes.dart';
+import 'package:e_commerce/src/providers/bottom_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:provider/provider.dart';
 
 class LocalNotificationService {
   static FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  static Future<void> setup() async {
+  static Future<void> setup(BuildContext context) async {
     const androidInitializationSetting =
         AndroidInitializationSettings('@mipmap/launcher_icon');
 
@@ -16,7 +21,15 @@ class LocalNotificationService {
       iOS: iosInitializationSetting,
     );
 
-    await flutterLocalNotificationsPlugin.initialize(initSettings);
+    flutterLocalNotificationsPlugin.initialize(
+      initSettings,
+      onDidReceiveNotificationResponse: (details) {
+        BottomProvider bottomProvider =
+            Provider.of<BottomProvider>(context, listen: false);
+        bottomProvider.selectIndex(1);
+        navigatorKey.currentState!.pushNamed(Routes.noti);
+      },
+    );
   }
 
   static Future<void> display(String title, String body) async {

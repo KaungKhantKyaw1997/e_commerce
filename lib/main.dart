@@ -1,10 +1,9 @@
-import 'package:e_commerce/src/screens/history_screen.dart';
+import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/services/local_notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:e_commerce/palette.dart';
 import 'package:e_commerce/routes.dart';
@@ -16,7 +15,6 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await LocalNotificationService.setup();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -56,6 +54,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
+    LocalNotificationService.setup(context);
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
         LocalNotificationService.display(
@@ -64,16 +64,12 @@ class _MyAppState extends State<MyApp> {
         );
       }
     });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      print('A new onMessageOpenedApp event was published!');
-      Navigator.pushNamed(context, Routes.noti);
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'Watch Vault by Diggie',
       theme: ThemeData(
         primarySwatch: Palette.kToDark,
