@@ -250,16 +250,43 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                           context,
                                           Routes.history_details,
                                           arguments: {
-                                            "id": orders[index]["items"][i]
-                                                ["order_id"],
+                                            "order_id": orders[index]["items"]
+                                                [i]["order_id"],
                                             "user_name": orders[index]["items"]
                                                 [i]["user_name"],
                                             "phone": orders[index]["items"][i]
                                                 ["phone"],
                                             "email": orders[index]["items"][i]
                                                 ["email"],
-                                            "address":
-                                                '${orders[index]["items"][i]["home_address"]}, ${orders[index]["items"][i]["street_address"]}, ${orders[index]["items"][i]["ward"]}, ${orders[index]["items"][i]["state"]}, ${orders[index]["items"][i]["city"]}, ${orders[index]["items"][i]["township"]}, ${orders[index]["items"][i]["country"]}, ${orders[index]["items"][i]["postal_code"]}',
+                                            "home_address": orders[index]
+                                                ["items"][i]["home_address"],
+                                            "street_address": orders[index]
+                                                ["items"][i]["street_address"],
+                                            "city": orders[index]["items"][i]
+                                                ["city"],
+                                            "state": orders[index]["items"][i]
+                                                ["state"],
+                                            "postal_code": orders[index]
+                                                ["items"][i]["postal_code"],
+                                            "country": orders[index]["items"][i]
+                                                ["country"],
+                                            "township": orders[index]["items"]
+                                                [i]["township"],
+                                            "ward": orders[index]["items"][i]
+                                                ["ward"],
+                                            "note": orders[index]["items"][i]
+                                                ["note"],
+                                            "order_total": orders[index]
+                                                ["items"][i]["order_total"],
+                                            "item_counts": orders[index]
+                                                ["items"][i]["item_counts"],
+                                            "payment_type": orders[index]
+                                                ["items"][i]["payment_type"],
+                                            "payslip_screenshot_path":
+                                                orders[index]["items"][i]
+                                                    ["payslip_screenshot_path"],
+                                            "created_at": orders[index]["items"]
+                                                [i]["created_at"],
                                             "status": orders[index]["items"][i]
                                                 ["status"],
                                           },
