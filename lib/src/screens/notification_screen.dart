@@ -135,6 +135,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         enablePullUp: true,
         onRefresh: () async {
           page = 1;
+          data = [];
           await getNotifications();
         },
         onLoading: () async {
