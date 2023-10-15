@@ -17,6 +17,7 @@ import 'package:e_commerce/src/utils/toast.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -32,18 +33,27 @@ class _HistoryScreenState extends State<HistoryScreen> {
   final notificationService = NotificationService();
   final storage = FlutterSecureStorage();
   final ScrollController _scrollController = ScrollController();
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   List orders = [];
-  DateTime startDate = DateTime.now();
-  DateTime endDate = DateTime.now();
+  List data = [];
+  int page = 1;
+  DateTime? startDate = null;
+  DateTime? endDate = null;
   String role = "";
-  bool loading = true;
+  bool _dataLoaded = false;
 
   @override
   void initState() {
     super.initState();
+    Future.delayed(Duration(milliseconds: 200), () {
+      setState(() {
+        _dataLoaded = true;
+      });
+    });
     unreadNotifications();
     getData();
-    getOrders(type: 'init');
+    getOrders();
   }
 
   @override
@@ -77,24 +87,29 @@ class _HistoryScreenState extends State<HistoryScreen> {
     }
   }
 
-  getOrders({String type = ''}) async {
-    setState(() {
-      loading = true;
-    });
+  getOrders() async {
     try {
-      orders = [];
-      String fromDate = DateFormat('yyyy-MM-dd').format(startDate);
-      String toDate = DateFormat('yyyy-MM-dd').format(endDate);
-
-      if (type == 'init') {
-        fromDate = '';
-        toDate = '';
+      String fromDate = "";
+      if (startDate != null) {
+        fromDate = DateFormat('yyyy-MM-dd').format(startDate!);
       }
-      final response =
-          await orderService.getOrdersData(fromDate: fromDate, toDate: toDate);
+
+      String toDate = "";
+      if (endDate != null) {
+        toDate = DateFormat('yyyy-MM-dd').format(endDate!);
+      }
+
+      final response = await orderService.getOrdersData(
+          page: page, fromDate: fromDate, toDate: toDate);
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
-          List data = response["data"];
+          orders = [];
+
+          data += response["data"];
+          page++;
 
           final groupedItemsMap = groupBy(data, (item) {
             return Jiffy.parseFromDateTime(
@@ -112,37 +127,39 @@ class _HistoryScreenState extends State<HistoryScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-      setState(() {
-        loading = false;
-      });
+      setState(() {});
     } catch (e) {
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
       print('Error: $e');
-      setState(() {
-        loading = false;
-      });
     }
   }
 
   _selectDateRange(BuildContext context) async {
-    endDate = DateTime.now();
-    startDate = DateTime.now();
     return showCustomDateRangePicker(
       context,
       dismissible: true,
-      minimumDate: DateTime.now().subtract(const Duration(days: 30)),
-      maximumDate: DateTime.now().add(const Duration(days: 30)),
+      minimumDate: DateTime.now().subtract(Duration(days: 30 * 12 * 1)),
+      maximumDate: DateTime.now(),
       endDate: endDate,
       startDate: startDate,
       backgroundColor: Colors.white,
       primaryColor: Theme.of(context).primaryColor,
       onApplyClick: (start, end) {
+        page = 1;
+        orders = [];
+        data = [];
         endDate = end;
         startDate = start;
         getOrders();
       },
       onCancelClick: () {
-        endDate = DateTime.now();
-        startDate = DateTime.now();
+        page = 1;
+        orders = [];
+        data = [];
+        endDate = null;
+        startDate = null;
+        getOrders();
       },
     );
   }
@@ -187,234 +204,240 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ),
         ],
       ),
-      body: !loading
-          ? SingleChildScrollView(
-              child: orders.isNotEmpty
-                  ? Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 24,
-                      ),
-                      width: double.infinity,
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        itemCount: orders.length,
-                        itemBuilder: (context, index) {
-                          String formattedDate =
-                              Jiffy.parse(orders[index]["date"])
-                                  .format(pattern: 'dd/MM/yyyy');
+      body: SmartRefresher(
+        header: WaterDropMaterialHeader(
+          backgroundColor: Theme.of(context).primaryColor,
+          color: Colors.white,
+        ),
+        footer: ClassicFooter(),
+        controller: _refreshController,
+        enablePullDown: true,
+        enablePullUp: true,
+        onRefresh: () async {
+          page = 1;
+          data = [];
+          await getOrders();
+        },
+        onLoading: () async {
+          await getOrders();
+        },
+        child: orders.isNotEmpty
+            ? SingleChildScrollView(
+                child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 24,
+                ),
+                width: double.infinity,
+                child: ListView.builder(
+                  controller: _scrollController,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: orders.length,
+                  itemBuilder: (context, index) {
+                    String formattedDate = Jiffy.parse(orders[index]["date"])
+                        .format(pattern: 'dd/MM/yyyy');
 
-                          return Container(
-                            margin: const EdgeInsets.only(
-                              bottom: 8,
+                    return Container(
+                      margin: const EdgeInsets.only(
+                        bottom: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              top: 8,
+                              bottom: 4,
                             ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
+                            child: Text(
+                              currentDate == formattedDate
+                                  ? "Today"
+                                  : yesterdayDate == formattedDate
+                                      ? "Yesterday"
+                                      : formattedDate,
+                              style: FontConstants.caption2,
                             ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 16,
-                                    right: 16,
-                                    top: 8,
-                                    bottom: 4,
-                                  ),
-                                  child: Text(
-                                    currentDate == formattedDate
-                                        ? "Today"
-                                        : yesterdayDate == formattedDate
-                                            ? "Yesterday"
-                                            : formattedDate,
-                                    style: FontConstants.caption2,
-                                  ),
-                                ),
-                                const Divider(
-                                  height: 0,
-                                  color: Colors.grey,
-                                ),
-                                ListView.builder(
-                                  controller: _scrollController,
-                                  scrollDirection: Axis.vertical,
-                                  shrinkWrap: true,
-                                  itemCount: orders[index]["items"].length,
-                                  itemBuilder: (context, i) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Navigator.pushNamed(
-                                          context,
-                                          Routes.history_details,
-                                          arguments: {
-                                            "order_id": orders[index]["items"]
-                                                [i]["order_id"],
-                                            "user_name": orders[index]["items"]
-                                                [i]["user_name"],
-                                            "phone": orders[index]["items"][i]
-                                                ["phone"],
-                                            "email": orders[index]["items"][i]
-                                                ["email"],
-                                            "home_address": orders[index]
-                                                ["items"][i]["home_address"],
-                                            "street_address": orders[index]
-                                                ["items"][i]["street_address"],
-                                            "city": orders[index]["items"][i]
-                                                ["city"],
-                                            "state": orders[index]["items"][i]
-                                                ["state"],
-                                            "postal_code": orders[index]
-                                                ["items"][i]["postal_code"],
-                                            "country": orders[index]["items"][i]
-                                                ["country"],
-                                            "township": orders[index]["items"]
-                                                [i]["township"],
-                                            "ward": orders[index]["items"][i]
-                                                ["ward"],
-                                            "note": orders[index]["items"][i]
-                                                ["note"],
-                                            "order_total": orders[index]
-                                                ["items"][i]["order_total"],
-                                            "item_counts": orders[index]
-                                                ["items"][i]["item_counts"],
-                                            "payment_type": orders[index]
-                                                ["items"][i]["payment_type"],
-                                            "payslip_screenshot_path":
-                                                orders[index]["items"][i]
-                                                    ["payslip_screenshot_path"],
-                                            "created_at": orders[index]["items"]
-                                                [i]["created_at"],
-                                            "status": orders[index]["items"][i]
-                                                ["status"],
-                                          },
-                                        );
-                                      },
+                          ),
+                          const Divider(
+                            height: 0,
+                            color: Colors.grey,
+                          ),
+                          ListView.builder(
+                            controller: _scrollController,
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            itemCount: orders[index]["items"].length,
+                            itemBuilder: (context, i) {
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    Routes.history_details,
+                                    arguments: {
+                                      "order_id": orders[index]["items"][i]
+                                          ["order_id"],
+                                      "user_name": orders[index]["items"][i]
+                                          ["user_name"],
+                                      "phone": orders[index]["items"][i]
+                                          ["phone"],
+                                      "email": orders[index]["items"][i]
+                                          ["email"],
+                                      "home_address": orders[index]["items"][i]
+                                          ["home_address"],
+                                      "street_address": orders[index]["items"]
+                                          [i]["street_address"],
+                                      "city": orders[index]["items"][i]["city"],
+                                      "state": orders[index]["items"][i]
+                                          ["state"],
+                                      "postal_code": orders[index]["items"][i]
+                                          ["postal_code"],
+                                      "country": orders[index]["items"][i]
+                                          ["country"],
+                                      "township": orders[index]["items"][i]
+                                          ["township"],
+                                      "ward": orders[index]["items"][i]["ward"],
+                                      "note": orders[index]["items"][i]["note"],
+                                      "order_total": orders[index]["items"][i]
+                                          ["order_total"],
+                                      "item_counts": orders[index]["items"][i]
+                                          ["item_counts"],
+                                      "payment_type": orders[index]["items"][i]
+                                          ["payment_type"],
+                                      "payslip_screenshot_path": orders[index]
+                                              ["items"][i]
+                                          ["payslip_screenshot_path"],
+                                      "created_at": orders[index]["items"][i]
+                                          ["created_at"],
+                                      "status": orders[index]["items"][i]
+                                          ["status"],
+                                    },
+                                  );
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.only(
+                                        left: 16,
+                                        right: 16,
+                                        bottom: 8,
+                                        top: 8,
+                                      ),
+                                      color: Colors.transparent,
                                       child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Container(
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.baseline,
+                                            textBaseline:
+                                                TextBaseline.alphabetic,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  '#${orders[index]["items"][i]["order_id"]}',
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: FontConstants.body1,
+                                                ),
+                                              ),
+                                              Text(
+                                                orders[index]["items"][i]
+                                                    ["status"],
+                                                style: FontConstants.caption1,
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.baseline,
+                                            textBaseline:
+                                                TextBaseline.alphabetic,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  Jiffy.parseFromDateTime(DateTime
+                                                              .parse(orders[index]
+                                                                          [
+                                                                          "items"][i]
+                                                                      [
+                                                                      "created_at"] +
+                                                                  "Z")
+                                                          .toLocal())
+                                                      .format(
+                                                          pattern: 'hh:mm a'),
+                                                  style: FontConstants.caption1,
+                                                ),
+                                              ),
+                                              FormattedAmount(
+                                                amount: double.parse(
+                                                    orders[index]["items"][i]
+                                                            ["order_total"]
+                                                        .toString()),
+                                                mainTextStyle:
+                                                    FontConstants.caption2,
+                                                decimalTextStyle:
+                                                    FontConstants.caption2,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    i < orders[index]["items"].length - 1
+                                        ? Container(
                                             padding: const EdgeInsets.only(
                                               left: 16,
                                               right: 16,
-                                              bottom: 8,
-                                              top: 8,
                                             ),
-                                            color: Colors.transparent,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .baseline,
-                                                  textBaseline:
-                                                      TextBaseline.alphabetic,
-                                                  children: [
-                                                    Expanded(
-                                                      child: Text(
-                                                        '#${orders[index]["items"][i]["order_id"]}',
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style:
-                                                            FontConstants.body1,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      orders[index]["items"][i]
-                                                          ["status"],
-                                                      style: FontConstants
-                                                          .caption1,
-                                                    ),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .baseline,
-                                                  textBaseline:
-                                                      TextBaseline.alphabetic,
-                                                  children: [
-                                                    Expanded(
-                                                      child: Text(
-                                                        Jiffy.parseFromDateTime(
-                                                                DateTime.parse(
-                                                                        orders[index]["items"][i]["created_at"] +
-                                                                            "Z")
-                                                                    .toLocal())
-                                                            .format(
-                                                                pattern:
-                                                                    'hh:mm a'),
-                                                        style: FontConstants
-                                                            .caption1,
-                                                      ),
-                                                    ),
-                                                    FormattedAmount(
-                                                      amount: double.parse(
-                                                          orders[index]["items"]
-                                                                      [i][
-                                                                  "order_total"]
-                                                              .toString()),
-                                                      mainTextStyle:
-                                                          FontConstants
-                                                              .caption2,
-                                                      decimalTextStyle:
-                                                          FontConstants
-                                                              .caption2,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
+                                            child: const Divider(
+                                              height: 0,
+                                              color: Colors.grey,
                                             ),
-                                          ),
-                                          i < orders[index]["items"].length - 1
-                                              ? Container(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                    left: 16,
-                                                    right: 16,
-                                                  ),
-                                                  child: const Divider(
-                                                    height: 0,
-                                                    color: Colors.grey,
-                                                  ),
-                                                )
-                                              : Container(),
-                                        ],
-                                      ),
-                                    );
-                                  },
+                                          )
+                                        : Container(),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          );
-                        },
+                              );
+                            },
+                          ),
+                        ],
                       ),
-                    )
-                  : Column(
+                    );
+                  },
+                ),
+              ))
+            : _dataLoaded
+                ? Center(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Center(
-                          child: Container(
-                            width: 300,
-                            height: 300,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage('assets/images/no_data.png'),
-                              ),
+                        Container(
+                          width: MediaQuery.of(context).orientation ==
+                                  Orientation.landscape
+                              ? 150
+                              : 300,
+                          height: MediaQuery.of(context).orientation ==
+                                  Orientation.landscape
+                              ? 150
+                              : 300,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/no_data.png'),
                             ),
                           ),
                         ),
@@ -443,8 +466,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         ),
                       ],
                     ),
-            )
-          : Container(),
+                  )
+                : Container(),
+      ),
       bottomNavigationBar: const BottomBarScreen(),
     );
   }
