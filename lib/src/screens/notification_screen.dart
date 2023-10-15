@@ -75,7 +75,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           final groupedItemsMap = groupBy(data, (item) {
             return Jiffy.parseFromDateTime(
                     DateTime.parse(item["created_at"] + "Z").toLocal())
-                .format(pattern: 'yyyy-MM-dd');
+                .format(pattern: 'dd/MM/yyyy');
           });
 
           groupedItemsMap.forEach((date, items) {
@@ -155,8 +155,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
               shrinkWrap: true,
               itemCount: notifications.length,
               itemBuilder: (context, index) {
-                String formattedDate = Jiffy.parse(notifications[index]["date"])
-                    .format(pattern: 'dd/MM/yyyy');
+                String date = notifications[index]["date"];
 
                 return Container(
                   margin: const EdgeInsets.only(
@@ -178,11 +177,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           bottom: 4,
                         ),
                         child: Text(
-                          currentDate == formattedDate
+                          currentDate == date
                               ? "Today"
-                              : yesterdayDate == formattedDate
+                              : yesterdayDate == date
                                   ? "Yesterday"
-                                  : formattedDate,
+                                  : date,
                           style: FontConstants.caption2,
                         ),
                       ),

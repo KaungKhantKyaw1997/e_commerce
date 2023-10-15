@@ -114,7 +114,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           final groupedItemsMap = groupBy(data, (item) {
             return Jiffy.parseFromDateTime(
                     DateTime.parse(item["created_at"] + "Z").toLocal())
-                .format(pattern: 'yyyy-MM-dd');
+                .format(pattern: 'dd/MM/yyyy');
           });
 
           groupedItemsMap.forEach((date, items) {
@@ -235,8 +235,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   shrinkWrap: true,
                   itemCount: orders.length,
                   itemBuilder: (context, index) {
-                    String formattedDate = Jiffy.parse(orders[index]["date"])
-                        .format(pattern: 'dd/MM/yyyy');
+                    String date = orders[index]["date"];
 
                     return Container(
                       margin: const EdgeInsets.only(
@@ -258,11 +257,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               bottom: 4,
                             ),
                             child: Text(
-                              currentDate == formattedDate
+                              currentDate == date
                                   ? "Today"
-                                  : yesterdayDate == formattedDate
+                                  : yesterdayDate == date
                                       ? "Yesterday"
-                                      : formattedDate,
+                                      : date,
                               style: FontConstants.caption2,
                             ),
                           ),
