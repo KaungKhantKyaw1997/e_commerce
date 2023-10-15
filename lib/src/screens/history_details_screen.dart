@@ -80,7 +80,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
 
   @override
   void dispose() {
-    orderService.cancelRequest();
+    // orderService.cancelRequest();
     super.dispose();
   }
 
@@ -133,6 +133,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         foregroundColor: Colors.black,
         backgroundColor: Colors.white,
         elevation: 0,
@@ -203,6 +204,26 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                               ),
                             ],
                           )
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      Row(
+                        children: [
+                          Text(
+                            "${orderData['payment_type']}",
+                            style: TextStyle(
+                              color: Color(0xff7B7B7B),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          // Spacer(),
+                          // Text(
+                          //   "${orderData['payment_type']}",
+                          //   style: TextStyle(
+                          //     color: Color(0xff7B7B7B),
+                          //     fontWeight: FontWeight.bold,
+                          //   ),
+                          // ),
                         ],
                       ),
                       // New code begins here
@@ -280,6 +301,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                                 ),
                         ],
                       ),
+
                       // New code ends here
                       // SizedBox(height: 15),
                     ],
@@ -292,13 +314,6 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                         horizontal: 20.0,
                       ),
                       child: ListView(
-                        // itemCount: orderData["item_counts"],
-                        // itemBuilder: (context, index) {
-                        //   return ListTile(
-                        //     title: Text('Item ${index + 1} Details'),
-                        //     subtitle: Text('More details about item...'),
-                        //   );
-                        // },
                         children: [
                           role == "admin"
                               ? Container(
@@ -488,7 +503,34 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                                 ),
                               ),
                             );
-                          }).toList()
+                          }).toList(),
+                          if (orderData["payment_type"] == "Preorder") ...[
+                            SizedBox(height: 10), // Space between widgets
+
+                            Text(
+                              "Payslip",
+                              style: TextStyle(
+                                color: Color(0xff7B7B7B),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                            SizedBox(height: 10), // Space between widgets
+
+                            GestureDetector(
+                              onTap: () async {
+                                final url = ApiConstants.baseUrl +
+                                    orderData["payslip_screenshot_path"];
+                                await launchUrl(Uri.parse(url));
+                              },
+                              child: Image.network(
+                                ApiConstants.baseUrl +
+                                    orderData["payslip_screenshot_path"],
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ]
                         ],
                       ),
                     ),
