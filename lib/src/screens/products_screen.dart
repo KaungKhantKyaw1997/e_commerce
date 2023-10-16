@@ -148,11 +148,6 @@ class _ProductsScreenState extends State<ProductsScreen>
   }
 
   void _showFilterBottomSheet(BuildContext context) {
-    _startValue = 0;
-    _endValue = 0;
-    _fromPrice.text = '';
-    _toPrice.text = '';
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -222,18 +217,24 @@ class _ProductsScreenState extends State<ProductsScreen>
                                   setState(() {
                                     _startValue = values.start;
                                     _endValue = values.end;
-                                    _fromPrice.text =
-                                        '${formatter.format(_startValue)}';
-                                    _toPrice.text =
-                                        '${formatter.format(_endValue)}';
+                                    _fromPrice.text = _startValue.toString();
+                                    _toPrice.text = _endValue.toString();
+                                    // _fromPrice.text =
+                                    //     '${formatter.format(_startValue)}';
+                                    // _toPrice.text =
+                                    //     '${formatter.format(_endValue)}';
                                   });
                                 },
                                 min: 0,
                                 max: 500000,
                                 divisions: 500,
                                 labels: RangeLabels(
-                                    '${formatter.format(_startValue)}',
-                                    '${formatter.format(_endValue)}'),
+                                  _startValue.toString(),
+                                  _endValue.toString(),
+                                ),
+                                // labels: RangeLabels(
+                                //     '${formatter.format(_startValue)}',
+                                //     '${formatter.format(_endValue)}'),
                               ),
                               Row(
                                 mainAxisAlignment:
@@ -249,9 +250,9 @@ class _ProductsScreenState extends State<ProductsScreen>
                                       child: TextFormField(
                                         controller: _fromPrice,
                                         focusNode: _fromFocusNode,
-                                        inputFormatters: [
-                                          CurrencyInputFormatter()
-                                        ],
+                                        // inputFormatters: [
+                                        //   CurrencyInputFormatter()
+                                        // ],
                                         keyboardType: TextInputType.number,
                                         textInputAction: TextInputAction.next,
                                         style: FontConstants.body1,
@@ -295,9 +296,9 @@ class _ProductsScreenState extends State<ProductsScreen>
                                       child: TextFormField(
                                         controller: _toPrice,
                                         focusNode: _toFocusNode,
-                                        inputFormatters: [
-                                          CurrencyInputFormatter()
-                                        ],
+                                        // inputFormatters: [
+                                        //   CurrencyInputFormatter()
+                                        // ],
                                         keyboardType: TextInputType.number,
                                         textInputAction: TextInputAction.next,
                                         style: FontConstants.body1,
@@ -351,6 +352,7 @@ class _ProductsScreenState extends State<ProductsScreen>
                                 ),
                                 child: MultiSelectChip(
                                   models,
+                                  selectedModels,
                                   onSelectionChanged: (selectedList) {
                                     setState(() {
                                       selectedModels = selectedList;
@@ -373,33 +375,89 @@ class _ProductsScreenState extends State<ProductsScreen>
                         color: Colors.grey,
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 16,
-                      ),
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 12,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: FractionallySizedBox(
+                            widthFactor: 1,
+                            child: Container(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                                bottom: 16,
+                              ),
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  backgroundColor: Colors.white,
+                                  side: BorderSide(
+                                    color: Theme.of(context).primaryColor,
+                                    width: 0.5,
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                  _startValue = 0.0;
+                                  _endValue = 0.0;
+                                  _fromPrice.text = '';
+                                  _toPrice.text = '';
+                                  selectedModels = [];
+                                  page = 1;
+                                  products = [];
+                                  getProducts();
+                                },
+                                child: Text(
+                                  language["Clear"] ?? "Clear",
+                                  style: FontConstants.button2,
+                                ),
+                              ),
+                            ),
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                        ),
+                        Expanded(
+                          child: FractionallySizedBox(
+                            widthFactor: 1,
+                            child: Container(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                                bottom: 16,
+                              ),
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor,
+                                ),
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                  page = 1;
+                                  products = [];
+                                  getProducts();
+                                },
+                                child: Text(
+                                  language["Search"] ?? "Search",
+                                  style: FontConstants.button1,
+                                ),
+                              ),
+                            ),
                           ),
-                          backgroundColor: Theme.of(context).primaryColor,
                         ),
-                        onPressed: () async {
-                          Navigator.pop(context);
-                          getProducts();
-                        },
-                        child: Text(
-                          language["Search"] ?? "Search",
-                          style: FontConstants.button1,
-                        ),
-                      ),
+                      ],
                     ),
                   ],
                 ),

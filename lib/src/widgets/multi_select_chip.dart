@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 
 class MultiSelectChip extends StatefulWidget {
   final List<String> dataList;
+  final List<String> selectedChoices;
   final Function(List<String>) onSelectionChanged;
-  MultiSelectChip(this.dataList, {required this.onSelectionChanged});
+  MultiSelectChip(this.dataList, this.selectedChoices,
+      {required this.onSelectionChanged});
   @override
   _MultiSelectChipState createState() => _MultiSelectChipState();
 }
 
 class _MultiSelectChipState extends State<MultiSelectChip> {
-  List<String> selectedChoices = [];
   _buildChoiceList() {
     List<Widget> choices = [];
     widget.dataList.forEach(
@@ -21,11 +22,11 @@ class _MultiSelectChipState extends State<MultiSelectChip> {
             child: ChoiceChip(
               label: Text(
                 item,
-                style: selectedChoices.contains(item)
+                style: widget.selectedChoices.contains(item)
                     ? FontConstants.caption4
                     : FontConstants.caption2,
               ),
-              selected: selectedChoices.contains(item),
+              selected: widget.selectedChoices.contains(item),
               selectedColor: Theme.of(context).primaryColor,
               backgroundColor: Theme.of(context).primaryColorLight,
               shape: RoundedRectangleBorder(
@@ -33,10 +34,10 @@ class _MultiSelectChipState extends State<MultiSelectChip> {
               ),
               onSelected: (selected) {
                 setState(() {
-                  selectedChoices.contains(item)
-                      ? selectedChoices.remove(item)
-                      : selectedChoices.add(item);
-                  widget.onSelectionChanged(selectedChoices);
+                  widget.selectedChoices.contains(item)
+                      ? widget.selectedChoices.remove(item)
+                      : widget.selectedChoices.add(item);
+                  widget.onSelectionChanged(widget.selectedChoices);
                 });
               },
             ),
