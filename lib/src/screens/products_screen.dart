@@ -450,7 +450,7 @@ class _ProductsScreenState extends State<ProductsScreen>
                                   getProducts();
                                 },
                                 child: Text(
-                                  language["Search"] ?? "Search",
+                                  language["Apply Filters"] ?? "Apply Filters",
                                   style: FontConstants.button1,
                                 ),
                               ),
