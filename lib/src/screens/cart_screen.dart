@@ -66,6 +66,7 @@ class _CartScreenState extends State<CartScreen> {
   String payslipImage = '';
   String paymenttype = 'Cash on Delivery';
   bool payslip = false;
+  double subtotal = 0.0;
 
   @override
   void initState() {
@@ -135,6 +136,7 @@ class _CartScreenState extends State<CartScreen> {
         for (var item in jsonData) {
           carts.add(item);
         }
+        calculateSubTotal();
       });
     }
   }
@@ -928,6 +930,50 @@ class _CartScreenState extends State<CartScreen> {
     setState(() {});
   }
 
+  void calculateSubTotal() {
+    subtotal = 0.0;
+    for (Map<String, dynamic> cart in carts) {
+      subtotal += cart["totalamount"];
+    }
+    setState(() {});
+  }
+
+  Widget _buildSummaryItem(String title, String amount,
+      {bool isTotal = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 16.0,
+            fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        amount == "--"
+            ? Text(
+                amount,
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+                ),
+              )
+            : FormattedAmount(
+                amount: double.parse(amount),
+                mainTextStyle: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16.0,
+                  fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+                ),
+                decimalTextStyle: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -969,328 +1015,381 @@ class _CartScreenState extends State<CartScreen> {
           return false;
         },
         child: carts.isNotEmpty
-            ? SingleChildScrollView(
-                child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 24,
-                ),
-                width: double.infinity,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.white,
-                  ),
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: carts.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Slidable(
-                            key: const ValueKey(0),
-                            endActionPane: ActionPane(
-                              motion: const BehindMotion(),
+            ? Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                        child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 24,
+                      ),
+                      width: double.infinity,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white,
+                        ),
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemCount: carts.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SlidableAction(
-                                  onPressed: (BuildContext context) {
-                                    CartProvider cartProvider =
-                                        Provider.of<CartProvider>(context,
-                                            listen: false);
-                                    cartProvider
-                                        .addCount(cartProvider.count - 1);
+                                Slidable(
+                                  key: const ValueKey(0),
+                                  endActionPane: ActionPane(
+                                    motion: const BehindMotion(),
+                                    children: [
+                                      SlidableAction(
+                                        onPressed: (BuildContext context) {
+                                          CartProvider cartProvider =
+                                              Provider.of<CartProvider>(context,
+                                                  listen: false);
+                                          cartProvider
+                                              .addCount(cartProvider.count - 1);
 
-                                    carts.removeAt(index);
-                                    saveListToSharedPreferences(carts);
-                                  },
-                                  backgroundColor: ColorConstants.redcolor,
-                                  foregroundColor: Colors.white,
-                                  borderRadius: BorderRadius.only(
-                                    topRight:
-                                        Radius.circular(index == 0 ? 10 : 0),
-                                    bottomRight: Radius.circular(
-                                        index == carts.length - 1 ? 10 : 0),
-                                  ),
-                                  icon: Icons.delete,
-                                  label: language["Delete"] ?? "Delete",
-                                ),
-                              ],
-                            ),
-                            child: Container(
-                              padding: const EdgeInsets.only(
-                                left: 16,
-                                right: 16,
-                                top: 8,
-                                bottom: 8,
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 75,
-                                    height: 75,
-                                    decoration: BoxDecoration(
-                                      image: carts[index]["product_images"]
-                                                  [0] !=
-                                              ""
-                                          ? DecorationImage(
-                                              image: NetworkImage(
-                                                  '${ApiConstants.baseUrl}${carts[index]["product_images"][0].toString()}'),
-                                              fit: BoxFit.cover,
-                                            )
-                                          : DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/images/logo.png'),
-                                              fit: BoxFit.cover,
-                                            ),
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: Colors.transparent,
+                                          carts.removeAt(index);
+                                          saveListToSharedPreferences(carts);
+                                        },
+                                        backgroundColor:
+                                            ColorConstants.redcolor,
+                                        foregroundColor: Colors.white,
+                                        borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(
+                                              index == 0 ? 10 : 0),
+                                          bottomRight: Radius.circular(
+                                              index == carts.length - 1
+                                                  ? 10
+                                                  : 0),
+                                        ),
+                                        icon: Icons.delete,
+                                        label: language["Delete"] ?? "Delete",
                                       ),
+                                    ],
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.only(
+                                      left: 16,
+                                      right: 16,
+                                      top: 8,
+                                      bottom: 8,
                                     ),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      margin: const EdgeInsets.only(
-                                        left: 15,
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.baseline,
-                                            textBaseline:
-                                                TextBaseline.alphabetic,
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  carts[index]["brand_name"] ??
-                                                      "",
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: 75,
+                                          height: 75,
+                                          decoration: BoxDecoration(
+                                            image: carts[index]
+                                                        ["product_images"][0] !=
+                                                    ""
+                                                ? DecorationImage(
+                                                    image: NetworkImage(
+                                                        '${ApiConstants.baseUrl}${carts[index]["product_images"][0].toString()}'),
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : DecorationImage(
+                                                    image: AssetImage(
+                                                        'assets/images/logo.png'),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: Colors.transparent,
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            margin: const EdgeInsets.only(
+                                              left: 15,
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .baseline,
+                                                  textBaseline:
+                                                      TextBaseline.alphabetic,
+                                                  children: [
+                                                    Expanded(
+                                                      child: Text(
+                                                        carts[index][
+                                                                "brand_name"] ??
+                                                            "",
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style:
+                                                            FontConstants.body1,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      'x ${carts[index]["quantity"].toString()}',
+                                                      style: FontConstants
+                                                          .caption1,
+                                                    ),
+                                                  ],
+                                                ),
+                                                Text(
+                                                  carts[index]["model"] ?? "",
                                                   overflow:
                                                       TextOverflow.ellipsis,
-                                                  style: FontConstants.body1,
+                                                  style: FontConstants.caption1,
                                                 ),
-                                              ),
-                                              Text(
-                                                'x ${carts[index]["quantity"].toString()}',
-                                                style: FontConstants.caption1,
-                                              ),
-                                            ],
-                                          ),
-                                          Text(
-                                            carts[index]["model"] ?? "",
-                                            overflow: TextOverflow.ellipsis,
-                                            style: FontConstants.caption1,
-                                          ),
-                                          SizedBox(
-                                            height: 12,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.baseline,
-                                                textBaseline:
-                                                    TextBaseline.alphabetic,
-                                                children: [
-                                                  Text(
-                                                    "Ks",
-                                                    style: FontConstants
-                                                        .subheadline1,
-                                                  ),
-                                                  FormattedAmount(
-                                                    amount: double.parse(
-                                                        carts[index]
-                                                                ["totalamount"]
-                                                            .toString()),
-                                                    mainTextStyle: FontConstants
-                                                        .subheadline1,
-                                                    decimalTextStyle:
-                                                        FontConstants.caption3,
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                        topLeft:
-                                                            Radius.circular(8),
-                                                        bottomLeft:
-                                                            Radius.circular(8),
-                                                      ),
-                                                      border: Border.all(
-                                                        color: Theme.of(context)
-                                                            .primaryColorLight,
-                                                        width: 1,
-                                                      ),
+                                                SizedBox(
+                                                  height: 12,
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .baseline,
+                                                      textBaseline: TextBaseline
+                                                          .alphabetic,
+                                                      children: [
+                                                        Text(
+                                                          "Ks",
+                                                          style: FontConstants
+                                                              .subheadline1,
+                                                        ),
+                                                        FormattedAmount(
+                                                          amount: double.parse(
+                                                              carts[index][
+                                                                      "totalamount"]
+                                                                  .toString()),
+                                                          mainTextStyle:
+                                                              FontConstants
+                                                                  .subheadline1,
+                                                          decimalTextStyle:
+                                                              FontConstants
+                                                                  .caption3,
+                                                        ),
+                                                      ],
                                                     ),
-                                                    width: 32,
-                                                    height: 32,
-                                                    child: IconButton(
-                                                      icon: Icon(
-                                                        Icons.remove,
-                                                        size: 15,
-                                                        color: Theme.of(context)
-                                                            .primaryColor,
-                                                      ),
-                                                      onPressed: () {
-                                                        if (carts[index]
-                                                                ['quantity'] >
-                                                            1) {
-                                                          carts[index]
-                                                              ['quantity']--;
-                                                          carts[index][
-                                                              'totalamount'] = double
-                                                                  .parse(carts[
-                                                                              index]
-                                                                          [
-                                                                          "price"]
-                                                                      .toString()) *
-                                                              carts[index]
-                                                                  ['quantity'];
-                                                        } else {
-                                                          CartProvider
-                                                              cartProvider =
-                                                              Provider.of<
-                                                                      CartProvider>(
-                                                                  context,
-                                                                  listen:
-                                                                      false);
-                                                          cartProvider.addCount(
-                                                              cartProvider
-                                                                      .count -
-                                                                  1);
-
-                                                          carts.removeAt(index);
-                                                        }
-
-                                                        saveListToSharedPreferences(
-                                                            carts);
-                                                      },
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    margin:
-                                                        EdgeInsets.symmetric(
-                                                      horizontal: 4,
-                                                    ),
-                                                    decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                        color: Theme.of(context)
-                                                            .primaryColorLight,
-                                                        width: 1,
-                                                      ),
-                                                    ),
-                                                    width: 50,
-                                                    height: 32,
-                                                    child: Center(
-                                                      child: Text(
-                                                        carts[index]['quantity']
-                                                            .toString(),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: FontConstants
-                                                            .subheadline1,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                        topRight:
-                                                            Radius.circular(8),
-                                                        bottomRight:
-                                                            Radius.circular(8),
-                                                      ),
-                                                      border: Border.all(
-                                                        color: Theme.of(context)
-                                                            .primaryColorLight,
-                                                        width: 1,
-                                                      ),
-                                                    ),
-                                                    width: 32,
-                                                    height: 32,
-                                                    child: IconButton(
-                                                      icon: Icon(
-                                                        Icons.add,
-                                                        size: 15,
-                                                        color: Theme.of(context)
-                                                            .primaryColor,
-                                                      ),
-                                                      onPressed: () {
-                                                        // if (product['quantity'] <
-                                                        //     int.parse(product["stock_quantity"]
-                                                        //         .toString())) {
-                                                        carts[index]
-                                                            ['quantity']++;
-                                                        carts[index][
-                                                                'totalamount'] =
-                                                            double.parse(carts[
-                                                                            index]
-                                                                        [
-                                                                        "price"]
-                                                                    .toString()) *
+                                                    Row(
+                                                      children: [
+                                                        Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              topLeft: Radius
+                                                                  .circular(8),
+                                                              bottomLeft: Radius
+                                                                  .circular(8),
+                                                            ),
+                                                            border: Border.all(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .primaryColorLight,
+                                                              width: 1,
+                                                            ),
+                                                          ),
+                                                          width: 32,
+                                                          height: 32,
+                                                          child: IconButton(
+                                                            icon: Icon(
+                                                              Icons.remove,
+                                                              size: 15,
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .primaryColor,
+                                                            ),
+                                                            onPressed: () {
+                                                              if (carts[index][
+                                                                      'quantity'] >
+                                                                  1) {
                                                                 carts[index][
-                                                                    'quantity'];
-                                                        saveListToSharedPreferences(
-                                                            carts);
-                                                        saveListToSharedPreferences(
-                                                            carts);
-                                                        // }
-                                                      },
+                                                                    'quantity']--;
+                                                                carts[index][
+                                                                    'totalamount'] = double.parse(carts[index]
+                                                                            [
+                                                                            "price"]
+                                                                        .toString()) *
+                                                                    carts[index]
+                                                                        [
+                                                                        'quantity'];
+                                                              } else {
+                                                                CartProvider
+                                                                    cartProvider =
+                                                                    Provider.of<
+                                                                            CartProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false);
+                                                                cartProvider.addCount(
+                                                                    cartProvider
+                                                                            .count -
+                                                                        1);
+
+                                                                carts.removeAt(
+                                                                    index);
+                                                              }
+                                                              calculateSubTotal();
+                                                              saveListToSharedPreferences(
+                                                                  carts);
+                                                            },
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          margin: EdgeInsets
+                                                              .symmetric(
+                                                            horizontal: 4,
+                                                          ),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            border: Border.all(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .primaryColorLight,
+                                                              width: 1,
+                                                            ),
+                                                          ),
+                                                          width: 50,
+                                                          height: 32,
+                                                          child: Center(
+                                                            child: Text(
+                                                              carts[index][
+                                                                      'quantity']
+                                                                  .toString(),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              style: FontConstants
+                                                                  .subheadline1,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              topRight: Radius
+                                                                  .circular(8),
+                                                              bottomRight:
+                                                                  Radius
+                                                                      .circular(
+                                                                          8),
+                                                            ),
+                                                            border: Border.all(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .primaryColorLight,
+                                                              width: 1,
+                                                            ),
+                                                          ),
+                                                          width: 32,
+                                                          height: 32,
+                                                          child: IconButton(
+                                                            icon: Icon(
+                                                              Icons.add,
+                                                              size: 15,
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .primaryColor,
+                                                            ),
+                                                            onPressed: () {
+                                                              // if (product['quantity'] <
+                                                              //     int.parse(product["stock_quantity"]
+                                                              //         .toString())) {
+                                                              carts[index][
+                                                                  'quantity']++;
+                                                              carts[index][
+                                                                  'totalamount'] = double.parse(
+                                                                      carts[index]
+                                                                              [
+                                                                              "price"]
+                                                                          .toString()) *
+                                                                  carts[index][
+                                                                      'quantity'];
+                                                              calculateSubTotal();
+                                                              saveListToSharedPreferences(
+                                                                  carts);
+                                                              saveListToSharedPreferences(
+                                                                  carts);
+                                                              // }
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          index < carts.length - 1
-                              ? Container(
-                                  padding: const EdgeInsets.only(
-                                    left: 100,
-                                    right: 16,
-                                  ),
-                                  child: const Divider(
-                                    height: 0,
-                                    color: Colors.grey,
-                                  ),
-                                )
-                              : Container(),
-                        ],
-                      );
-                    },
+                                ),
+                                index < carts.length - 1
+                                    ? Container(
+                                        padding: const EdgeInsets.only(
+                                          left: 100,
+                                          right: 16,
+                                        ),
+                                        child: const Divider(
+                                          height: 0,
+                                          color: Colors.grey,
+                                        ),
+                                      )
+                                    : Container(),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    )),
                   ),
-                ),
-              ))
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSummaryItem('Subtotal', subtotal.toString()),
+                        SizedBox(height: 16.0),
+                        _buildSummaryItem('Shipping', '--'),
+                        Divider(
+                          thickness: 1.5,
+                        ),
+                        _buildSummaryItem('Total', subtotal.toString(),
+                            isTotal: true),
+                      ],
+                    ),
+                  ),
+                ],
+              )
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
