@@ -46,11 +46,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(milliseconds: 200), () {
-      setState(() {
-        _dataLoaded = true;
-      });
-    });
     unreadNotifications();
     getData();
     getOrders();
@@ -122,6 +117,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
               "date": date,
               "items": items,
             });
+          });
+        }
+
+        if (orders.isEmpty) {
+          setState(() {
+            _dataLoaded = true;
           });
         }
       } else {
