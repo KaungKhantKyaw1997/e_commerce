@@ -225,18 +225,41 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                             style: FontConstants.body1,
                                           ),
                                         ),
-                                        notifications[index]["items"][i]
-                                                    ["status"] ==
-                                                "Unread"
-                                            ? Container(
-                                                width: 8,
-                                                height: 8,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.orangeAccent,
-                                                  shape: BoxShape.circle,
-                                                ),
-                                              )
-                                            : Container(),
+                                        Row(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                right: 4,
+                                              ),
+                                              child: Text(
+                                                Jiffy.parseFromDateTime(DateTime
+                                                            .parse(notifications[
+                                                                            index]
+                                                                        [
+                                                                        "items"][i]
+                                                                    [
+                                                                    "created_at"] +
+                                                                "Z")
+                                                        .toLocal())
+                                                    .format(pattern: 'hh:mm a'),
+                                                style: FontConstants.caption1,
+                                              ),
+                                            ),
+                                            notifications[index]["items"][i]
+                                                        ["status"] ==
+                                                    "Unread"
+                                                ? Container(
+                                                    width: 8,
+                                                    height: 8,
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          Colors.orangeAccent,
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                  )
+                                                : Container(),
+                                          ],
+                                        ),
                                       ],
                                     ),
                                     Text(
