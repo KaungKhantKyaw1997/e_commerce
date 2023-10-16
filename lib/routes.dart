@@ -4,6 +4,7 @@ import 'package:e_commerce/src/screens/categories_setup_screen.dart';
 import 'package:e_commerce/src/screens/category_setup_screen.dart';
 import 'package:e_commerce/src/screens/product_setup_screen.dart';
 import 'package:e_commerce/src/screens/products_setup_screen.dart';
+import 'package:e_commerce/src/screens/scan_screen.dart';
 import 'package:e_commerce/src/screens/shop_setup_screen.dart';
 import 'package:e_commerce/src/screens/shops_setup_screen.dart';
 import 'package:e_commerce/src/screens/splash_screen.dart';
@@ -55,6 +56,7 @@ class Routes {
   static const String brands_setup = '/brands_setup';
   static const String category_setup = '/category_setup';
   static const String categories_setup = '/categories_setup';
+  static const String scan = "/scan";
 
   static final Map<String, WidgetBuilder> routes = {
     splash: (BuildContext context) => const SplashScreen(),

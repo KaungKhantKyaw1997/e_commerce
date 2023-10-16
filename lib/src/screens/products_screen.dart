@@ -39,6 +39,7 @@ class _ProductsScreenState extends State<ProductsScreen>
   int shopId = 0;
   int categoryId = 0;
   int brandId = 0;
+  List<int> productIds = [];
   List brands = [];
   List<String> models = [];
   List<String> selectedModels = [];
@@ -58,6 +59,7 @@ class _ProductsScreenState extends State<ProductsScreen>
         shopId = arguments["shop_id"] ?? 0;
         categoryId = arguments["category_id"] ?? 0;
         brandId = arguments["brand_id"] ?? 0;
+        productIds = arguments["productIds"] ?? [];
         if (brandId != 0) {
           brands.add(brandId);
         }
@@ -113,6 +115,7 @@ class _ProductsScreenState extends State<ProductsScreen>
         "to_price": toPrice,
         "brands": brands,
         "models": selectedModels,
+        "products": productIds,
       };
 
       if (shopId == 0) body.remove("shop_id");

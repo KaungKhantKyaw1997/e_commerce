@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/services/local_notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,6 +13,7 @@ import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
+import 'src/screens/scan_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +27,8 @@ Future<void> main() async {
   int cartCount = prefs.getInt('cartCount') ?? 0;
   int notiCount = prefs.getInt('notiCount') ?? 0;
 
+  final cameras = await availableCameras();
+  final firstCamera = cameras.first;
   runApp(
     MultiProvider(
       providers: [
@@ -32,7 +36,9 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => CartProvider(cartCount)),
         ChangeNotifierProvider(create: (context) => NotiProvider(notiCount)),
       ],
-      child: MyApp(),
+      child: MyApp(
+        camera: firstCamera,
+      ),
     ),
   );
 }
@@ -43,7 +49,12 @@ Future<void> backgroundMessageHandler(RemoteMessage message) async {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final CameraDescription camera;
+
+  const MyApp({
+    Key? key,
+    required this.camera,
+  }) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -82,7 +93,10 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       initialRoute: Routes.splash,
-      routes: Routes.routes,
+      routes: {
+        ...Routes.routes,
+        "/scan": (context) => ScanScreen(camera: widget.camera),
+      },
     );
   }
 }

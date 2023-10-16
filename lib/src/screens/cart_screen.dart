@@ -1372,8 +1372,17 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     )),
                   ),
-                  Padding(
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                     padding: const EdgeInsets.all(16.0),
+                    margin: const EdgeInsets.only(
+                      bottom: 10,
+                      left: 16,
+                      right: 16,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

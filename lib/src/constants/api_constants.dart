@@ -21,4 +21,5 @@ class ApiConstants {
       '$baseUrl/api/unread-notifications';
   static const String notificationsUrl = '$baseUrl/api/notifications';
   static const String usersUrl = '$baseUrl/api/users';
+  static const String vectorsUrl = '$baseUrl/api/vectors';
 }
