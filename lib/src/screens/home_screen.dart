@@ -5,6 +5,7 @@ import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/brands_service.dart';
 import 'package:e_commerce/src/services/categories_service.dart';
+import 'package:e_commerce/src/services/products_service.dart';
 import 'package:e_commerce/src/services/shops_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
@@ -30,11 +31,13 @@ class _HomeScreenState extends State<HomeScreen>
   final shopsService = ShopsService();
   final brandsService = BrandsService();
   final categoriesService = CategoriesService();
+  final productsService = ProductsService();
   final storage = FlutterSecureStorage();
   final ScrollController _scrollController = ScrollController();
   late TabController _tabController;
   List shops = [];
   List brands = [];
+  List products = [];
   List categories = [];
   int page = 1;
   int pageCounts = 0;
@@ -116,8 +119,30 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   getProducts() {
+    getTopModels();
     getBrands();
     getCategories();
+  }
+
+  getTopModels() async {
+    try {
+      final response = await productsService.getProductsData({
+        "is_top_model": true,
+        "page": 1,
+        "per_page": 10,
+      });
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          setState(() {
+            products = response["data"];
+          });
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   getBrands() async {
@@ -309,6 +334,75 @@ class _HomeScreenState extends State<HomeScreen>
               alignment: Alignment.centerLeft,
               child: Text(
                 categories[index]["description"].toString(),
+                overflow: TextOverflow.ellipsis,
+                style: FontConstants.smallText1,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  productsCard(index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            height: 200,
+            decoration: BoxDecoration(
+              image: products[index]["product_images"][0] != ""
+                  ? DecorationImage(
+                      image: NetworkImage(
+                          '${ApiConstants.baseUrl}${products[index]["product_images"][0].toString()}'),
+                      fit: BoxFit.cover,
+                    )
+                  : DecorationImage(
+                      image: AssetImage('assets/images/logo.png'),
+                      fit: BoxFit.cover,
+                    ),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+              border: Border.all(
+                color: Colors.transparent,
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 8,
+              right: 8,
+              bottom: 4,
+            ),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                products[index]["brand_name"].toString(),
+                overflow: TextOverflow.ellipsis,
+                style: FontConstants.caption2,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 8,
+              right: 8,
+              bottom: 4,
+            ),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                products[index]["model"].toString(),
                 overflow: TextOverflow.ellipsis,
                 style: FontConstants.smallText1,
               ),
@@ -562,10 +656,78 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                         child: Column(
                           children: [
-                            brands.isNotEmpty
+                            products.isNotEmpty
                                 ? Container(
                                     padding: EdgeInsets.only(
                                       top: 16,
+                                      bottom: 4,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.baseline,
+                                      textBaseline: TextBaseline.alphabetic,
+                                      children: [
+                                        Text(
+                                          language["Products"] ?? "Products",
+                                          style: FontConstants.body1,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                              context,
+                                              Routes.products,
+                                              arguments: {
+                                                "is_top_model": true,
+                                              },
+                                            );
+                                          },
+                                          child: Text(
+                                            language["See More"] ?? "See More",
+                                            style: FontConstants.caption1,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
+                            products.isNotEmpty
+                                ? Container(
+                                    height: 250,
+                                    child: ListView.builder(
+                                      controller: _scrollController,
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: products.length,
+                                      itemBuilder: (context, index) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                              context,
+                                              Routes.product,
+                                              arguments: products[index],
+                                            );
+                                          },
+                                          child: Container(
+                                            margin: EdgeInsets.only(
+                                              right: 8,
+                                            ),
+                                            child: productsCard(index),
+                                          ),
+                                        );
+                                      },
+                                      itemExtent:
+                                          MediaQuery.of(context).size.width /
+                                                  2 -
+                                              25,
+                                    ),
+                                  )
+                                : Container(),
+                            brands.isNotEmpty
+                                ? Container(
+                                    padding: EdgeInsets.only(
+                                      top: 24,
                                       bottom: 4,
                                     ),
                                     child: Row(

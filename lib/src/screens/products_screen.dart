@@ -45,6 +45,7 @@ class _ProductsScreenState extends State<ProductsScreen>
   List<String> selectedModels = [];
   double _startValue = 0;
   double _endValue = 0;
+  bool isTopModel = false;
   bool loading = false;
 
   @override
@@ -60,6 +61,7 @@ class _ProductsScreenState extends State<ProductsScreen>
         categoryId = arguments["category_id"] ?? 0;
         brandId = arguments["brand_id"] ?? 0;
         productIds = arguments["productIds"] ?? [];
+        isTopModel = arguments["is_top_model"] ?? false;
         if (brandId != 0) {
           brands.add(brandId);
         }
@@ -116,6 +118,7 @@ class _ProductsScreenState extends State<ProductsScreen>
         "brands": brands,
         "models": selectedModels,
         "products": productIds,
+        if (isTopModel) "is_top_model": isTopModel,
       };
 
       if (shopId == 0) body.remove("shop_id");
