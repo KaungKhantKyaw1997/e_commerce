@@ -138,7 +138,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         title: Text(
-          'Track Order',
+          language['Track Order'] ?? 'Track Order',
           style: TextStyle(
             color: Colors.black,
           ),
