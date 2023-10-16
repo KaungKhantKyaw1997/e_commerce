@@ -1386,13 +1386,16 @@ class _CartScreenState extends State<CartScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildSummaryItem('Subtotal', subtotal.toString()),
+                        _buildSummaryItem(language['Subtotal'] ?? 'Subtotal',
+                            subtotal.toString()),
                         SizedBox(height: 16.0),
-                        _buildSummaryItem('Shipping', '--'),
+                        _buildSummaryItem(
+                            language['Shipping'] ?? 'Shipping', '--'),
                         Divider(
                           thickness: 1.5,
                         ),
-                        _buildSummaryItem('Total', subtotal.toString(),
+                        _buildSummaryItem(
+                            language['Total'] ?? 'Total', subtotal.toString(),
                             isTotal: true),
                       ],
                     ),
