@@ -27,8 +27,8 @@ Future<void> main() async {
   int cartCount = prefs.getInt('cartCount') ?? 0;
   int notiCount = prefs.getInt('notiCount') ?? 0;
 
-  final cameras = await availableCameras();
-  final firstCamera = cameras.first;
+  // final cameras = await availableCameras();
+  // final firstCamera = cameras.first;
   runApp(
     MultiProvider(
       providers: [
@@ -36,9 +36,10 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => CartProvider(cartCount)),
         ChangeNotifierProvider(create: (context) => NotiProvider(notiCount)),
       ],
-      child: MyApp(
-        camera: firstCamera,
-      ),
+      child: MyApp(),
+      // child: MyApp(
+      //   camera: firstCamera,
+      // ),
     ),
   );
 }
@@ -49,11 +50,11 @@ Future<void> backgroundMessageHandler(RemoteMessage message) async {
 }
 
 class MyApp extends StatefulWidget {
-  final CameraDescription camera;
+  // final CameraDescription camera;
 
   const MyApp({
     Key? key,
-    required this.camera,
+    // required this.camera,
   }) : super(key: key);
 
   @override
@@ -95,7 +96,7 @@ class _MyAppState extends State<MyApp> {
       initialRoute: Routes.splash,
       routes: {
         ...Routes.routes,
-        "/scan": (context) => ScanScreen(camera: widget.camera),
+        // "/scan": (context) => ScanScreen(camera: widget.camera),
       },
     );
   }

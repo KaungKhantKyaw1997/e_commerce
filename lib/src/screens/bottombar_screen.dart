@@ -36,12 +36,17 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
           },
           {"index": 2, "icon": "assets/icons/setting.svg", "label": "Settings"}
         ];
-      } else if (role != '') {
+      } else if (role == 'user') {
         navItems = [
           {"index": 0, "icon": "assets/icons/home.svg", "label": "Home"},
           {"index": 1, "icon": "assets/icons/cart.svg", "label": "Cart"},
           {"index": 2, "icon": "assets/icons/history.svg", "label": "History"},
-          {"index": 3, "icon": "assets/icons/setting.svg", "label": "Settings"}
+          {
+            "index": 3,
+            "icon": "assets/icons/noti.svg",
+            "label": "Notification"
+          },
+          {"index": 4, "icon": "assets/icons/setting.svg", "label": "Settings"}
         ];
       } else {
         navItems = [
@@ -105,8 +110,8 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                   return BottomNavigationBarItem(
                     icon: (cartProvider.count > 0 && navItem["index"] == 1) ||
                             (notiProvider.count > 0 &&
-                                navItem["index"] == 3 &&
-                                role == 'admin')
+                                ((navItem["index"] == 1 && role == 'admin') ||
+                                    navItem["index"] == 3 && role == 'user'))
                         ? Stack(
                             children: [
                               Padding(

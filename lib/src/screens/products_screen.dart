@@ -11,7 +11,7 @@ import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:intl/intl.dart';
-import 'package:number_paginator/number_paginator.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen({super.key});
@@ -27,6 +27,8 @@ class _ProductsScreenState extends State<ProductsScreen>
   FocusNode _fromFocusNode = FocusNode();
   FocusNode _toFocusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   TextEditingController search = TextEditingController(text: '');
   TextEditingController _fromPrice = TextEditingController(text: '');
   TextEditingController _toPrice = TextEditingController(text: '');
@@ -34,8 +36,6 @@ class _ProductsScreenState extends State<ProductsScreen>
 
   List products = [];
   int page = 1;
-  int pageCounts = 0;
-  int total = 0;
   int shopId = 0;
   int categoryId = 0;
   int brandId = 0;
@@ -46,7 +46,7 @@ class _ProductsScreenState extends State<ProductsScreen>
   double _startValue = 0;
   double _endValue = 0;
   bool isTopModel = false;
-  bool loading = false;
+  bool _dataLoaded = false;
 
   @override
   void initState() {
@@ -96,9 +96,6 @@ class _ProductsScreenState extends State<ProductsScreen>
   }
 
   getProducts() async {
-    setState(() {
-      loading = true;
-    });
     try {
       double fromPrice = _fromPrice.text == ''
           ? 0.0
@@ -127,24 +124,26 @@ class _ProductsScreenState extends State<ProductsScreen>
       if (toPrice == 0.0) body.remove("to_price");
 
       final response = await productsService.getProductsData(body);
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
-          products = response["data"];
-          page = response["page"];
-          pageCounts = response["page_counts"];
-          total = response["total"];
+          products += response["data"];
+          page++;
         }
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
       setState(() {
-        loading = false;
+        if (products.isEmpty) {
+          _dataLoaded = true;
+        }
       });
     } catch (e) {
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
       print('Error: $e');
-      setState(() {
-        loading = false;
-      });
     }
   }
 
@@ -516,6 +515,8 @@ class _ProductsScreenState extends State<ProductsScreen>
             _endValue = 0;
             _fromPrice.text = '';
             _toPrice.text = '';
+            page = 1;
+            products = [];
             getProducts();
           },
         ),
@@ -539,86 +540,110 @@ class _ProductsScreenState extends State<ProductsScreen>
           color: Theme.of(context).primaryColor,
         ),
       ),
-      body: !loading
-          ? products.isNotEmpty
-              ? SingleChildScrollView(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 24,
-                    ),
-                    width: double.infinity,
+      body: SmartRefresher(
+        header: WaterDropMaterialHeader(
+          backgroundColor: Theme.of(context).primaryColor,
+          color: Colors.white,
+        ),
+        footer: ClassicFooter(),
+        controller: _refreshController,
+        enablePullDown: true,
+        enablePullUp: true,
+        onRefresh: () async {
+          page = 1;
+          products = [];
+          await getProducts();
+        },
+        onLoading: () async {
+          await getProducts();
+        },
+        child: products.isNotEmpty
+            ? SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 24,
+                  ),
+                  width: double.infinity,
+                  child: Column(
+                    children: [
+                      GridView.builder(
+                        controller: _scrollController,
+                        shrinkWrap: true,
+                        itemCount: products.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          mainAxisExtent: 250,
+                          childAspectRatio: 2 / 1,
+                          crossAxisSpacing: 15,
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 15,
+                        ),
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                Routes.product,
+                                arguments: products[index],
+                              );
+                            },
+                            child: productCard(index),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : _dataLoaded
+                ? Center(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        GridView.builder(
-                          controller: _scrollController,
-                          shrinkWrap: true,
-                          itemCount: products.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            mainAxisExtent: 250,
-                            childAspectRatio: 2 / 1,
-                            crossAxisSpacing: 15,
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 15,
+                        Container(
+                          width: MediaQuery.of(context).orientation ==
+                                  Orientation.landscape
+                              ? 150
+                              : 300,
+                          height: MediaQuery.of(context).orientation ==
+                                  Orientation.landscape
+                              ? 150
+                              : 300,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/no_data.png'),
+                            ),
                           ),
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  Routes.product,
-                                  arguments: products[index],
-                                );
-                              },
-                              child: productCard(index),
-                            );
-                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            bottom: 4,
+                          ),
+                          child: Text(
+                            "Empty Product",
+                            textAlign: TextAlign.center,
+                            style: FontConstants.title2,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                          ),
+                          child: Text(
+                            "There is no data...",
+                            textAlign: TextAlign.center,
+                            style: FontConstants.subheadline2,
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                )
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Center(
-                      child: Container(
-                        width: 300,
-                        height: 300,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/no_data.png'),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 10,
-                      ),
-                      child: Text(
-                        "Empty Product",
-                        textAlign: TextAlign.center,
-                        style: FontConstants.title2,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 40,
-                      ),
-                      child: Text(
-                        "There is no data...",
-                        textAlign: TextAlign.center,
-                        style: FontConstants.subheadline2,
-                      ),
-                    ),
-                  ],
-                )
-          : Container(),
+                  )
+                : Container(),
+      ),
     );
   }
 }

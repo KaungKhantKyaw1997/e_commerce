@@ -632,11 +632,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   Provider.of<CartProvider>(context, listen: false);
               cartProvider.addCount(carts.length);
 
-              BottomProvider bottomProvider =
-                  Provider.of<BottomProvider>(context, listen: false);
-              bottomProvider.selectIndex(1);
-
-              Navigator.pushNamed(context, Routes.cart);
+              Navigator.pop(context);
             }
           },
           child: Text(

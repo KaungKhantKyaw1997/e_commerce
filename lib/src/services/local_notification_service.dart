@@ -5,6 +5,7 @@ import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalNotificationService {
   static FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -23,10 +24,13 @@ class LocalNotificationService {
 
     flutterLocalNotificationsPlugin.initialize(
       initSettings,
-      onDidReceiveNotificationResponse: (details) {
+      onDidReceiveNotificationResponse: (details) async {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        String role = prefs.getString('role') ?? "";
+
         BottomProvider bottomProvider =
             Provider.of<BottomProvider>(context, listen: false);
-        bottomProvider.selectIndex(1);
+        bottomProvider.selectIndex(role == 'admin' ? 1 : 3);
         navigatorKey.currentState!.pushNamed(Routes.noti);
       },
     );

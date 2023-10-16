@@ -46,7 +46,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   void initState() {
     super.initState();
-    unreadNotifications();
     getData();
     getOrders();
   }
@@ -63,6 +62,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       role = prefs.getString('role') ?? "";
+      if (role == 'admin') {
+        unreadNotifications();
+      }
     });
   }
 
@@ -119,12 +121,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
             });
           });
         }
-
-        if (orders.isEmpty) {
-          setState(() {
+        setState(() {
+          if (orders.isEmpty) {
             _dataLoaded = true;
-          });
-        }
+          }
+        });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -215,6 +216,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
         enablePullDown: true,
         enablePullUp: true,
         onRefresh: () async {
+          if (role == 'admin') {
+            unreadNotifications();
+          }
           page = 1;
           data = [];
           await getOrders();

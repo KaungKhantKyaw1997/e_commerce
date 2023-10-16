@@ -7,7 +7,7 @@ import 'package:e_commerce/src/services/user_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:number_paginator/number_paginator.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class UsersSetupScreen extends StatefulWidget {
   const UsersSetupScreen({super.key});
@@ -20,10 +20,10 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
   final userService = UserService();
   TextEditingController search = TextEditingController(text: '');
   final ScrollController _scrollController = ScrollController();
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   List users = [];
   int page = 1;
-  int pageCounts = 0;
-  int total = 0;
 
   @override
   void initState() {
@@ -42,18 +42,21 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
     try {
       final response =
           await userService.getUsersData(page: page, search: search.text);
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
-          users = response["data"];
-          page = response["page"];
-          pageCounts = response["page_counts"];
-          total = response["total"];
+          users += response["data"];
+          page++;
         }
         setState(() {});
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
     } catch (e) {
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
       print('Error: $e');
     }
   }
@@ -173,6 +176,8 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
             ),
           ),
           onChanged: (value) {
+            page = 1;
+            users = [];
             getUsers();
           },
         ),
@@ -180,86 +185,73 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
           color: Theme.of(context).primaryColor,
         ),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.only(
-            left: 16,
-            right: 16,
-            bottom: 24,
-          ),
-          width: double.infinity,
-          child: Column(
-            children: [
-              users.isNotEmpty
-                  ? Container(
-                      padding: EdgeInsets.only(
-                        top: 4,
-                        bottom: 4,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+      body: SmartRefresher(
+        header: WaterDropMaterialHeader(
+          backgroundColor: Theme.of(context).primaryColor,
+          color: Colors.white,
+        ),
+        footer: ClassicFooter(),
+        controller: _refreshController,
+        enablePullDown: true,
+        enablePullUp: true,
+        onRefresh: () async {
+          page = 1;
+          users = [];
+          await getUsers();
+        },
+        onLoading: () async {
+          await getUsers();
+        },
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 24,
+            ),
+            width: double.infinity,
+            child: Column(
+              children: [
+                ListView.builder(
+                  controller: _scrollController,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: users.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(
+                          context,
+                          Routes.user_setup,
+                          arguments: {
+                            "id": users[index]["user_id"],
+                          },
+                        );
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Total ${total.toString()}',
-                            style: FontConstants.caption1,
-                          ),
-                          NumberPaginator(
-                            numberPages: pageCounts,
-                            onPageChange: (int index) {
-                              setState(() {
-                                page = index + 1;
-                                getUsers();
-                              });
-                            },
-                            config: const NumberPaginatorUIConfig(
-                              mode: ContentDisplayMode.hidden,
-                            ),
-                          ),
+                          userCard(index),
+                          index < users.length - 1
+                              ? Container(
+                                  padding: const EdgeInsets.only(
+                                    left: 16,
+                                    right: 16,
+                                  ),
+                                  child: const Divider(
+                                    height: 0,
+                                    color: Colors.grey,
+                                  ),
+                                )
+                              : Container(),
                         ],
                       ),
-                    )
-                  : Container(),
-              ListView.builder(
-                controller: _scrollController,
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: users.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.pushNamed(
-                        context,
-                        Routes.user_setup,
-                        arguments: {
-                          "id": users[index]["user_id"],
-                        },
-                      );
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        userCard(index),
-                        index < users.length - 1
-                            ? Container(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                ),
-                                child: const Divider(
-                                  height: 0,
-                                  color: Colors.grey,
-                                ),
-                              )
-                            : Container(),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ],
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

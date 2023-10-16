@@ -1,21 +1,22 @@
-import 'dart:ui';
-
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
+import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/brands_service.dart';
 import 'package:e_commerce/src/services/categories_service.dart';
+import 'package:e_commerce/src/services/notification_service.dart';
 import 'package:e_commerce/src/services/products_service.dart';
 import 'package:e_commerce/src/services/shops_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/screens/bottombar_screen.dart';
-import 'package:number_paginator/number_paginator.dart';
+import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,28 +33,29 @@ class _HomeScreenState extends State<HomeScreen>
   final brandsService = BrandsService();
   final categoriesService = CategoriesService();
   final productsService = ProductsService();
+  final notificationService = NotificationService();
   final storage = FlutterSecureStorage();
   final ScrollController _scrollController = ScrollController();
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   late TabController _tabController;
   List shops = [];
   List brands = [];
   List products = [];
   List categories = [];
   int page = 1;
-  int pageCounts = 0;
-  int total = 0;
   int crossAxisCount = 1;
   bool shopTab = false;
   bool productTab = false;
   String profileImage = '';
   String profileName = '';
-  bool validtoken = true;
+  String role = "";
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    verifyToken();
+    getData();
     getProfile();
     getShops();
     getProducts();
@@ -66,25 +68,30 @@ class _HomeScreenState extends State<HomeScreen>
     shopsService.cancelRequest();
     brandsService.cancelRequest();
     categoriesService.cancelRequest();
+    notificationService.cancelRequest();
     super.dispose();
   }
 
-  verifyToken() async {
-    var token = await storage.read(key: "token") ?? "";
-    if (token == "") {
-      validtoken = false;
-      return;
-    }
+  getData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      role = prefs.getString('role') ?? "";
+      if (role == 'admin') {
+        unreadNotifications();
+      }
+    });
+  }
+
+  unreadNotifications() async {
     try {
-      final body = {
-        "token": token,
-      };
-      final response = await authService.verifyTokenData(body);
-      if (response["code"] != 200) {
-        setState(() {
-          validtoken = false;
-        });
-        authService.clearData();
+      final response = await notificationService.unreadNotificationsData();
+      if (response!["code"] == 200) {
+        NotiProvider notiProvider =
+            Provider.of<NotiProvider>(context, listen: false);
+        notiProvider.addCount(response["data"]);
+        FlutterAppBadger.updateBadgeCount(response["data"]);
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
       }
     } catch (e) {
       print('Error: $e');
@@ -100,20 +107,22 @@ class _HomeScreenState extends State<HomeScreen>
   getShops() async {
     try {
       final response = await shopsService.getShopsData(page: page);
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
-          setState(() {
-            shops = response["data"];
-            page = response["page"];
-            pageCounts = response["page_counts"];
-            total = response["total"];
-            shopTab = true;
-          });
+          shops += response["data"];
+          page++;
+          shopTab = true;
         }
+        setState(() {});
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
     } catch (e) {
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
       print('Error: $e');
     }
   }
@@ -470,58 +479,59 @@ class _HomeScreenState extends State<HomeScreen>
               },
             ),
           ),
-          leading: GestureDetector(
-            onTap: () {
-              if (validtoken) {
-                Navigator.pushNamed(
-                  context,
-                  Routes.profile,
-                  arguments: {
-                    'from': 'home',
+          automaticallyImplyLeading: role != '' ? true : false,
+          leading: role != ''
+              ? GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      Routes.profile,
+                      arguments: {
+                        'from': 'home',
+                      },
+                    );
                   },
-                );
-              }
-            },
-            child: Container(
-              margin: const EdgeInsets.only(
-                left: 16,
-                top: 8,
-                bottom: 8,
-              ),
-              decoration: profileImage == ''
-                  ? BoxDecoration(
-                      color: ColorConstants.fillcolor,
-                      image: DecorationImage(
-                        image: AssetImage("assets/images/profile.png"),
-                        fit: BoxFit.cover,
-                      ),
-                      borderRadius: BorderRadius.circular(50),
-                    )
-                  : BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(
-                            '${ApiConstants.baseUrl}${profileImage.toString()}'),
-                        fit: BoxFit.cover,
-                      ),
-                      borderRadius: BorderRadius.circular(50),
+                  child: Container(
+                    margin: const EdgeInsets.only(
+                      left: 16,
+                      top: 8,
+                      bottom: 8,
                     ),
-            ),
-          ),
+                    decoration: profileImage == ''
+                        ? BoxDecoration(
+                            color: ColorConstants.fillcolor,
+                            image: DecorationImage(
+                              image: AssetImage("assets/images/profile.png"),
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.circular(50),
+                          )
+                        : BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                  '${ApiConstants.baseUrl}${profileImage.toString()}'),
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                  ),
+                )
+              : null,
           actions: [
-            IconButton(
-              icon: SvgPicture.asset(
-                "assets/icons/scan.svg",
-                width: 24,
-                height: 24,
-                colorFilter: const ColorFilter.mode(
-                  Colors.black,
-                  BlendMode.srcIn,
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pushNamed(Routes.scan);
-              },
-            ),
+            // IconButton(
+            //   icon: SvgPicture.asset(
+            //     "assets/icons/scan.svg",
+            //     width: 24,
+            //     height: 24,
+            //     colorFilter: const ColorFilter.mode(
+            //       Colors.black,
+            //       BlendMode.srcIn,
+            //     ),
+            //   ),
+            //   onPressed: () {
+            //     Navigator.of(context).pushNamed(Routes.scan);
+            //   },
+            // ),
           ],
           bottom: TabBar(
             controller: _tabController,
@@ -552,96 +562,59 @@ class _HomeScreenState extends State<HomeScreen>
             controller: _tabController,
             children: [
               shopTab
-                  ? SingleChildScrollView(
-                      child: Container(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          bottom: 24,
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.only(
-                                top: 4,
-                                bottom: 4,
+                  ? SmartRefresher(
+                      header: WaterDropMaterialHeader(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        color: Colors.white,
+                      ),
+                      footer: ClassicFooter(),
+                      controller: _refreshController,
+                      enablePullDown: true,
+                      enablePullUp: true,
+                      onRefresh: () async {
+                        page = 1;
+                        shops = [];
+                        await getShops();
+                      },
+                      onLoading: () async {
+                        await getShops();
+                      },
+                      child: SingleChildScrollView(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 24,
+                          ),
+                          child: Column(
+                            children: [
+                              GridView.builder(
+                                controller: _scrollController,
+                                shrinkWrap: true,
+                                itemCount: shops.length,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  mainAxisExtent:
+                                      crossAxisCount == 1 ? 300 : 210,
+                                  childAspectRatio: 2 / 1,
+                                  crossAxisSpacing: 8,
+                                  crossAxisCount: crossAxisCount,
+                                  mainAxisSpacing: 8,
+                                ),
+                                itemBuilder: (context, index) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                        context,
+                                        Routes.products,
+                                        arguments: shops[index],
+                                      );
+                                    },
+                                    child: shopCard(index),
+                                  );
+                                },
                               ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Total ${total.toString()}',
-                                    style: FontConstants.caption1,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      NumberPaginator(
-                                        numberPages: pageCounts,
-                                        onPageChange: (int index) {
-                                          setState(() {
-                                            page = index + 1;
-                                            getShops();
-                                          });
-                                        },
-                                        config: const NumberPaginatorUIConfig(
-                                          mode: ContentDisplayMode.hidden,
-                                        ),
-                                      ),
-                                      IconButton(
-                                        icon: SvgPicture.asset(
-                                          crossAxisCount == 1
-                                              ? "assets/icons/grid_2.svg"
-                                              : "assets/icons/grid_4.svg",
-                                          width: 24,
-                                          height: 24,
-                                          colorFilter: const ColorFilter.mode(
-                                            Colors.black,
-                                            BlendMode.srcIn,
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            crossAxisCount =
-                                                crossAxisCount == 1 ? 2 : 1;
-                                          });
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            GridView.builder(
-                              controller: _scrollController,
-                              shrinkWrap: true,
-                              itemCount: shops.length,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                mainAxisExtent: crossAxisCount == 1 ? 300 : 210,
-                                childAspectRatio: 2 / 1,
-                                crossAxisSpacing: 8,
-                                crossAxisCount: crossAxisCount,
-                                mainAxisSpacing: 8,
-                              ),
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      Routes.products,
-                                      arguments: shops[index],
-                                    );
-                                  },
-                                  child: shopCard(index),
-                                );
-                              },
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     )
