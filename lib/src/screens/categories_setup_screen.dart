@@ -95,7 +95,7 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
             width: 75,
             height: 75,
             decoration: BoxDecoration(
-              image: categories[index]["cover_image"] != ""
+              image: categories[index]["cover_image"].isNotEmpty
                   ? DecorationImage(
                       image: NetworkImage(
                           '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),

@@ -159,7 +159,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          if (role != '') {
+                          if (role.isNotEmpty) {
                             Navigator.pushNamed(
                               context,
                               Routes.profile,
@@ -177,7 +177,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           color: Colors.transparent,
                           child: Row(
                             children: [
-                              role != ''
+                              role.isNotEmpty
                                   ? Container(
                                       margin: const EdgeInsets.only(
                                         right: 16,
@@ -186,7 +186,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                       ),
                                       width: 40,
                                       height: 40,
-                                      decoration: profileImage == ''
+                                      decoration: profileImage.isEmpty
                                           ? BoxDecoration(
                                               color: ColorConstants.fillcolor,
                                               image: DecorationImage(
@@ -225,7 +225,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         borderRadius: BorderRadius.circular(50),
                                       ),
                                     ),
-                              profileName != ''
+                              profileName.isNotEmpty
                                   ? Expanded(
                                       child: Padding(
                                         padding: const EdgeInsets.only(
@@ -652,7 +652,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           color: Colors.grey,
                         ),
                       ),
-                      role != ''
+                      role.isNotEmpty
                           ? Padding(
                               padding: const EdgeInsets.only(
                                 left: 16,
@@ -668,7 +668,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
-                      role != ''
+                      role.isNotEmpty
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
@@ -749,7 +749,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                         ),
                       ),
-                      role != ''
+                      role.isNotEmpty
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
@@ -870,7 +870,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     ],
                   ),
                 ),
-                role != ''
+                role.isNotEmpty
                     ? Container(
                         width: double.infinity,
                         child: ElevatedButton(

@@ -146,8 +146,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   addProduct() async {
     try {
-      double _price =
-          price.text == '' ? 0.0 : double.parse(price.text.replaceAll(',', ''));
+      double _price = price.text.isEmpty
+          ? 0.0
+          : double.parse(price.text.replaceAll(',', ''));
 
       final body = {
         "shop_id": shopId,
@@ -190,8 +191,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   updateProduct() async {
     try {
-      double _price =
-          price.text == '' ? 0.0 : double.parse(price.text.replaceAll(',', ''));
+      double _price = price.text.isEmpty
+          ? 0.0
+          : double.parse(price.text.replaceAll(',', ''));
 
       final body = {
         "shop_id": shopId,

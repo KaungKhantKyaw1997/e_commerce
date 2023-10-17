@@ -221,7 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onTap: () {
                             _pickImage(ImageSource.gallery);
                           },
-                          child: profileImage != ""
+                          child: profileImage.isNotEmpty
                               ? ClipOval(
                                   child: Image.network(
                                     '${ApiConstants.baseUrl}${profileImage.toString()}',

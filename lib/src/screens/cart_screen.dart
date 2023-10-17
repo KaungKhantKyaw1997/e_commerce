@@ -983,7 +983,7 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                   ),
                   onPressed: () {
-                    role == ''
+                    role.isEmpty
                         ? Navigator.pushNamed(context, Routes.login)
                         : _showOrderBottomSheet(context);
                   },

@@ -227,7 +227,7 @@ class _CategorySetupScreenState extends State<CategorySetupScreen> {
                           onTap: () {
                             _pickImage(ImageSource.gallery);
                           },
-                          child: coverImage != ""
+                          child: coverImage.isNotEmpty
                               ? ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
                                   child: Image.network(

@@ -27,7 +27,7 @@ class FormattedAmount extends StatelessWidget {
         style: mainTextStyle,
         children: [
           TextSpan(
-            text: mainPart == "" ? "0" : mainPart,
+            text: mainPart.isEmpty ? "0" : mainPart,
           ),
           const TextSpan(
             text: '.',

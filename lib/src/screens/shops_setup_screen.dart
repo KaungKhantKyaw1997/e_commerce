@@ -95,7 +95,7 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
             width: 75,
             height: 75,
             decoration: BoxDecoration(
-              image: shops[index]["cover_image"] != ""
+              image: shops[index]["cover_image"].isNotEmpty
                   ? DecorationImage(
                       image: NetworkImage(
                           '${ApiConstants.baseUrl}${shops[index]["cover_image"].toString()}'),

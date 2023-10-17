@@ -250,7 +250,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
                           onTap: () {
                             _pickImage(ImageSource.gallery);
                           },
-                          child: coverImage != ""
+                          child: coverImage.isNotEmpty
                               ? ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
                                   child: Image.network(

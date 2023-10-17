@@ -16,6 +16,7 @@ class TermsAndConditionsScreen extends StatefulWidget {
 class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
   final ScrollController _scrollController = ScrollController();
   final termsAndConditionsService = TermsAndConditionsService();
+  String data = '';
   String from = '';
 
   @override
@@ -27,9 +28,9 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
 
       if (arguments != null) {
         from = arguments["from"] ?? "";
-        getTermsAndConditions();
       }
     });
+    getTermsAndConditions();
   }
 
   @override
@@ -43,7 +44,11 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
       final response =
           await termsAndConditionsService.getTermsAndConditionsData();
       if (response!["code"] == 200) {
-        setState(() {});
+        if (response["data"].isNotEmpty) {
+          setState(() {
+            data = response["data"];
+          });
+        }
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }

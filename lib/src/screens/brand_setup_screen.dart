@@ -227,7 +227,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
                           onTap: () {
                             _pickImage(ImageSource.gallery);
                           },
-                          child: logoUrl != ""
+                          child: logoUrl.isNotEmpty
                               ? ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
                                   child: Image.network(

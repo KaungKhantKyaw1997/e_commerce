@@ -97,7 +97,7 @@ class AuthService {
       Uri.parse(ApiConstants.fcmUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        if (token != '') 'Authorization': 'Bearer $token',
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
       },
       body: jsonEncode(body),
     );
@@ -108,8 +108,8 @@ class AuthService {
   logout(BuildContext context) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String role = prefs.getString('role') ?? "";
-    Navigator.pushNamed(
-        context, role == 'admin' || role != '' ? Routes.home : Routes.history);
+    Navigator.pushNamed(context,
+        role == 'admin' || role.isNotEmpty ? Routes.home : Routes.history);
 
     clearData();
     CartProvider cartProvider =

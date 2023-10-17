@@ -19,7 +19,7 @@ class TermsAndConditionsService {
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
-            if (token != '') 'Authorization': 'Bearer $token',
+            if (token.isNotEmpty) 'Authorization': 'Bearer $token',
           },
         ),
         cancelToken: _cancelToken,

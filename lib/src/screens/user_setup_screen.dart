@@ -267,7 +267,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                           onTap: () {
                             _pickImage(ImageSource.gallery);
                           },
-                          child: profileImage != ""
+                          child: profileImage.isNotEmpty
                               ? ClipOval(
                                   child: Image.network(
                                     '${ApiConstants.baseUrl}${profileImage.toString()}',

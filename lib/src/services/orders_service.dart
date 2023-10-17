@@ -17,7 +17,7 @@ class OrderService {
       Uri.parse(ApiConstants.ordersUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        if (token != '') 'Authorization': 'Bearer $token',
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
       },
       body: jsonEncode(body),
     );
@@ -32,7 +32,7 @@ class OrderService {
       Uri.parse("${ApiConstants.ordersUrl}/$id"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        if (token != '') 'Authorization': 'Bearer $token',
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
       },
       body: jsonEncode(body),
     );
@@ -49,8 +49,8 @@ class OrderService {
       double toAmount = 0.0}) async {
     var token = await storage.read(key: "token") ?? '';
     var url = '${ApiConstants.ordersUrl}?page=$page&per_page=$perPage';
-    if (fromDate != '') url += '&from_date=$fromDate';
-    if (toDate != '') url += '&to_date=$toDate';
+    if (fromDate.isNotEmpty) url += '&from_date=$fromDate';
+    if (toDate.isNotEmpty) url += '&to_date=$toDate';
     if (toAmount != 0.0) url += '&from_amount=$fromAmount';
     if (toAmount != 0.0) url += '&to_amount=$toAmount';
 
@@ -60,7 +60,7 @@ class OrderService {
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
-            if (token != '') 'Authorization': 'Bearer $token',
+            if (token.isNotEmpty) 'Authorization': 'Bearer $token',
           },
         ),
         cancelToken: _cancelToken,
@@ -81,7 +81,7 @@ class OrderService {
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
-            if (token != '') 'Authorization': 'Bearer $token',
+            if (token.isNotEmpty) 'Authorization': 'Bearer $token',
           },
         ),
         cancelToken: _cancelToken,

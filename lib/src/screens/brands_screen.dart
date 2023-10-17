@@ -85,7 +85,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
             width: 75,
             height: 75,
             decoration: BoxDecoration(
-              image: brands[index]["logo_url"] != ""
+              image: brands[index]["logo_url"].isNotEmpty
                   ? DecorationImage(
                       image: NetworkImage(
                           '${ApiConstants.baseUrl}${brands[index]["logo_url"].toString()}'),

@@ -86,7 +86,7 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
             width: 75,
             height: 75,
             decoration: BoxDecoration(
-              image: users[index]["profile_image"] != ""
+              image: users[index]["profile_image"].isNotEmpty
                   ? DecorationImage(
                       image: NetworkImage(
                           '${ApiConstants.baseUrl}${users[index]["profile_image"].toString()}'),

@@ -201,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen>
             width: double.infinity,
             height: crossAxisCount == 1 ? 240 : 150,
             decoration: BoxDecoration(
-              image: shops[index]["cover_image"] != ""
+              image: shops[index]["cover_image"].isNotEmpty
                   ? DecorationImage(
                       image: NetworkImage(
                           '${ApiConstants.baseUrl}${shops[index]["cover_image"].toString()}'),
@@ -296,7 +296,7 @@ class _HomeScreenState extends State<HomeScreen>
             width: double.infinity,
             height: 150,
             decoration: BoxDecoration(
-              image: categories[index]["cover_image"] != ""
+              image: categories[index]["cover_image"].isNotEmpty
                   ? DecorationImage(
                       image: NetworkImage(
                           '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
@@ -365,7 +365,7 @@ class _HomeScreenState extends State<HomeScreen>
             width: double.infinity,
             height: 200,
             decoration: BoxDecoration(
-              image: products[index]["product_images"][0] != ""
+              image: products[index]["product_images"][0].isNotEmpty
                   ? DecorationImage(
                       image: NetworkImage(
                           '${ApiConstants.baseUrl}${products[index]["product_images"][0].toString()}'),
@@ -452,7 +452,7 @@ class _HomeScreenState extends State<HomeScreen>
                     greeting = 'Good Evening';
                   }
 
-                  return profileName == ""
+                  return profileName.isEmpty
                       ? Text(
                           greeting,
                           style: FontConstants.body1,
@@ -479,8 +479,8 @@ class _HomeScreenState extends State<HomeScreen>
               },
             ),
           ),
-          automaticallyImplyLeading: role != '' ? true : false,
-          leading: role != ''
+          automaticallyImplyLeading: role.isNotEmpty ? true : false,
+          leading: role.isNotEmpty
               ? GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(
@@ -497,7 +497,7 @@ class _HomeScreenState extends State<HomeScreen>
                       top: 8,
                       bottom: 8,
                     ),
-                    decoration: profileImage == ''
+                    decoration: profileImage.isEmpty
                         ? BoxDecoration(
                             color: ColorConstants.fillcolor,
                             image: DecorationImage(

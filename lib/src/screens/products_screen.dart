@@ -97,10 +97,10 @@ class _ProductsScreenState extends State<ProductsScreen>
 
   getProducts() async {
     try {
-      double fromPrice = _fromPrice.text == ''
+      double fromPrice = _fromPrice.text.isEmpty
           ? 0.0
           : double.parse(_fromPrice.text.replaceAll(',', ''));
-      double toPrice = _toPrice.text == ''
+      double toPrice = _toPrice.text.isEmpty
           ? 0.0
           : double.parse(_toPrice.text.replaceAll(',', ''));
 

@@ -17,7 +17,7 @@ class UserService {
       Uri.parse(ApiConstants.usersUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        if (token != '') 'Authorization': 'Bearer $token',
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
       },
       body: jsonEncode(body),
     );
@@ -32,7 +32,7 @@ class UserService {
       Uri.parse('${ApiConstants.usersUrl}/$id'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        if (token != '') 'Authorization': 'Bearer $token',
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
       },
       body: jsonEncode(body),
     );
@@ -46,7 +46,7 @@ class UserService {
       Uri.parse('${ApiConstants.usersUrl}/$id'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        if (token != '') 'Authorization': 'Bearer $token',
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
       },
     );
 
@@ -62,7 +62,7 @@ class UserService {
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
-            if (token != '') 'Authorization': 'Bearer $token',
+            if (token.isNotEmpty) 'Authorization': 'Bearer $token',
           },
         ),
         cancelToken: _cancelToken,
@@ -83,7 +83,7 @@ class UserService {
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
-            if (token != '') 'Authorization': 'Bearer $token',
+            if (token.isNotEmpty) 'Authorization': 'Bearer $token',
           },
         ),
         cancelToken: _cancelToken,
