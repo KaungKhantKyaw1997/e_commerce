@@ -482,7 +482,7 @@ class _ProductsScreenState extends State<ProductsScreen>
             height: 200,
             decoration: BoxDecoration(
               image: products.length > 0 &&
-                      products[index]["product_images"][0] != ""
+                      products[index]["product_images"].isNotEmpty
                   ? DecorationImage(
                       image: NetworkImage(
                           '${ApiConstants.baseUrl}${products[index]["product_images"][0].toString()}'),
