@@ -100,50 +100,47 @@ class _TermsAndConditionsSetUpScreenState
             Navigator.of(context).pop();
             return true;
           },
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            child: Form(
-              key: _formKey,
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 24,
-                ),
-                child: TextFormField(
-                  controller: content,
-                  focusNode: _contentFocusNode,
-                  keyboardType: TextInputType.text,
-                  textInputAction: TextInputAction.done,
-                  style: FontConstants.body1,
-                  cursorColor: Colors.black,
-                  maxLines: 30,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: ColorConstants.fillcolor,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
+          child: Form(
+            key: _formKey,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 24,
+              ),
+              child: TextFormField(
+                controller: content,
+                focusNode: _contentFocusNode,
+                keyboardType: TextInputType.text,
+                textInputAction: TextInputAction.done,
+                style: FontConstants.body1,
+                cursorColor: Colors.black,
+                maxLines: null,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: ColorConstants.fillcolor,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return language["Enter Content"] ?? "Enter Content";
-                    }
-                    return null;
-                  },
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return language["Enter Content"] ?? "Enter Content";
+                  }
+                  return null;
+                },
               ),
             ),
           ),
