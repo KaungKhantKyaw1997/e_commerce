@@ -1090,8 +1090,8 @@ class _CartScreenState extends State<CartScreen> {
                                           height: 75,
                                           decoration: BoxDecoration(
                                             image: carts[index]
-                                                        ["product_images"][0] !=
-                                                    ""
+                                                        ["product_images"]
+                                                    .isNotEmpty
                                                 ? DecorationImage(
                                                     image: NetworkImage(
                                                         '${ApiConstants.baseUrl}${carts[index]["product_images"][0].toString()}'),

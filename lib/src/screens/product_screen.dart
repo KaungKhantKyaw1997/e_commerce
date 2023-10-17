@@ -594,52 +594,124 @@ class _ProductScreenState extends State<ProductScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.only(
-          left: 16,
-          right: 16,
-          bottom: 24,
-        ),
-        width: double.infinity,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 12,
+      bottomNavigationBar: Row(
+        children: [
+          Expanded(
+            child: FractionallySizedBox(
+              widthFactor: 1,
+              child: Container(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  bottom: 24,
+                ),
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    backgroundColor: Colors.white,
+                    side: BorderSide(
+                      color: Theme.of(context).primaryColor,
+                      width: 0.5,
+                    ),
+                  ),
+                  onPressed: () async {
+                    if (product['quantity'] > 0) {
+                      if (updateCart) {
+                        for (var cart in carts) {
+                          if (cart["product_id"] == product["product_id"]) {
+                            cart["quantity"] = product["quantity"] ?? 0;
+                            cart["totalamount"] = product["totalamount"] ?? 0.0;
+                            break;
+                          }
+                        }
+                      } else {
+                        carts.add(product);
+                      }
+
+                      saveListToSharedPreferences(carts);
+
+                      CartProvider cartProvider =
+                          Provider.of<CartProvider>(context, listen: false);
+                      cartProvider.addCount(carts.length);
+
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Text(
+                    language["Add to cart"] ?? "Add to cart",
+                    style: FontConstants.button2,
+                  ),
+                ),
+              ),
             ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+          ),
+          Expanded(
+            child: FractionallySizedBox(
+              widthFactor: 1,
+              child: Container(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  bottom: 24,
+                ),
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    backgroundColor: Theme.of(context).primaryColor,
+                  ),
+                  onPressed: () async {
+                    if (product['quantity'] > 0) {
+                      if (updateCart) {
+                        for (var cart in carts) {
+                          if (cart["product_id"] == product["product_id"]) {
+                            cart["quantity"] = product["quantity"] ?? 0;
+                            cart["totalamount"] = product["totalamount"] ?? 0.0;
+                            break;
+                          }
+                        }
+                      } else {
+                        carts.add(product);
+                      }
+
+                      saveListToSharedPreferences(carts);
+
+                      CartProvider cartProvider =
+                          Provider.of<CartProvider>(context, listen: false);
+                      cartProvider.addCount(carts.length);
+
+                      BottomProvider bottomProvider =
+                          Provider.of<BottomProvider>(context, listen: false);
+                      bottomProvider.selectIndex(1);
+
+                      Navigator.pushNamed(
+                        context,
+                        Routes.cart,
+                      );
+                    }
+                  },
+                  child: Text(
+                    language["Buy Now"] ?? "Buy Now",
+                    style: FontConstants.button1,
+                  ),
+                ),
+              ),
             ),
-            backgroundColor: Theme.of(context).primaryColor,
           ),
-          onPressed: () async {
-            if (product['quantity'] > 0) {
-              if (updateCart) {
-                for (var cart in carts) {
-                  if (cart["product_id"] == product["product_id"]) {
-                    cart["quantity"] = product["quantity"] ?? 0;
-                    cart["totalamount"] = product["totalamount"] ?? 0.0;
-                    break;
-                  }
-                }
-              } else {
-                carts.add(product);
-              }
-
-              saveListToSharedPreferences(carts);
-
-              CartProvider cartProvider =
-                  Provider.of<CartProvider>(context, listen: false);
-              cartProvider.addCount(carts.length);
-
-              Navigator.pop(context);
-            }
-          },
-          child: Text(
-            language["Add to cart"] ?? "Add to cart",
-            style: FontConstants.button1,
-          ),
-        ),
+        ],
       ),
     );
   }
