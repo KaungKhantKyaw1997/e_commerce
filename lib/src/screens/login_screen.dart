@@ -104,8 +104,28 @@ class _LogInScreenState extends State<LogInScreen> {
     await authService.addFCMData(body);
     Navigator.pop(context);
 
-    Navigator.pushNamed(
-        context, role == 'admin' ? Routes.history : Routes.home);
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool termsandcondition = prefs.getBool("termsandcondition") ?? false;
+
+    if (role == 'admin') {
+      Navigator.pushNamed(
+        context,
+        Routes.history,
+      );
+    } else if (termsandcondition) {
+      Navigator.pushNamed(
+        context,
+        Routes.home,
+      );
+    } else {
+      Navigator.pushNamed(
+        context,
+        Routes.termsandconditions,
+        arguments: {
+          "from": "login",
+        },
+      );
+    }
   }
 
   @override

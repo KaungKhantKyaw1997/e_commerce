@@ -29,13 +29,11 @@ class _SettingScreenState extends State<SettingScreen> {
   String profileName = '';
   String version = '';
   String packageName = '';
-  bool validtoken = true;
   String role = '';
 
   @override
   void initState() {
     super.initState();
-    verifyToken();
     getData();
   }
 
@@ -43,28 +41,6 @@ class _SettingScreenState extends State<SettingScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
-  }
-
-  verifyToken() async {
-    var token = await storage.read(key: "token") ?? "";
-    if (token == "") {
-      validtoken = false;
-      return;
-    }
-    try {
-      final body = {
-        "token": token,
-      };
-      final response = await authService.verifyTokenData(body);
-      if (response["code"] != 200) {
-        setState(() {
-          validtoken = false;
-        });
-        authService.clearData();
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
   }
 
   getData() async {
@@ -183,7 +159,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          if (validtoken) {
+                          if (role != '') {
                             Navigator.pushNamed(
                               context,
                               Routes.profile,
@@ -201,7 +177,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           color: Colors.transparent,
                           child: Row(
                             children: [
-                              validtoken
+                              role != ''
                                   ? Container(
                                       margin: const EdgeInsets.only(
                                         right: 16,
@@ -249,7 +225,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         borderRadius: BorderRadius.circular(50),
                                       ),
                                     ),
-                              validtoken
+                              profileName != ''
                                   ? Expanded(
                                       child: Padding(
                                         padding: const EdgeInsets.only(
@@ -321,7 +297,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                         ),
                       ),
-                      validtoken && role == 'admin'
+                      role == 'admin'
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
@@ -377,7 +353,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
-                      validtoken && role == 'admin'
+                      role == 'admin'
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
@@ -433,7 +409,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
-                      validtoken && role == 'admin'
+                      role == 'admin'
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
@@ -489,7 +465,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
-                      validtoken && role == 'admin'
+                      role == 'admin'
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
@@ -545,7 +521,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
-                      validtoken && role == 'admin'
+                      role == 'admin'
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
@@ -676,7 +652,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           color: Colors.grey,
                         ),
                       ),
-                      validtoken
+                      role != ''
                           ? Padding(
                               padding: const EdgeInsets.only(
                                 left: 16,
@@ -692,7 +668,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
-                      validtoken
+                      role != ''
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
@@ -773,6 +749,63 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                         ),
                       ),
+                      role != ''
+                          ? GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  Routes.termsandconditions,
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 16,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: SvgPicture.asset(
+                                        "assets/icons/shield.svg",
+                                        width: 24,
+                                        height: 24,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 16,
+                                          top: 16,
+                                          bottom: 16,
+                                        ),
+                                        child: Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: language[
+                                                        "Terms & Conditions"] ??
+                                                    "Terms & Conditions",
+                                                style: FontConstants.caption2,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 20,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Container(),
                       GestureDetector(
                         onTap: () {
                           StoreRedirect.redirect(
@@ -837,7 +870,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     ],
                   ),
                 ),
-                validtoken
+                role != ''
                     ? Container(
                         width: double.infinity,
                         child: ElevatedButton(

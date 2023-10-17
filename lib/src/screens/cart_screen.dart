@@ -60,18 +60,18 @@ class _CartScreenState extends State<CartScreen> {
     'Cash on Delivery',
     'Preorder',
   ];
-  bool validtoken = true;
   final ImagePicker _picker = ImagePicker();
   XFile? pickedFile;
   String payslipImage = '';
   String paymenttype = 'Cash on Delivery';
   bool payslip = false;
   double subtotal = 0.0;
+  String role = '';
 
   @override
   void initState() {
     super.initState();
-    verifyToken();
+    getData();
     getCart();
   }
 
@@ -81,28 +81,9 @@ class _CartScreenState extends State<CartScreen> {
     super.dispose();
   }
 
-  verifyToken() async {
-    var token = await storage.read(key: "token") ?? "";
-    if (token == "") {
-      validtoken = false;
-      return;
-    }
-    try {
-      final body = {
-        "token": token,
-      };
-      final response = await authService.verifyTokenData(body);
-      if (response["code"] != 200) {
-        setState(() {
-          validtoken = false;
-        });
-        authService.clearData();
-      } else {
-        getAddress();
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
+  getData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    role = prefs.getString('role') ?? "";
   }
 
   getAddress() async {
@@ -1002,7 +983,7 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                   ),
                   onPressed: () {
-                    !validtoken
+                    role == ''
                         ? Navigator.pushNamed(context, Routes.login)
                         : _showOrderBottomSheet(context);
                   },
