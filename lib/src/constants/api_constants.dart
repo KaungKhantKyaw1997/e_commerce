@@ -22,4 +22,6 @@ class ApiConstants {
   static const String notificationsUrl = '$baseUrl/api/notifications';
   static const String usersUrl = '$baseUrl/api/users';
   static const String vectorsUrl = '$baseUrl/api/vectors';
+  static const String termsAndConditionsUrl =
+      '$baseUrl/api/terms-and-conditions';
 }
