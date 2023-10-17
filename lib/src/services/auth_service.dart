@@ -127,7 +127,9 @@ class AuthService {
 
   clearData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool termsandconditions = prefs.getBool("termsandconditions") ?? false;
     prefs.clear();
+    prefs.setBool("termsandconditions", termsandconditions);
     await storage.delete(key: "token");
     await FirebaseMessaging.instance.deleteToken();
   }

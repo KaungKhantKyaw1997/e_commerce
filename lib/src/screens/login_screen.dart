@@ -105,14 +105,14 @@ class _LogInScreenState extends State<LogInScreen> {
     Navigator.pop(context);
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool termsandcondition = prefs.getBool("termsandcondition") ?? false;
+    bool termsandconditions = prefs.getBool("termsandconditions") ?? false;
 
     if (role == 'admin') {
       Navigator.pushNamed(
         context,
         Routes.history,
       );
-    } else if (termsandcondition) {
+    } else if (termsandconditions) {
       Navigator.pushNamed(
         context,
         Routes.home,

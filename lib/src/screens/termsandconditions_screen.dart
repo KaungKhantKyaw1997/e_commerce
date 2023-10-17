@@ -105,7 +105,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                 onPressed: () async {
                   final SharedPreferences prefs =
                       await SharedPreferences.getInstance();
-                  prefs.setBool("termsandcondition", true);
+                  prefs.setBool("termsandconditions", true);
                 },
                 child: Text(
                   language["Save"] ?? "Save",
