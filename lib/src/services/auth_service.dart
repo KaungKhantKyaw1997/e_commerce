@@ -40,8 +40,10 @@ class AuthService {
     return jsonDecode(response.body);
   }
 
-  static Future<http.Response> uploadFile(File file) async {
-    var uri = Uri.parse(ApiConstants.imageUploadUrl);
+  static Future<http.Response> uploadFile(File file,
+      {String resolution = ""}) async {
+    var uri = Uri.parse(
+        '${ApiConstants.imageUploadUrl}${resolution.isNotEmpty ? '?resolution=${resolution}' : ''}');
     var request = http.MultipartRequest('POST', uri);
 
     var fileStream = http.ByteStream(file.openRead());

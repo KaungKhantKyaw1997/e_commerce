@@ -91,7 +91,8 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
 
   Future<void> uploadFile() async {
     try {
-      var response = await AuthService.uploadFile(File(pickedFile!.path));
+      var response = await AuthService.uploadFile(File(pickedFile!.path),
+          resolution: "600x480");
       var res = jsonDecode(response.body);
       if (res["code"] == 200) {
         coverImage = res["url"];
