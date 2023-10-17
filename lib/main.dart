@@ -82,6 +82,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: navigatorKey,
+      debugShowCheckedModeBanner: false,
       title: 'Watch Vault by Diggie',
       theme: ThemeData(
         primarySwatch: Palette.kToDark,
