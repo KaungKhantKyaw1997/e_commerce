@@ -926,10 +926,7 @@ class _CartScreenState extends State<CartScreen> {
       children: [
         Text(
           title,
-          style: TextStyle(
-            fontSize: 16.0,
-            fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-          ),
+          style: FontConstants.subheadline2,
         ),
         amount == "--"
             ? Text(
@@ -941,15 +938,8 @@ class _CartScreenState extends State<CartScreen> {
               )
             : FormattedAmount(
                 amount: double.parse(amount),
-                mainTextStyle: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16.0,
-                  fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-                ),
-                decimalTextStyle: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-                ),
+                mainTextStyle: FontConstants.subheadline1,
+                decimalTextStyle: FontConstants.caption2,
               ),
       ],
     );
@@ -1122,10 +1112,17 @@ class _CartScreenState extends State<CartScreen> {
                                                             FontConstants.body1,
                                                       ),
                                                     ),
-                                                    Text(
-                                                      'x ${carts[index]["quantity"].toString()}',
-                                                      style: FontConstants
-                                                          .caption1,
+                                                    FormattedAmount(
+                                                      amount: double.parse(
+                                                          carts[index][
+                                                                  "totalamount"]
+                                                              .toString()),
+                                                      mainTextStyle:
+                                                          FontConstants
+                                                              .subheadline1,
+                                                      decimalTextStyle:
+                                                          FontConstants
+                                                              .caption3,
                                                     ),
                                                   ],
                                                 ),
@@ -1140,189 +1137,151 @@ class _CartScreenState extends State<CartScreen> {
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
+                                                      MainAxisAlignment.end,
                                                   children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .baseline,
-                                                      textBaseline: TextBaseline
-                                                          .alphabetic,
-                                                      children: [
-                                                        Text(
-                                                          "Ks",
-                                                          style: FontConstants
-                                                              .subheadline1,
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  8),
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  8),
                                                         ),
-                                                        FormattedAmount(
-                                                          amount: double.parse(
-                                                              carts[index][
-                                                                      "totalamount"]
-                                                                  .toString()),
-                                                          mainTextStyle:
-                                                              FontConstants
-                                                                  .subheadline1,
-                                                          decimalTextStyle:
-                                                              FontConstants
-                                                                  .caption3,
+                                                        border: Border.all(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .primaryColorLight,
+                                                          width: 1,
                                                         ),
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .only(
-                                                              topLeft: Radius
-                                                                  .circular(8),
-                                                              bottomLeft: Radius
-                                                                  .circular(8),
-                                                            ),
-                                                            border: Border.all(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .primaryColorLight,
-                                                              width: 1,
-                                                            ),
-                                                          ),
-                                                          width: 32,
-                                                          height: 32,
-                                                          child: IconButton(
-                                                            icon: Icon(
-                                                              Icons.remove,
-                                                              size: 15,
-                                                              color: Theme.of(
-                                                                      context)
+                                                      ),
+                                                      width: 32,
+                                                      height: 32,
+                                                      child: IconButton(
+                                                        icon: Icon(
+                                                          Icons.remove,
+                                                          size: 15,
+                                                          color:
+                                                              Theme.of(context)
                                                                   .primaryColor,
-                                                            ),
-                                                            onPressed: () {
-                                                              if (carts[index][
-                                                                      'quantity'] >
-                                                                  1) {
-                                                                carts[index][
-                                                                    'quantity']--;
-                                                                carts[index][
-                                                                    'totalamount'] = double.parse(carts[index]
+                                                        ),
+                                                        onPressed: () {
+                                                          if (carts[index]
+                                                                  ['quantity'] >
+                                                              1) {
+                                                            carts[index]
+                                                                ['quantity']--;
+                                                            carts[index][
+                                                                'totalamount'] = double.parse(
+                                                                    carts[index]
                                                                             [
                                                                             "price"]
                                                                         .toString()) *
-                                                                    carts[index]
-                                                                        [
-                                                                        'quantity'];
-                                                              } else {
-                                                                CartProvider
-                                                                    cartProvider =
-                                                                    Provider.of<
-                                                                            CartProvider>(
-                                                                        context,
-                                                                        listen:
-                                                                            false);
-                                                                cartProvider.addCount(
-                                                                    cartProvider
-                                                                            .count -
-                                                                        1);
+                                                                carts[index][
+                                                                    'quantity'];
+                                                          } else {
+                                                            CartProvider
+                                                                cartProvider =
+                                                                Provider.of<
+                                                                        CartProvider>(
+                                                                    context,
+                                                                    listen:
+                                                                        false);
+                                                            cartProvider.addCount(
+                                                                cartProvider
+                                                                        .count -
+                                                                    1);
 
-                                                                carts.removeAt(
-                                                                    index);
-                                                              }
-                                                              calculateSubTotal();
-                                                              saveListToSharedPreferences(
-                                                                  carts);
-                                                            },
-                                                          ),
+                                                            carts.removeAt(
+                                                                index);
+                                                          }
+                                                          calculateSubTotal();
+                                                          saveListToSharedPreferences(
+                                                              carts);
+                                                        },
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      margin:
+                                                          EdgeInsets.symmetric(
+                                                        horizontal: 4,
+                                                      ),
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                        horizontal: 8,
+                                                      ),
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .primaryColorLight,
+                                                          width: 1,
                                                         ),
-                                                        Container(
-                                                          margin: EdgeInsets
-                                                              .symmetric(
-                                                            horizontal: 4,
-                                                          ),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            border: Border.all(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .primaryColorLight,
-                                                              width: 1,
-                                                            ),
-                                                          ),
-                                                          width: 50,
-                                                          height: 32,
-                                                          child: Center(
-                                                            child: Text(
-                                                              carts[index][
-                                                                      'quantity']
-                                                                  .toString(),
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              style: FontConstants
-                                                                  .subheadline1,
-                                                            ),
-                                                          ),
+                                                      ),
+                                                      height: 32,
+                                                      child: Center(
+                                                        child: Text(
+                                                          carts[index]
+                                                                  ['quantity']
+                                                              .toString(),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: FontConstants
+                                                              .subheadline1,
                                                         ),
-                                                        Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .only(
-                                                              topRight: Radius
-                                                                  .circular(8),
-                                                              bottomRight:
-                                                                  Radius
-                                                                      .circular(
-                                                                          8),
-                                                            ),
-                                                            border: Border.all(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .primaryColorLight,
-                                                              width: 1,
-                                                            ),
-                                                          ),
-                                                          width: 32,
-                                                          height: 32,
-                                                          child: IconButton(
-                                                            icon: Icon(
-                                                              Icons.add,
-                                                              size: 15,
-                                                              color: Theme.of(
-                                                                      context)
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  8),
+                                                          bottomRight:
+                                                              Radius.circular(
+                                                                  8),
+                                                        ),
+                                                        border: Border.all(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .primaryColorLight,
+                                                          width: 1,
+                                                        ),
+                                                      ),
+                                                      width: 32,
+                                                      height: 32,
+                                                      child: IconButton(
+                                                        icon: Icon(
+                                                          Icons.add,
+                                                          size: 15,
+                                                          color:
+                                                              Theme.of(context)
                                                                   .primaryColor,
-                                                            ),
-                                                            onPressed: () {
-                                                              // if (product['quantity'] <
-                                                              //     int.parse(product["stock_quantity"]
-                                                              //         .toString())) {
-                                                              carts[index][
-                                                                  'quantity']++;
-                                                              carts[index][
-                                                                  'totalamount'] = double.parse(
-                                                                      carts[index]
-                                                                              [
-                                                                              "price"]
-                                                                          .toString()) *
-                                                                  carts[index][
-                                                                      'quantity'];
-                                                              calculateSubTotal();
-                                                              saveListToSharedPreferences(
-                                                                  carts);
-                                                              saveListToSharedPreferences(
-                                                                  carts);
-                                                              // }
-                                                            },
-                                                          ),
                                                         ),
-                                                      ],
+                                                        onPressed: () {
+                                                          // if (product['quantity'] <
+                                                          //     int.parse(product["stock_quantity"]
+                                                          //         .toString())) {
+                                                          carts[index]
+                                                              ['quantity']++;
+                                                          carts[index][
+                                                              'totalamount'] = double
+                                                                  .parse(carts[
+                                                                              index]
+                                                                          [
+                                                                          "price"]
+                                                                      .toString()) *
+                                                              carts[index]
+                                                                  ['quantity'];
+                                                          calculateSubTotal();
+                                                          saveListToSharedPreferences(
+                                                              carts);
+                                                          // }
+                                                        },
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -1356,9 +1315,13 @@ class _CartScreenState extends State<CartScreen> {
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(
+                        10,
+                      ),
                     ),
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(
+                      16,
+                    ),
                     margin: const EdgeInsets.only(
                       bottom: 10,
                       left: 16,
@@ -1369,15 +1332,19 @@ class _CartScreenState extends State<CartScreen> {
                       children: [
                         _buildSummaryItem(language['Subtotal'] ?? 'Subtotal',
                             subtotal.toString()),
-                        SizedBox(height: 16.0),
+                        SizedBox(
+                          height: 16,
+                        ),
                         _buildSummaryItem(
                             language['Shipping'] ?? 'Shipping', '--'),
                         Divider(
                           thickness: 1.5,
                         ),
                         _buildSummaryItem(
-                            language['Total'] ?? 'Total', subtotal.toString(),
-                            isTotal: true),
+                          language['Total'] ?? 'Total',
+                          subtotal.toString(),
+                          isTotal: true,
+                        ),
                       ],
                     ),
                   ),
