@@ -505,13 +505,15 @@ class _ProductScreenState extends State<ProductScreen> {
                                 margin: EdgeInsets.symmetric(
                                   horizontal: 4,
                                 ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                ),
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                     color: Theme.of(context).primaryColorLight,
                                     width: 1,
                                   ),
                                 ),
-                                width: 50,
                                 height: 32,
                                 child: Center(
                                   child: Text(
