@@ -577,6 +577,64 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
+                          role == 'admin'
+                             ? GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  Routes.termsandconditions_setup,
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 16,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: SvgPicture.asset(
+                                        "assets/icons/shield.svg",
+                                        width: 24,
+                                        height: 24,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 16,
+                                          top: 16,
+                                          bottom: 16,
+                                        ),
+                                        child: Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: language[
+                                                        "Terms & Conditions"] ??
+                                                    "Terms & Conditions",
+                                                style: FontConstants.caption2,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 20,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Container(),
+
                       GestureDetector(
                         onTap: () {
                           Navigator.pushNamed(
@@ -749,7 +807,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                         ),
                       ),
-                      role.isNotEmpty
+                      role=='user'
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(

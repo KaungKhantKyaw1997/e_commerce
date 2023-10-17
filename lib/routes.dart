@@ -4,11 +4,11 @@ import 'package:e_commerce/src/screens/categories_setup_screen.dart';
 import 'package:e_commerce/src/screens/category_setup_screen.dart';
 import 'package:e_commerce/src/screens/product_setup_screen.dart';
 import 'package:e_commerce/src/screens/products_setup_screen.dart';
-import 'package:e_commerce/src/screens/scan_screen.dart';
 import 'package:e_commerce/src/screens/shop_setup_screen.dart';
 import 'package:e_commerce/src/screens/shops_setup_screen.dart';
 import 'package:e_commerce/src/screens/splash_screen.dart';
 import 'package:e_commerce/src/screens/termsandconditions_screen.dart';
+import 'package:e_commerce/src/screens/termsandconditions_setup_screen.dart';
 import 'package:e_commerce/src/screens/user_setup_screen.dart';
 import 'package:e_commerce/src/screens/users_setup_screen.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +46,7 @@ class Routes {
   static const String setting = '/setting';
   static const String profile = '/profile';
   static const String termsandconditions = '/termsandconditions';
+  static const String termsandconditions_setup = '/termsandconditions_setup';
   static const String language = '/language';
   static const String change_password = '/change_password';
   static const String user_setup = '/user_setup';
@@ -78,6 +79,8 @@ class Routes {
     profile: (BuildContext context) => const ProfileScreen(),
     termsandconditions: (BuildContext context) =>
         const TermsAndConditionsScreen(),
+    termsandconditions_setup: (BuildContext context) =>
+        const TermsAndConditionsSetUpScreen(),
     language: (BuildContext context) => const LanguageScreen(),
     change_password: (BuildContext context) => const ChangePasswordScreen(),
     user_setup: (BuildContext context) => const UserSetupScreen(),

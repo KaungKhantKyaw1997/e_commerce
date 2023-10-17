@@ -11,6 +11,21 @@ class TermsAndConditionsService {
   final Dio dio = Dio();
   CancelToken _cancelToken = CancelToken();
 
+   Future<Map<String, dynamic>> addTermsAndConditionsData(Map<String, dynamic> body) async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await http.post(
+      Uri.parse(ApiConstants.termsAndConditionsUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+
+    return jsonDecode(response.body);
+  }
+
+
   Future<Map<String, dynamic>?> getTermsAndConditionsData() async {
     var token = await storage.read(key: "token") ?? '';
     try {
