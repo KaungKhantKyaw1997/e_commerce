@@ -114,10 +114,12 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        users[index]["username"].toString(),
-                        overflow: TextOverflow.ellipsis,
-                        style: FontConstants.body1,
+                      Expanded(
+                        child: Text(
+                          users[index]["username"].toString(),
+                          overflow: TextOverflow.ellipsis,
+                          style: FontConstants.body1,
+                        ),
                       ),
                       Text(
                         Jiffy.parse(users[index]["created_at"])

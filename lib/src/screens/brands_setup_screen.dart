@@ -123,10 +123,12 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        brands[index]["name"].toString(),
-                        overflow: TextOverflow.ellipsis,
-                        style: FontConstants.body1,
+                      Expanded(
+                        child: Text(
+                          brands[index]["name"].toString(),
+                          overflow: TextOverflow.ellipsis,
+                          style: FontConstants.body1,
+                        ),
                       ),
                       Text(
                         Jiffy.parseFromDateTime(DateTime.parse(

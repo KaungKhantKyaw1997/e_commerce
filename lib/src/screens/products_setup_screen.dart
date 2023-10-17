@@ -119,10 +119,12 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        products[index]["brand_name"].toString(),
-                        overflow: TextOverflow.ellipsis,
-                        style: FontConstants.body1,
+                      Expanded(
+                        child: Text(
+                          products[index]["brand_name"].toString(),
+                          overflow: TextOverflow.ellipsis,
+                          style: FontConstants.body1,
+                        ),
                       ),
                       Text(
                         Jiffy.parseFromDateTime(DateTime.parse(

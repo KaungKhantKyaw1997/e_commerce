@@ -27,7 +27,9 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
       if (arguments != null) {
-        from = arguments["from"] ?? "";
+        setState(() {
+          from = arguments["from"] ?? "";
+        });
       }
     });
     getTermsAndConditions();
