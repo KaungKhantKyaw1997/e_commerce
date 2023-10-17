@@ -108,130 +108,88 @@ class _ProductScreenState extends State<ProductScreen> {
         scrollDirection: Axis.vertical,
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: 16,
             vertical: 24,
           ),
           width: double.infinity,
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 4,
-                    child: SizedBox(
-                      height: 200,
-                      child: Column(
-                        children: [
-                          product.containsKey("product_images") &&
-                                  product["product_images"].isNotEmpty
-                              ? Expanded(
-                                  child: PageView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    controller: _imageController,
-                                    itemCount: product["product_images"].length,
-                                    itemBuilder: (context, index) {
-                                      return Container(
-                                        margin: EdgeInsets.symmetric(
-                                          horizontal: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          image: product["product_images"]
-                                                      [index] !=
-                                                  ""
-                                              ? DecorationImage(
-                                                  image: NetworkImage(
-                                                      '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'),
-                                                  fit: BoxFit.cover,
-                                                )
-                                              : DecorationImage(
-                                                  image: AssetImage(
-                                                      'assets/images/logo.png'),
-                                                  fit: BoxFit.fill,
-                                                ),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(
-                                            color: Colors.transparent,
+              Container(
+                margin: EdgeInsets.only(
+                  left: 12,
+                  right: 12,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 400,
+                        child: Column(
+                          children: [
+                            product.containsKey("product_images") &&
+                                    product["product_images"].isNotEmpty
+                                ? Expanded(
+                                    child: PageView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      controller: _imageController,
+                                      itemCount:
+                                          product["product_images"].length,
+                                      itemBuilder: (context, index) {
+                                        return Container(
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: 4,
                                           ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                )
-                              : Container(),
-                          product.containsKey("product_images") &&
-                                  product["product_images"].isNotEmpty
-                              ? DotsIndicator(
-                                  dotsCount: product["product_images"].length,
-                                  position: _currentPage.toInt(),
-                                  decorator: DotsDecorator(
-                                    size: Size.square(8),
-                                    activeSize: Size(12, 16),
-                                    color: Colors.grey,
-                                    activeColor:
-                                        Theme.of(context).primaryColorDark,
-                                  ),
-                                )
-                              : Container(),
-                        ],
+                                          decoration: BoxDecoration(
+                                            image: product["product_images"]
+                                                        [index] !=
+                                                    ""
+                                                ? DecorationImage(
+                                                    image: NetworkImage(
+                                                        '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'),
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : DecorationImage(
+                                                    image: AssetImage(
+                                                        'assets/images/logo.png'),
+                                                    fit: BoxFit.fill,
+                                                  ),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: Colors.transparent,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                : Container(),
+                            product.containsKey("product_images") &&
+                                    product["product_images"].isNotEmpty
+                                ? DotsIndicator(
+                                    dotsCount: product["product_images"].length,
+                                    position: _currentPage.toInt(),
+                                    decorator: DotsDecorator(
+                                      size: Size.square(8),
+                                      activeSize: Size(20, 16),
+                                      color: Colors.grey,
+                                      activeColor:
+                                          Theme.of(context).primaryColorDark,
+                                    ),
+                                  )
+                                : Container(),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 6,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 4,
-                            bottom: 4,
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              product["brand_name"] ?? "",
-                              overflow: TextOverflow.ellipsis,
-                              style: FontConstants.headline1,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 4,
-                            bottom: 16,
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              product["model"] ?? "",
-                              overflow: TextOverflow.ellipsis,
-                              style: FontConstants.body2,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 4,
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              product["description"] ?? "",
-                              maxLines: 5,
-                              overflow: TextOverflow.ellipsis,
-                              style: FontConstants.body1,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               Container(
                 margin: EdgeInsets.only(
+                  left: 16,
+                  right: 16,
                   top: 16,
                 ),
                 decoration: BoxDecoration(
@@ -245,6 +203,51 @@ class _ProductScreenState extends State<ProductScreen> {
                         left: 16,
                         right: 16,
                         top: 8,
+                        bottom: 4,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            product["brand_name"] ?? "",
+                            overflow: TextOverflow.ellipsis,
+                            style: FontConstants.headline1,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 4,
+                            ),
+                            child: Text(
+                              '(${product["model"]})',
+                              overflow: TextOverflow.ellipsis,
+                              style: FontConstants.body2,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          product["description"] ?? "",
+                          maxLines: 5,
+                          overflow: TextOverflow.ellipsis,
+                          style: FontConstants.body1,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 16,
                         bottom: 4,
                       ),
                       child: Align(
