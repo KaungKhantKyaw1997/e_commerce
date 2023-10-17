@@ -74,6 +74,8 @@ class _LogInScreenState extends State<LogInScreen> {
       final response = await authService.loginData(body);
 
       if (response["code"] == 200) {
+        String userName = prefs.getString("username") ?? "";
+        prefs.setString("username", username.text);
         prefs.setString("name", response["data"]["name"]);
         prefs.setString("role", response["data"]["role"]);
         prefs.setString("profile_image", response["data"]["profile_image"]);
@@ -83,7 +85,7 @@ class _LogInScreenState extends State<LogInScreen> {
             Provider.of<BottomProvider>(context, listen: false);
         bottomProvider.selectIndex(0);
 
-        fcm(response["data"]["role"] ?? "");
+        fcm(response["data"]["role"] ?? "", userName);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
@@ -94,7 +96,7 @@ class _LogInScreenState extends State<LogInScreen> {
     }
   }
 
-  fcm(role) async {
+  fcm(role, userName) async {
     var deviceType = Platform.isIOS ? "ios" : "android";
     final body = {
       "token": _fcmToken,
@@ -112,7 +114,7 @@ class _LogInScreenState extends State<LogInScreen> {
         context,
         Routes.history,
       );
-    } else if (termsandconditions) {
+    } else if (termsandconditions && userName == username.text) {
       Navigator.pushNamed(
         context,
         Routes.home,
