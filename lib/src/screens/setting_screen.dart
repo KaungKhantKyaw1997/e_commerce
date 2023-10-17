@@ -777,6 +777,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         onTap: () {
                           StoreRedirect.redirect(
                             androidAppId: packageName,
+                            iOSAppId: "6469529196",
                           );
                         },
                         child: Padding(
