@@ -2,6 +2,7 @@ import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/termsandconditions_service.dart';
+import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 
@@ -18,8 +19,8 @@ class _TermsAndConditionsSetUpScreenState
   final ScrollController _scrollController = ScrollController();
   final termsAndConditionsService = TermsAndConditionsService();
   final _formKey = GlobalKey<FormState>();
-  TextEditingController description = TextEditingController(text: '');
-  FocusNode _descriptionFocusNode = FocusNode();
+  TextEditingController content = TextEditingController(text: '');
+  FocusNode _contentFocusNode = FocusNode();
   @override
   void initState() {
     super.initState();
@@ -39,7 +40,7 @@ class _TermsAndConditionsSetUpScreenState
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           setState(() {
-            description.text = response["data"];
+            content.text = response["data"];
           });
         }
       } else {
@@ -53,7 +54,7 @@ class _TermsAndConditionsSetUpScreenState
   addTermsAndConditions() async {
     try {
       final body = {
-        "content": description.text,
+        "content": content.text,
       };
 
       final response =
@@ -61,7 +62,6 @@ class _TermsAndConditionsSetUpScreenState
       Navigator.pop(context);
       if (response["code"] == 201) {
         ToastUtil.showToast(response["code"], response["message"]);
-        Navigator.pop(context);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -76,7 +76,7 @@ class _TermsAndConditionsSetUpScreenState
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        _descriptionFocusNode.unfocus();
+        _contentFocusNode.unfocus();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -110,8 +110,8 @@ class _TermsAndConditionsSetUpScreenState
                   vertical: 24,
                 ),
                 child: TextFormField(
-                  controller: description,
-                  focusNode: _descriptionFocusNode,
+                  controller: content,
+                  focusNode: _contentFocusNode,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.done,
                   style: FontConstants.body1,
@@ -139,8 +139,7 @@ class _TermsAndConditionsSetUpScreenState
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return language["Enter Description"] ??
-                          "Enter Description";
+                      return language["Enter Content"] ?? "Enter Content";
                     }
                     return null;
                   },
@@ -167,13 +166,12 @@ class _TermsAndConditionsSetUpScreenState
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
+                showLoadingDialog(context);
                 addTermsAndConditions();
               }
             },
             child: Text(
-              description.text.isEmpty
-                  ? language["Save"] ?? "Save"
-                  : language["Update"] ?? "Update",
+              language["Save"] ?? "Save",
               style: FontConstants.button1,
             ),
           ),
