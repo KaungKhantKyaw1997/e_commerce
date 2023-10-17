@@ -65,10 +65,10 @@ class _HomeScreenState extends State<HomeScreen>
   void dispose() {
     _tabController.dispose();
     _scrollController.dispose();
-    shopsService.cancelRequest();
-    brandsService.cancelRequest();
-    categoriesService.cancelRequest();
-    notificationService.cancelRequest();
+    // shopsService.cancelRequest();
+    // brandsService.cancelRequest();
+    // categoriesService.cancelRequest();
+    // notificationService.cancelRequest();
     super.dispose();
   }
 

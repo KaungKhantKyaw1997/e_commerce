@@ -42,7 +42,7 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
 
   @override
   void dispose() {
-    shopsService.cancelRequest();
+    // shopsService.cancelRequest();
     _scrollController.dispose();
     super.dispose();
   }

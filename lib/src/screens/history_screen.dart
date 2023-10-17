@@ -52,8 +52,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   void dispose() {
-    orderService.cancelRequest();
-    notificationService.cancelRequest();
+    // orderService.cancelRequest();
+    // notificationService.cancelRequest();
     _scrollController.dispose();
     super.dispose();
   }

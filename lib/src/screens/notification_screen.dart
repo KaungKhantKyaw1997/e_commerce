@@ -36,7 +36,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   void dispose() {
-    notificationService.cancelRequest();
+    // notificationService.cancelRequest();
     _scrollController.dispose();
     super.dispose();
   }

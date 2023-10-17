@@ -33,7 +33,7 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
 
   @override
   void dispose() {
-    userService.cancelRequest();
+    // userService.cancelRequest();
     _scrollController.dispose();
     super.dispose();
   }

@@ -146,7 +146,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                                     minHeight: 16,
                                   ),
                                   child: Text(
-                                    navItem["index"] == 1
+                                    navItem["index"] == 1 && role != "admin"
                                         ? '${cartProvider.count}'
                                         : '${notiProvider.count}',
                                     style: TextStyle(
