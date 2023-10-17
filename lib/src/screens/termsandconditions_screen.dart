@@ -1,4 +1,5 @@
 import 'package:e_commerce/global.dart';
+import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/termsandconditions_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
@@ -85,6 +86,17 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
         },
         child: SingleChildScrollView(
           controller: _scrollController,
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 24,
+            ),
+            child: Text(
+              data.toString(),
+              textAlign: TextAlign.left,
+              style: FontConstants.body1,
+            ),
+          ),
         ),
       ),
       bottomNavigationBar: from == "login"
@@ -108,9 +120,13 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                   final SharedPreferences prefs =
                       await SharedPreferences.getInstance();
                   prefs.setBool("termsandconditions", true);
+                  Navigator.pushNamed(
+                    context,
+                    Routes.home,
+                  );
                 },
                 child: Text(
-                  language["Save"] ?? "Save",
+                  language["I AGREE"] ?? "I AGREE",
                   style: FontConstants.button1,
                 ),
               ),
