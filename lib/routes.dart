@@ -8,6 +8,7 @@ import 'package:e_commerce/src/screens/scan_screen.dart';
 import 'package:e_commerce/src/screens/shop_setup_screen.dart';
 import 'package:e_commerce/src/screens/shops_setup_screen.dart';
 import 'package:e_commerce/src/screens/splash_screen.dart';
+import 'package:e_commerce/src/screens/termsandconditions_screen.dart';
 import 'package:e_commerce/src/screens/user_setup_screen.dart';
 import 'package:e_commerce/src/screens/users_setup_screen.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,7 @@ class Routes {
   static const String noti = '/noti';
   static const String setting = '/setting';
   static const String profile = '/profile';
+  static const String termsandconditions = '/termsandconditions';
   static const String language = '/language';
   static const String change_password = '/change_password';
   static const String user_setup = '/user_setup';
@@ -74,6 +76,8 @@ class Routes {
     noti: (BuildContext context) => const NotificationScreen(),
     setting: (BuildContext context) => const SettingScreen(),
     profile: (BuildContext context) => const ProfileScreen(),
+    termsandconditions: (BuildContext context) =>
+        const TermsAndConditionsScreen(),
     language: (BuildContext context) => const LanguageScreen(),
     change_password: (BuildContext context) => const ChangePasswordScreen(),
     user_setup: (BuildContext context) => const UserSetupScreen(),
