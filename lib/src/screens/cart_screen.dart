@@ -6,8 +6,7 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/services/address_service.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
-import 'package:e_commerce/src/services/orders_service.dart';
-import 'package:e_commerce/src/utils/loading.dart';
+import 'package:e_commerce/src/services/insurance_rules_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +32,7 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   final ScrollController _scrollController = ScrollController();
   final addressService = AddressService();
-  final orderService = OrderService();
+  final insuranceRulesService = InsuranceRulesService();
   final authService = AuthService();
   final storage = FlutterSecureStorage();
   FocusNode _countryFocusNode = FocusNode();
@@ -62,11 +61,20 @@ class _CartScreenState extends State<CartScreen> {
   ];
   final ImagePicker _picker = ImagePicker();
   XFile? pickedFile;
-  String payslipImage = '';
   String paymenttype = 'Cash on Delivery';
-  bool payslip = false;
   double subtotal = 0.0;
+  double total = 0.0;
   String role = '';
+  List<Map<String, dynamic>> insurancerules = [
+    {
+      "description": "No Insurance",
+      "commission_percentage": 0.0,
+    }
+  ];
+  List<String> insurancenames = ["No Insurance"];
+  String insurancetype = "No Insurance";
+  double commissionPercentage = 0.0;
+  int ruleId = 0;
 
   @override
   void initState() {
@@ -84,6 +92,9 @@ class _CartScreenState extends State<CartScreen> {
   getData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     role = prefs.getString('role') ?? "";
+    if (role.isNotEmpty) {
+      getAddress();
+    }
   }
 
   getAddress() async {
@@ -122,64 +133,41 @@ class _CartScreenState extends State<CartScreen> {
     }
   }
 
-  createOrder() async {
-    final prefs = await SharedPreferences.getInstance();
-    List<Map<String, dynamic>> orderItems = carts.map((cartItem) {
-      return {
-        'product_id': cartItem['product_id'],
-        'quantity': cartItem['quantity'],
-      };
-    }).toList();
-
+  getInsuranceRules() async {
     try {
-      final body = {
-        "order_items": orderItems,
-        "address": {
-          "street_address": streetAddress.text,
-          "city": city.text,
-          "state": state.text,
-          "postal_code": postalCode.text,
-          "country": country.text,
-          "township": township.text,
-          "ward": ward.text,
-          "home_address": homeAddress.text,
-          "note": note.text,
-        },
-        "payment_type": paymenttype,
-        "payslip_screenshot_path": payslipImage
-      };
-      final response = await orderService.addOrderData(body);
-      Navigator.pop(context);
-      if (response["code"] == 200) {
-        CartProvider cartProvider =
-            Provider.of<CartProvider>(context, listen: false);
-        cartProvider.addCount(0);
+      insurancetype = "No Insurance";
+      commissionPercentage = 0.0;
+      ruleId = 0;
+      insurancenames = ["No Insurance"];
+      insurancerules = [
+        {
+          "description": "No Insurance",
+          "commission_percentage": 0.0,
+          "rule_id": 0,
+        }
+      ];
 
-        carts = [];
-        prefs.remove("carts");
+      final response =
+          await insuranceRulesService.getInsuranceRulesData(amount: total);
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          insurancerules = [
+            ...insurancerules,
+            ...(response["data"] as List).cast<Map<String, dynamic>>()
+          ];
 
-        Navigator.pushNamed(
-          context,
-          Routes.success,
-        );
+          for (var data in response["data"]) {
+            if (data["description"] != null) {
+              insurancenames.add(data["description"]);
+            }
+          }
+        }
+        _showOrderBottomSheet(context);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
     } catch (e) {
       print('Error: $e');
-      Navigator.pop(context);
-    }
-  }
-
-  Future<void> uploadFile() async {
-    try {
-      var response = await AuthService.uploadFile(File(pickedFile!.path));
-      var res = jsonDecode(response.body);
-      if (res["code"] == 200) {
-        payslipImage = res["url"];
-      }
-    } catch (error) {
-      print('Error uploading file: $error');
     }
   }
 
@@ -217,7 +205,7 @@ class _CartScreenState extends State<CartScreen> {
                   height: MediaQuery.of(context).orientation ==
                           Orientation.landscape
                       ? MediaQuery.of(context).size.height - 10
-                      : MediaQuery.of(context).size.height - 100,
+                      : MediaQuery.of(context).size.height - 50,
                   child: Column(
                     children: <Widget>[
                       Padding(
@@ -723,17 +711,15 @@ class _CartScreenState extends State<CartScreen> {
                                   padding: EdgeInsets.only(
                                     left: 16,
                                     right: 16,
-                                    bottom: paymenttype == 'Preorder' ? 16 : 24,
+                                    bottom: 8,
                                   ),
                                   child: CustomDropDown(
                                     value: paymenttype,
                                     onChanged: (newValue) {
                                       setState(() {
                                         pickedFile = null;
-                                        payslipImage = "";
                                         paymenttype =
                                             newValue ?? "Cash on Delivery";
-                                        payslip = false;
                                       });
                                     },
                                     items: paymenttypes,
@@ -747,10 +733,7 @@ class _CartScreenState extends State<CartScreen> {
                                                 await _picker.pickImage(
                                               source: ImageSource.gallery,
                                             );
-                                            setState(() {
-                                              payslipImage = "";
-                                              payslip = false;
-                                            });
+                                            setState(() {});
                                           } catch (e) {
                                             print(e);
                                           }
@@ -759,7 +742,7 @@ class _CartScreenState extends State<CartScreen> {
                                           margin: EdgeInsets.only(
                                             left: 16,
                                             right: 16,
-                                            bottom: 4,
+                                            bottom: 8,
                                           ),
                                           width: double.infinity,
                                           decoration: BoxDecoration(
@@ -813,17 +796,46 @@ class _CartScreenState extends State<CartScreen> {
                                         ),
                                       )
                                     : Container(),
-                                payslip
-                                    ? Container(
-                                        margin: EdgeInsets.only(
-                                          left: 32,
-                                          right: 32,
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    left: 16,
+                                    right: 16,
+                                    bottom:
+                                        insurancetype != 'No Insurance' ? 4 : 8,
+                                  ),
+                                  child: CustomDropDown(
+                                    value: insurancetype,
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        insurancetype =
+                                            newValue ?? insurancenames[0];
+                                      });
+                                      for (var data in insurancerules) {
+                                        if (data["description"] ==
+                                            insurancetype) {
+                                          commissionPercentage =
+                                              data["commission_percentage"];
+                                          ruleId = data["rule_id"];
+                                        }
+                                      }
+                                    },
+                                    items: insurancenames,
+                                  ),
+                                ),
+                                insurancetype != 'No Insurance'
+                                    ? Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 16,
+                                          right: 16,
                                           bottom: 24,
                                         ),
                                         child: Text(
-                                          language["Choose Image"] ??
-                                              "Choose Image",
-                                          style: FontConstants.caption5,
+                                          'A commission of ${commissionPercentage.toString()}%.',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w400,
+                                            color: Color(0xffF97316),
+                                          ),
                                         ),
                                       )
                                     : Container(),
@@ -862,20 +874,40 @@ class _CartScreenState extends State<CartScreen> {
                           ),
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              showLoadingDialog(context);
-                              if (paymenttype == 'Preorder') {
-                                if (pickedFile == null) {
-                                  setState(() {
-                                    payslip = true;
-                                  });
-                                  Navigator.pop(context);
-                                  return;
-                                }
-                                await uploadFile();
-                                createOrder();
-                              } else {
-                                createOrder();
+                              if (paymenttype == 'Preorder' &&
+                                  pickedFile == null) {
+                                ToastUtil.showToast(0,
+                                    language["Choose Image"] ?? "Choose Image");
+                                return;
                               }
+                              Navigator.pop(context);
+                              Navigator.pushNamed(
+                                context,
+                                Routes.order_confirm,
+                                arguments: {
+                                  "carts": carts,
+                                  "address": {
+                                    "street_address": streetAddress.text,
+                                    "city": city.text,
+                                    "state": state.text,
+                                    "postal_code": postalCode.text,
+                                    "country": country.text,
+                                    "township": township.text,
+                                    "ward": ward.text,
+                                    "home_address": homeAddress.text,
+                                    "note": note.text,
+                                  },
+                                  "paymenttype": paymenttype,
+                                  "pickedFile": pickedFile,
+                                  "insurancetype": insurancetype,
+                                  "subtotal": subtotal,
+                                  "commissionAmount":
+                                      subtotal * (commissionPercentage / 100),
+                                  "total": total +
+                                      (subtotal * (commissionPercentage / 100)),
+                                  "ruleId": ruleId,
+                                },
+                              );
                             }
                           },
                           child: Text(
@@ -895,8 +927,6 @@ class _CartScreenState extends State<CartScreen> {
     ).whenComplete(() {
       pickedFile = null;
       paymenttype = "Cash on Delivery";
-      payslipImage = "";
-      payslip = false;
     });
   }
 
@@ -913,9 +943,11 @@ class _CartScreenState extends State<CartScreen> {
 
   void calculateSubTotal() {
     subtotal = 0.0;
+    total = 0.0;
     for (Map<String, dynamic> cart in carts) {
       subtotal += cart["totalamount"];
     }
+    total = subtotal;
     setState(() {});
   }
 
@@ -975,7 +1007,7 @@ class _CartScreenState extends State<CartScreen> {
                   onPressed: () {
                     role.isEmpty
                         ? Navigator.pushNamed(context, Routes.login)
-                        : _showOrderBottomSheet(context);
+                        : getInsuranceRules();
                   },
                 )
               : Container(),
@@ -1323,6 +1355,7 @@ class _CartScreenState extends State<CartScreen> {
                       16,
                     ),
                     margin: const EdgeInsets.only(
+                      top: 8,
                       bottom: 10,
                       left: 16,
                       right: 16,
@@ -1330,19 +1363,23 @@ class _CartScreenState extends State<CartScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildSummaryItem(language['Subtotal'] ?? 'Subtotal',
-                            subtotal.toString()),
+                        _buildSummaryItem(
+                          language['Subtotal'] ?? 'Subtotal',
+                          subtotal.toString(),
+                        ),
                         SizedBox(
                           height: 16,
                         ),
                         _buildSummaryItem(
-                            language['Shipping'] ?? 'Shipping', '--'),
+                          language['Shipping'] ?? 'Shipping',
+                          '--',
+                        ),
                         Divider(
                           thickness: 1.5,
                         ),
                         _buildSummaryItem(
                           language['Total'] ?? 'Total',
-                          subtotal.toString(),
+                          total.toString(),
                           isTotal: true,
                         ),
                       ],

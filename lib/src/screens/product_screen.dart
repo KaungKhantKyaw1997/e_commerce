@@ -648,8 +648,9 @@ class _ProductScreenState extends State<ProductScreen> {
                       cartProvider.addCount(carts.length);
 
                       Navigator.pop(context);
-                    } else{
-                      ToastUtil.showToast(0, "Please choose quantity");
+                    } else {
+                      ToastUtil.showToast(
+                          0, language["Choose Quantity"] ?? "Choose Quantity");
                     }
                   },
                   child: Text(
@@ -709,8 +710,9 @@ class _ProductScreenState extends State<ProductScreen> {
                         context,
                         Routes.cart,
                       );
-                    } else{
-                      ToastUtil.showToast(0, "Please choose quantity");
+                    } else {
+                      ToastUtil.showToast(
+                          0, language["Choose Quantity"] ?? "Choose Quantity");
                     }
                   },
                   child: Text(

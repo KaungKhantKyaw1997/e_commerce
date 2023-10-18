@@ -15,11 +15,21 @@ class SuccessScreen extends StatefulWidget {
 class _SuccessScreenState extends State<SuccessScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  int id = 0;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
+
+    Future.delayed(Duration.zero, () async {
+      final arguments =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+      if (arguments != null) {
+        id = arguments["id"] ?? 0;
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -53,9 +63,9 @@ class _SuccessScreenState extends State<SuccessScreen>
               bottom: 4,
             ),
             child: Text(
-              "Your order was successful!",
+              "Your order${id != 0 ? ' (ID: #${id}) ' : ' '}was successful!",
               textAlign: TextAlign.center,
-              style: FontConstants.title2,
+              style: FontConstants.headline1,
             ),
           ),
           Padding(
