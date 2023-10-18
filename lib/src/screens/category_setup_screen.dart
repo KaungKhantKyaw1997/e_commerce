@@ -88,7 +88,8 @@ class _CategorySetupScreenState extends State<CategorySetupScreen> {
 
   Future<void> uploadFile() async {
     try {
-      var response = await AuthService.uploadFile(File(pickedFile!.path));
+      var response = await AuthService.uploadFile(File(pickedFile!.path),
+          resolution: "170x150");
       var res = jsonDecode(response.body);
       if (res["code"] == 200) {
         coverImage = res["url"];
