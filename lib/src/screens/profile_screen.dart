@@ -101,7 +101,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> uploadFile() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
-      var response = await AuthService.uploadFile(File(pickedFile!.path));
+      var response = await AuthService.uploadFile(File(pickedFile!.path),
+          resolution: "100x100");
       var res = jsonDecode(response.body);
       if (res["code"] == 200) {
         profileImage = res["url"];
