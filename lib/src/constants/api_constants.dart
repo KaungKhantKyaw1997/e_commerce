@@ -24,4 +24,5 @@ class ApiConstants {
   static const String vectorsUrl = '$baseUrl/api/vectors';
   static const String termsAndConditionsUrl =
       '$baseUrl/api/terms-and-conditions';
+  static const String insuranceRulesUrl = '$baseUrl/api/insurance-rules';
 }
