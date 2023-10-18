@@ -134,7 +134,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     for (var pickedFile in pickedMultiFile) {
       try {
         var response = await AuthService.uploadFile(File(pickedFile.path),
-          resolution: "400x400");
+            resolution: "400x400");
         var res = jsonDecode(response.body);
         if (res["code"] == 200) {
           productImages.add(res["url"]);
@@ -174,7 +174,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
       final response = await productsService.addProductData(body);
       Navigator.pop(context);
-      if (response["code"] == 201) {
+      if (response["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
         Navigator.pushNamed(
@@ -1381,6 +1381,61 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                           ),
                         ),
                       ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["Price"] ?? "Price",
+                          style: FontConstants.caption1,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      child: TextFormField(
+                        controller: price,
+                        focusNode: _priceFocusNode,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.next,
+                        style: FontConstants.body1,
+                        cursorColor: Colors.black,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: ColorConstants.fillcolor,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return language["Enter Price"] ?? "Enter Price";
+                          }
+                          return null;
+                        },
+                      ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,

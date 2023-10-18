@@ -109,7 +109,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
 
       final response = await brandsService.addBrandData(body);
       Navigator.pop(context);
-      if (response["code"] == 201) {
+      if (response["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
         Navigator.pushNamed(
