@@ -56,7 +56,8 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
     "item_counts": 0,
     "payment_type": "Cash on Delivery",
     "payslip_screenshot_path": "",
-    "created_at": ""
+    "created_at": "",
+    "commission_amount": 0.0,
   };
   List<Map<String, dynamic>> orderItems = [];
 
@@ -174,6 +175,8 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                       ),
                       SizedBox(height: 5),
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text(
                             'Order ID: #${orderData["order_id"]}',
@@ -185,6 +188,8 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                           Spacer(),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
                             children: [
                               Text(
                                 'Amt: ',
@@ -208,28 +213,57 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                       ),
                       SizedBox(height: 5),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text(
-                            "${orderData['payment_type']}",
+                            'Commission: ',
                             style: TextStyle(
                               color: Color(0xff7B7B7B),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          // Spacer(),
-                          // Text(
-                          //   "${orderData['payment_type']}",
-                          //   style: TextStyle(
-                          //     color: Color(0xff7B7B7B),
-                          //     fontWeight: FontWeight.bold,
-                          //   ),
-                          // ),
+                          FormattedAmount(
+                            amount: orderData["commission_amount"],
+                            mainTextStyle: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                            decimalTextStyle: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            'Payment Type: ',
+                            style: TextStyle(
+                              color: Color(0xff7B7B7B),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            "${orderData['payment_type']}",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
                         ],
                       ),
                       // New code begins here
                       SizedBox(height: 5),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text(
                             "Order Status:",
@@ -297,6 +331,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                                   status,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
+                                    color: Colors.black,
                                   ),
                                 ),
                         ],
