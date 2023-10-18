@@ -68,7 +68,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> uploadFile() async {
     try {
-      var response = await AuthService.uploadFile(File(pickedFile!.path));
+      var response = await AuthService.uploadFile(File(pickedFile!.path),
+          resolution: "100x100");
       var res = jsonDecode(response.body);
       if (res["code"] == 200) {
         profileImage = res["url"];
