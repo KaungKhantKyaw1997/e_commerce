@@ -11,6 +11,7 @@ import 'package:e_commerce/src/utils/format_amount.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:e_commerce/src/utils/toast.dart';
 
 class ProductScreen extends StatefulWidget {
   const ProductScreen({super.key});
@@ -647,6 +648,8 @@ class _ProductScreenState extends State<ProductScreen> {
                       cartProvider.addCount(carts.length);
 
                       Navigator.pop(context);
+                    } else{
+                      ToastUtil.showToast(0, "Please choose quantity");
                     }
                   },
                   child: Text(
@@ -706,6 +709,8 @@ class _ProductScreenState extends State<ProductScreen> {
                         context,
                         Routes.cart,
                       );
+                    } else{
+                      ToastUtil.showToast(0, "Please choose quantity");
                     }
                   },
                   child: Text(
