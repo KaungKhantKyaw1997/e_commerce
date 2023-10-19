@@ -50,6 +50,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
   List<String> roles = [
     "user",
     "admin",
+    "agent",
   ];
   String role = 'user';
   int id = 0;
