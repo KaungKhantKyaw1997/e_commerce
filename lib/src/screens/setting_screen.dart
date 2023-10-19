@@ -577,8 +577,8 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
-                          role == 'admin'
-                             ? GestureDetector(
+                      role == 'admin'
+                          ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
                                   context,
@@ -806,7 +806,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                         ),
                       ),
-                      role=='user'
+                      role == 'user'
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(

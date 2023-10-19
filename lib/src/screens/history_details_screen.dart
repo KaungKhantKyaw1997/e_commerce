@@ -440,42 +440,49 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                                       ]),
                                 )
                               : Text(""),
-                        role == "admin" || role == "user" ? Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Color(0xff1f335a),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Spacer(),
-                                    Text('ADDRESS',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 12)),
-                                  ],
-                                ),
-                                Text('Deliver to',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontStyle: FontStyle.italic,
-                                    )),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                    '${orderData["home_address"]}, ${orderData["street_address"]}, Ward ${orderData["ward"]}, ${orderData["township"]}',
-                                    style: TextStyle(color: Colors.white)),
-                                Text(
-                                    '${orderData["city"]}, ${orderData["state"]} ${orderData["postal_code"]}',
-                                    style: TextStyle(color: Colors.white)),
-                                Text('${orderData["country"]}',
-                                    style: TextStyle(color: Colors.white)),
-                              ],
-                            ),
-                          ): Text(""),
+                          role == "admin" || role == "user"
+                              ? Container(
+                                  padding: const EdgeInsets.all(20),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xff1f335a),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Spacer(),
+                                          Text('ADDRESS',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12)),
+                                        ],
+                                      ),
+                                      Text('Deliver to',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontStyle: FontStyle.italic,
+                                          )),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                          '${orderData["home_address"]}, ${orderData["street_address"]}, Ward ${orderData["ward"]}, ${orderData["township"]}',
+                                          style:
+                                              TextStyle(color: Colors.white)),
+                                      Text(
+                                          '${orderData["city"]}, ${orderData["state"]} ${orderData["postal_code"]}',
+                                          style:
+                                              TextStyle(color: Colors.white)),
+                                      Text('${orderData["country"]}',
+                                          style:
+                                              TextStyle(color: Colors.white)),
+                                    ],
+                                  ),
+                                )
+                              : Text(""),
                           SizedBox(
                             height: 10,
                           ),
