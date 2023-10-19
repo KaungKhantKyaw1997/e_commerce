@@ -107,6 +107,19 @@ class AuthService {
     return jsonDecode(response.body);
   }
 
+  Future<Map<String, dynamic>> deleteAccountData() async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await http.delete(
+      Uri.parse(ApiConstants.deleteAccountUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+      },
+    );
+
+    return jsonDecode(response.body);
+  }
+
   logout(BuildContext context) async {
     clearData();
     CartProvider cartProvider =

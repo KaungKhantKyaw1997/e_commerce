@@ -2,6 +2,8 @@ import 'dart:ui';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
+import 'package:e_commerce/src/utils/loading.dart';
+import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
@@ -55,6 +57,84 @@ class _SettingScreenState extends State<SettingScreen> {
       profileName = prefs.getString('name') ?? "";
       role = prefs.getString('role') ?? "";
     });
+  }
+
+  deleteAccount() async {
+    try {
+      final response = await authService.deleteAccountData();
+      Navigator.pop(context);
+      if (response["code"] == 204) {
+        ToastUtil.showToast(response["code"], response["message"]);
+        authService.logout(context);
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e) {
+      print('Error: $e');
+      Navigator.pop(context);
+    }
+  }
+
+  showRemoveAccountDialog() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (c) => BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: 5,
+          sigmaY: 5,
+        ),
+        child: AlertDialog(
+          backgroundColor: Colors.white,
+          title: Text(
+            language["Remove Account"] ?? "Remove Account",
+            style: FontConstants.body1,
+          ),
+          content: Text(
+            language["Are you sure you want to remove account?"] ??
+                "Are you sure you want to remove account?",
+            style: FontConstants.caption2,
+          ),
+          actions: [
+            TextButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+              ),
+              child: Text(
+                language["Cancel"] ?? "Cancel",
+                style: FontConstants.button2,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    Theme.of(context).primaryColor),
+              ),
+              child: Text(
+                language["Ok"] ?? "Ok",
+                style: FontConstants.button1,
+              ),
+              onPressed: () async {
+                showLoadingDialog(context);
+                deleteAccount();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   showExitDialog() async {
@@ -927,37 +1007,33 @@ class _SettingScreenState extends State<SettingScreen> {
                     ],
                   ),
                 ),
-                // role == 'user'
-                //     ? Container(
-                //         margin: EdgeInsets.only(
-                //           bottom: 8,
-                //         ),
-                //         width: double.infinity,
-                //         child: ElevatedButton(
-                //           style: ElevatedButton.styleFrom(
-                //             padding: const EdgeInsets.symmetric(
-                //               horizontal: 14,
-                //               vertical: 12,
-                //             ),
-                //             shape: RoundedRectangleBorder(
-                //               borderRadius: BorderRadius.circular(8),
-                //             ),
-                //             backgroundColor: Colors.white,
-                //             side: BorderSide(
-                //               color: Theme.of(context).primaryColor,
-                //               width: 0.5,
-                //             ),
-                //           ),
-                //           onPressed: () {
-                //             showExitDialog();
-                //           },
-                //           child: Text(
-                //             language["Log Out"] ?? "Log Out",
-                //             style: FontConstants.button2,
-                //           ),
-                //         ),
-                //       )
-                //     : Container(),
+                role == 'user'
+                    ? Container(
+                        margin: EdgeInsets.only(
+                          bottom: 8,
+                        ),
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            backgroundColor: ColorConstants.redcolor,
+                          ),
+                          onPressed: () {
+                            showRemoveAccountDialog();
+                          },
+                          child: Text(
+                            language["Account Deletion"] ?? "Account Deletion",
+                            style: FontConstants.button1,
+                          ),
+                        ),
+                      )
+                    : Container(),
                 role.isNotEmpty
                     ? Container(
                         width: double.infinity,
