@@ -149,7 +149,8 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                                   height: 24,
                                 ),
                               ),
-                              navItem["label"] == 'Cart'
+                              navItem["label"] == 'Cart' &&
+                                      cartProvider.count > 0
                                   ? Positioned(
                                       right: 2,
                                       child: Container(
@@ -164,9 +165,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                                           minHeight: 16,
                                         ),
                                         child: Text(
-                                          cartProvider.count > 0
-                                              ? '${cartProvider.count}'
-                                              : '',
+                                          '${cartProvider.count}',
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontSize: FontConstants.bottom,
@@ -175,31 +174,32 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                                         ),
                                       ),
                                     )
-                                  : Positioned(
-                                      right: 2,
-                                      child: Container(
-                                        padding: const EdgeInsets.all(2),
-                                        decoration: BoxDecoration(
-                                          color: ColorConstants.redcolor,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        constraints: const BoxConstraints(
-                                          minWidth: 16,
-                                          minHeight: 16,
-                                        ),
-                                        child: Text(
+                                  : navItem["label"] == 'Notification' &&
                                           notiProvider.count > 0
-                                              ? '${notiProvider.count}'
-                                              : '',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: FontConstants.bottom,
+                                      ? Positioned(
+                                          right: 2,
+                                          child: Container(
+                                            padding: const EdgeInsets.all(2),
+                                            decoration: BoxDecoration(
+                                              color: ColorConstants.redcolor,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            constraints: const BoxConstraints(
+                                              minWidth: 16,
+                                              minHeight: 16,
+                                            ),
+                                            child: Text(
+                                              '${notiProvider.count}',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: FontConstants.bottom,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
                                           ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
+                                        )
+                                      : Text(''),
                             ],
                           ),
                     label: language[navItem["label"]] ?? navItem["label"],

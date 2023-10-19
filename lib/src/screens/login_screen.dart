@@ -337,7 +337,7 @@ class _LogInScreenState extends State<LogInScreen> {
                   padding: const EdgeInsets.only(
                     left: 16,
                     right: 16,
-                    bottom: 16,
+                    bottom: 8,
                   ),
                   width: double.infinity,
                   child: ElevatedButton(

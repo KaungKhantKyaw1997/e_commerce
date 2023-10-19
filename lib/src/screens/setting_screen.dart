@@ -1028,7 +1028,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             showRemoveAccountDialog();
                           },
                           child: Text(
-                            language["Account Deletion"] ?? "Account Deletion",
+                            language["Remove Account"] ?? "Remove Account",
                             style: FontConstants.button1,
                           ),
                         ),
