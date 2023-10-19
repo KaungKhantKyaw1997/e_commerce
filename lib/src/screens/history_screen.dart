@@ -62,7 +62,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       role = prefs.getString('role') ?? "";
-      if (role == 'admin') {
+      if (role == 'admin' || role == 'agent') {
         unreadNotifications();
       }
     });
@@ -183,7 +183,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         title: Align(
           alignment: Alignment.centerLeft,
           child: Text(
-            role == "admin"
+            role == "admin" || role == 'agent'
                 ? language["Order"] ?? "Order"
                 : language["History"] ?? "History",
             style: FontConstants.title2,
@@ -216,7 +216,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         enablePullDown: true,
         enablePullUp: true,
         onRefresh: () async {
-          if (role == 'admin') {
+          if (role == 'admin' || role == 'agent') {
             unreadNotifications();
           }
           page = 1;

@@ -93,6 +93,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final response = await authService.registerData(body);
       if (response["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
+        Navigator.pop(context);
         Navigator.pushNamed(context, Routes.login);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);

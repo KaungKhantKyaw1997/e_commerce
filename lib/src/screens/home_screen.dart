@@ -76,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen>
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       role = prefs.getString('role') ?? "";
-      if (role == 'admin') {
+      if (role == 'user') {
         unreadNotifications();
       }
     });

@@ -440,7 +440,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                                       ]),
                                 )
                               : Text(""),
-                          Container(
+                        role == "admin" || role == "user" ? Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
                               color: Color(0xff1f335a),
@@ -475,7 +475,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                                     style: TextStyle(color: Colors.white)),
                               ],
                             ),
-                          ),
+                          ): Text(""),
                           SizedBox(
                             height: 10,
                           ),
