@@ -65,6 +65,7 @@ dependencies:
   infinite_scroll_pagination: ^4.0.0
   url_launcher: ^6.1.14
   camera: ^0.10.5+5
+  flutter_rating_bar: ^4.0.1
 
 dev_dependencies:
   flutter_test:

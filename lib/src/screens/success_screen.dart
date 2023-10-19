@@ -1,8 +1,10 @@
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
+import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 
 class SuccessScreen extends StatefulWidget {
@@ -14,6 +16,7 @@ class SuccessScreen extends StatefulWidget {
 
 class _SuccessScreenState extends State<SuccessScreen>
     with SingleTickerProviderStateMixin {
+  TextEditingController note = TextEditingController(text: '');
   late AnimationController _controller;
   int id = 0;
 
@@ -36,6 +39,121 @@ class _SuccessScreenState extends State<SuccessScreen>
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  ratingModel(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: RatingBar.builder(
+                  initialRating: 0,
+                  minRating: 0,
+                  direction: Axis.horizontal,
+                  allowHalfRating: true,
+                  itemCount: 5,
+                  glowColor: Colors.amber,
+                  unratedColor: Color(0xffFFECB0),
+                  itemPadding: EdgeInsets.symmetric(
+                    horizontal: 4.0,
+                  ),
+                  itemBuilder: (context, _) => Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                  onRatingUpdate: (rating) {
+                    print(rating);
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 24,
+                  bottom: 16,
+                ),
+                child: TextFormField(
+                  controller: note,
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.done,
+                  style: FontConstants.body1,
+                  cursorColor: Colors.black,
+                  decoration: InputDecoration(
+                    hintText: language["Note"] ?? "Note",
+                    filled: true,
+                    fillColor: ColorConstants.fillcolor,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                      ),
+                      child: Text(
+                        language["Cancel"] ?? "Cancel",
+                        style: FontConstants.button2,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: TextButton(
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Theme.of(context).primaryColor),
+                      ),
+                      child: Text(
+                        language["Ok"] ?? "Ok",
+                        style: FontConstants.button1,
+                      ),
+                      onPressed: () async {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
