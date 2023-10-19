@@ -927,6 +927,37 @@ class _SettingScreenState extends State<SettingScreen> {
                     ],
                   ),
                 ),
+                // role == 'user'
+                //     ? Container(
+                //         margin: EdgeInsets.only(
+                //           bottom: 8,
+                //         ),
+                //         width: double.infinity,
+                //         child: ElevatedButton(
+                //           style: ElevatedButton.styleFrom(
+                //             padding: const EdgeInsets.symmetric(
+                //               horizontal: 14,
+                //               vertical: 12,
+                //             ),
+                //             shape: RoundedRectangleBorder(
+                //               borderRadius: BorderRadius.circular(8),
+                //             ),
+                //             backgroundColor: Colors.white,
+                //             side: BorderSide(
+                //               color: Theme.of(context).primaryColor,
+                //               width: 0.5,
+                //             ),
+                //           ),
+                //           onPressed: () {
+                //             showExitDialog();
+                //           },
+                //           child: Text(
+                //             language["Log Out"] ?? "Log Out",
+                //             style: FontConstants.button2,
+                //           ),
+                //         ),
+                //       )
+                //     : Container(),
                 role.isNotEmpty
                     ? Container(
                         width: double.infinity,
