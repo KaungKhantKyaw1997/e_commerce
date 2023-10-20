@@ -456,7 +456,7 @@ class _ProductScreenState extends State<ProductScreen> {
                             textBaseline: TextBaseline.alphabetic,
                             children: [
                               Text(
-                                "Ks",
+                                product["symbol"].toString(),
                                 style: FontConstants.subheadline1,
                               ),
                               product["price"] != null
@@ -642,6 +642,14 @@ class _ProductScreenState extends State<ProductScreen> {
                                 "You can only order items from one shop at a time. Please place separate orders for items from different shops!");
                         return;
                       }
+                      if (product['currency_id'] != carts[0]['currency_id']) {
+                        ToastUtil.showToast(
+                            0,
+                            language[
+                                    "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!"] ??
+                                "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!");
+                        return;
+                      }
                     }
                     if (updateCart) {
                       for (var cart in carts) {
@@ -705,6 +713,14 @@ class _ProductScreenState extends State<ProductScreen> {
                             language[
                                     "You can only order items from one shop at a time. Please place separate orders for items from different shops!"] ??
                                 "You can only order items from one shop at a time. Please place separate orders for items from different shops!");
+                        return;
+                      }
+                      if (product['currency_id'] != carts[0]['currency_id']) {
+                        ToastUtil.showToast(
+                            0,
+                            language[
+                                    "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!"] ??
+                                "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!");
                         return;
                       }
                     }

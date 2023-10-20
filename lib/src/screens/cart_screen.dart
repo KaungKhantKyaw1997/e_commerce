@@ -1144,17 +1144,40 @@ class _CartScreenState extends State<CartScreen> {
                                                             FontConstants.body1,
                                                       ),
                                                     ),
-                                                    FormattedAmount(
-                                                      amount: double.parse(
-                                                          carts[index][
-                                                                  "totalamount"]
-                                                              .toString()),
-                                                      mainTextStyle:
-                                                          FontConstants
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .baseline,
+                                                      textBaseline: TextBaseline
+                                                          .alphabetic,
+                                                      children: [
+                                                        Text(
+                                                          carts[index]["symbol"]
+                                                              .toString(),
+                                                          style: FontConstants
                                                               .subheadline1,
-                                                      decimalTextStyle:
-                                                          FontConstants
-                                                              .caption3,
+                                                        ),
+                                                        carts[index][
+                                                                    "totalamount"] !=
+                                                                null
+                                                            ? FormattedAmount(
+                                                                amount: double.parse(
+                                                                    carts[index]
+                                                                            [
+                                                                            "totalamount"]
+                                                                        .toString()),
+                                                                mainTextStyle:
+                                                                    FontConstants
+                                                                        .subheadline1,
+                                                                decimalTextStyle:
+                                                                    FontConstants
+                                                                        .caption3,
+                                                              )
+                                                            : Text(""),
+                                                      ],
                                                     ),
                                                   ],
                                                 ),
