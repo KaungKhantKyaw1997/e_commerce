@@ -221,6 +221,32 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
               );
             },
           ),
+          actions: [
+            id != 0
+                ? IconButton(
+                    icon: SvgPicture.asset(
+                      "assets/icons/product.svg",
+                      width: 24,
+                      height: 24,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.black,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        Routes.products_setup,
+                        arguments: {
+                          "shopId": id,
+                          "shopName": name.text,
+                          "from": "shop",
+                        },
+                      );
+                    },
+                  )
+                : Container(),
+          ],
         ),
         backgroundColor: Colors.white,
         body: WillPopScope(
@@ -443,6 +469,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
+                        bottom: 8,
                       ),
                       child: TextFormField(
                         controller: address,

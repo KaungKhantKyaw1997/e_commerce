@@ -65,8 +65,8 @@ class _ProductsScreenState extends State<ProductsScreen>
         if (brandId != 0) {
           brands.add(brandId);
         }
-        getProducts();
       }
+      getProducts();
     });
   }
 

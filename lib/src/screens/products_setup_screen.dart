@@ -24,11 +24,24 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
       RefreshController(initialRefresh: false);
   List products = [];
   int page = 1;
+  int shopId = 0;
+  String shopName = '';
+  String from = '';
 
   @override
   void initState() {
     super.initState();
-    getProducts();
+    Future.delayed(Duration.zero, () {
+      final arguments =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
+      if (arguments != null) {
+        shopId = arguments["shopId"] ?? 0;
+        shopName = arguments["shopName"] ?? '';
+        from = arguments["from"] ?? '';
+      }
+      getProducts();
+    });
   }
 
   @override
@@ -44,6 +57,7 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
         "page": page,
         "per_page": 10,
         "search": search.text,
+        if (shopId != 0) "shop_id": shopId,
       };
 
       final response = await productsService.getProductsData(body);
@@ -185,76 +199,88 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
             getProducts();
           },
         ),
-        iconTheme: IconThemeData(
+        leading: BackButton(
           color: Theme.of(context).primaryColor,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
       ),
-      body: SmartRefresher(
-        header: WaterDropMaterialHeader(
-          backgroundColor: Theme.of(context).primaryColor,
-          color: Colors.white,
-        ),
-        footer: ClassicFooter(),
-        controller: _refreshController,
-        enablePullDown: true,
-        enablePullUp: true,
-        onRefresh: () async {
-          page = 1;
-          products = [];
-          await getProducts();
+      body: WillPopScope(
+        onWillPop: () async {
+          Navigator.of(context).pop();
+          return true;
         },
-        onLoading: () async {
-          await getProducts();
-        },
-        child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 24,
-            ),
-            width: double.infinity,
-            child: Column(
-              children: [
-                ListView.builder(
-                  controller: _scrollController,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.pushNamed(
-                          context,
-                          Routes.product_setup,
-                          arguments: {
-                            "id": products[index]["product_id"],
-                          },
-                        );
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          productCard(index),
-                          index < products.length - 1
-                              ? Container(
-                                  padding: const EdgeInsets.only(
-                                    left: 16,
-                                    right: 16,
-                                  ),
-                                  child: const Divider(
-                                    height: 0,
-                                    color: Colors.grey,
-                                  ),
-                                )
-                              : Container(),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ],
+        child: SmartRefresher(
+          header: WaterDropMaterialHeader(
+            backgroundColor: Theme.of(context).primaryColor,
+            color: Colors.white,
+          ),
+          footer: ClassicFooter(),
+          controller: _refreshController,
+          enablePullDown: true,
+          enablePullUp: true,
+          onRefresh: () async {
+            page = 1;
+            products = [];
+            await getProducts();
+          },
+          onLoading: () async {
+            await getProducts();
+          },
+          child: SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 24,
+              ),
+              width: double.infinity,
+              child: Column(
+                children: [
+                  ListView.builder(
+                    controller: _scrollController,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: products.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.pushNamed(
+                            context,
+                            Routes.product_setup,
+                            arguments: {
+                              "id": products[index]["product_id"],
+                              "shopId": shopId,
+                              "shopName": shopName,
+                              "from": from,
+                            },
+                          );
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            productCard(index),
+                            index < products.length - 1
+                                ? Container(
+                                    padding: const EdgeInsets.only(
+                                      left: 16,
+                                      right: 16,
+                                    ),
+                                    child: const Divider(
+                                      height: 0,
+                                      color: Colors.grey,
+                                    ),
+                                  )
+                                : Container(),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -267,6 +293,9 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
             Routes.product_setup,
             arguments: {
               "id": 0,
+              "shopId": shopId,
+              "shopName": shopName,
+              "from": from,
             },
           );
         },

@@ -63,6 +63,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   List<XFile> pickedMultiFile = <XFile>[];
 
   int id = 0;
+  String from = '';
 
   @override
   void initState() {
@@ -72,7 +73,12 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
       if (arguments != null) {
-        id = arguments["id"];
+        id = arguments["id"] ?? 0;
+        from = arguments["from"] ?? '';
+        if (from == 'shop') {
+          shopId = arguments["shopId"] ?? 0;
+          shopName.text = arguments["shopName"] ?? '';
+        }
         getProduct();
       }
     });
@@ -89,8 +95,10 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
       final response = await productsService.getProductData(id);
       if (response!["code"] == 200) {
         setState(() {
-          shopName.text = response["data"]["shop_name"] ?? "";
-          shopId = response["data"]["shop_id"] ?? 0;
+          if (from != 'shop') {
+            shopName.text = response["data"]["shop_name"] ?? "";
+            shopId = response["data"]["shop_id"] ?? 0;
+          }
           categoryName.text = response["data"]["category_name"] ?? "";
           categoryId = response["data"]["category_id"] ?? 0;
           brandName.text = response["data"]["brand_name"] ?? "";
@@ -180,6 +188,11 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         Navigator.pushNamed(
           context,
           Routes.products_setup,
+          arguments: {
+            if (from == 'shop') "shopId": shopId,
+            if (from == 'shop') "shopName": shopName.text,
+            "from": from,
+          },
         );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -225,6 +238,11 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         Navigator.pushNamed(
           context,
           Routes.products_setup,
+          arguments: {
+            if (from == 'shop') "shopId": shopId,
+            if (from == 'shop') "shopName": shopName.text,
+            "from": from,
+          },
         );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -245,6 +263,11 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         Navigator.pushNamed(
           context,
           Routes.products_setup,
+          arguments: {
+            if (from == 'shop') "shopId": shopId,
+            if (from == 'shop') "shopName": shopName.text,
+            "from": from,
+          },
         );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -252,23 +275,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     } catch (e) {
       print('Error: $e');
       Navigator.pop(context);
-    }
-  }
-
-  Future<void> fetchShopData() async {
-    var result = await Navigator.pushNamed(
-      context,
-      Routes.shops_setup,
-      arguments: {
-        "from": "product",
-      },
-    );
-
-    if (result != null && result is Map<String, dynamic>) {
-      setState(() {
-        shopId = result["shop_id"] ?? 0;
-        shopName.text = result["name"] ?? "";
-      });
     }
   }
 
@@ -341,6 +347,11 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
               Navigator.pushNamed(
                 context,
                 Routes.products_setup,
+                arguments: {
+                  if (from == 'shop') "shopId": shopId,
+                  if (from == 'shop') "shopName": shopName.text,
+                  "from": from,
+                },
               );
             },
           ),
@@ -352,6 +363,11 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
             Navigator.pushNamed(
               context,
               Routes.products_setup,
+              arguments: {
+                if (from == 'shop') "shopId": shopId,
+                if (from == 'shop') "shopName": shopName.text,
+                "from": from,
+              },
             );
             return true;
           },
@@ -470,21 +486,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide.none,
-                          ),
-                          suffixIcon: IconButton(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                            ),
-                            onPressed: fetchShopData,
-                            icon: SvgPicture.asset(
-                              "assets/icons/shop.svg",
-                              width: 24,
-                              height: 24,
-                              colorFilter: ColorFilter.mode(
-                                Theme.of(context).primaryColor,
-                                BlendMode.srcIn,
-                              ),
-                            ),
                           ),
                         ),
                       ),
@@ -1400,7 +1401,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
-                        bottom: 16,
+                        bottom: 4,
                       ),
                       child: TextFormField(
                         controller: price,
@@ -1446,6 +1447,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
+                          activeColor: Theme.of(context).primaryColor,
                           onChanged: (value) {
                             setState(() {
                               isTopModel = value ?? false;
