@@ -7,9 +7,11 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
+import 'package:e_commerce/src/services/currencies_service.dart';
 import 'package:e_commerce/src/services/products_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
+import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
@@ -25,6 +27,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
   final productsService = ProductsService();
+  final currenciesService = CurrenciesService();
   FocusNode _modelFocusNode = FocusNode();
   FocusNode _descriptionFocusNode = FocusNode();
   FocusNode _colorFocusNode = FocusNode();
@@ -61,6 +64,10 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   bool isTopModel = false;
   List productImages = [];
   List<XFile> pickedMultiFile = <XFile>[];
+  List currencies = [];
+  List<String> currencycodes = [];
+  int currencyId = 0;
+  String currencyCode = '';
 
   int id = 0;
   String from = '';
@@ -68,7 +75,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
+    Future.delayed(Duration.zero, () async {
+      await getCurrencies();
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
@@ -88,6 +96,30 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  getCurrencies() async {
+    try {
+      final response = await currenciesService.getCurrenciesData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          currencies = response["data"];
+
+          for (var data in response["data"]) {
+            if (data["currency_code"] != null) {
+              currencycodes.add(data["currency_code"]);
+            }
+          }
+          currencyId = currencies[0]["currency_id"];
+          currencyCode = currencies[0]["currency_code"];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   getProduct() async {
@@ -115,6 +147,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           warrantyPeriod.text = response["data"]["warranty_period"] ?? "";
           dimensions.text = response["data"]["dimensions"] ?? "";
           price.text = response["data"]["price"].toString() ?? "";
+          currencyCode = response["data"]["currency_code"] ?? "";
+          currencyId = response["data"]["currency_id"] ?? 0;
           stockQuantity.text =
               response["data"]["stock_quantity"].toString() ?? "";
           isTopModel = response["data"]["is_top_model"] ?? false;
@@ -175,6 +209,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "warranty_period": warrantyPeriod.text,
         "dimensions": dimensions.text,
         "price": _price,
+        "currency_id": currencyId,
         "stock_quantity": int.parse(stockQuantity.text),
         "is_top_model": isTopModel,
         "product_images": productImages,
@@ -225,6 +260,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "warranty_period": warrantyPeriod.text,
         "dimensions": dimensions.text,
         "price": _price,
+        "currency_id": currencyId,
         "stock_quantity": int.parse(stockQuantity.text),
         "is_top_model": isTopModel,
         "product_images": productImages,
@@ -1383,60 +1419,115 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 4,
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          language["Price"] ?? "Price",
-                          style: FontConstants.caption1,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 4,
+                                  bottom: 4,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    language["Currency"] ?? "Currency",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 4,
+                                  bottom: 4,
+                                ),
+                                child: CustomDropDown(
+                                  value: currencyCode,
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      currencyCode =
+                                          newValue ?? currencycodes[0];
+                                    });
+                                    for (var data in currencies) {
+                                      if (data["currency_code"] ==
+                                          currencyCode) {
+                                        currencyId = data["currency_id"];
+                                      }
+                                    }
+                                  },
+                                  items: currencycodes,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 4,
-                      ),
-                      child: TextFormField(
-                        controller: price,
-                        focusNode: _priceFocusNode,
-                        keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.next,
-                        style: FontConstants.body1,
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: ColorConstants.fillcolor,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 4,
+                                  right: 16,
+                                  bottom: 4,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    language["Price"] ?? "Price",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 4,
+                                  right: 16,
+                                  bottom: 4,
+                                ),
+                                child: TextFormField(
+                                  controller: price,
+                                  focusNode: _priceFocusNode,
+                                  keyboardType: TextInputType.text,
+                                  textInputAction: TextInputAction.next,
+                                  style: FontConstants.body1,
+                                  cursorColor: Colors.black,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: ColorConstants.fillcolor,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 14,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return language["Enter Price"] ??
+                                          "Enter Price";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return language["Enter Price"] ?? "Enter Price";
-                          }
-                          return null;
-                        },
-                      ),
+                      ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
