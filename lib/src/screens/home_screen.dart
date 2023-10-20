@@ -365,7 +365,7 @@ class _HomeScreenState extends State<HomeScreen>
             width: double.infinity,
             height: 200,
             decoration: BoxDecoration(
-              image: products[index]["product_images"][0].isNotEmpty
+              image: products[index]["product_images"].isNotEmpty
                   ? DecorationImage(
                       image: NetworkImage(
                           '${ApiConstants.baseUrl}${products[index]["product_images"][0].toString()}'),
