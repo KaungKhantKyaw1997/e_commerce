@@ -143,7 +143,7 @@ class _ProductsScreenState extends State<ProductsScreen>
                     )
                   : DecorationImage(
                       image: AssetImage('assets/images/logo.png'),
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                     ),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(10),

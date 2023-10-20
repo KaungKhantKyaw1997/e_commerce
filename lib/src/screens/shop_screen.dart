@@ -319,7 +319,7 @@ class _ShopScreenState extends State<ShopScreen> {
                           )
                         : DecorationImage(
                             image: AssetImage('assets/images/logo.png'),
-                            fit: BoxFit.fill,
+                            fit: BoxFit.cover,
                           ),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(

@@ -99,15 +99,28 @@ class _SearchScreenState extends State<SearchScreen>
 
   productCard(index) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+      padding: const EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 8,
+        bottom: 8,
       ),
-      child: Column(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(index == 0 ? 10 : 0),
+          topRight: Radius.circular(index == 0 ? 10 : 0),
+          bottomLeft: Radius.circular(index == products.length - 1 ? 10 : 0),
+          bottomRight: Radius.circular(index == products.length - 1 ? 10 : 0),
+        ),
+        color: Colors.white,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            width: double.infinity,
-            height: 200,
+            width: 75,
+            height: 75,
             decoration: BoxDecoration(
               image: products.length > 0 &&
                       products[index]["product_images"].isNotEmpty
@@ -118,53 +131,74 @@ class _SearchScreenState extends State<SearchScreen>
                     )
                   : DecorationImage(
                       image: AssetImage('assets/images/logo.png'),
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                     ),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10),
-                topRight: Radius.circular(10),
-              ),
+              borderRadius: BorderRadius.circular(10),
               border: Border.all(
                 color: Colors.transparent,
               ),
             ),
           ),
-          const SizedBox(
-            height: 8,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 8,
-              right: 8,
-              bottom: 4,
-            ),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                products[index]["brand_name"].toString(),
-                overflow: TextOverflow.ellipsis,
-                style: FontConstants.caption2,
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.only(
+                left: 15,
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 8,
-              right: 8,
-              bottom: 4,
-            ),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                products[index]["model"].toString(),
-                overflow: TextOverflow.ellipsis,
-                style: FontConstants.smallText1,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    products[index]["brand_name"].toString(),
+                    overflow: TextOverflow.ellipsis,
+                    style: FontConstants.body1,
+                  ),
+                  Text(
+                    products[index]["model"].toString(),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: FontConstants.caption1,
+                  ),
+                ],
               ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  searchHistoriesList() {
+    List<Widget> choices = [];
+    searchhistories.forEach(
+      (item) {
+        choices.add(
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 4.0,
+            ),
+            child: ChoiceChip(
+              label: Text(
+                item,
+                style: FontConstants.caption2,
+              ),
+              selected: true,
+              selectedColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              onSelected: (selected) async {
+                search.text = item;
+                page = 1;
+                products = [];
+                await getProducts();
+              },
+            ),
+          ),
+        );
+      },
+    );
+    return choices;
   }
 
   @override
@@ -259,18 +293,11 @@ class _SearchScreenState extends State<SearchScreen>
                   width: double.infinity,
                   child: Column(
                     children: [
-                      GridView.builder(
+                      ListView.builder(
                         controller: _scrollController,
+                        scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         itemCount: products.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: 250,
-                          childAspectRatio: 2 / 1,
-                          crossAxisSpacing: 15,
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 15,
-                        ),
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () {
@@ -280,7 +307,25 @@ class _SearchScreenState extends State<SearchScreen>
                                 arguments: products[index],
                               );
                             },
-                            child: productCard(index),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                productCard(index),
+                                index < products.length - 1
+                                    ? Container(
+                                        padding: const EdgeInsets.only(
+                                          left: 100,
+                                          right: 16,
+                                        ),
+                                        child: const Divider(
+                                          height: 0,
+                                          color: Colors.grey,
+                                        ),
+                                      )
+                                    : Container(),
+                              ],
+                            ),
                           );
                         },
                       ),
@@ -297,80 +342,41 @@ class _SearchScreenState extends State<SearchScreen>
                       ),
                       width: double.infinity,
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              language["Search Histories"] ??
-                                  "Search Histories",
-                              style: FontConstants.subheadline1,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Text(
+                                language["Search Histories"] ??
+                                    "Search Histories",
+                                style: FontConstants.subheadline1,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  searchhistories = [];
+                                  saveListToSharedPreferences(searchhistories);
+                                  setState(() {});
+                                },
+                                child: SvgPicture.asset(
+                                  "assets/icons/trash.svg",
+                                  width: 24,
+                                  height: 24,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           SizedBox(
                             height: 8,
                           ),
-                          GridView.builder(
-                            controller: _scrollController,
-                            shrinkWrap: true,
-                            itemCount: searchhistories.length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              mainAxisExtent: 25,
-                              childAspectRatio: 2 / 1,
-                              crossAxisSpacing: 8,
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 8,
-                            ),
-                            itemBuilder: (context, index) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: GestureDetector(
-                                        onTap: () async {
-                                          search.text =
-                                              searchhistories[index].toString();
-                                          page = 1;
-                                          products = [];
-                                          await getProducts();
-                                        },
-                                        child: Text(
-                                          searchhistories[index].toString(),
-                                          overflow: TextOverflow.ellipsis,
-                                          style: FontConstants.caption2,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 6,
-                                    ),
-                                    GestureDetector(
-                                      onTap: () async {
-                                        searchhistories.removeAt(index);
-                                        saveListToSharedPreferences(
-                                            searchhistories);
-                                        setState(() {});
-                                      },
-                                      child: Icon(
-                                        Icons.close,
-                                        size: 15,
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
+                          Wrap(
+                            children: searchHistoriesList(),
                           ),
                         ],
                       ),
