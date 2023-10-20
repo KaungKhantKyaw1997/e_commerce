@@ -19,6 +19,7 @@ class _SuccessScreenState extends State<SuccessScreen>
   TextEditingController note = TextEditingController(text: '');
   late AnimationController _controller;
   int id = 0;
+  int shopId = 0;
 
   @override
   void initState() {
@@ -30,6 +31,7 @@ class _SuccessScreenState extends State<SuccessScreen>
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
       if (arguments != null) {
         id = arguments["id"] ?? 0;
+        shopId = arguments["shopId"] ?? 0;
         setState(() {});
       }
     });
