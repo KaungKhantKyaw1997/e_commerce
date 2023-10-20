@@ -101,6 +101,7 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
           arguments: {
             "id": response["data"],
             "shopId": shopId,
+            "isAlreadyReviewed": response["is_already_reviewed"],
           },
         );
       } else {

@@ -3,6 +3,8 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
+import 'package:e_commerce/src/services/rating_service.dart';
+import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
@@ -16,10 +18,13 @@ class SuccessScreen extends StatefulWidget {
 
 class _SuccessScreenState extends State<SuccessScreen>
     with SingleTickerProviderStateMixin {
-  TextEditingController note = TextEditingController(text: '');
+  final ratingService = RatingService();
+  TextEditingController comment = TextEditingController(text: '');
   late AnimationController _controller;
   int id = 0;
   int shopId = 0;
+  bool isAlreadyReviewed = true;
+  double rating = 0.0;
 
   @override
   void initState() {
@@ -32,6 +37,10 @@ class _SuccessScreenState extends State<SuccessScreen>
       if (arguments != null) {
         id = arguments["id"] ?? 0;
         shopId = arguments["shopId"] ?? 0;
+        isAlreadyReviewed = arguments["isAlreadyReviewed"] ?? true;
+        if (!isAlreadyReviewed) {
+          ratingModel(context);
+        }
         setState(() {});
       }
     });
@@ -41,6 +50,25 @@ class _SuccessScreenState extends State<SuccessScreen>
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  addSellerReviews() async {
+    try {
+      final body = {
+        "shop_id": shopId,
+        "rating": rating,
+        "comment": comment.text,
+      };
+      final response = await ratingService.addSellerReviewsData(body);
+      Navigator.pop(context);
+      if (response["code"] == 200) {
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e) {
+      print('Error: $e');
+      Navigator.pop(context);
+    }
   }
 
   ratingModel(BuildContext context) {
@@ -54,7 +82,7 @@ class _SuccessScreenState extends State<SuccessScreen>
               Center(
                 child: RatingBar.builder(
                   initialRating: 0,
-                  minRating: 0,
+                  minRating: 1,
                   direction: Axis.horizontal,
                   allowHalfRating: true,
                   itemCount: 5,
@@ -68,7 +96,7 @@ class _SuccessScreenState extends State<SuccessScreen>
                     color: Colors.amber,
                   ),
                   onRatingUpdate: (rating) {
-                    print(rating);
+                    rating = rating;
                   },
                 ),
               ),
@@ -78,13 +106,14 @@ class _SuccessScreenState extends State<SuccessScreen>
                   bottom: 16,
                 ),
                 child: TextFormField(
-                  controller: note,
+                  controller: comment,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.done,
                   style: FontConstants.body1,
                   cursorColor: Colors.black,
+                  maxLength: 256,
                   decoration: InputDecoration(
-                    hintText: language["Note"] ?? "Note",
+                    hintText: language["Comment"] ?? "Comment",
                     filled: true,
                     fillColor: ColorConstants.fillcolor,
                     contentPadding: const EdgeInsets.symmetric(
@@ -141,11 +170,11 @@ class _SuccessScreenState extends State<SuccessScreen>
                             Theme.of(context).primaryColor),
                       ),
                       child: Text(
-                        language["Ok"] ?? "Ok",
+                        language["Post"] ?? "Post",
                         style: FontConstants.button1,
                       ),
                       onPressed: () async {
-                        Navigator.pop(context);
+                        addSellerReviews();
                       },
                     ),
                   ),

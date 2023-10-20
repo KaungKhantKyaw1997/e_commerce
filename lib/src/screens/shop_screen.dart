@@ -3,8 +3,10 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/products_service.dart';
+import 'package:e_commerce/src/services/rating_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});
@@ -16,8 +18,10 @@ class ShopScreen extends StatefulWidget {
 class _ShopScreenState extends State<ShopScreen> {
   final ScrollController _scrollController = ScrollController();
   final productsService = ProductsService();
+  final ratingService = RatingService();
   List products = [];
   List reviews = [];
+  List<double> ratings = [];
   Map<String, dynamic> shop = {};
 
   @override
@@ -30,6 +34,7 @@ class _ShopScreenState extends State<ShopScreen> {
       if (arguments != null) {
         shop = arguments;
         getProducts();
+        getSellerReviews();
       }
     });
   }
@@ -37,7 +42,45 @@ class _ShopScreenState extends State<ShopScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    // productsService.cancelRequest();
+    // ratingService.cancelRequest();
     super.dispose();
+  }
+
+  getSellerReviews() async {
+    try {
+      final response =
+          await ratingService.getSellerReviewsData(shop["shop_id"]);
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          setState(() {
+            reviews = response["data"];
+            for (var item in reviews) {
+              ratings.add(item["rating"]);
+            }
+            print(ratings);
+          });
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  double calculateAverageRating(ratings) {
+    if (ratings.isEmpty) {
+      return 0.0;
+    }
+
+    double totalRatings = 0.0;
+    for (double rating in ratings) {
+      totalRatings += rating;
+    }
+
+    double averageRating = totalRatings / ratings.length;
+    return averageRating;
   }
 
   getProducts() async {
@@ -62,22 +105,98 @@ class _ShopScreenState extends State<ShopScreen> {
     }
   }
 
-  reviewCard(index) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 12,
-          horizontal: 16,
+  averageRatingCard() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          Routes.reviews,
+          arguments: {
+            "reviews": reviews,
+          },
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.only(
+          top: 16,
         ),
-        child: Center(
-          child: Text(
-            reviews[index]["name"].toString(),
-            overflow: TextOverflow.ellipsis,
-            style: FontConstants.caption2,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 12,
+            horizontal: 16,
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 37,
+                height: 37,
+                margin: EdgeInsets.only(
+                  right: 8,
+                ),
+                padding: EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  border: Border.all(
+                    color: Colors.transparent,
+                  ),
+                  color: Color(0xffFFECB0),
+                ),
+                child: SvgPicture.asset(
+                  "assets/icons/star.svg",
+                  width: 16,
+                  height: 16,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.amber,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          language["Rating"] ?? "Rating",
+                          style: FontConstants.body1,
+                        ),
+                        SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          "-",
+                          style: FontConstants.body1,
+                        ),
+                        SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          calculateAverageRating(ratings).toString(),
+                          style: FontConstants.body1,
+                        )
+                      ],
+                    ),
+                    Text(
+                      '${reviews.length.toString()} ${language["Reviews"] ?? "Reviews"}',
+                      overflow: TextOverflow.ellipsis,
+                      style: FontConstants.caption1,
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 20,
+              ),
+            ],
           ),
         ),
       ),
@@ -232,44 +351,7 @@ class _ShopScreenState extends State<ShopScreen> {
                     ),
                   ),
                 ),
-                reviews.isNotEmpty
-                    ? Container(
-                        height: 110,
-                        child: ListView.builder(
-                          controller: _scrollController,
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: (reviews.length / 2).ceil(),
-                          itemBuilder: (context, pageIndex) {
-                            int startIndex = pageIndex * 2;
-                            int endIndex = (pageIndex * 2 + 1)
-                                .clamp(0, reviews.length - 1);
-
-                            return ListView.builder(
-                              controller: _scrollController,
-                              shrinkWrap: true,
-                              itemCount: endIndex - startIndex + 1,
-                              itemBuilder: (context, index) {
-                                int itemIndex = startIndex + index;
-                                if (itemIndex < reviews.length) {
-                                  return Padding(
-                                    padding: EdgeInsets.only(
-                                      right: 8,
-                                      bottom: 8,
-                                    ),
-                                    child: reviewCard(itemIndex),
-                                  );
-                                } else {
-                                  return Container();
-                                }
-                              },
-                            );
-                          },
-                          itemExtent:
-                              MediaQuery.of(context).size.width / 2 - 50,
-                        ),
-                      )
-                    : Container(),
+                reviews.isNotEmpty ? averageRatingCard() : Container(),
                 products.isNotEmpty
                     ? Container(
                         padding: EdgeInsets.only(
