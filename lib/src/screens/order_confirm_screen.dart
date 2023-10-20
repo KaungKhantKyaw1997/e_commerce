@@ -85,6 +85,8 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
       final response = await orderService.addOrderData(body);
       Navigator.pop(context);
       if (response["code"] == 200) {
+        int shopId = carts[0]["shop_id"];
+
         CartProvider cartProvider =
             Provider.of<CartProvider>(context, listen: false);
         cartProvider.addCount(0);
@@ -98,6 +100,7 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
           Routes.success,
           arguments: {
             "id": response["data"],
+            "shopId": shopId,
           },
         );
       } else {
@@ -157,7 +160,7 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
         centerTitle: true,
         elevation: 0,
         title: Text(
-          language["Cart"] ?? "Cart",
+          language["Order"] ?? "Order",
           style: FontConstants.title1,
         ),
         leading: BackButton(

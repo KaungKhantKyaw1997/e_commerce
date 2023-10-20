@@ -3,6 +3,7 @@ import 'package:e_commerce/src/screens/brands_setup_screen.dart';
 import 'package:e_commerce/src/screens/categories_setup_screen.dart';
 import 'package:e_commerce/src/screens/category_setup_screen.dart';
 import 'package:e_commerce/src/screens/order_confirm_screen.dart';
+import 'package:e_commerce/src/screens/order_screen.dart';
 import 'package:e_commerce/src/screens/product_setup_screen.dart';
 import 'package:e_commerce/src/screens/products_setup_screen.dart';
 import 'package:e_commerce/src/screens/shop_setup_screen.dart';
@@ -60,6 +61,7 @@ class Routes {
   static const String brands_setup = '/brands_setup';
   static const String category_setup = '/category_setup';
   static const String categories_setup = '/categories_setup';
+  static const String order = '/order';
   static const String order_confirm = '/order_confirm';
   static const String scan = "/scan";
 
@@ -95,6 +97,7 @@ class Routes {
     brands_setup: (BuildContext context) => const BrandsSetupScreen(),
     category_setup: (BuildContext context) => const CategorySetupScreen(),
     categories_setup: (BuildContext context) => const CategoriesSetupScreen(),
+    order: (BuildContext context) => const OrderScreen(),
     order_confirm: (BuildContext context) => const OrderConfirmScreen(),
   };
 }
