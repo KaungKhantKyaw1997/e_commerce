@@ -1317,7 +1317,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 child: TextFormField(
                                   controller: stockQuantity,
                                   focusNode: _stockQuantityFocusNode,
-                                  keyboardType: TextInputType.text,
+                                  keyboardType: TextInputType.number,
                                   textInputAction: TextInputAction.next,
                                   style: FontConstants.body1,
                                   cursorColor: Colors.black,
@@ -1492,7 +1492,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 child: TextFormField(
                                   controller: price,
                                   focusNode: _priceFocusNode,
-                                  keyboardType: TextInputType.text,
+                                  keyboardType: TextInputType.number,
                                   textInputAction: TextInputAction.next,
                                   style: FontConstants.body1,
                                   cursorColor: Colors.black,
