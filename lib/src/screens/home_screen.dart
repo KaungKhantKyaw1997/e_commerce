@@ -136,11 +136,12 @@ class _HomeScreenState extends State<HomeScreen>
 
   getTopModels() async {
     try {
-      final response = await productsService.getProductsData({
+      final body = {
         "is_top_model": true,
         "page": 1,
         "per_page": 10,
-      });
+      };
+      final response = await productsService.getProductsData(body);
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           setState(() {
@@ -606,7 +607,7 @@ class _HomeScreenState extends State<HomeScreen>
                                     onTap: () {
                                       Navigator.pushNamed(
                                         context,
-                                        Routes.products,
+                                        Routes.shop,
                                         arguments: shops[index],
                                       );
                                     },
