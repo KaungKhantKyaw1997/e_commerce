@@ -141,9 +141,13 @@ class AuthService {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String username = prefs.getString("username") ?? "";
     bool termsandconditions = prefs.getBool("termsandconditions") ?? false;
+    String searchhistoriesJson = prefs.getString("searchhistories") ?? "";
+
     prefs.clear();
     prefs.setString("username", username);
     prefs.setBool("termsandconditions", termsandconditions);
+    prefs.setString("searchhistories", searchhistoriesJson);
+
     await storage.delete(key: "token");
     await FirebaseMessaging.instance.deleteToken();
   }

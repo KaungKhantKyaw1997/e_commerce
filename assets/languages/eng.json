@@ -46,11 +46,9 @@
   "Cancel": "Cancel",
   "Ok": "Ok",
   "Are you sure you want to log out?": "Are you sure you want to log out?",
-  "Order No.": "Order No.",
+  "Are you sure you want to remove account?": "Are you sure you want to remove account?",
   "Date": "Date",
   "Time": "Time",
-  "Order Information": "Order Information",
-  "Information": "Information",
   "Address": "Address",
   "Enter Address": "Enter Address",
   "Brand": "Brand",
@@ -117,6 +115,7 @@
   "Order Status": "Order Status",
   "Deliver to": "Deliver to",
   "Payslip": "Payslip",
+  "Search Histories": "Search Histories",
   "You can only order items from one shop at a time. Please place separate orders for items from different shops!": "You can only order items from one shop at a time. Please place separate orders for items from different shops!",
   "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!": "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!"
 }

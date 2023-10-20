@@ -15,6 +15,7 @@ import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/screens/bottombar_screen.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -518,20 +519,20 @@ class _HomeScreenState extends State<HomeScreen>
                 )
               : null,
           actions: [
-            // IconButton(
-            //   icon: SvgPicture.asset(
-            //     "assets/icons/scan.svg",
-            //     width: 24,
-            //     height: 24,
-            //     colorFilter: const ColorFilter.mode(
-            //       Colors.black,
-            //       BlendMode.srcIn,
-            //     ),
-            //   ),
-            //   onPressed: () {
-            //     Navigator.of(context).pushNamed(Routes.scan);
-            //   },
-            // ),
+            IconButton(
+              icon: SvgPicture.asset(
+                "assets/icons/search.svg",
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  Colors.black,
+                  BlendMode.srcIn,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pushNamed(Routes.search);
+              },
+            ),
           ],
           bottom: TabBar(
             controller: _tabController,
@@ -658,7 +659,7 @@ class _HomeScreenState extends State<HomeScreen>
                                           },
                                           child: Text(
                                             language["See More"] ?? "See More",
-                                            style: FontConstants.caption1,
+                                            style: FontConstants.caption5,
                                           ),
                                         ),
                                       ],
@@ -723,7 +724,7 @@ class _HomeScreenState extends State<HomeScreen>
                                           },
                                           child: Text(
                                             language["See More"] ?? "See More",
-                                            style: FontConstants.caption1,
+                                            style: FontConstants.caption5,
                                           ),
                                         ),
                                       ],
@@ -807,7 +808,7 @@ class _HomeScreenState extends State<HomeScreen>
                                           },
                                           child: Text(
                                             language["See More"] ?? "See More",
-                                            style: FontConstants.caption1,
+                                            style: FontConstants.caption5,
                                           ),
                                         ),
                                       ],
