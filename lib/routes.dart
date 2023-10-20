@@ -4,6 +4,7 @@ import 'package:e_commerce/src/screens/categories_setup_screen.dart';
 import 'package:e_commerce/src/screens/category_setup_screen.dart';
 import 'package:e_commerce/src/screens/order_confirm_screen.dart';
 import 'package:e_commerce/src/screens/order_screen.dart';
+import 'package:e_commerce/src/screens/product_filter_screen.dart';
 import 'package:e_commerce/src/screens/product_setup_screen.dart';
 import 'package:e_commerce/src/screens/products_setup_screen.dart';
 import 'package:e_commerce/src/screens/shop_setup_screen.dart';
@@ -63,6 +64,7 @@ class Routes {
   static const String categories_setup = '/categories_setup';
   static const String order = '/order';
   static const String order_confirm = '/order_confirm';
+  static const String products_filter = '/products_filter';
   static const String scan = "/scan";
 
   static final Map<String, WidgetBuilder> routes = {
@@ -99,5 +101,6 @@ class Routes {
     categories_setup: (BuildContext context) => const CategoriesSetupScreen(),
     order: (BuildContext context) => const OrderScreen(),
     order_confirm: (BuildContext context) => const OrderConfirmScreen(),
+    products_filter: (BuildContext context) => const ProductsFilterScreen(),
   };
 }

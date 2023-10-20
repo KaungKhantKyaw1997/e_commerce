@@ -1,10 +1,7 @@
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
-import 'package:e_commerce/src/services/models_service.dart';
 import 'package:e_commerce/src/services/products_service.dart';
-import 'package:e_commerce/src/utils/currency_input_formatter.dart';
 import 'package:e_commerce/src/utils/toast.dart';
-import 'package:e_commerce/src/widgets/multi_select_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
@@ -22,17 +19,18 @@ class ProductsScreen extends StatefulWidget {
 
 class _ProductsScreenState extends State<ProductsScreen>
     with SingleTickerProviderStateMixin {
-  final modelsService = ModelsService();
   final productsService = ProductsService();
-  FocusNode _fromFocusNode = FocusNode();
-  FocusNode _toFocusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   TextEditingController search = TextEditingController(text: '');
+
   TextEditingController _fromPrice = TextEditingController(text: '');
   TextEditingController _toPrice = TextEditingController(text: '');
+  double _startValue = 0;
+  double _endValue = 0;
   NumberFormat formatter = NumberFormat('###,###.00', 'en_US');
+  List<String> selectedModels = [];
 
   List products = [];
   int page = 1;
@@ -41,17 +39,13 @@ class _ProductsScreenState extends State<ProductsScreen>
   int brandId = 0;
   List<int> productIds = [];
   List brands = [];
-  List<String> models = [];
-  List<String> selectedModels = [];
-  double _startValue = 0;
-  double _endValue = 0;
+
   bool isTopModel = false;
   bool _dataLoaded = false;
 
   @override
   void initState() {
     super.initState();
-    getModels();
     Future.delayed(Duration.zero, () {
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
@@ -72,27 +66,8 @@ class _ProductsScreenState extends State<ProductsScreen>
 
   @override
   void dispose() {
-    // modelsService.cancelRequest();
     _scrollController.dispose();
     super.dispose();
-  }
-
-  getModels() async {
-    try {
-      final response = await modelsService.getModelsData();
-      if (response!["code"] == 200) {
-        if (response["data"].isNotEmpty) {
-          setState(() {
-            List<dynamic> dynamicList = response["data"];
-            models = dynamicList.map((item) => item.toString()).toList();
-          });
-        }
-      } else {
-        ToastUtil.showToast(response["code"], response["message"]);
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
   }
 
   getProducts() async {
@@ -145,328 +120,6 @@ class _ProductsScreenState extends State<ProductsScreen>
       _refreshController.loadComplete();
       print('Error: $e');
     }
-  }
-
-  void _showFilterBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                _fromFocusNode.unfocus();
-                _toFocusNode.unfocus();
-              },
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                ),
-                height:
-                    MediaQuery.of(context).orientation == Orientation.landscape
-                        ? MediaQuery.of(context).size.height - 10
-                        : MediaQuery.of(context).size.height - 300,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: 10,
-                        bottom: 10,
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        width: 45,
-                        height: 4,
-                      ),
-                    ),
-                    Expanded(
-                      child: DraggableScrollableSheet(
-                        initialChildSize: 1.0,
-                        maxChildSize: 1.0,
-                        minChildSize: 0.2,
-                        builder: (BuildContext context,
-                            ScrollController scrollController) {
-                          return ListView(
-                            controller: scrollController,
-                            physics: NeverScrollableScrollPhysics(),
-                            children: [
-                              Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 8,
-                                  ),
-                                  child: Text(
-                                    language["Price Range"] ?? "Price Range",
-                                    style: FontConstants.subheadline1,
-                                  ),
-                                ),
-                              ),
-                              RangeSlider(
-                                values: RangeValues(_startValue, _endValue),
-                                onChanged: (RangeValues values) {
-                                  setState(() {
-                                    _startValue = values.start;
-                                    _endValue = values.end;
-                                    _fromPrice.text = _startValue.toString();
-                                    _toPrice.text = _endValue.toString();
-                                    // _fromPrice.text =
-                                    //     '${formatter.format(_startValue)}';
-                                    // _toPrice.text =
-                                    //     '${formatter.format(_endValue)}';
-                                  });
-                                },
-                                min: 0,
-                                max: 500000,
-                                divisions: 500,
-                                labels: RangeLabels(
-                                  _startValue.toString(),
-                                  _endValue.toString(),
-                                ),
-                                // labels: RangeLabels(
-                                //     '${formatter.format(_startValue)}',
-                                //     '${formatter.format(_endValue)}'),
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: 16,
-                                        right: 4,
-                                        top: 8,
-                                      ),
-                                      child: TextFormField(
-                                        controller: _fromPrice,
-                                        focusNode: _fromFocusNode,
-                                        // inputFormatters: [
-                                        //   CurrencyInputFormatter()
-                                        // ],
-                                        keyboardType: TextInputType.number,
-                                        textInputAction: TextInputAction.next,
-                                        style: FontConstants.body1,
-                                        cursorColor: Colors.black,
-                                        decoration: InputDecoration(
-                                          hintText: language["From"] ?? "From",
-                                          filled: true,
-                                          fillColor: ColorConstants.fillcolor,
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 14,
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: 4,
-                                        right: 16,
-                                        top: 8,
-                                      ),
-                                      child: TextFormField(
-                                        controller: _toPrice,
-                                        focusNode: _toFocusNode,
-                                        // inputFormatters: [
-                                        //   CurrencyInputFormatter()
-                                        // ],
-                                        keyboardType: TextInputType.number,
-                                        textInputAction: TextInputAction.next,
-                                        style: FontConstants.body1,
-                                        cursorColor: Colors.black,
-                                        decoration: InputDecoration(
-                                          hintText: language["To"] ?? "To",
-                                          filled: true,
-                                          fillColor: ColorConstants.fillcolor,
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 14,
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            borderSide: BorderSide.none,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 8,
-                                  ),
-                                  child: Text(
-                                    language["Models"] ?? "Models",
-                                    style: FontConstants.subheadline1,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 12,
-                                  right: 12,
-                                ),
-                                child: MultiSelectChip(
-                                  models,
-                                  selectedModels,
-                                  onSelectionChanged: (selectedList) {
-                                    setState(() {
-                                      selectedModels = selectedList;
-                                    });
-                                  },
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 10,
-                        bottom: 10,
-                      ),
-                      child: const Divider(
-                        height: 0,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: FractionallySizedBox(
-                            widthFactor: 1,
-                            child: Container(
-                              padding: const EdgeInsets.only(
-                                left: 16,
-                                right: 16,
-                                bottom: 16,
-                              ),
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 14,
-                                    vertical: 12,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  backgroundColor: Colors.white,
-                                  side: BorderSide(
-                                    color: Theme.of(context).primaryColor,
-                                    width: 0.5,
-                                  ),
-                                ),
-                                onPressed: () async {
-                                  Navigator.pop(context);
-                                  _startValue = 0.0;
-                                  _endValue = 0.0;
-                                  _fromPrice.text = '';
-                                  _toPrice.text = '';
-                                  selectedModels = [];
-                                  page = 1;
-                                  products = [];
-                                  getProducts();
-                                },
-                                child: Text(
-                                  language["Clear"] ?? "Clear",
-                                  style: FontConstants.button2,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: FractionallySizedBox(
-                            widthFactor: 1,
-                            child: Container(
-                              padding: const EdgeInsets.only(
-                                left: 16,
-                                right: 16,
-                                bottom: 16,
-                              ),
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 14,
-                                    vertical: 12,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  backgroundColor:
-                                      Theme.of(context).primaryColor,
-                                ),
-                                onPressed: () async {
-                                  Navigator.pop(context);
-                                  page = 1;
-                                  products = [];
-                                  getProducts();
-                                },
-                                child: Text(
-                                  language["Apply Filters"] ?? "Apply Filters",
-                                  style: FontConstants.button1,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
   }
 
   productCard(index) {
@@ -569,10 +222,6 @@ class _ProductsScreenState extends State<ProductsScreen>
             ),
           ),
           onChanged: (value) {
-            _startValue = 0;
-            _endValue = 0;
-            _fromPrice.text = '';
-            _toPrice.text = '';
             page = 1;
             products = [];
             getProducts();
@@ -589,8 +238,29 @@ class _ProductsScreenState extends State<ProductsScreen>
                 BlendMode.srcIn,
               ),
             ),
-            onPressed: () {
-              _showFilterBottomSheet(context);
+            onPressed: () async {
+              var result = await Navigator.pushNamed(
+                context,
+                Routes.products_filter,
+                arguments: {
+                  "_fromPrice": _fromPrice.text,
+                  "_toPrice": _toPrice.text,
+                  "_startValue": _startValue,
+                  "_endValue": _endValue,
+                  "selectedModels": selectedModels,
+                },
+              );
+
+              if (result != null && result is Map<String, dynamic>) {
+                _fromPrice.text = result["_fromPrice"] ?? '';
+                _toPrice.text = result["_toPrice"] ?? '';
+                _startValue = result["_startValue"] ?? 0;
+                _endValue = result["_endValue"] ?? 0;
+                selectedModels = result["selectedModels"] ?? [];
+                page = 1;
+                products = [];
+                getProducts();
+              }
             },
           ),
         ],
