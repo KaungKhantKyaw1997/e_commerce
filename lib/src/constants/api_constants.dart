@@ -27,4 +27,5 @@ class ApiConstants {
   static const String insuranceRulesUrl = '$baseUrl/api/insurance-rules';
   static const String deleteAccountUrl = '$baseUrl/api/delete-account';
   static const String currenciesUrl = '$baseUrl/api/currencies';
+  static const String sellerReviews = '$baseUrl/api/seller-reviews';
 }
