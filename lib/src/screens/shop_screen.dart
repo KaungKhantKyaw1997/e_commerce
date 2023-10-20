@@ -17,6 +17,7 @@ class _ShopScreenState extends State<ShopScreen> {
   final ScrollController _scrollController = ScrollController();
   final productsService = ProductsService();
   List products = [];
+  List reviews = [];
   Map<String, dynamic> shop = {};
 
   @override
@@ -59,6 +60,28 @@ class _ShopScreenState extends State<ShopScreen> {
     } catch (e) {
       print('Error: $e');
     }
+  }
+
+  reviewCard(index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: 12,
+          horizontal: 16,
+        ),
+        child: Center(
+          child: Text(
+            reviews[index]["name"].toString(),
+            overflow: TextOverflow.ellipsis,
+            style: FontConstants.caption2,
+          ),
+        ),
+      ),
+    );
   }
 
   productsCard(index) {
@@ -209,6 +232,44 @@ class _ShopScreenState extends State<ShopScreen> {
                     ),
                   ),
                 ),
+                reviews.isNotEmpty
+                    ? Container(
+                        height: 110,
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: (reviews.length / 2).ceil(),
+                          itemBuilder: (context, pageIndex) {
+                            int startIndex = pageIndex * 2;
+                            int endIndex = (pageIndex * 2 + 1)
+                                .clamp(0, reviews.length - 1);
+
+                            return ListView.builder(
+                              controller: _scrollController,
+                              shrinkWrap: true,
+                              itemCount: endIndex - startIndex + 1,
+                              itemBuilder: (context, index) {
+                                int itemIndex = startIndex + index;
+                                if (itemIndex < reviews.length) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                      right: 8,
+                                      bottom: 8,
+                                    ),
+                                    child: reviewCard(itemIndex),
+                                  );
+                                } else {
+                                  return Container();
+                                }
+                              },
+                            );
+                          },
+                          itemExtent:
+                              MediaQuery.of(context).size.width / 2 - 50,
+                        ),
+                      )
+                    : Container(),
                 products.isNotEmpty
                     ? Container(
                         padding: EdgeInsets.only(
