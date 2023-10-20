@@ -1,0 +1,350 @@
+import 'package:e_commerce/global.dart';
+import 'package:e_commerce/src/constants/color_constants.dart';
+import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/src/services/models_service.dart';
+import 'package:e_commerce/src/utils/toast.dart';
+import 'package:e_commerce/src/widgets/multi_select_chip.dart';
+import 'package:flutter/material.dart';
+
+class ProductsFilterScreen extends StatefulWidget {
+  const ProductsFilterScreen({super.key});
+
+  @override
+  State<ProductsFilterScreen> createState() => _ProductsFilterScreenState();
+}
+
+class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
+  final modelsService = ModelsService();
+  final ScrollController _scrollController = ScrollController();
+  final _formKey = GlobalKey<FormState>();
+
+  FocusNode _fromFocusNode = FocusNode();
+  FocusNode _toFocusNode = FocusNode();
+  TextEditingController _fromPrice = TextEditingController(text: '');
+  TextEditingController _toPrice = TextEditingController(text: '');
+  double _startValue = 0;
+  double _endValue = 0;
+
+  List<String> models = [];
+  List<String> selectedModels = [];
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () async {
+      await getModels();
+      final arguments =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
+      if (arguments != null) {
+        _fromPrice.text = arguments["_fromPrice"] ?? '';
+        _toPrice.text = arguments["_toPrice"] ?? '';
+        _startValue = arguments["_startValue"] ?? 0;
+        _endValue = arguments["_endValue"] ?? 0;
+        selectedModels = arguments["selectedModels"] ?? [];
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // modelsService.cancelRequest();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  getModels() async {
+    try {
+      final response = await modelsService.getModelsData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          setState(() {
+            List<dynamic> dynamicList = response["data"];
+            models = dynamicList.map((item) => item.toString()).toList();
+          });
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        _fromFocusNode.unfocus();
+        _toFocusNode.unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          centerTitle: true,
+          elevation: 0,
+          title: Text(
+            language["Products"] ?? "Products",
+            style: FontConstants.title1,
+          ),
+          leading: BackButton(
+            color: Theme.of(context).primaryColor,
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+        backgroundColor: Colors.white,
+        body: WillPopScope(
+          onWillPop: () async {
+            Navigator.of(context).pop();
+            return true;
+          },
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Form(
+              key: _formKey,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 24,
+                ),
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        language["Price Range"] ?? "Price Range",
+                        style: FontConstants.subheadline1,
+                      ),
+                    ),
+                    RangeSlider(
+                      values: RangeValues(_startValue, _endValue),
+                      onChanged: (RangeValues values) {
+                        setState(() {
+                          _startValue = values.start;
+                          _endValue = values.end;
+                          _fromPrice.text = _startValue.toString();
+                          _toPrice.text = _endValue.toString();
+                          // _fromPrice.text =
+                          //     '${formatter.format(_startValue)}';
+                          // _toPrice.text =
+                          //     '${formatter.format(_endValue)}';
+                        });
+                      },
+                      min: 0,
+                      max: 500000,
+                      divisions: 500,
+                      labels: RangeLabels(
+                        _startValue.toString(),
+                        _endValue.toString(),
+                      ),
+                      // labels: RangeLabels(
+                      //     '${formatter.format(_startValue)}',
+                      //     '${formatter.format(_endValue)}'),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              right: 4,
+                              top: 8,
+                            ),
+                            child: TextFormField(
+                              controller: _fromPrice,
+                              focusNode: _fromFocusNode,
+                              // inputFormatters: [
+                              //   CurrencyInputFormatter()
+                              // ],
+                              keyboardType: TextInputType.number,
+                              textInputAction: TextInputAction.next,
+                              style: FontConstants.body1,
+                              cursorColor: Colors.black,
+                              decoration: InputDecoration(
+                                hintText: language["From"] ?? "From",
+                                filled: true,
+                                fillColor: ColorConstants.fillcolor,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 14,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide.none,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedErrorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide.none,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              left: 4,
+                              top: 8,
+                            ),
+                            child: TextFormField(
+                              controller: _toPrice,
+                              focusNode: _toFocusNode,
+                              // inputFormatters: [
+                              //   CurrencyInputFormatter()
+                              // ],
+                              keyboardType: TextInputType.number,
+                              textInputAction: TextInputAction.next,
+                              style: FontConstants.body1,
+                              cursorColor: Colors.black,
+                              decoration: InputDecoration(
+                                hintText: language["To"] ?? "To",
+                                filled: true,
+                                fillColor: ColorConstants.fillcolor,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 14,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide.none,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedErrorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide.none,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        language["Models"] ?? "Models",
+                        style: FontConstants.subheadline1,
+                      ),
+                    ),
+                    MultiSelectChip(
+                      models,
+                      selectedModels,
+                      onSelectionChanged: (selectedList) {
+                        setState(() {
+                          selectedModels = selectedList;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        bottomNavigationBar: Row(
+          children: [
+            Expanded(
+              child: FractionallySizedBox(
+                widthFactor: 1,
+                child: Container(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
+                  ),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      backgroundColor: Colors.white,
+                      side: BorderSide(
+                        color: Theme.of(context).primaryColor,
+                        width: 0.5,
+                      ),
+                    ),
+                    onPressed: () async {
+                      _startValue = 0.0;
+                      _endValue = 0.0;
+                      _fromPrice.text = '';
+                      _toPrice.text = '';
+                      selectedModels = [];
+
+                      Navigator.of(context).pop({
+                        "_fromPrice": _fromPrice.text,
+                        "_toPrice": _toPrice.text,
+                        "_startValue": _startValue,
+                        "_endValue": _endValue,
+                        "selectedModels": selectedModels,
+                      });
+                    },
+                    child: Text(
+                      language["Clear"] ?? "Clear",
+                      style: FontConstants.button2,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: FractionallySizedBox(
+                widthFactor: 1,
+                child: Container(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
+                  ),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      backgroundColor: Theme.of(context).primaryColor,
+                    ),
+                    onPressed: () async {
+                      Navigator.of(context).pop({
+                        "_fromPrice": _fromPrice.text,
+                        "_toPrice": _toPrice.text,
+                        "_startValue": _startValue,
+                        "_endValue": _endValue,
+                        "selectedModels": selectedModels,
+                      });
+                    },
+                    child: Text(
+                      language["Apply Filters"] ?? "Apply Filters",
+                      style: FontConstants.button1,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
