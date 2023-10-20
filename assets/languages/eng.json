@@ -108,5 +108,7 @@
   "I AGREE": "I AGREE",
   "Enter Content": "Enter Content",
   "Price": "Price",
-  "Remove Account": "Remove Account"
+  "Enter Price": "Enter Price",
+  "Remove Account": "Remove Account",
+  "You can only order items from one shop at a time. Please place separate orders for items from different shops!": "You can only order items from one shop at a time. Please place separate orders for items from different shops!"
 }

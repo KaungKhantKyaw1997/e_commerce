@@ -628,30 +628,40 @@ class _ProductScreenState extends State<ProductScreen> {
                     ),
                   ),
                   onPressed: () async {
-                    if (product['quantity'] > 0) {
-                      if (updateCart) {
-                        for (var cart in carts) {
-                          if (cart["product_id"] == product["product_id"]) {
-                            cart["quantity"] = product["quantity"] ?? 0;
-                            cart["totalamount"] = product["totalamount"] ?? 0.0;
-                            break;
-                          }
-                        }
-                      } else {
-                        carts.add(product);
-                      }
-
-                      saveListToSharedPreferences(carts);
-
-                      CartProvider cartProvider =
-                          Provider.of<CartProvider>(context, listen: false);
-                      cartProvider.addCount(carts.length);
-
-                      Navigator.pop(context);
-                    } else {
+                    if (product['quantity'] <= 0) {
                       ToastUtil.showToast(
                           0, language["Choose Quantity"] ?? "Choose Quantity");
+                      return;
                     }
+                    if (carts.isNotEmpty) {
+                      if (product['shop_id'] != carts[0]['shop_id']) {
+                        ToastUtil.showToast(
+                            0,
+                            language[
+                                    "You can only order items from one shop at a time. Please place separate orders for items from different shops!"] ??
+                                "You can only order items from one shop at a time. Please place separate orders for items from different shops!");
+                        return;
+                      }
+                    }
+                    if (updateCart) {
+                      for (var cart in carts) {
+                        if (cart["product_id"] == product["product_id"]) {
+                          cart["quantity"] = product["quantity"] ?? 0;
+                          cart["totalamount"] = product["totalamount"] ?? 0.0;
+                          break;
+                        }
+                      }
+                    } else {
+                      carts.add(product);
+                    }
+
+                    saveListToSharedPreferences(carts);
+
+                    CartProvider cartProvider =
+                        Provider.of<CartProvider>(context, listen: false);
+                    cartProvider.addCount(carts.length);
+
+                    Navigator.pop(context);
                   },
                   child: Text(
                     language["Add to cart"] ?? "Add to cart",
@@ -683,37 +693,47 @@ class _ProductScreenState extends State<ProductScreen> {
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
                   onPressed: () async {
-                    if (product['quantity'] > 0) {
-                      if (updateCart) {
-                        for (var cart in carts) {
-                          if (cart["product_id"] == product["product_id"]) {
-                            cart["quantity"] = product["quantity"] ?? 0;
-                            cart["totalamount"] = product["totalamount"] ?? 0.0;
-                            break;
-                          }
-                        }
-                      } else {
-                        carts.add(product);
-                      }
-
-                      saveListToSharedPreferences(carts);
-
-                      CartProvider cartProvider =
-                          Provider.of<CartProvider>(context, listen: false);
-                      cartProvider.addCount(carts.length);
-
-                      BottomProvider bottomProvider =
-                          Provider.of<BottomProvider>(context, listen: false);
-                      bottomProvider.selectIndex(1);
-
-                      Navigator.pushNamed(
-                        context,
-                        Routes.cart,
-                      );
-                    } else {
+                    if (product['quantity'] <= 0) {
                       ToastUtil.showToast(
                           0, language["Choose Quantity"] ?? "Choose Quantity");
+                      return;
                     }
+                    if (carts.isNotEmpty) {
+                      if (product['shop_id'] != carts[0]['shop_id']) {
+                        ToastUtil.showToast(
+                            0,
+                            language[
+                                    "You can only order items from one shop at a time. Please place separate orders for items from different shops!"] ??
+                                "You can only order items from one shop at a time. Please place separate orders for items from different shops!");
+                        return;
+                      }
+                    }
+                    if (updateCart) {
+                      for (var cart in carts) {
+                        if (cart["product_id"] == product["product_id"]) {
+                          cart["quantity"] = product["quantity"] ?? 0;
+                          cart["totalamount"] = product["totalamount"] ?? 0.0;
+                          break;
+                        }
+                      }
+                    } else {
+                      carts.add(product);
+                    }
+
+                    saveListToSharedPreferences(carts);
+
+                    CartProvider cartProvider =
+                        Provider.of<CartProvider>(context, listen: false);
+                    cartProvider.addCount(carts.length);
+
+                    BottomProvider bottomProvider =
+                        Provider.of<BottomProvider>(context, listen: false);
+                    bottomProvider.selectIndex(1);
+
+                    Navigator.pushNamed(
+                      context,
+                      Routes.cart,
+                    );
                   },
                   child: Text(
                     language["Buy Now"] ?? "Buy Now",
