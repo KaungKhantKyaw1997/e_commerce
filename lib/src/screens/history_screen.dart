@@ -324,6 +324,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                           ["status"],
                                       "commission_amount": orders[index]
                                           ["items"][i]["commission_amount"],
+                                      "symbol": orders[index]["items"][i]
+                                          ["symbol"],
                                     },
                                   );
                                 },

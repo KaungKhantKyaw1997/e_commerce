@@ -1,6 +1,7 @@
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/utils/loading.dart';
+import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
@@ -22,7 +23,7 @@ class HistoryDetailsScreen extends StatefulWidget {
 class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
   final orderService = OrderService();
   Map<String, dynamic> details = {};
-  List statuslist = [
+  List<String> statuslist = [
     "Pending",
     "Processing",
     "Shipped",
@@ -58,13 +59,13 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
     "payslip_screenshot_path": "",
     "created_at": "",
     "commission_amount": 0.0,
+    "symbol": "",
   };
   List<Map<String, dynamic>> orderItems = [];
 
   @override
   void initState() {
     super.initState();
-
     Future.delayed(Duration.zero, () {
       getData();
       final arguments =
@@ -72,8 +73,8 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
       if (arguments != null) {
         getOrderDetails(arguments["order_id"]);
         setState(() {
-          this.orderData = arguments;
-          this.status = this.orderData['status'];
+          orderData = arguments;
+          status = orderData['status'];
         });
       }
     });
@@ -130,455 +131,442 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
     }
   }
 
+  void _onDropdownChanged(String newValue) {
+    if (newValue != null) {
+      setState(() {
+        status = newValue;
+        orderData["status"] = newValue;
+      });
+      updateOrder();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        foregroundColor: Colors.black,
         backgroundColor: Colors.white,
+        centerTitle: true,
         elevation: 0,
         title: Text(
-          language['Track Order'] ?? 'Track Order',
-          style: TextStyle(
-            color: Colors.black,
-          ),
+          language["Track Order"] ?? "Track Order",
+          style: FontConstants.title1,
         ),
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () =>
-                Navigator.of(context).popAndPushNamed(Routes.history)),
+        leading: BackButton(
+          color: Theme.of(context).primaryColor,
+          onPressed: () {
+            Navigator.of(context).pop();
+            Navigator.of(context).popAndPushNamed(
+              Routes.history,
+            );
+          },
+        ),
       ),
-      body: Container(
-        // color: Colors.white,
-        child: Stack(
+      body: WillPopScope(
+        onWillPop: () async {
+          Navigator.of(context).pop();
+          Navigator.of(context).popAndPushNamed(
+            Routes.history,
+          );
+          return true;
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            Container(
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 24,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    orderData["created_at"].isEmpty
+                        ? ""
+                        : Jiffy.parseFromDateTime(
+                                DateTime.parse(orderData["created_at"] + "Z")
+                                    .toLocal())
+                            .format(pattern: "dd MMM yyyy, hh:mm a"),
+                    style: FontConstants.body1,
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
                     children: [
                       Text(
-                        orderData["created_at"].isEmpty
-                            ? ""
-                            : Jiffy.parseFromDateTime(DateTime.parse(
-                                        orderData["created_at"] + "Z")
-                                    .toLocal())
-                                .format(pattern: "dd MMM yyyy, hh:mm a"),
-                        style: TextStyle(
-                          color: Color(0xff7B7B7B),
-                          fontWeight: FontWeight.bold,
-                        ),
+                        '${language["Order ID"] ?? "Order ID"}: #${orderData["order_id"]}',
+                        style: FontConstants.body1,
                       ),
-                      SizedBox(height: 5),
+                      Spacer(),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.baseline,
                         textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text(
-                            'Order ID: #${orderData["order_id"]}',
-                            style: TextStyle(
-                              color: Color(0xff7B7B7B),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Spacer(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
-                            children: [
-                              Text(
-                                'Amt: ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              FormattedAmount(
-                                amount: orderData["order_total"],
-                                mainTextStyle: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                                decimalTextStyle: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      SizedBox(height: 5),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            'Commission: ',
-                            style: TextStyle(
-                              color: Color(0xff7B7B7B),
-                              fontWeight: FontWeight.bold,
-                            ),
+                            orderData['symbol'].toString(),
+                            style: FontConstants.body1,
                           ),
                           FormattedAmount(
-                            amount: orderData["commission_amount"],
-                            mainTextStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                            decimalTextStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            amount: orderData["order_total"],
+                            mainTextStyle: FontConstants.body1,
+                            decimalTextStyle: FontConstants.caption2,
                           ),
                         ],
-                      ),
-                      SizedBox(height: 5),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            'Payment Type: ',
-                            style: TextStyle(
-                              color: Color(0xff7B7B7B),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            "${orderData['payment_type']}",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                      // New code begins here
-                      SizedBox(height: 5),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            "Order Status:",
-                            style: TextStyle(
-                              color: Color(0xff7B7B7B),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Spacer(),
-                          role == "admin"
-                              ? Container(
-                                  width: 150,
-                                  child: DropdownButtonFormField<String>(
-                                    decoration: InputDecoration(
-                                      isDense: true,
-                                      // labelText: "Order Status",
-                                      filled: true,
-                                      fillColor: Colors.white,
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                            color: Colors.grey.shade400,
-                                            width: 2),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                        borderSide: BorderSide(
-                                            color: Colors.green, width: 2),
-                                      ),
-                                    ),
-                                    value: status,
-                                    icon: Icon(
-                                      Icons.arrow_drop_down,
-                                      color: Colors
-                                          .green, // Change color to suit your theme
-                                    ),
-                                    iconSize: 24,
-                                    elevation: 16,
-                                    style: TextStyle(
-                                        color: Colors.black87,
-                                        fontSize: 16), // Change text style
-                                    onChanged: (newValue) {
-                                      if (newValue != null) {
-                                        setState(() {
-                                          status = newValue;
-                                          orderData["status"] = newValue;
-                                        });
-                                        updateOrder();
-                                      }
-                                    },
-                                    items: statuslist
-                                        .map<DropdownMenuItem<String>>((value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(
-                                              0.0), // Adds padding to the item
-                                          child: Text(value),
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                )
-                              : Text(
-                                  status,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                        ],
-                      ),
-
-                      // New code ends here
-                      // SizedBox(height: 15),
+                      )
                     ],
                   ),
-                ),
-                Expanded(
-                  child: Container(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20.0,
+                  SizedBox(
+                    height: 2,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(
+                        '${language["Commission"] ?? "Commission"}: ',
+                        style: FontConstants.body1,
                       ),
-                      child: ListView(
-                        children: [
-                          role == "admin"
-                              ? Container(
-                                  padding: const EdgeInsets.all(20),
-                                  margin: const EdgeInsets.only(
-                                      bottom:
-                                          20), // Optional, to give some spacing between this container and the others
-                                  decoration: BoxDecoration(
-                                    color: Color(0xff36936C),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // User Name
-                                        Row(
-                                          children: [
-                                            Icon(Icons.person_outline,
-                                                color: Colors.white, size: 20),
-                                            SizedBox(width: 8),
-                                            Text(
-                                              'Ordered by: ${orderData["user_name"]}',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 10),
-
-                                        // Phone Number
-                                        GestureDetector(
-                                          onTap: () async {
-                                            String phoneNumber =
-                                                orderData["phone"];
-                                            String uri = 'tel:+$phoneNumber';
-                                            await launchUrl(Uri.parse(uri));
-                                          },
-                                          child: Row(
-                                            children: [
-                                              Icon(Icons.phone,
-                                                  color: Colors.white,
-                                                  size: 20),
-                                              SizedBox(width: 8),
-                                              Text(
-                                                "+" + orderData["phone"],
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 14,
-                                                  decoration:
-                                                      TextDecoration.underline,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(height: 10),
-
-                                        // Email
-                                        GestureDetector(
-                                          onTap: () async {
-                                            String emailAddress =
-                                                orderData["email"];
-                                            String uri =
-                                                'mailto:+$emailAddress';
-                                            await launchUrl(Uri.parse(uri));
-                                          },
-                                          child: Row(
-                                            children: [
-                                              Icon(Icons.email_outlined,
-                                                  color: Colors.white,
-                                                  size: 20),
-                                              SizedBox(width: 8),
-                                              Text(
-                                                orderData["email"],
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 14,
-                                                  decoration:
-                                                      TextDecoration.underline,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ]),
-                                )
-                              : Text(""),
-                          role == "admin" || role == "user"
-                              ? Container(
-                                  padding: const EdgeInsets.all(20),
-                                  decoration: BoxDecoration(
-                                    color: Color(0xff1f335a),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Spacer(),
-                                          Text('ADDRESS',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12)),
-                                        ],
-                                      ),
-                                      Text('Deliver to',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontStyle: FontStyle.italic,
-                                          )),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                          '${orderData["home_address"]}, ${orderData["street_address"]}, Ward ${orderData["ward"]}, ${orderData["township"]}',
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                      Text(
-                                          '${orderData["city"]}, ${orderData["state"]} ${orderData["postal_code"]}',
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                      Text('${orderData["country"]}',
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                    ],
-                                  ),
-                                )
-                              : Text(""),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          ...orderItems.map((item) {
-                            return Card(
-                              elevation: 0,
-                              margin: EdgeInsets.symmetric(vertical: 10),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    20), // Rounded corners for Card
+                      FormattedAmount(
+                        amount: orderData["commission_amount"],
+                        mainTextStyle: FontConstants.body1,
+                        decimalTextStyle: FontConstants.caption2,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(
+                        '${language["Payment Type"] ?? "Payment Type"}: ',
+                        style: FontConstants.body1,
+                      ),
+                      Text(
+                        "${orderData['payment_type']}",
+                        style: FontConstants.body1,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '${language["Order Status"] ?? "Order Status"}: ',
+                          style: FontConstants.body1,
+                        ),
+                      ),
+                      Expanded(
+                        child: role == 'admin'
+                            ? CustomDropDown(
+                                value: status,
+                                fillColor: Colors.white,
+                                onChanged: (newValue) {
+                                  if (newValue != null) {
+                                    setState(() {
+                                      status = newValue;
+                                      orderData["status"] = newValue;
+                                    });
+                                    updateOrder();
+                                  }
+                                },
+                                items: statuslist,
+                              )
+                            : Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  status,
+                                  style: FontConstants.body1,
+                                ),
                               ),
-                              child: ListTile(
-                                leading: Image.network(
-                                  ApiConstants.baseUrl +
-                                      item["product_images"][
-                                          0], // Replace "YOUR_SERVER_URL_HERE" with your server URL
-                                  fit: BoxFit.cover,
-                                  height: 60,
-                                  width: 60,
-                                ),
-                                title: Text(
-                                  "${item["brand"]} ${item["model"]}",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 16,
+                ),
+                child: ListView(
+                  children: [
+                    role == "admin"
+                        ? Container(
+                            padding: const EdgeInsets.all(
+                              16,
+                            ),
+                            margin: const EdgeInsets.only(
+                              bottom: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Color(0xff36936C),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
                                   children: [
-                                    Text("Quantity: ${item["quantity"]}"),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text("Price: "),
-                                        FormattedAmount(
-                                          amount: item["price"],
-                                          mainTextStyle: TextStyle(
-                                            color: Colors.grey,
-                                          ),
-                                          decimalTextStyle: TextStyle(),
-                                        ),
-                                      ],
+                                    SvgPicture.asset(
+                                      "assets/icons/profile.svg",
+                                      width: 20,
+                                      height: 20,
+                                      colorFilter: ColorFilter.mode(
+                                        Colors.white,
+                                        BlendMode.srcIn,
+                                      ),
                                     ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text("Amount: "),
-                                        FormattedAmount(
-                                          amount: item["amount"],
-                                          mainTextStyle: TextStyle(
-                                            color: Colors.grey,
-                                          ),
-                                          decimalTextStyle: TextStyle(),
-                                        ),
-                                      ],
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Text(
+                                      '${language["Order by"] ?? "Order by"}: ${orderData["user_name"]}',
+                                      style: FontConstants.subheadline3,
                                     ),
                                   ],
                                 ),
-                              ),
-                            );
-                          }).toList(),
-                          if (orderData["payment_type"] == "Preorder") ...[
-                            SizedBox(height: 10), // Space between widgets
-
-                            Text(
-                              "Payslip",
-                              style: TextStyle(
-                                color: Color(0xff7B7B7B),
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                                SizedBox(
+                                  height: 8,
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    String phoneNumber = orderData["phone"];
+                                    String uri = 'tel:+$phoneNumber';
+                                    await launchUrl(Uri.parse(uri));
+                                  },
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                        "assets/icons/phone.svg",
+                                        width: 20,
+                                        height: 20,
+                                        colorFilter: ColorFilter.mode(
+                                          Colors.white,
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Text(
+                                        "+" + orderData["phone"],
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 8,
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    String emailAddress = orderData["email"];
+                                    String uri = 'mailto:+$emailAddress';
+                                    await launchUrl(Uri.parse(uri));
+                                  },
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                        "assets/icons/mailbox.svg",
+                                        width: 20,
+                                        height: 20,
+                                        colorFilter: ColorFilter.mode(
+                                          Colors.white,
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Text(
+                                        orderData["email"],
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Text(""),
+                    role == "admin" || role == "user"
+                        ? Container(
+                            padding: const EdgeInsets.all(
+                              10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Color(0xff1f335a),
+                              borderRadius: BorderRadius.circular(
+                                10,
                               ),
                             ),
-
-                            SizedBox(height: 10), // Space between widgets
-
-                            GestureDetector(
-                              onTap: () async {
-                                final url = ApiConstants.baseUrl +
-                                    orderData["payslip_screenshot_path"];
-                                await launchUrl(Uri.parse(url));
-                              },
-                              child: Image.network(
-                                ApiConstants.baseUrl +
-                                    orderData["payslip_screenshot_path"],
-                                fit: BoxFit.cover,
-                              ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      '${language["Address"] ?? "Address"}',
+                                      style: FontConstants.caption4,
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  '${language["Deliver to"] ?? "Deliver to"}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 8,
+                                ),
+                                Text(
+                                  '${orderData["home_address"]}, ${orderData["street_address"]}, Ward ${orderData["ward"]}, ${orderData["township"]}',
+                                  style: FontConstants.body3,
+                                ),
+                                Text(
+                                  '${orderData["city"]}, ${orderData["state"]} ${orderData["postal_code"]}',
+                                  style: FontConstants.body3,
+                                ),
+                                Text(
+                                  '${orderData["country"]}',
+                                  style: FontConstants.body3,
+                                ),
+                              ],
                             ),
-                          ]
-                        ],
-                      ),
+                          )
+                        : Text(""),
+                    SizedBox(
+                      height: 8,
                     ),
-                  ),
+                    ...orderItems.map((item) {
+                      return Card(
+                        elevation: 0,
+                        margin: EdgeInsets.symmetric(
+                          vertical: 4,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            10,
+                          ),
+                        ),
+                        child: ListTile(
+                          leading: Image.network(
+                            '${ApiConstants.baseUrl}${item["product_images"][0]}',
+                            fit: BoxFit.cover,
+                            height: 60,
+                            width: 60,
+                          ),
+                          title: Text(
+                            "${item["brand"]} ${item["model"]}",
+                            style: FontConstants.subheadline1,
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  Text(
+                                    "${language["Quantity"] ?? "Quantity"}: ",
+                                    style: FontConstants.body2,
+                                  ),
+                                  Text(
+                                    "${item["quantity"]}",
+                                    style: FontConstants.body1,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  Text(
+                                    "${language["Price"] ?? "Price"}: ",
+                                    style: FontConstants.body2,
+                                  ),
+                                  FormattedAmount(
+                                    amount: item["price"],
+                                    mainTextStyle: FontConstants.body1,
+                                    decimalTextStyle: FontConstants.caption2,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  Text(
+                                    "${language["Amount"] ?? "Amount"}: ",
+                                    style: FontConstants.body2,
+                                  ),
+                                  FormattedAmount(
+                                    amount: item["amount"],
+                                    mainTextStyle: FontConstants.body1,
+                                    decimalTextStyle: FontConstants.caption2,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                    if (orderData["payment_type"] == "Preorder") ...[
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Text(
+                        '${language["Payslip"] ?? "Payslip"}',
+                        style: FontConstants.headline1,
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          final url =
+                              '${ApiConstants.baseUrl}${orderData["payslip_screenshot_path"]}';
+                          await launchUrl(Uri.parse(url));
+                        },
+                        child: Image.network(
+                          '${ApiConstants.baseUrl}${orderData["payslip_screenshot_path"]}',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ]
+                  ],
                 ),
-              ],
+              ),
             ),
           ],
         ),

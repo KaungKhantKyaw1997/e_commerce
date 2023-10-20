@@ -605,6 +605,7 @@ class _OrderScreenState extends State<OrderScreen> {
                       ),
                       child: CustomDropDown(
                         value: paymenttype,
+                        fillColor: ColorConstants.fillcolor,
                         onChanged: (newValue) {
                           setState(() {
                             pickedFile = null;
@@ -680,6 +681,7 @@ class _OrderScreenState extends State<OrderScreen> {
                       ),
                       child: CustomDropDown(
                         value: insurancetype,
+                        fillColor: ColorConstants.fillcolor,
                         onChanged: (newValue) {
                           setState(() {
                             insurancetype = newValue ?? insurancenames[0];

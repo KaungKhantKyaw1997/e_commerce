@@ -565,6 +565,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                     ),
                     child: CustomDropDown(
                       value: role,
+                      fillColor: ColorConstants.fillcolor,
                       onChanged: (newValue) {
                         setState(() {
                           role = newValue ?? "User";

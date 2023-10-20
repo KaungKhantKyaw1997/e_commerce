@@ -5,11 +5,13 @@ import 'package:flutter_svg/svg.dart';
 
 class CustomDropDown extends StatelessWidget {
   final String value;
+  final Color fillColor;
   final List<String> items;
   final Function(String?)? onChanged;
 
   CustomDropDown({
     required this.value,
+    required this.fillColor,
     required this.items,
     required this.onChanged,
   });
@@ -19,7 +21,7 @@ class CustomDropDown extends StatelessWidget {
     return InputDecorator(
       decoration: InputDecoration(
         filled: true,
-        fillColor: ColorConstants.fillcolor,
+        fillColor: fillColor,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
         ),

@@ -1447,6 +1447,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 ),
                                 child: CustomDropDown(
                                   value: currencyCode,
+                                  fillColor: ColorConstants.fillcolor,
                                   onChanged: (newValue) {
                                     setState(() {
                                       currencyCode =

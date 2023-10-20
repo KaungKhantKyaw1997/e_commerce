@@ -19,6 +19,12 @@ class FontConstants {
     color: Colors.grey,
   );
 
+  static TextStyle subheadline3 = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+    color: Colors.white,
+  );
+
   static TextStyle body1 = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w500,
@@ -29,6 +35,12 @@ class FontConstants {
     fontSize: 14,
     fontWeight: FontWeight.w500,
     color: Colors.grey,
+  );
+
+  static TextStyle body3 = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+    color: Colors.white,
   );
 
   static TextStyle caption1 = TextStyle(
