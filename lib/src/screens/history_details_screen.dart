@@ -212,6 +212,9 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                             orderData['symbol'].toString(),
                             style: FontConstants.body1,
                           ),
+                          SizedBox(
+                            width: 4,
+                          ),
                           FormattedAmount(
                             amount: orderData["order_total"],
                             mainTextStyle: FontConstants.body1,

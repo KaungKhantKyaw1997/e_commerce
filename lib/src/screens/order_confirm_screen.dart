@@ -74,8 +74,11 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
       };
     }).toList();
 
+    int shopId = carts[0]["shop_id"];
+
     try {
       final body = {
+        "shop_id": shopId,
         "order_items": orderItems,
         "address": address,
         "payment_type": paymenttype,
@@ -85,8 +88,6 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
       final response = await orderService.addOrderData(body);
       Navigator.pop(context);
       if (response["code"] == 200) {
-        int shopId = carts[0]["shop_id"];
-
         CartProvider cartProvider =
             Provider.of<CartProvider>(context, listen: false);
         cartProvider.addCount(0);
@@ -143,10 +144,26 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
                   amount,
                   style: FontConstants.subheadline2,
                 )
-              : FormattedAmount(
-                  amount: double.parse(amount),
-                  mainTextStyle: FontConstants.subheadline1,
-                  decimalTextStyle: FontConstants.caption2,
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    carts.isNotEmpty
+                        ? Text(
+                            carts[0]["symbol"] ?? "",
+                            style: FontConstants.subheadline1,
+                          )
+                        : Text(''),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    FormattedAmount(
+                      amount: double.parse(amount),
+                      mainTextStyle: FontConstants.subheadline1,
+                      decimalTextStyle: FontConstants.caption2,
+                    ),
+                  ],
                 ),
         ],
       ),
@@ -258,14 +275,32 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
                                           SizedBox(
                                             height: 12,
                                           ),
-                                          FormattedAmount(
-                                            amount: double.parse(carts[index]
-                                                    ["totalamount"]
-                                                .toString()),
-                                            mainTextStyle:
-                                                FontConstants.subheadline1,
-                                            decimalTextStyle:
-                                                FontConstants.caption3,
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.baseline,
+                                            textBaseline:
+                                                TextBaseline.alphabetic,
+                                            children: [
+                                              Text(
+                                                carts[index]["symbol"] ?? "",
+                                                style:
+                                                    FontConstants.subheadline1,
+                                              ),
+                                              SizedBox(
+                                                width: 4,
+                                              ),
+                                              FormattedAmount(
+                                                amount: double.parse(
+                                                    carts[index]["totalamount"]
+                                                        .toString()),
+                                                mainTextStyle:
+                                                    FontConstants.subheadline1,
+                                                decimalTextStyle:
+                                                    FontConstants.caption3,
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),

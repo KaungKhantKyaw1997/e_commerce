@@ -702,12 +702,15 @@ class _OrderScreenState extends State<OrderScreen> {
                             padding: EdgeInsets.only(
                               bottom: 24,
                             ),
-                            child: Text(
-                              'A commission of ${commissionPercentage.toString()}%.',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xffF97316),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'A commission of ${commissionPercentage.toString()}%.',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xffF97316),
+                                ),
                               ),
                             ),
                           )

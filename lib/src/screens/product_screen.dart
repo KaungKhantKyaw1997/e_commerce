@@ -459,6 +459,9 @@ class _ProductScreenState extends State<ProductScreen> {
                                 product["symbol"].toString(),
                                 style: FontConstants.subheadline1,
                               ),
+                              SizedBox(
+                                width: 4,
+                              ),
                               product["price"] != null
                                   ? FormattedAmount(
                                       amount: double.parse(

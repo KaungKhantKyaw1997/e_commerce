@@ -97,10 +97,26 @@ class _CartScreenState extends State<CartScreen> {
                   fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
                 ),
               )
-            : FormattedAmount(
-                amount: double.parse(amount),
-                mainTextStyle: FontConstants.subheadline1,
-                decimalTextStyle: FontConstants.caption2,
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  carts.isNotEmpty
+                      ? Text(
+                          carts[0]["symbol"] ?? "",
+                          style: FontConstants.subheadline1,
+                        )
+                      : Text(''),
+                  SizedBox(
+                    width: 4,
+                  ),
+                  FormattedAmount(
+                    amount: double.parse(amount),
+                    mainTextStyle: FontConstants.subheadline1,
+                    decimalTextStyle: FontConstants.caption2,
+                  ),
+                ],
               ),
       ],
     );
@@ -295,10 +311,14 @@ class _CartScreenState extends State<CartScreen> {
                                                           .alphabetic,
                                                       children: [
                                                         Text(
-                                                          carts[index]["symbol"]
-                                                              .toString(),
+                                                          carts[index]
+                                                                  ["symbol"] ??
+                                                              "",
                                                           style: FontConstants
                                                               .subheadline1,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 4,
                                                         ),
                                                         carts[index][
                                                                     "totalamount"] !=

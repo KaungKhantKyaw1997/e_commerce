@@ -95,8 +95,8 @@ class _SuccessScreenState extends State<SuccessScreen>
                     Icons.star,
                     color: Colors.amber,
                   ),
-                  onRatingUpdate: (rating) {
-                    rating = rating;
+                  onRatingUpdate: (r) {
+                    rating = r;
                   },
                 ),
               ),

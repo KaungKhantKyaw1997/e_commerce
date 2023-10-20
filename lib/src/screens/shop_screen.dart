@@ -80,7 +80,7 @@ class _ShopScreenState extends State<ShopScreen> {
     }
 
     double averageRating = totalRatings / ratings.length;
-    return averageRating;
+    return double.parse(averageRating.toStringAsFixed(1));
   }
 
   getProducts() async {

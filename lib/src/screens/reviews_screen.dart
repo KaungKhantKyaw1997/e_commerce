@@ -42,6 +42,9 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
         borderRadius: BorderRadius.circular(10),
       ),
       width: double.infinity,
+      margin: EdgeInsets.only(
+        bottom: 8,
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
           vertical: 12,
