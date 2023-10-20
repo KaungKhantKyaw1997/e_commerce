@@ -4,14 +4,15 @@ import 'package:dio/dio.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-class RatingService
-{
-   final storage = FlutterSecureStorage();
+
+class RatingService {
+  final storage = FlutterSecureStorage();
 
   final Dio dio = Dio();
   CancelToken _cancelToken = CancelToken();
 
-  Future<Map<String, dynamic>> addSellerReviewsData(Map<String, dynamic> body) async {
+  Future<Map<String, dynamic>> addSellerReviewsData(
+      Map<String, dynamic> body) async {
     var token = await storage.read(key: "token") ?? '';
     final response = await http.post(
       Uri.parse(ApiConstants.sellerReviews),
@@ -25,8 +26,7 @@ class RatingService
     return jsonDecode(response.body);
   }
 
-  Future<Map<String, dynamic>?> getSellerReviewsData(
-      int shopId) async {
+  Future<Map<String, dynamic>?> getSellerReviewsData(int shopId) async {
     var token = await storage.read(key: "token") ?? '';
     try {
       final response = await dio.get(
@@ -47,7 +47,7 @@ class RatingService
     }
   }
 
-    void cancelRequest() {
+  void cancelRequest() {
     _cancelToken.cancel('Request canceled');
   }
 }
