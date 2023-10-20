@@ -25,6 +25,7 @@ class _ShopScreenState extends State<ShopScreen> {
   Map<String, dynamic> shop = {
     'name': '',
     'address': '',
+    'cover_image': '',
   };
 
   @override
@@ -36,6 +37,7 @@ class _ShopScreenState extends State<ShopScreen> {
 
       if (arguments != null) {
         shop = arguments;
+        setState(() {});
         getProducts();
         getSellerReviews();
       }
