@@ -176,7 +176,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     for (var pickedFile in pickedMultiFile) {
       try {
         var response = await AuthService.uploadFile(File(pickedFile.path),
-            resolution: "400x400");
+            resolution: "800x800");
         var res = jsonDecode(response.body);
         if (res["code"] == 200) {
           productImages.add(res["url"]);
