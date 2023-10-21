@@ -2,6 +2,7 @@ import 'package:e_commerce/src/screens/brand_setup_screen.dart';
 import 'package:e_commerce/src/screens/brands_setup_screen.dart';
 import 'package:e_commerce/src/screens/categories_setup_screen.dart';
 import 'package:e_commerce/src/screens/category_setup_screen.dart';
+import 'package:e_commerce/src/screens/image_preview_screen.dart';
 import 'package:e_commerce/src/screens/order_confirm_screen.dart';
 import 'package:e_commerce/src/screens/order_screen.dart';
 import 'package:e_commerce/src/screens/product_filter_screen.dart';
@@ -72,6 +73,7 @@ class Routes {
   static const String shop = "/shop";
   static const String reviews = "/reviews";
   static const String scan = "/scan";
+  static const String image_preview = "/image_preview";
 
   static final Map<String, WidgetBuilder> routes = {
     splash: (BuildContext context) => const SplashScreen(),
@@ -111,5 +113,6 @@ class Routes {
     search: (BuildContext context) => const SearchScreen(),
     shop: (BuildContext context) => const ShopScreen(),
     reviews: (BuildContext context) => const ReviewsScreen(),
+    image_preview: (context) => const ImagePreviewScreen(),
   };
 }

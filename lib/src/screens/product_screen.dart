@@ -137,28 +137,38 @@ class _ProductScreenState extends State<ProductScreen> {
                                       itemCount:
                                           product["product_images"].length,
                                       itemBuilder: (context, index) {
-                                        return Container(
-                                          margin: EdgeInsets.symmetric(
-                                            horizontal: 4,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            image: product["product_images"]
-                                                        [index] !=
-                                                    ""
-                                                ? DecorationImage(
-                                                    image: NetworkImage(
-                                                        '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'),
-                                                    fit: BoxFit.cover,
-                                                  )
-                                                : DecorationImage(
-                                                    image: AssetImage(
-                                                        'assets/images/logo.png'),
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                              color: Colors.transparent,
+                                        return InkWell(
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                                context, Routes.image_preview,
+                                                arguments: {
+                                                  "image_url":
+                                                      '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'
+                                                });
+                                          },
+                                          child: Container(
+                                            margin: EdgeInsets.symmetric(
+                                              horizontal: 4,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              image: product["product_images"]
+                                                          [index] !=
+                                                      ""
+                                                  ? DecorationImage(
+                                                      image: NetworkImage(
+                                                          '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'),
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : DecorationImage(
+                                                      image: AssetImage(
+                                                          'assets/images/logo.png'),
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              border: Border.all(
+                                                color: Colors.transparent,
+                                              ),
                                             ),
                                           ),
                                         );
