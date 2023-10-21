@@ -89,7 +89,7 @@ class _SuccessScreenState extends State<SuccessScreen>
                   glowColor: Colors.amber,
                   unratedColor: Color(0xffFFECB0),
                   itemPadding: EdgeInsets.symmetric(
-                    horizontal: 4.0,
+                    horizontal: 3.0,
                   ),
                   itemBuilder: (context, _) => Icon(
                     Icons.star,
