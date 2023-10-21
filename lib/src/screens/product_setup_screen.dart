@@ -41,6 +41,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   FocusNode _dimensionsFocusNode = FocusNode();
   FocusNode _priceFocusNode = FocusNode();
   FocusNode _stockQuantityFocusNode = FocusNode();
+  FocusNode _conditionFocusNode = FocusNode();
 
   TextEditingController shopName = TextEditingController(text: '');
   int shopId = 0;
@@ -61,6 +62,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   TextEditingController dimensions = TextEditingController(text: '');
   TextEditingController price = TextEditingController(text: '');
   TextEditingController stockQuantity = TextEditingController(text: '');
+  TextEditingController condition = TextEditingController(text: '');
   bool isTopModel = false;
   List productImages = [];
   List<XFile> pickedMultiFile = <XFile>[];
@@ -153,6 +155,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
               response["data"]["stock_quantity"].toString() ?? "";
           isTopModel = response["data"]["is_top_model"] ?? false;
           productImages = response["data"]["product_images"] ?? [];
+          condition.text = response["data"]["condition"] ?? "";
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -213,6 +216,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "stock_quantity": int.parse(stockQuantity.text),
         "is_top_model": isTopModel,
         "product_images": productImages,
+        "condition": condition.text
       };
 
       final response = await productsService.addProductData(body);
@@ -264,6 +268,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "stock_quantity": int.parse(stockQuantity.text),
         "is_top_model": isTopModel,
         "product_images": productImages,
+        "condition": condition.text
       };
 
       final response = await productsService.updateProductData(body, id);
@@ -366,6 +371,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         _dimensionsFocusNode.unfocus();
         _priceFocusNode.unfocus();
         _stockQuantityFocusNode.unfocus();
+        _conditionFocusNode.unfocus();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -1520,6 +1526,76 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                     if (value == null || value.isEmpty) {
                                       return language["Enter Price"] ??
                                           "Enter Price";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 4,
+                                  bottom: 4,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    language["Condition"] ?? "Condition",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 4,
+                                  bottom: 16,
+                                ),
+                                child: TextFormField(
+                                  controller: condition,
+                                  focusNode: _conditionFocusNode,
+                                  keyboardType: TextInputType.text,
+                                  textInputAction: TextInputAction.next,
+                                  style: FontConstants.body1,
+                                  cursorColor: Colors.black,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: ColorConstants.fillcolor,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 14,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return language["Enter Condition"] ??
+                                          "Enter Condition";
                                     }
                                     return null;
                                   },
