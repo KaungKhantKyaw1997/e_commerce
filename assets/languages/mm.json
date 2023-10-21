@@ -123,5 +123,15 @@
   "You can only order items from one shop at a time. Please place separate orders for items from different shops!": "တစ်ကြိမ်လျှင် ဆိုင်တစ်ဆိုင်မှ ပစ္စည်းများကိုသာ မှာယူနိုင်ပါသည်။ မတူညီသောဆိုင်များမှ ပစ္စည်းများအတွက် သီးခြားအမှာစာတင်ပါ။",
   "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!": "တစ်ကြိမ်လျှင် တူညီသောငွေကြေးဖြင့် ပစ္စည်းများကိုသာ မှာယူနိုင်ပါသည်။ မတူညီသောငွေကြေးများဖြင့် ပစ္စည်းများအတွက် သီးခြားအမှာစာတင်ပါ။",
   "Condition": "အခြေအနေ",
-  "Enter Condition": "အခြေအနေကိုထည့်ပါ"
+  "Enter Condition": "အခြေအနေကိုထည့်ပါ",
+  "Warranty Period": "အာမခံကာလ",
+  "In Stock": "ကုန်ပစ္စည်းလက်ဝယ်ရှိ",
+  "Color": "အရောင်",
+  "Strap Material": "လက်ပတ်ပစ္စည်း",
+  "Strap Color": "လက်ပတ်အရောင်",
+  "Case Material": "ကိုယ်ထည်ပစ္စည်း",
+  "Dial Color": "ဒိုင်ခွက်အရောင်",
+  "Movement Type": "လှုပ်ရှားမှုအမျိုးအစား",
+  "Dimensions": "အတိုင်းအတာများ",
+  "Water Resistance": "ရေခုခံမှု"
 }

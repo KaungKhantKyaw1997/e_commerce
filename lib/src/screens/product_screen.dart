@@ -438,6 +438,69 @@ class _ProductScreenState extends State<ProductScreen> {
                         ],
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 8,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            language["Warranty Period"] ?? "Warranty Period",
+                            style: FontConstants.caption1,
+                          ),
+                          Text(
+                            product["warranty_period"] ?? "",
+                            style: FontConstants.caption2,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 8,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            language["Condition"] ?? "Condition",
+                            style: FontConstants.caption1,
+                          ),
+                          Text(
+                            product["condition"] ?? "",
+                            style: FontConstants.caption2,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 8,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            language["In Stock"] ?? "In Stock",
+                            style: FontConstants.caption1,
+                          ),
+                          Text(
+                            product["stock_quantity"].toString() ?? "",
+                            style: FontConstants.caption2,
+                          ),
+                        ],
+                      ),
+                    ),
                     const Divider(
                       height: 0,
                       color: Colors.grey,
