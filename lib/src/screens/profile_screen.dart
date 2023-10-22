@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/profile_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
@@ -23,6 +25,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
   final profileService = ProfileService();
@@ -81,8 +84,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
+      }
     }
   }
 
@@ -125,15 +144,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       final response = await profileService.updateProfileData(body);
       Navigator.pop(context);
-      if (response["code"] == 200) {
+      if (response!["code"] == 200) {
         prefs.setString('name', name.text);
         ToastUtil.showToast(response["code"], response["message"]);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
       Navigator.pop(context);
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
+      }
     }
   }
 
