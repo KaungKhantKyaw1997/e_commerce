@@ -17,6 +17,7 @@ import 'package:e_commerce/src/screens/shops_setup_screen.dart';
 import 'package:e_commerce/src/screens/splash_screen.dart';
 import 'package:e_commerce/src/screens/termsandconditions_screen.dart';
 import 'package:e_commerce/src/screens/termsandconditions_setup_screen.dart';
+import 'package:e_commerce/src/screens/unauthorized_screen.dart';
 import 'package:e_commerce/src/screens/user_setup_screen.dart';
 import 'package:e_commerce/src/screens/users_setup_screen.dart';
 import 'package:flutter/material.dart';
@@ -76,6 +77,7 @@ class Routes {
   static const String scan = "/scan";
   static const String image_preview = "/image_preview";
   static const String connection_timeout = "/connection_timeout";
+  static const String unauthorized = "/unauthorized";
 
   static final Map<String, WidgetBuilder> routes = {
     splash: (BuildContext context) => const SplashScreen(),
@@ -117,5 +119,6 @@ class Routes {
     reviews: (BuildContext context) => const ReviewsScreen(),
     image_preview: (context) => const ImagePreviewScreen(),
     connection_timeout: (context) => const ConnectionTimeoutScreen(),
+    unauthorized: (context) => const UnauthorizedScreen(),
   };
 }

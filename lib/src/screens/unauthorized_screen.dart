@@ -1,5 +1,6 @@
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class UnauthorizedScreen extends StatefulWidget {
@@ -10,7 +11,8 @@ class UnauthorizedScreen extends StatefulWidget {
 }
 
 class _UnauthorizedScreenState extends State<UnauthorizedScreen> {
-  @override
+  final authService = AuthService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +37,7 @@ class _UnauthorizedScreenState extends State<UnauthorizedScreen> {
                 bottom: 10,
               ),
               child: Text(
-                "Connection Timed Out",
+                "Session Expired",
                 textAlign: TextAlign.center,
                 style: FontConstants.title2,
               ),
@@ -45,7 +47,7 @@ class _UnauthorizedScreenState extends State<UnauthorizedScreen> {
                 horizontal: 40,
               ),
               child: Text(
-                "Please check your internet connection and try again.",
+                "Your session has ended due to inactivity. For your security, we've logged you out. Please log in again to continue.",
                 textAlign: TextAlign.center,
                 style: FontConstants.subheadline2,
               ),
@@ -70,10 +72,10 @@ class _UnauthorizedScreenState extends State<UnauthorizedScreen> {
             ),
           ),
           onPressed: () async {
-            Navigator.pop(context);
+            authService.logout(context);
           },
           child: Text(
-            language["Log In"] ?? "Log In",
+            language["Ok"] ?? "Ok",
             style: FontConstants.button1,
           ),
         ),

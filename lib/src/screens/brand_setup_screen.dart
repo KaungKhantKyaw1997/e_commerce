@@ -27,7 +27,6 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
   final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
-  final authService = AuthService();
   final brandsService = BrandsService();
   FocusNode _nameFocusNode = FocusNode();
   FocusNode _descriptionFocusNode = FocusNode();
@@ -86,7 +85,10 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
       }
       crashlytic.myGlobalErrorHandler(e, s);
       if (e is DioException && e.response?.statusCode == 401) {
-        authService.logout(context);
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
       }
     }
   }
@@ -150,7 +152,10 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
       }
       crashlytic.myGlobalErrorHandler(e, s);
       if (e is DioException && e.response?.statusCode == 401) {
-        authService.logout(context);
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
       }
     }
   }
@@ -189,7 +194,10 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
       }
       crashlytic.myGlobalErrorHandler(e, s);
       if (e is DioException && e.response?.statusCode == 401) {
-        authService.logout(context);
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
       }
     }
   }
@@ -222,7 +230,10 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
       }
       crashlytic.myGlobalErrorHandler(e, s);
       if (e is DioException && e.response?.statusCode == 401) {
-        authService.logout(context);
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
       }
     }
   }

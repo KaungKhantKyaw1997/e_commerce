@@ -6,7 +6,6 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/address_service.dart';
-import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/insurance_rules_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
@@ -27,7 +26,6 @@ class _OrderScreenState extends State<OrderScreen> {
   final ScrollController _scrollController = ScrollController();
   final addressService = AddressService();
   final insuranceRulesService = InsuranceRulesService();
-  final authService = AuthService();
   FocusNode _countryFocusNode = FocusNode();
   FocusNode _cityFocusNode = FocusNode();
   FocusNode _stateFocusNode = FocusNode();
@@ -122,7 +120,10 @@ class _OrderScreenState extends State<OrderScreen> {
       }
       crashlytic.myGlobalErrorHandler(e, s);
       if (e is DioException && e.response?.statusCode == 401) {
-        authService.logout(context);
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
       }
     }
   }
@@ -173,7 +174,10 @@ class _OrderScreenState extends State<OrderScreen> {
       }
       crashlytic.myGlobalErrorHandler(e, s);
       if (e is DioException && e.response?.statusCode == 401) {
-        authService.logout(context);
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
       }
     }
   }

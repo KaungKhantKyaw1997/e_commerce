@@ -6,7 +6,6 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
-import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/user_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
@@ -23,7 +22,6 @@ class UsersSetupScreen extends StatefulWidget {
 
 class _UsersSetupScreenState extends State<UsersSetupScreen> {
   final crashlytic = new CrashlyticsService();
-  final authService = AuthService();
   final userService = UserService();
   TextEditingController search = TextEditingController(text: '');
   final ScrollController _scrollController = ScrollController();
@@ -76,7 +74,10 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
       }
       crashlytic.myGlobalErrorHandler(e, s);
       if (e is DioException && e.response?.statusCode == 401) {
-        authService.logout(context);
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
       }
     }
   }
