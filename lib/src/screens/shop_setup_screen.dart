@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/shops_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
@@ -22,6 +24,7 @@ class ShopSetupScreen extends StatefulWidget {
 }
 
 class _ShopSetupScreenState extends State<ShopSetupScreen> {
+  final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
   final shopsService = ShopsService();
@@ -72,8 +75,24 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
+      }
     }
   }
 
@@ -122,7 +141,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
 
       final response = await shopsService.addShopData(body);
       Navigator.pop(context);
-      if (response["code"] == 201) {
+      if (response!["code"] == 201) {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
         Navigator.pushNamed(
@@ -132,9 +151,25 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
       Navigator.pop(context);
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
+      }
     }
   }
 
@@ -158,7 +193,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
 
       final response = await shopsService.updateShopData(body, id);
       Navigator.pop(context);
-      if (response["code"] == 200) {
+      if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
         Navigator.pushNamed(
@@ -168,9 +203,25 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
       Navigator.pop(context);
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
+      }
     }
   }
 
@@ -178,7 +229,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
     try {
       final response = await shopsService.deleteShopData(id);
       Navigator.pop(context);
-      if (response["code"] == 204) {
+      if (response!["code"] == 204) {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
         Navigator.pushNamed(
@@ -188,9 +239,25 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
       Navigator.pop(context);
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
+      }
     }
   }
 
