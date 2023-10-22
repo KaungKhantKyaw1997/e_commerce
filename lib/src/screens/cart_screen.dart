@@ -570,42 +570,55 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                 ],
               )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 300,
-                    height: 300,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/no_data.png'),
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).orientation ==
+                              Orientation.landscape
+                          ? 150
+                          : 300,
+                      height: MediaQuery.of(context).orientation ==
+                              Orientation.landscape
+                          ? 150
+                          : 300,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/no_data.png'),
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 10,
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 10,
+                      ),
+                      child: Text(
+                        "Empty Cart",
+                        textAlign: TextAlign.center,
+                        style: MediaQuery.of(context).orientation ==
+                                Orientation.landscape
+                            ? FontConstants.title1
+                            : FontConstants.title2,
+                      ),
                     ),
-                    child: Text(
-                      "Empty Cart",
-                      textAlign: TextAlign.center,
-                      style: FontConstants.title2,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 40,
+                      ),
+                      child: Text(
+                        "Looks like you haven't made your choice yet...",
+                        textAlign: TextAlign.center,
+                        style: MediaQuery.of(context).orientation ==
+                                Orientation.landscape
+                            ? FontConstants.caption1
+                            : FontConstants.subheadline2,
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40,
-                    ),
-                    child: Text(
-                      "Looks like you haven't made your choice yet...",
-                      textAlign: TextAlign.center,
-                      style: FontConstants.subheadline2,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
       ),
       bottomNavigationBar: const BottomBarScreen(),

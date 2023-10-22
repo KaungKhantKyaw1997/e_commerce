@@ -278,206 +278,214 @@ class _HistoryScreenState extends State<HistoryScreen> {
         child: orders.isNotEmpty
             ? SingleChildScrollView(
                 child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 24,
-                ),
-                width: double.infinity,
-                child: ListView.builder(
-                  controller: _scrollController,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: orders.length,
-                  itemBuilder: (context, index) {
-                    String date = orders[index]["date"];
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 24,
+                  ),
+                  width: double.infinity,
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: orders.length,
+                    itemBuilder: (context, index) {
+                      String date = orders[index]["date"];
 
-                    return Container(
-                      margin: const EdgeInsets.only(
-                        bottom: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 16,
-                              right: 16,
-                              top: 8,
-                              bottom: 4,
+                      return Container(
+                        margin: const EdgeInsets.only(
+                          bottom: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                                top: 8,
+                                bottom: 4,
+                              ),
+                              child: Text(
+                                currentDate == date
+                                    ? "Today"
+                                    : yesterdayDate == date
+                                        ? "Yesterday"
+                                        : date,
+                                style: FontConstants.caption2,
+                              ),
                             ),
-                            child: Text(
-                              currentDate == date
-                                  ? "Today"
-                                  : yesterdayDate == date
-                                      ? "Yesterday"
-                                      : date,
-                              style: FontConstants.caption2,
+                            const Divider(
+                              height: 0,
+                              color: Colors.grey,
                             ),
-                          ),
-                          const Divider(
-                            height: 0,
-                            color: Colors.grey,
-                          ),
-                          ListView.builder(
-                            controller: _scrollController,
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            itemCount: orders[index]["items"].length,
-                            itemBuilder: (context, i) {
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    Routes.history_details,
-                                    arguments: {
-                                      "order_id": orders[index]["items"][i]
-                                          ["order_id"],
-                                      "user_name": orders[index]["items"][i]
-                                          ["user_name"],
-                                      "phone": orders[index]["items"][i]
-                                          ["phone"],
-                                      "email": orders[index]["items"][i]
-                                          ["email"],
-                                      "home_address": orders[index]["items"][i]
-                                          ["home_address"],
-                                      "street_address": orders[index]["items"]
-                                          [i]["street_address"],
-                                      "city": orders[index]["items"][i]["city"],
-                                      "state": orders[index]["items"][i]
-                                          ["state"],
-                                      "postal_code": orders[index]["items"][i]
-                                          ["postal_code"],
-                                      "country": orders[index]["items"][i]
-                                          ["country"],
-                                      "township": orders[index]["items"][i]
-                                          ["township"],
-                                      "ward": orders[index]["items"][i]["ward"],
-                                      "note": orders[index]["items"][i]["note"],
-                                      "order_total": orders[index]["items"][i]
-                                          ["order_total"],
-                                      "item_counts": orders[index]["items"][i]
-                                          ["item_counts"],
-                                      "payment_type": orders[index]["items"][i]
-                                          ["payment_type"],
-                                      "payslip_screenshot_path": orders[index]
-                                              ["items"][i]
-                                          ["payslip_screenshot_path"],
-                                      "created_at": orders[index]["items"][i]
-                                          ["created_at"],
-                                      "status": orders[index]["items"][i]
-                                          ["status"],
-                                      "commission_amount": orders[index]
-                                          ["items"][i]["commission_amount"],
-                                      "symbol": orders[index]["items"][i]
-                                          ["symbol"],
-                                    },
-                                  );
-                                },
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.only(
-                                        left: 16,
-                                        right: 16,
-                                        bottom: 8,
-                                        top: 8,
-                                      ),
-                                      color: Colors.transparent,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.baseline,
-                                            textBaseline:
-                                                TextBaseline.alphabetic,
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  '#${orders[index]["items"][i]["order_id"]}',
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: FontConstants.body1,
+                            ListView.builder(
+                              controller: _scrollController,
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: orders[index]["items"].length,
+                              itemBuilder: (context, i) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      Routes.history_details,
+                                      arguments: {
+                                        "order_id": orders[index]["items"][i]
+                                            ["order_id"],
+                                        "user_name": orders[index]["items"][i]
+                                            ["user_name"],
+                                        "phone": orders[index]["items"][i]
+                                            ["phone"],
+                                        "email": orders[index]["items"][i]
+                                            ["email"],
+                                        "home_address": orders[index]["items"]
+                                            [i]["home_address"],
+                                        "street_address": orders[index]["items"]
+                                            [i]["street_address"],
+                                        "city": orders[index]["items"][i]
+                                            ["city"],
+                                        "state": orders[index]["items"][i]
+                                            ["state"],
+                                        "postal_code": orders[index]["items"][i]
+                                            ["postal_code"],
+                                        "country": orders[index]["items"][i]
+                                            ["country"],
+                                        "township": orders[index]["items"][i]
+                                            ["township"],
+                                        "ward": orders[index]["items"][i]
+                                            ["ward"],
+                                        "note": orders[index]["items"][i]
+                                            ["note"],
+                                        "order_total": orders[index]["items"][i]
+                                            ["order_total"],
+                                        "item_counts": orders[index]["items"][i]
+                                            ["item_counts"],
+                                        "payment_type": orders[index]["items"]
+                                            [i]["payment_type"],
+                                        "payslip_screenshot_path": orders[index]
+                                                ["items"][i]
+                                            ["payslip_screenshot_path"],
+                                        "created_at": orders[index]["items"][i]
+                                            ["created_at"],
+                                        "status": orders[index]["items"][i]
+                                            ["status"],
+                                        "commission_amount": orders[index]
+                                            ["items"][i]["commission_amount"],
+                                        "symbol": orders[index]["items"][i]
+                                            ["symbol"],
+                                      },
+                                    );
+                                  },
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.only(
+                                          left: 16,
+                                          right: 16,
+                                          bottom: 8,
+                                          top: 8,
+                                        ),
+                                        color: Colors.transparent,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.baseline,
+                                              textBaseline:
+                                                  TextBaseline.alphabetic,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    '#${orders[index]["items"][i]["order_id"]}',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: FontConstants.body1,
+                                                  ),
                                                 ),
-                                              ),
-                                              Text(
-                                                orders[index]["items"][i]
-                                                    ["status"],
-                                                style: FontConstants.caption1,
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.baseline,
-                                            textBaseline:
-                                                TextBaseline.alphabetic,
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  Jiffy.parseFromDateTime(DateTime
-                                                              .parse(orders[index]
-                                                                          [
-                                                                          "items"][i]
-                                                                      [
-                                                                      "created_at"] +
-                                                                  "Z")
-                                                          .toLocal())
-                                                      .format(
-                                                          pattern: 'hh:mm a'),
+                                                Text(
+                                                  orders[index]["items"][i]
+                                                      ["status"],
                                                   style: FontConstants.caption1,
                                                 ),
-                                              ),
-                                              FormattedAmount(
-                                                amount: double.parse(
-                                                    orders[index]["items"][i]
-                                                            ["order_total"]
-                                                        .toString()),
-                                                mainTextStyle:
-                                                    FontConstants.caption2,
-                                                decimalTextStyle:
-                                                    FontConstants.caption2,
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.baseline,
+                                              textBaseline:
+                                                  TextBaseline.alphabetic,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    Jiffy.parseFromDateTime(
+                                                            DateTime.parse(orders[index]
+                                                                            [
+                                                                            "items"][i]
+                                                                        [
+                                                                        "created_at"] +
+                                                                    "Z")
+                                                                .toLocal())
+                                                        .format(
+                                                            pattern: 'hh:mm a'),
+                                                    style:
+                                                        FontConstants.caption1,
+                                                  ),
+                                                ),
+                                                FormattedAmount(
+                                                  amount: double.parse(
+                                                      orders[index]["items"][i]
+                                                              ["order_total"]
+                                                          .toString()),
+                                                  mainTextStyle:
+                                                      FontConstants.caption2,
+                                                  decimalTextStyle:
+                                                      FontConstants.caption2,
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    i < orders[index]["items"].length - 1
-                                        ? Container(
-                                            padding: const EdgeInsets.only(
-                                              left: 16,
-                                              right: 16,
-                                            ),
-                                            child: const Divider(
-                                              height: 0,
-                                              color: Colors.grey,
-                                            ),
-                                          )
-                                        : Container(),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                                      i < orders[index]["items"].length - 1
+                                          ? Container(
+                                              padding: const EdgeInsets.only(
+                                                left: 16,
+                                                right: 16,
+                                              ),
+                                              child: const Divider(
+                                                height: 0,
+                                                color: Colors.grey,
+                                              ),
+                                            )
+                                          : Container(),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ))
+              )
             : _dataLoaded
                 ? Center(
                     child: Column(
@@ -507,7 +515,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           child: Text(
                             "Empty History",
                             textAlign: TextAlign.center,
-                            style: FontConstants.title2,
+                            style: MediaQuery.of(context).orientation ==
+                                    Orientation.landscape
+                                ? FontConstants.title1
+                                : FontConstants.title2,
                           ),
                         ),
                         Padding(
@@ -518,7 +529,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           child: Text(
                             "There is no data...",
                             textAlign: TextAlign.center,
-                            style: FontConstants.subheadline2,
+                            style: MediaQuery.of(context).orientation ==
+                                    Orientation.landscape
+                                ? FontConstants.caption1
+                                : FontConstants.subheadline2,
                           ),
                         ),
                       ],

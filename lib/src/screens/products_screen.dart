@@ -381,7 +381,10 @@ class _ProductsScreenState extends State<ProductsScreen>
                           child: Text(
                             "Empty Product",
                             textAlign: TextAlign.center,
-                            style: FontConstants.title2,
+                            style: MediaQuery.of(context).orientation ==
+                                    Orientation.landscape
+                                ? FontConstants.title1
+                                : FontConstants.title2,
                           ),
                         ),
                         Padding(
@@ -392,7 +395,10 @@ class _ProductsScreenState extends State<ProductsScreen>
                           child: Text(
                             "There is no data...",
                             textAlign: TextAlign.center,
-                            style: FontConstants.subheadline2,
+                            style: MediaQuery.of(context).orientation ==
+                                    Orientation.landscape
+                                ? FontConstants.caption1
+                                : FontConstants.subheadline2,
                           ),
                         ),
                       ],
