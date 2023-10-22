@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'dart:ui';
+import 'package:dio/dio.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +26,7 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
+  final crashlytic = new CrashlyticsService();
   final authService = AuthService();
   final ScrollController _scrollController = ScrollController();
   final storage = FlutterSecureStorage();
@@ -63,15 +67,38 @@ class _SettingScreenState extends State<SettingScreen> {
     try {
       final response = await authService.deleteAccountData();
       Navigator.pop(context);
-      if (response["code"] == 204) {
+      if (response!["code"] == 204) {
         ToastUtil.showToast(response["code"], response["message"]);
         authService.logout(context);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
       Navigator.pop(context);
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
     }
   }
 

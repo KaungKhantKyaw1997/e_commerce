@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
@@ -16,28 +17,51 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthService {
   final storage = FlutterSecureStorage();
 
-  Future<Map<String, dynamic>> loginData(Map<String, dynamic> body) async {
-    final response = await http.post(
-      Uri.parse(ApiConstants.loginUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(body),
+  final Dio dio = Dio();
+  CancelToken _cancelToken = CancelToken();
+
+  Future<Map<String, dynamic>?> loginData(Map<String, dynamic> body) async {
+    final response = await dio.post(
+      ApiConstants.loginUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      ),
+      data: jsonEncode(body),
     );
 
-    return jsonDecode(response.body);
+    return response.data;
   }
 
-  Future<Map<String, dynamic>> registerData(Map<String, dynamic> body) async {
-    final response = await http.post(
-      Uri.parse(ApiConstants.registerUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(body),
+  Future<Map<String, dynamic>?> addFCMData(Map<String, dynamic> body) async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.post(
+      ApiConstants.fcmUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      data: jsonEncode(body),
     );
 
-    return jsonDecode(response.body);
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>?> registerData(Map<String, dynamic> body) async {
+    final response = await dio.post(
+      ApiConstants.registerUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      ),
+      data: jsonEncode(body),
+    );
+
+    return response.data;
   }
 
   static Future<http.Response> uploadFile(File file,
@@ -65,59 +89,51 @@ class AuthService {
     return base64Encode(imageBytes);
   }
 
-  Future<Map<String, dynamic>> changePasswordData(
+  Future<Map<String, dynamic>?> changePasswordData(
       Map<String, dynamic> body) async {
-    var token = await storage.read(key: "token");
-    final response = await http.post(
-      Uri.parse(ApiConstants.changepasswordUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode(body),
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.post(
+      ApiConstants.changepasswordUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      data: jsonEncode(body),
     );
 
-    return jsonDecode(response.body);
+    return response.data;
   }
 
-  Future<Map<String, dynamic>> verifyTokenData(
+  Future<Map<String, dynamic>?> verifyTokenData(
       Map<String, dynamic> body) async {
-    final response = await http.post(
-      Uri.parse(ApiConstants.verifyTokenUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(body),
+    final response = await dio.post(
+      ApiConstants.verifyTokenUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      ),
+      data: jsonEncode(body),
     );
 
-    return jsonDecode(response.body);
+    return response.data;
   }
 
-  Future<Map<String, dynamic>> addFCMData(Map<String, dynamic> body) async {
+  Future<Map<String, dynamic>?> deleteAccountData() async {
     var token = await storage.read(key: "token") ?? '';
-    final response = await http.post(
-      Uri.parse(ApiConstants.fcmUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode(body),
+    final response = await dio.delete(
+      ApiConstants.deleteAccountUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
     );
 
-    return jsonDecode(response.body);
-  }
-
-  Future<Map<String, dynamic>> deleteAccountData() async {
-    var token = await storage.read(key: "token") ?? '';
-    final response = await http.delete(
-      Uri.parse(ApiConstants.deleteAccountUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
-      },
-    );
-
-    return jsonDecode(response.body);
+    return response.data;
   }
 
   logout(BuildContext context) async {
@@ -150,5 +166,9 @@ class AuthService {
 
     await storage.delete(key: "token");
     await FirebaseMessaging.instance.deleteToken();
+  }
+
+  void cancelRequest() {
+    _cancelToken.cancel('Request canceled');
   }
 }

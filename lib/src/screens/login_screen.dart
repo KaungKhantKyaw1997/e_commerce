@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -23,6 +25,7 @@ class LogInScreen extends StatefulWidget {
 }
 
 class _LogInScreenState extends State<LogInScreen> {
+  final crashlytic = new CrashlyticsService();
   ScrollController _scrollController = ScrollController();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   String _fcmToken = '';
@@ -73,7 +76,7 @@ class _LogInScreenState extends State<LogInScreen> {
 
       final response = await authService.loginData(body);
 
-      if (response["code"] == 200) {
+      if (response!["code"] == 200) {
         String userName = prefs.getString("username") ?? "";
         prefs.setString("username", username.text);
         prefs.setString("name", response["data"]["name"]);
@@ -90,9 +93,32 @@ class _LogInScreenState extends State<LogInScreen> {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
       Navigator.pop(context);
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
     }
   }
 

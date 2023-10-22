@@ -84,11 +84,18 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
         return;
       }
       crashlytic.myGlobalErrorHandler(e, s);
-      if (e is DioException && e.response?.statusCode == 401) {
-        Navigator.pushNamed(
-          context,
-          Routes.unauthorized,
-        );
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
       }
     }
   }
@@ -151,11 +158,18 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
         return;
       }
       crashlytic.myGlobalErrorHandler(e, s);
-      if (e is DioException && e.response?.statusCode == 401) {
-        Navigator.pushNamed(
-          context,
-          Routes.unauthorized,
-        );
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
       }
     }
   }
@@ -193,11 +207,18 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
         return;
       }
       crashlytic.myGlobalErrorHandler(e, s);
-      if (e is DioException && e.response?.statusCode == 401) {
-        Navigator.pushNamed(
-          context,
-          Routes.unauthorized,
-        );
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
       }
     }
   }
@@ -229,11 +250,18 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
         return;
       }
       crashlytic.myGlobalErrorHandler(e, s);
-      if (e is DioException && e.response?.statusCode == 401) {
-        Navigator.pushNamed(
-          context,
-          Routes.unauthorized,
-        );
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
       }
     }
   }
