@@ -85,8 +85,7 @@ class _OrderScreenState extends State<OrderScreen> {
 
   @override
   void dispose() {
-    // addressService.cancelRequest();
-    // insuranceRulesService.cancelRequest();
+    _scrollController.dispose();
     super.dispose();
   }
 

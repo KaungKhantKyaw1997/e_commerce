@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:collection/collection.dart';
+import 'package:dio/dio.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/notification_service.dart';
 import 'package:e_commerce/src/utils/format_amount.dart';
 import 'package:e_commerce/src/widgets/custom_date_range.dart';
@@ -28,6 +32,7 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
+  final crashlytic = new CrashlyticsService();
   final orderService = OrderService();
   final authService = AuthService();
   final notificationService = NotificationService();
@@ -52,8 +57,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   void dispose() {
-    // orderService.cancelRequest();
-    // notificationService.cancelRequest();
     _scrollController.dispose();
     super.dispose();
   }
@@ -79,8 +82,24 @@ class _HistoryScreenState extends State<HistoryScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
+      }
     }
   }
 
@@ -130,10 +149,26 @@ class _HistoryScreenState extends State<HistoryScreen> {
         ToastUtil.showToast(response["code"], response["message"]);
       }
       setState(() {});
-    } catch (e) {
+    } catch (e, s) {
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
-      print('Error: $e');
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
+      }
     }
   }
 

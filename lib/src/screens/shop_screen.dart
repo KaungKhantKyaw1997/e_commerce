@@ -27,11 +27,7 @@ class _ShopScreenState extends State<ShopScreen> {
   List products = [];
   List reviews = [];
   List<double> ratings = [];
-  Map<String, dynamic> shop = {
-    'name': '',
-    'address': '',
-    'cover_image': '',
-  };
+  Map<String, dynamic> shop = {};
 
   @override
   void initState() {

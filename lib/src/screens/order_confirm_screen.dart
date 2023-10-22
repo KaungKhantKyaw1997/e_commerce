@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/orders_service.dart';
 import 'package:e_commerce/src/utils/format_amount.dart';
 import 'package:e_commerce/src/utils/loading.dart';
@@ -24,6 +26,7 @@ class OrderConfirmScreen extends StatefulWidget {
 }
 
 class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
+  final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
   final orderService = OrderService();
   Object address = {};
@@ -61,7 +64,7 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
 
   @override
   void dispose() {
-    // orderService.cancelRequest();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -87,7 +90,7 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
       };
       final response = await orderService.addOrderData(body);
       Navigator.pop(context);
-      if (response["code"] == 200) {
+      if (response!["code"] == 200) {
         CartProvider cartProvider =
             Provider.of<CartProvider>(context, listen: false);
         cartProvider.addCount(0);
@@ -108,9 +111,25 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
       Navigator.pop(context);
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
+      }
     }
   }
 
