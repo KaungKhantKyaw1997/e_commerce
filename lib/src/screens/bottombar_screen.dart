@@ -62,19 +62,21 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
     BottomProvider bottomProvider =
         Provider.of<BottomProvider>(context, listen: false);
 
-    bottomProvider.selectIndex(index);
+    if (bottomProvider.currentIndex != index) {
+      bottomProvider.selectIndex(index);
 
-    var data = navItems[index];
-    if (data["label"] == 'Home') {
-      Navigator.pushNamed(context, Routes.home);
-    } else if (data["label"] == 'Cart') {
-      Navigator.pushNamed(context, Routes.cart);
-    } else if (data["label"] == 'History' || data["label"] == 'Order') {
-      Navigator.pushNamed(context, Routes.history);
-    } else if (data["label"] == 'Notification') {
-      Navigator.pushNamed(context, Routes.noti);
-    } else if (data["label"] == 'Settings') {
-      Navigator.pushNamed(context, Routes.setting);
+      var data = navItems[index];
+      if (data["label"] == 'Home') {
+        Navigator.pushNamed(context, Routes.home);
+      } else if (data["label"] == 'Cart') {
+        Navigator.pushNamed(context, Routes.cart);
+      } else if (data["label"] == 'History' || data["label"] == 'Order') {
+        Navigator.pushNamed(context, Routes.history);
+      } else if (data["label"] == 'Notification') {
+        Navigator.pushNamed(context, Routes.noti);
+      } else if (data["label"] == 'Settings') {
+        Navigator.pushNamed(context, Routes.setting);
+      }
     }
   }
 
@@ -96,7 +98,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
         child: navItems.isNotEmpty
             ? BottomNavigationBar(
                 currentIndex: bottomProvider.currentIndex,
-                type: BottomNavigationBarType.shifting,
+                type: BottomNavigationBarType.fixed,
                 backgroundColor: Colors.white,
                 selectedItemColor: Theme.of(context).primaryColor,
                 unselectedItemColor: Colors.grey,

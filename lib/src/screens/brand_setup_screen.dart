@@ -48,8 +48,10 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
       if (arguments != null) {
-        id = arguments["id"];
-        getBrand();
+        id = arguments["id"] ?? 0;
+        if (id != 0) {
+          getBrand();
+        }
       }
     });
   }

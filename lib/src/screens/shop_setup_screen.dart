@@ -50,8 +50,10 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
       if (arguments != null) {
-        id = arguments["id"];
-        getShop();
+        id = arguments["id"] ?? 0;
+        if (id != 0) {
+          getShop();
+        }
       }
     });
   }

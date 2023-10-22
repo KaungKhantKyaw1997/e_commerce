@@ -92,7 +92,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           shopId = arguments["shopId"] ?? 0;
           shopName.text = arguments["shopName"] ?? '';
         }
-        getProduct();
+        if (id != 0) {
+          getProduct();
+        }
       }
     });
   }

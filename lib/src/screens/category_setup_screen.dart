@@ -48,8 +48,10 @@ class _CategorySetupScreenState extends State<CategorySetupScreen> {
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
       if (arguments != null) {
-        id = arguments["id"];
-        getCategory();
+        id = arguments["id"] ?? 0;
+        if (id != 0) {
+          getCategory();
+        }
       }
     });
   }

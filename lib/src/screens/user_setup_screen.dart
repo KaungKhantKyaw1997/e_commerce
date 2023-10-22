@@ -66,8 +66,10 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
       if (arguments != null) {
-        id = arguments["id"];
-        getUser();
+        id = arguments["id"] ?? 0;
+        if (id != 0) {
+          getUser();
+        }
       }
     });
   }
