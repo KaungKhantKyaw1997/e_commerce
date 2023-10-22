@@ -1,8 +1,13 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/src/services/auth_service.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/user_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +22,8 @@ class UsersSetupScreen extends StatefulWidget {
 }
 
 class _UsersSetupScreenState extends State<UsersSetupScreen> {
+  final crashlytic = new CrashlyticsService();
+  final authService = AuthService();
   final userService = UserService();
   TextEditingController search = TextEditingController(text: '');
   final ScrollController _scrollController = ScrollController();
@@ -54,10 +61,21 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
+    } catch (e, s) {
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
-      print('Error: $e');
+
+      if (e is DioException && e.error is SocketException) {
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+      } else {
+        crashlytic.myGlobalErrorHandler(e, s);
+        if (e is DioException && e.response?.statusCode == 401) {
+          authService.logout(context);
+        }
+      }
     }
   }
 

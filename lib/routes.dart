@@ -2,6 +2,7 @@ import 'package:e_commerce/src/screens/brand_setup_screen.dart';
 import 'package:e_commerce/src/screens/brands_setup_screen.dart';
 import 'package:e_commerce/src/screens/categories_setup_screen.dart';
 import 'package:e_commerce/src/screens/category_setup_screen.dart';
+import 'package:e_commerce/src/screens/connection_timeout_screen.dart';
 import 'package:e_commerce/src/screens/image_preview_screen.dart';
 import 'package:e_commerce/src/screens/order_confirm_screen.dart';
 import 'package:e_commerce/src/screens/order_screen.dart';
@@ -74,6 +75,7 @@ class Routes {
   static const String reviews = "/reviews";
   static const String scan = "/scan";
   static const String image_preview = "/image_preview";
+  static const String connection_timeout = "/connection_timeout";
 
   static final Map<String, WidgetBuilder> routes = {
     splash: (BuildContext context) => const SplashScreen(),
@@ -114,5 +116,6 @@ class Routes {
     shop: (BuildContext context) => const ShopScreen(),
     reviews: (BuildContext context) => const ReviewsScreen(),
     image_preview: (context) => const ImagePreviewScreen(),
+    connection_timeout: (context) => const ConnectionTimeoutScreen(),
   };
 }
