@@ -35,7 +35,6 @@ class _ProductsScreenState extends State<ProductsScreen>
   double _startValue = 0;
   double _endValue = 0;
   NumberFormat formatter = NumberFormat('###,###.00', 'en_US');
-  List<String> selectedModels = [];
 
   List products = [];
   int page = 1;
@@ -43,7 +42,8 @@ class _ProductsScreenState extends State<ProductsScreen>
   int categoryId = 0;
   int brandId = 0;
   List<int> productIds = [];
-  List brands = [];
+  List<int> brands = [];
+  List<String> models = [];
 
   bool isTopModel = false;
   bool _dataLoaded = false;
@@ -93,7 +93,7 @@ class _ProductsScreenState extends State<ProductsScreen>
         "from_price": fromPrice,
         "to_price": toPrice,
         "brands": brands,
-        "models": selectedModels,
+        "models": models,
         "products": productIds,
         if (isTopModel) "is_top_model": isTopModel,
       };
@@ -275,7 +275,8 @@ class _ProductsScreenState extends State<ProductsScreen>
                   "_toPrice": _toPrice.text,
                   "_startValue": _startValue,
                   "_endValue": _endValue,
-                  "selectedModels": selectedModels,
+                  "selectedModels": models,
+                  "selectedBrands": brands,
                 },
               );
 
@@ -284,7 +285,8 @@ class _ProductsScreenState extends State<ProductsScreen>
                 _toPrice.text = result["_toPrice"] ?? '';
                 _startValue = result["_startValue"] ?? 0;
                 _endValue = result["_endValue"] ?? 0;
-                selectedModels = result["selectedModels"] ?? [];
+                models = result["selectedModels"] ?? [];
+                brands = result["selectedBrands"] ?? [];
                 page = 1;
                 products = [];
                 getProducts();

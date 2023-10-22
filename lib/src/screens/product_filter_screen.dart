@@ -5,6 +5,7 @@ import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/src/services/brands_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/models_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
@@ -21,6 +22,7 @@ class ProductsFilterScreen extends StatefulWidget {
 class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
   final crashlytic = new CrashlyticsService();
   final modelsService = ModelsService();
+  final brandsService = BrandsService();
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
 
@@ -34,11 +36,15 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
   List<String> models = [];
   List<String> selectedModels = [];
 
+  List brands = [];
+  List<String> brandnames = [];
+  List<int> selectedBrands = [];
+  List<String> selectedBrandsName = [];
+
   @override
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () async {
-      await getModels();
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
@@ -47,6 +53,19 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
         _toPrice.text = arguments["_toPrice"] ?? '';
         _startValue = arguments["_startValue"] ?? 0;
         _endValue = arguments["_endValue"] ?? 0;
+
+        await getBrands();
+        selectedBrands = arguments["selectedBrands"] ?? [];
+        for (int selectedBrand in selectedBrands) {
+          for (Map<String, dynamic> brand in brands) {
+            if (brand["brand_id"] == selectedBrand) {
+              selectedBrandsName.add(brand["name"]);
+              break;
+            }
+          }
+        }
+
+        await getModels();
         selectedModels = arguments["selectedModels"] ?? [];
       }
     });
@@ -56,6 +75,47 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  getBrands() async {
+    try {
+      final response = await brandsService.getBrandsData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          setState(() {
+            brands = response["data"];
+            brandnames = brands.map((item) => item["name"] as String).toList();
+          });
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
   }
 
   getModels() async {
@@ -139,6 +199,7 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
                   vertical: 24,
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Align(
                       alignment: Alignment.centerLeft,
@@ -263,6 +324,25 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
+                        language["Brands"] ?? "Brands",
+                        style: FontConstants.subheadline1,
+                      ),
+                    ),
+                    MultiSelectChip(
+                      brandnames,
+                      selectedBrandsName,
+                      onSelectionChanged: (selectedList) {
+                        setState(() {
+                          selectedBrandsName = selectedList;
+                        });
+                      },
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
                         language["Models"] ?? "Models",
                         style: FontConstants.subheadline1,
                       ),
@@ -315,6 +395,7 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
                       _fromPrice.text = '';
                       _toPrice.text = '';
                       selectedModels = [];
+                      selectedBrands = [];
 
                       Navigator.of(context).pop({
                         "_fromPrice": _fromPrice.text,
@@ -322,6 +403,7 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
                         "_startValue": _startValue,
                         "_endValue": _endValue,
                         "selectedModels": selectedModels,
+                        "selectedBrands": selectedBrands,
                       });
                     },
                     child: Text(
@@ -354,12 +436,23 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
                       backgroundColor: Theme.of(context).primaryColor,
                     ),
                     onPressed: () async {
+                      selectedBrands = [];
+                      for (String selectedBrandName in selectedBrandsName) {
+                        for (Map<String, dynamic> brand in brands) {
+                          if (brand["name"] == selectedBrandName) {
+                            selectedBrands.add(brand["brand_id"]);
+                            break;
+                          }
+                        }
+                      }
+
                       Navigator.of(context).pop({
                         "_fromPrice": _fromPrice.text,
                         "_toPrice": _toPrice.text,
                         "_startValue": _startValue,
                         "_endValue": _endValue,
                         "selectedModels": selectedModels,
+                        "selectedBrands": selectedBrands,
                       });
                     },
                     child: Text(
