@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/address_service.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/insurance_rules_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:e_commerce/src/widgets/custom_dropdown.dart';
@@ -21,6 +23,7 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
+  final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
   final addressService = AddressService();
   final insuranceRulesService = InsuranceRulesService();
@@ -64,6 +67,7 @@ class _OrderScreenState extends State<OrderScreen> {
   List<Map<String, dynamic>> carts = [];
   double subtotal = 0.0;
   double total = 0.0;
+  bool _isConnectionTimeoutHandled = false;
 
   @override
   void initState() {
@@ -106,8 +110,21 @@ class _OrderScreenState extends State<OrderScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !_isConnectionTimeoutHandled) {
+        _isConnectionTimeoutHandled = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        authService.logout(context);
+      }
     }
   }
 
@@ -144,8 +161,21 @@ class _OrderScreenState extends State<OrderScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !_isConnectionTimeoutHandled) {
+        _isConnectionTimeoutHandled = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        authService.logout(context);
+      }
     }
   }
 

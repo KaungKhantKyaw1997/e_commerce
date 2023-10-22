@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
@@ -8,6 +9,7 @@ import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/brands_service.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +24,10 @@ class BrandSetupScreen extends StatefulWidget {
 }
 
 class _BrandSetupScreenState extends State<BrandSetupScreen> {
+  final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
+  final authService = AuthService();
   final brandsService = BrandsService();
   FocusNode _nameFocusNode = FocusNode();
   FocusNode _descriptionFocusNode = FocusNode();
@@ -36,6 +40,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
   String logoUrl = '';
 
   int id = 0;
+  bool _isConnectionTimeoutHandled = false;
 
   @override
   void initState() {
@@ -69,8 +74,21 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !_isConnectionTimeoutHandled) {
+        _isConnectionTimeoutHandled = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        authService.logout(context);
+      }
     }
   }
 
@@ -109,7 +127,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
 
       final response = await brandsService.addBrandData(body);
       Navigator.pop(context);
-      if (response["code"] == 200) {
+      if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
         Navigator.pushNamed(
@@ -119,9 +137,22 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
       Navigator.pop(context);
+      if (e is DioException &&
+          e.error is SocketException &&
+          !_isConnectionTimeoutHandled) {
+        _isConnectionTimeoutHandled = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        authService.logout(context);
+      }
     }
   }
 
@@ -135,7 +166,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
 
       final response = await brandsService.updateBrandData(body, id);
       Navigator.pop(context);
-      if (response["code"] == 200) {
+      if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
         Navigator.pushNamed(
@@ -145,9 +176,22 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
       Navigator.pop(context);
+      if (e is DioException &&
+          e.error is SocketException &&
+          !_isConnectionTimeoutHandled) {
+        _isConnectionTimeoutHandled = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        authService.logout(context);
+      }
     }
   }
 
@@ -155,7 +199,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
     try {
       final response = await brandsService.deleteBrandData(id);
       Navigator.pop(context);
-      if (response["code"] == 204) {
+      if (response!["code"] == 204) {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
         Navigator.pushNamed(
@@ -165,9 +209,22 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
       Navigator.pop(context);
+      if (e is DioException &&
+          e.error is SocketException &&
+          !_isConnectionTimeoutHandled) {
+        _isConnectionTimeoutHandled = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        authService.logout(context);
+      }
     }
   }
 

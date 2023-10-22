@@ -1,9 +1,14 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/brands_service.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
@@ -17,6 +22,8 @@ class BrandsSetupScreen extends StatefulWidget {
 }
 
 class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
+  final crashlytic = new CrashlyticsService();
+  final authService = AuthService();
   final brandsService = BrandsService();
   TextEditingController search = TextEditingController(text: '');
   final ScrollController _scrollController = ScrollController();
@@ -25,6 +32,7 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
   List brands = [];
   int page = 1;
   String from = "";
+  bool _isConnectionTimeoutHandled = false;
 
   @override
   void initState() {
@@ -63,10 +71,23 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
+    } catch (e, s) {
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
-      print('Error: $e');
+      if (e is DioException &&
+          e.error is SocketException &&
+          !_isConnectionTimeoutHandled) {
+        _isConnectionTimeoutHandled = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        authService.logout(context);
+      }
     }
   }
 

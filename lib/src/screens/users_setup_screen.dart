@@ -31,6 +31,7 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
       RefreshController(initialRefresh: false);
   List users = [];
   int page = 1;
+  bool _isConnectionTimeoutHandled = false;
 
   @override
   void initState() {
@@ -64,17 +65,19 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
     } catch (e, s) {
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
-
-      if (e is DioException && e.error is SocketException) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !_isConnectionTimeoutHandled) {
+        _isConnectionTimeoutHandled = true;
         Navigator.pushNamed(
           context,
           Routes.connection_timeout,
         );
-      } else {
-        crashlytic.myGlobalErrorHandler(e, s);
-        if (e is DioException && e.response?.statusCode == 401) {
-          authService.logout(context);
-        }
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        authService.logout(context);
       }
     }
   }
