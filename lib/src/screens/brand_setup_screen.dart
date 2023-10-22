@@ -40,7 +40,6 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
   String logoUrl = '';
 
   int id = 0;
-  bool _isConnectionTimeoutHandled = false;
 
   @override
   void initState() {
@@ -77,8 +76,8 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
     } catch (e, s) {
       if (e is DioException &&
           e.error is SocketException &&
-          !_isConnectionTimeoutHandled) {
-        _isConnectionTimeoutHandled = true;
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
         Navigator.pushNamed(
           context,
           Routes.connection_timeout,
@@ -141,8 +140,8 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
       Navigator.pop(context);
       if (e is DioException &&
           e.error is SocketException &&
-          !_isConnectionTimeoutHandled) {
-        _isConnectionTimeoutHandled = true;
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
         Navigator.pushNamed(
           context,
           Routes.connection_timeout,
@@ -180,8 +179,8 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
       Navigator.pop(context);
       if (e is DioException &&
           e.error is SocketException &&
-          !_isConnectionTimeoutHandled) {
-        _isConnectionTimeoutHandled = true;
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
         Navigator.pushNamed(
           context,
           Routes.connection_timeout,
@@ -213,8 +212,8 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
       Navigator.pop(context);
       if (e is DioException &&
           e.error is SocketException &&
-          !_isConnectionTimeoutHandled) {
-        _isConnectionTimeoutHandled = true;
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
         Navigator.pushNamed(
           context,
           Routes.connection_timeout,

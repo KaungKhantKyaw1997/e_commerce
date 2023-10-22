@@ -31,7 +31,6 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
       RefreshController(initialRefresh: false);
   List users = [];
   int page = 1;
-  bool _isConnectionTimeoutHandled = false;
 
   @override
   void initState() {
@@ -67,8 +66,8 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
       _refreshController.loadComplete();
       if (e is DioException &&
           e.error is SocketException &&
-          !_isConnectionTimeoutHandled) {
-        _isConnectionTimeoutHandled = true;
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
         Navigator.pushNamed(
           context,
           Routes.connection_timeout,

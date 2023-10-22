@@ -67,7 +67,6 @@ class _OrderScreenState extends State<OrderScreen> {
   List<Map<String, dynamic>> carts = [];
   double subtotal = 0.0;
   double total = 0.0;
-  bool _isConnectionTimeoutHandled = false;
 
   @override
   void initState() {
@@ -113,8 +112,8 @@ class _OrderScreenState extends State<OrderScreen> {
     } catch (e, s) {
       if (e is DioException &&
           e.error is SocketException &&
-          !_isConnectionTimeoutHandled) {
-        _isConnectionTimeoutHandled = true;
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
         Navigator.pushNamed(
           context,
           Routes.connection_timeout,
@@ -164,8 +163,8 @@ class _OrderScreenState extends State<OrderScreen> {
     } catch (e, s) {
       if (e is DioException &&
           e.error is SocketException &&
-          !_isConnectionTimeoutHandled) {
-        _isConnectionTimeoutHandled = true;
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
         Navigator.pushNamed(
           context,
           Routes.connection_timeout,

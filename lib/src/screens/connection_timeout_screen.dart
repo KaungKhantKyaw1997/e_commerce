@@ -14,43 +14,48 @@ class _ConnectionTimeoutScreenState extends State<ConnectionTimeoutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 300,
-              height: 300,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/no_connection.png'),
+      body: WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 300,
+                height: 300,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/no_connection.png'),
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 16,
-                right: 16,
-                bottom: 10,
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  bottom: 10,
+                ),
+                child: Text(
+                  "Connection Timed Out",
+                  textAlign: TextAlign.center,
+                  style: FontConstants.title2,
+                ),
               ),
-              child: Text(
-                "Connection Timed Out",
-                textAlign: TextAlign.center,
-                style: FontConstants.title2,
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 40,
+                ),
+                child: Text(
+                  "Please check your internet connection and try again.",
+                  textAlign: TextAlign.center,
+                  style: FontConstants.subheadline2,
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 40,
-              ),
-              child: Text(
-                "Please check your internet connection and try again.",
-                textAlign: TextAlign.center,
-                style: FontConstants.subheadline2,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: Container(
@@ -70,7 +75,8 @@ class _ConnectionTimeoutScreenState extends State<ConnectionTimeoutScreen> {
             ),
           ),
           onPressed: () async {
-            Navigator.pop(context);
+            isConnectionTimeout = false;
+            Navigator.of(context).pop();
           },
           child: Text(
             language["Try Again"] ?? "Try Again",

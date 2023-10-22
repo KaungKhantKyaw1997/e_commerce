@@ -32,7 +32,6 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
   List brands = [];
   int page = 1;
   String from = "";
-  bool _isConnectionTimeoutHandled = false;
 
   @override
   void initState() {
@@ -50,7 +49,6 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
 
   @override
   void dispose() {
-    // brandsService.cancelRequest();
     _scrollController.dispose();
     super.dispose();
   }
@@ -76,8 +74,8 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
       _refreshController.loadComplete();
       if (e is DioException &&
           e.error is SocketException &&
-          !_isConnectionTimeoutHandled) {
-        _isConnectionTimeoutHandled = true;
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
         Navigator.pushNamed(
           context,
           Routes.connection_timeout,
