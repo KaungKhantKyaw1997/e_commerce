@@ -1,9 +1,13 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/categories_service.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
@@ -17,6 +21,7 @@ class CategoriesSetupScreen extends StatefulWidget {
 }
 
 class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
+  final crashlytic = new CrashlyticsService();
   final categoriesService = CategoriesService();
   TextEditingController search = TextEditingController(text: '');
   final ScrollController _scrollController = ScrollController();
@@ -42,7 +47,6 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
 
   @override
   void dispose() {
-    // categoriesService.cancelRequest();
     _scrollController.dispose();
     super.dispose();
   }
@@ -63,10 +67,26 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
+    } catch (e, s) {
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
-      print('Error: $e');
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
+      }
     }
   }
 
