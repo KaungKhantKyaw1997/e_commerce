@@ -11,23 +11,18 @@ class ModelsService {
   Future<Map<String, dynamic>?> getModelsData(
       {int page = 1, int perPage = 10, String search = ''}) async {
     var token = await storage.read(key: "token") ?? '';
-    try {
-      final response = await dio.get(
-        '${ApiConstants.modelsUrl}',
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json; charset=UTF-8',
-            if (token.isNotEmpty) 'Authorization': 'Bearer $token',
-          },
-        ),
-        cancelToken: _cancelToken,
-      );
+    final response = await dio.get(
+      '${ApiConstants.modelsUrl}',
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
 
-      return response.data;
-    } catch (e) {
-      print('Error: $e');
-      return null;
-    }
+    return response.data;
   }
 
   void cancelRequest() {

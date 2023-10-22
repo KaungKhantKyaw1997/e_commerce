@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/products_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +24,7 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen>
     with SingleTickerProviderStateMixin {
+  final crashlytic = new CrashlyticsService();
   final productsService = ProductsService();
   final ScrollController _scrollController = ScrollController();
   final RefreshController _refreshController =
@@ -90,10 +94,26 @@ class _SearchScreenState extends State<SearchScreen>
         ToastUtil.showToast(response["code"], response["message"]);
       }
       setState(() {});
-    } catch (e) {
+    } catch (e, s) {
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
-      print('Error: $e');
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
+      }
     }
   }
 

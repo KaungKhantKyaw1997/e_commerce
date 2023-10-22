@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
+import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/models_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:e_commerce/src/widgets/multi_select_chip.dart';
@@ -14,6 +19,7 @@ class ProductsFilterScreen extends StatefulWidget {
 }
 
 class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
+  final crashlytic = new CrashlyticsService();
   final modelsService = ModelsService();
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
@@ -48,7 +54,6 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
 
   @override
   void dispose() {
-    // modelsService.cancelRequest();
     _scrollController.dispose();
     super.dispose();
   }
@@ -66,8 +71,24 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response?.statusCode == 401) {
+        Navigator.pushNamed(
+          context,
+          Routes.unauthorized,
+        );
+      }
     }
   }
 
