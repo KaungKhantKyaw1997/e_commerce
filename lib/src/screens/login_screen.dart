@@ -135,6 +135,7 @@ class _LogInScreenState extends State<LogInScreen> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     bool termsandconditions = prefs.getBool("termsandconditions") ?? false;
 
+    Navigator.pop(context);
     if (role == 'admin' || role == 'agent') {
       Navigator.pushNamed(
         context,
@@ -410,11 +411,37 @@ class _LogInScreenState extends State<LogInScreen> {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.pushNamed(context, Routes.register);
+                      Navigator.pop(context);
+                      Navigator.pushNamed(
+                        context,
+                        Routes.register,
+                      );
                     },
                     child: Text(
                       language["Register"] ?? "Register",
                       style: FontConstants.button2,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 24,
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(
+                        context,
+                        Routes.forgot_password,
+                      );
+                    },
+                    child: Center(
+                      child: Text(
+                        '${language["Forgot Password"]}?' ?? "Forgot Password?",
+                        style: FontConstants.caption5,
+                      ),
                     ),
                   ),
                 ),

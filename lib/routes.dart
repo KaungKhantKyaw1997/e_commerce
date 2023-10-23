@@ -3,6 +3,7 @@ import 'package:e_commerce/src/screens/brands_setup_screen.dart';
 import 'package:e_commerce/src/screens/categories_setup_screen.dart';
 import 'package:e_commerce/src/screens/category_setup_screen.dart';
 import 'package:e_commerce/src/screens/connection_timeout_screen.dart';
+import 'package:e_commerce/src/screens/forgot_password_screen.dart';
 import 'package:e_commerce/src/screens/image_preview_screen.dart';
 import 'package:e_commerce/src/screens/order_confirm_screen.dart';
 import 'package:e_commerce/src/screens/order_screen.dart';
@@ -42,6 +43,7 @@ class Routes {
   static const String splash = '/splash';
   static const String login = '/login';
   static const String register = '/register';
+  static const String forgot_password = '/forgot_password';
   static const String home = '/home';
   static const String products = '/products';
   static const String product = '/product';
@@ -83,6 +85,7 @@ class Routes {
     splash: (BuildContext context) => const SplashScreen(),
     login: (BuildContext context) => const LogInScreen(),
     register: (BuildContext context) => const RegisterScreen(),
+    forgot_password: (BuildContext context) => const ForgotPasswordScreen(),
     home: (BuildContext context) => const HomeScreen(),
     products: (BuildContext context) => const ProductsScreen(),
     product: (BuildContext context) => const ProductScreen(),

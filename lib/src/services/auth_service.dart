@@ -64,6 +64,21 @@ class AuthService {
     return response.data;
   }
 
+  Future<Map<String, dynamic>?> forgotPasswordData(
+      Map<String, dynamic> body) async {
+    final response = await dio.post(
+      ApiConstants.forgotPasswordUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      ),
+      data: jsonEncode(body),
+    );
+
+    return response.data;
+  }
+
   static Future<http.Response> uploadFile(File file,
       {String resolution = ""}) async {
     var uri = Uri.parse(

@@ -2,6 +2,7 @@ class ApiConstants {
   static const String baseUrl = 'http://150.95.82.125:8001';
   static const String loginUrl = '$baseUrl/api/auth/login';
   static const String registerUrl = '$baseUrl/api/auth/register';
+  static const String forgotPasswordUrl = '$baseUrl/api/auth/forgot-password';
   static const String changepasswordUrl = '$baseUrl/api/auth/change-password';
   static const String verifyTokenUrl = '$baseUrl/api/auth/verify-token';
   static const String fcmUrl = '$baseUrl/api/fcm/token';

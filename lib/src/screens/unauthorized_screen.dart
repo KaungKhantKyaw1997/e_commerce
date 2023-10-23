@@ -16,43 +16,48 @@ class _UnauthorizedScreenState extends State<UnauthorizedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 300,
-              height: 300,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/unauthorized.png'),
+      body: WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 300,
+                height: 300,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/unauthorized.png'),
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 16,
-                right: 16,
-                bottom: 10,
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  bottom: 10,
+                ),
+                child: Text(
+                  "Session Expired",
+                  textAlign: TextAlign.center,
+                  style: FontConstants.title2,
+                ),
               ),
-              child: Text(
-                "Session Expired",
-                textAlign: TextAlign.center,
-                style: FontConstants.title2,
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 40,
+                ),
+                child: Text(
+                  "Your session has ended due to inactivity. For your security, we've logged you out. Please log in again to continue.",
+                  textAlign: TextAlign.center,
+                  style: FontConstants.subheadline2,
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 40,
-              ),
-              child: Text(
-                "Your session has ended due to inactivity. For your security, we've logged you out. Please log in again to continue.",
-                textAlign: TextAlign.center,
-                style: FontConstants.subheadline2,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: Container(
@@ -75,7 +80,7 @@ class _UnauthorizedScreenState extends State<UnauthorizedScreen> {
             authService.logout(context);
           },
           child: Text(
-            language["Ok"] ?? "Ok",
+            language["Home"] ?? "Home",
             style: FontConstants.button1,
           ),
         ),
