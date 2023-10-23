@@ -5,6 +5,7 @@ import 'package:e_commerce/src/screens/category_setup_screen.dart';
 import 'package:e_commerce/src/screens/connection_timeout_screen.dart';
 import 'package:e_commerce/src/screens/forgot_password_screen.dart';
 import 'package:e_commerce/src/screens/image_preview_screen.dart';
+import 'package:e_commerce/src/screens/insurance_rules_setup_screen.dart';
 import 'package:e_commerce/src/screens/order_confirm_screen.dart';
 import 'package:e_commerce/src/screens/order_screen.dart';
 import 'package:e_commerce/src/screens/product_filter_screen.dart';
@@ -80,6 +81,7 @@ class Routes {
   static const String image_preview = "/image_preview";
   static const String connection_timeout = "/connection_timeout";
   static const String unauthorized = "/unauthorized";
+  static const String insurrance_rules_setup="/insurrance_rules";
 
   static final Map<String, WidgetBuilder> routes = {
     splash: (BuildContext context) => const SplashScreen(),
@@ -120,8 +122,10 @@ class Routes {
     search: (BuildContext context) => const SearchScreen(),
     shop: (BuildContext context) => const ShopScreen(),
     reviews: (BuildContext context) => const ReviewsScreen(),
+    insurrance_rules_setup:(BuildContext context) => const insurance_rules_setup_screen(),
     image_preview: (context) => const ImagePreviewScreen(),
     connection_timeout: (context) => const ConnectionTimeoutScreen(),
     unauthorized: (context) => const UnauthorizedScreen(),
+
   };
 }

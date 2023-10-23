@@ -82,7 +82,7 @@ class BrandsService {
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           if (token.isNotEmpty) 'Authorization': 'Bearer $token',
-        },
+        },    
       ),
       cancelToken: _cancelToken,
     );

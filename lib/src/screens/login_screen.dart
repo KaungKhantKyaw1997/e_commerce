@@ -406,9 +406,9 @@ class _LogInScreenState extends State<LogInScreen> {
                       ),
                       backgroundColor: Colors.white,
                       side: BorderSide(
-                        color: Theme.of(context).primaryColor,
                         width: 0.5,
                       ),
+                      
                     ),
                     onPressed: () {
                       Navigator.pop(context);
