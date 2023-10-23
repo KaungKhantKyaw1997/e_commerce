@@ -194,7 +194,7 @@ class _ShopScreenState extends State<ShopScreen> {
                   border: Border.all(
                     color: Colors.transparent,
                   ),
-                  color: Color(0xffFFECB0),
+                  color: Colors.amber.withOpacity(0.2),
                 ),
                 child: SvgPicture.asset(
                   "assets/icons/star.svg",

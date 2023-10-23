@@ -114,7 +114,7 @@ class _SuccessScreenState extends State<SuccessScreen>
                   allowHalfRating: true,
                   itemCount: 5,
                   glowColor: Colors.amber,
-                  unratedColor: Color(0xffFFECB0),
+                  unratedColor: Colors.amber.withOpacity(0.2),
                   itemPadding: EdgeInsets.symmetric(
                     horizontal: 3.0,
                   ),
