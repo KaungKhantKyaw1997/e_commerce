@@ -6,6 +6,7 @@ import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
+import 'package:e_commerce/src/utils/signin_utils.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -376,7 +377,7 @@ class _LogInScreenState extends State<LogInScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         getFCMToken();
                       }
