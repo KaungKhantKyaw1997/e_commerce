@@ -126,9 +126,6 @@ class _OrderScreenState extends State<OrderScreen> {
             context,
             Routes.unauthorized,
           );
-        } else {
-          ToastUtil.showToast(
-              e.response!.data['code'], e.response!.data['message']);
         }
       }
     }

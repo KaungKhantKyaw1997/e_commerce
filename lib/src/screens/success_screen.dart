@@ -138,7 +138,6 @@ class _SuccessScreenState extends State<SuccessScreen>
                   textInputAction: TextInputAction.done,
                   style: FontConstants.body1,
                   cursorColor: Colors.black,
-                  maxLength: 256,
                   decoration: InputDecoration(
                     hintText: language["Comment"] ?? "Comment",
                     filled: true,
@@ -183,7 +182,9 @@ class _SuccessScreenState extends State<SuccessScreen>
                       },
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(
+                    width: 16,
+                  ),
                   Expanded(
                     child: TextButton(
                       style: ButtonStyle(

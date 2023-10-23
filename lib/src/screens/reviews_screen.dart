@@ -36,6 +36,9 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
   }
 
   reviewCard(index) {
+    int fullStars = reviews[index]["rating"].floor();
+    bool hasHalfStar = (reviews[index]["rating"] - fullStars) >= 0.5;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -50,81 +53,80 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
           vertical: 12,
           horizontal: 16,
         ),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
-              width: 37,
-              height: 37,
-              margin: EdgeInsets.only(
-                right: 8,
-              ),
-              decoration: BoxDecoration(
-                image: reviews[index]["profile_image"].isNotEmpty
-                    ? DecorationImage(
-                        image: NetworkImage(
-                            '${ApiConstants.baseUrl}${reviews[index]["profile_image"].toString()}'),
-                        fit: BoxFit.cover,
-                      )
-                    : DecorationImage(
-                        image: AssetImage('assets/images/logo.png'),
-                        fit: BoxFit.cover,
-                      ),
-                borderRadius: BorderRadius.circular(50),
-                border: Border.all(
-                  color: Colors.transparent,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  margin: EdgeInsets.only(
+                    right: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    image: reviews[index]["profile_image"].isNotEmpty
+                        ? DecorationImage(
+                            image: NetworkImage(
+                                '${ApiConstants.baseUrl}${reviews[index]["profile_image"].toString()}'),
+                            fit: BoxFit.cover,
+                          )
+                        : DecorationImage(
+                            image: AssetImage('assets/images/profile.png'),
+                            fit: BoxFit.cover,
+                          ),
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(
+                      color: Colors.transparent,
+                    ),
+                  ),
                 ),
-              ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      reviews[index]["name"].toString(),
+                      overflow: TextOverflow.ellipsis,
+                      style: FontConstants.body1,
+                    ),
+                    Row(
+                      children: List.generate(5, (index) {
+                        if (index < fullStars) {
+                          return Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                            size: 16,
+                          );
+                        } else if (hasHalfStar && index == fullStars) {
+                          return Icon(
+                            Icons.star_half,
+                            color: Colors.amber,
+                            size: 16,
+                          );
+                        } else {
+                          return Icon(
+                            Icons.star_border,
+                            color: Colors.amber,
+                            size: 16,
+                          );
+                        }
+                      }),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          reviews[index]["name"].toString(),
-                          overflow: TextOverflow.ellipsis,
-                          style: FontConstants.body1,
-                        ),
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            reviews[index]["rating"].toString(),
-                            style: FontConstants.body1,
-                          ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              bottom: 4,
-                            ),
-                            child: SvgPicture.asset(
-                              "assets/icons/star.svg",
-                              width: 16,
-                              height: 16,
-                              colorFilter: const ColorFilter.mode(
-                                Colors.amber,
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Text(
-                    reviews[index]["comment"].toString(),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: FontConstants.caption1,
-                  ),
-                ],
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 8,
+              ),
+              child: Text(
+                reviews[index]["comment"].toString(),
+                style: FontConstants.caption1,
               ),
             ),
           ],
