@@ -29,18 +29,16 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
   final userService = UserService();
-  FocusNode _userFocusNode = FocusNode();
+  FocusNode _emailFocusNode = FocusNode();
   FocusNode _passwordFocusNode = FocusNode();
   FocusNode _confirmPasswordFocusNode = FocusNode();
   FocusNode _nameFocusNode = FocusNode();
-  FocusNode _emailFocusNode = FocusNode();
   FocusNode _phoneFocusNode = FocusNode();
 
-  TextEditingController username = TextEditingController(text: '');
+  TextEditingController email = TextEditingController(text: '');
   TextEditingController password = TextEditingController(text: '');
   TextEditingController confirmpassword = TextEditingController(text: '');
   TextEditingController name = TextEditingController(text: '');
-  TextEditingController email = TextEditingController(text: '');
   TextEditingController phone = TextEditingController(text: '');
 
   bool obscurePassword = true;
@@ -85,7 +83,6 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
       final response = await userService.getUserData(id);
       if (response!["code"] == 200) {
         setState(() {
-          username.text = response["data"]["username"] ?? "";
           password.text = response["data"]["password"] ?? "";
           confirmpassword.text = response["data"]["password"] ?? "";
           confirmpassword.text = response["data"]["password"] ?? "";
@@ -154,11 +151,11 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
   addUser() async {
     try {
       final body = {
-        "username": username.text,
+        "username": email.text,
+        "email": email.text,
         "password": password.text,
         "role": role,
         "name": name.text,
-        "email": email.text,
         "phone": '959${phone.text}',
         "profile_image": profileImage,
       };
@@ -207,10 +204,10 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
   updateUser() async {
     try {
       final body = {
+        "email": email.text,
         "password": password.text,
         "role": role,
         "name": name.text,
-        "email": email.text,
         "phone": '959${phone.text}',
         "profile_image": profileImage,
       };
@@ -304,11 +301,10 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        _userFocusNode.unfocus();
+        _emailFocusNode.unfocus();
         _passwordFocusNode.unfocus();
         _confirmPasswordFocusNode.unfocus();
         _nameFocusNode.unfocus();
-        _emailFocusNode.unfocus();
         _phoneFocusNode.unfocus();
       },
       child: Scaffold(
@@ -433,7 +429,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        language["User Name"] ?? "User Name",
+                        language["Email"] ?? "Email",
                         style: FontConstants.caption1,
                       ),
                     ),
@@ -445,9 +441,9 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       bottom: 16,
                     ),
                     child: TextFormField(
-                      controller: username,
-                      focusNode: _userFocusNode,
-                      keyboardType: TextInputType.text,
+                      controller: email,
+                      focusNode: _emailFocusNode,
+                      keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
                       style:
                           id != 0 ? FontConstants.body2 : FontConstants.body1,
@@ -475,8 +471,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return language["Enter User Name"] ??
-                              "Enter User Name";
+                          return language["Enter Email"] ?? "Enter Email";
                         }
                         return null;
                       },
@@ -721,61 +716,6 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return language["Enter Name"] ?? "Enter Name";
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 4,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        language["Email"] ?? "Email",
-                        style: FontConstants.caption1,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
-                    ),
-                    child: TextFormField(
-                      controller: email,
-                      focusNode: _emailFocusNode,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      style: FontConstants.body1,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: ColorConstants.fillcolor,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return language["Enter Email"] ?? "Enter Email";
                         }
                         return null;
                       },

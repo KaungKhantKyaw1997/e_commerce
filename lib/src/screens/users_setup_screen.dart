@@ -143,7 +143,7 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          users[index]["username"].toString(),
+                          users[index]["name"].toString(),
                           overflow: TextOverflow.ellipsis,
                           style: FontConstants.body1,
                         ),
@@ -157,12 +157,12 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
                     ],
                   ),
                   Text(
-                    users[index]["phone"].toString(),
+                    users[index]["email"].toString(),
                     overflow: TextOverflow.ellipsis,
                     style: FontConstants.caption1,
                   ),
                   Text(
-                    users[index]["email"].toString(),
+                    users[index]["phone"].toString(),
                     overflow: TextOverflow.ellipsis,
                     style: FontConstants.caption1,
                   ),

@@ -6,6 +6,7 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/address_service.dart';
+import 'package:e_commerce/src/services/bank_accounts_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/insurance_rules_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
@@ -26,6 +27,7 @@ class _OrderScreenState extends State<OrderScreen> {
   final ScrollController _scrollController = ScrollController();
   final addressService = AddressService();
   final insuranceRulesService = InsuranceRulesService();
+  final bankAccountsService = BankAccountsService();
   FocusNode _countryFocusNode = FocusNode();
   FocusNode _cityFocusNode = FocusNode();
   FocusNode _stateFocusNode = FocusNode();
@@ -65,6 +67,8 @@ class _OrderScreenState extends State<OrderScreen> {
   List<Map<String, dynamic>> carts = [];
   double subtotal = 0.0;
   double total = 0.0;
+  List bankaccounts = [];
+  String bankaccount = '';
 
   @override
   void initState() {
@@ -81,6 +85,7 @@ class _OrderScreenState extends State<OrderScreen> {
     });
     getAddress();
     getInsuranceRules();
+    getBankAccounts();
   }
 
   @override
@@ -159,6 +164,45 @@ class _OrderScreenState extends State<OrderScreen> {
               insurancenames.add(data["description"]);
             }
           }
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getBankAccounts() async {
+    try {
+      final response = await bankAccountsService.getBankAccountsData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          bankaccounts = response["data"];
           setState(() {});
         }
       } else {
@@ -658,6 +702,44 @@ class _OrderScreenState extends State<OrderScreen> {
                         items: paymenttypes,
                       ),
                     ),
+                    // paymenttype == 'Preorder'
+                    //     ? Padding(
+                    //         padding: EdgeInsets.only(
+                    //           bottom: 8,
+                    //         ),
+                    //         child: DropdownButton(
+                    //           value: bankaccount,
+                    //           onChanged: (newValue) {
+                    //             setState(() {
+                    //               bankaccount = newValue as String ?? "";
+                    //             });
+                    //           },
+                    //           items: bankaccounts.map((item) {
+                    //             return DropdownMenuItem(
+                    //               value: item,
+                    //               child: Row(
+                    //                 children: <Widget>[
+                    //                   Column(
+                    //                     crossAxisAlignment:
+                    //                         CrossAxisAlignment.start,
+                    //                     children: <Widget>[
+                    //                       Text(item.account_holder_name),
+                    //                       Text(
+                    //                         item.account_number,
+                    //                         style: TextStyle(
+                    //                           fontSize: 12,
+                    //                           color: Colors.grey,
+                    //                         ),
+                    //                       ),
+                    //                     ],
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //             );
+                    //           }).toList(),
+                    //         ),
+                    //       )
+                    //     : Container(),
                     paymenttype == 'Preorder'
                         ? GestureDetector(
                             onTap: () async {

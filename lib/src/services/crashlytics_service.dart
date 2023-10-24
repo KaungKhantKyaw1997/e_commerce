@@ -4,9 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class CrashlyticsService {
   Future<void> myGlobalErrorHandler(dynamic e, StackTrace s) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String userName = prefs.getString("username") ?? "";
-    if (userName != "") {
-      FirebaseCrashlytics.instance.setUserIdentifier(userName);
+    String _email = prefs.getString("email") ?? "";
+    if (_email != "") {
+      FirebaseCrashlytics.instance.setUserIdentifier(_email);
     }
     FirebaseCrashlytics.instance.recordError(e, s, reason: 'non-fatal error');
   }

@@ -26,18 +26,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final authService = AuthService();
   ScrollController _scrollController = ScrollController();
-  FocusNode _userFocusNode = FocusNode();
+  FocusNode _emailFocusNode = FocusNode();
   FocusNode _passwordFocusNode = FocusNode();
   FocusNode _confirmPasswordFocusNode = FocusNode();
   FocusNode _nameFocusNode = FocusNode();
-  FocusNode _emailFocusNode = FocusNode();
   FocusNode _phoneFocusNode = FocusNode();
 
-  TextEditingController username = TextEditingController(text: '');
+  TextEditingController email = TextEditingController(text: '');
   TextEditingController password = TextEditingController(text: '');
   TextEditingController confirmpassword = TextEditingController(text: '');
   TextEditingController name = TextEditingController(text: '');
-  TextEditingController email = TextEditingController(text: '');
   TextEditingController phone = TextEditingController(text: '');
 
   bool obscurePassword = true;
@@ -85,10 +83,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   register() async {
     try {
       final body = {
-        "name": name.text,
-        "password": password.text,
-        "username": username.text,
+        "username": email.text,
         "email": email.text,
+        "password": password.text,
+        "name": name.text,
         "phone": '959${phone.text}',
         "profile_image": profileImage,
       };
@@ -139,7 +137,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        _userFocusNode.unfocus();
         _passwordFocusNode.unfocus();
         _confirmPasswordFocusNode.unfocus();
         _nameFocusNode.unfocus();
@@ -259,7 +256,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        language["User Name"] ?? "User Name",
+                        language["Email"] ?? "Email",
                         style: FontConstants.caption1,
                       ),
                     ),
@@ -271,9 +268,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       bottom: 16,
                     ),
                     child: TextFormField(
-                      controller: username,
-                      focusNode: _userFocusNode,
-                      keyboardType: TextInputType.text,
+                      controller: email,
+                      focusNode: _emailFocusNode,
+                      keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
                       style: FontConstants.body1,
                       cursorColor: Colors.black,
@@ -299,8 +296,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return language["Enter User Name"] ??
-                              "Enter User Name";
+                          return language["Enter Email"] ?? "Enter Email";
                         }
                         return null;
                       },
@@ -514,61 +510,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return language["Enter Name"] ?? "Enter Name";
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 4,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        language["Email"] ?? "Email",
-                        style: FontConstants.caption1,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
-                    ),
-                    child: TextFormField(
-                      controller: email,
-                      focusNode: _emailFocusNode,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      style: FontConstants.body1,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: ColorConstants.fillcolor,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return language["Enter Email"] ?? "Enter Email";
                         }
                         return null;
                       },

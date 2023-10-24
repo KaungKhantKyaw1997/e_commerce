@@ -170,12 +170,12 @@ class AuthService {
 
   clearData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String username = prefs.getString("username") ?? "";
+    String _email = prefs.getString("email") ?? "";
     bool termsandconditions = prefs.getBool("termsandconditions") ?? false;
     String searchhistoriesJson = prefs.getString("searchhistories") ?? "";
 
     prefs.clear();
-    prefs.setString("username", username);
+    prefs.setString("email", _email);
     prefs.setBool("termsandconditions", termsandconditions);
     prefs.setString("searchhistories", searchhistoriesJson);
 

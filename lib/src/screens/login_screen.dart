@@ -32,9 +32,9 @@ class _LogInScreenState extends State<LogInScreen> {
   final authService = AuthService();
   final storage = FlutterSecureStorage();
   final _formKey = GlobalKey<FormState>();
-  FocusNode _userFocusNode = FocusNode();
+  FocusNode _emailFocusNode = FocusNode();
   FocusNode _passwordFocusNode = FocusNode();
-  TextEditingController username = TextEditingController(text: '');
+  TextEditingController email = TextEditingController(text: '');
   TextEditingController password = TextEditingController(text: '');
   bool obscurePassword = true;
 
@@ -70,15 +70,15 @@ class _LogInScreenState extends State<LogInScreen> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       final body = {
-        "username": username.text,
+        "username": email.text,
         "password": password.text,
       };
 
       final response = await authService.loginData(body);
 
       if (response!["code"] == 200) {
-        String userName = prefs.getString("username") ?? "";
-        prefs.setString("username", username.text);
+        String _email = prefs.getString("email") ?? "";
+        prefs.setString("email", _email);
         prefs.setString("name", response["data"]["name"]);
         prefs.setString("role", response["data"]["role"]);
         prefs.setString("profile_image", response["data"]["profile_image"]);
@@ -88,7 +88,7 @@ class _LogInScreenState extends State<LogInScreen> {
             Provider.of<BottomProvider>(context, listen: false);
         bottomProvider.selectIndex(0);
 
-        fcm(response["data"]["role"] ?? "", userName);
+        fcm(response["data"]["role"] ?? "", _email);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
@@ -122,7 +122,7 @@ class _LogInScreenState extends State<LogInScreen> {
     }
   }
 
-  fcm(role, userName) async {
+  fcm(role, _email) async {
     var deviceType = Platform.isIOS ? "ios" : "android";
     final body = {
       "token": _fcmToken,
@@ -141,7 +141,7 @@ class _LogInScreenState extends State<LogInScreen> {
         context,
         Routes.history,
       );
-    } else if (termsandconditions && userName == username.text) {
+    } else if (termsandconditions && _email == email.text) {
       Navigator.pushNamed(
         context,
         Routes.home,
@@ -162,7 +162,7 @@ class _LogInScreenState extends State<LogInScreen> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        _userFocusNode.unfocus();
+        _emailFocusNode.unfocus();
         _passwordFocusNode.unfocus();
       },
       child: Scaffold(
@@ -236,7 +236,7 @@ class _LogInScreenState extends State<LogInScreen> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      language["User Name"] ?? "User Name",
+                      language["Email"] ?? "Email",
                       style: FontConstants.caption1,
                     ),
                   ),
@@ -248,8 +248,8 @@ class _LogInScreenState extends State<LogInScreen> {
                     bottom: 16,
                   ),
                   child: TextFormField(
-                    controller: username,
-                    focusNode: _userFocusNode,
+                    controller: email,
+                    focusNode: _emailFocusNode,
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.next,
                     style: FontConstants.body1,
@@ -276,7 +276,7 @@ class _LogInScreenState extends State<LogInScreen> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return language["Enter User Name"] ?? "Enter User Name";
+                        return language["Enter Email"] ?? "Enter Email";
                       }
                       return null;
                     },
@@ -408,7 +408,6 @@ class _LogInScreenState extends State<LogInScreen> {
                       side: BorderSide(
                         width: 0.5,
                       ),
-                      
                     ),
                     onPressed: () {
                       Navigator.pop(context);

@@ -31,6 +31,7 @@ class ImagePreviewScreen extends StatelessWidget {
           return Container(
             child: PhotoView(
               imageProvider: NetworkImage(defaultImageUrl),
+              filterQuality: FilterQuality.high,
             ),
           );
         } else {
@@ -38,6 +39,7 @@ class ImagePreviewScreen extends StatelessWidget {
           return Container(
             child: PhotoView(
               imageProvider: NetworkImage(imageUrl),
+              filterQuality: FilterQuality.high,
             ),
           );
         }
