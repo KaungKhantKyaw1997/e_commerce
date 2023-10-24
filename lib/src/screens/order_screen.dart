@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
+import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/address_service.dart';
@@ -68,7 +69,6 @@ class _OrderScreenState extends State<OrderScreen> {
   double subtotal = 0.0;
   double total = 0.0;
   List bankaccounts = [];
-  String bankaccount = '';
 
   @override
   void initState() {
@@ -702,44 +702,66 @@ class _OrderScreenState extends State<OrderScreen> {
                         items: paymenttypes,
                       ),
                     ),
-                    // paymenttype == 'Preorder'
-                    //     ? Padding(
-                    //         padding: EdgeInsets.only(
-                    //           bottom: 8,
-                    //         ),
-                    //         child: DropdownButton(
-                    //           value: bankaccount,
-                    //           onChanged: (newValue) {
-                    //             setState(() {
-                    //               bankaccount = newValue as String ?? "";
-                    //             });
-                    //           },
-                    //           items: bankaccounts.map((item) {
-                    //             return DropdownMenuItem(
-                    //               value: item,
-                    //               child: Row(
-                    //                 children: <Widget>[
-                    //                   Column(
-                    //                     crossAxisAlignment:
-                    //                         CrossAxisAlignment.start,
-                    //                     children: <Widget>[
-                    //                       Text(item.account_holder_name),
-                    //                       Text(
-                    //                         item.account_number,
-                    //                         style: TextStyle(
-                    //                           fontSize: 12,
-                    //                           color: Colors.grey,
-                    //                         ),
-                    //                       ),
-                    //                     ],
-                    //                   ),
-                    //                 ],
-                    //               ),
-                    //             );
-                    //           }).toList(),
-                    //         ),
-                    //       )
-                    //     : Container(),
+                    paymenttype == 'Preorder'
+                        ? Padding(
+                            padding: EdgeInsets.only(
+                              top: 16,
+                              bottom: 4,
+                            ),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                language[
+                                        "Transfer Half-Prepaid to the mentioned account numbers only"] ??
+                                    "Transfer Half-Prepaid to the mentioned account numbers only",
+                                style: FontConstants.caption2,
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    if (paymenttype == 'Preorder')
+                      ...bankaccounts.map((item) {
+                        return Card(
+                          elevation: 0,
+                          margin: EdgeInsets.symmetric(
+                            vertical: 4,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              10,
+                            ),
+                          ),
+                          color: ColorConstants.fillcolor,
+                          child: ListTile(
+                            leading: item["bank_logo"].isNotEmpty
+                                ? ClipRRect(
+                                    child: Image.network(
+                                      '${ApiConstants.baseUrl}${item["bank_logo"]}',
+                                      fit: BoxFit.cover,
+                                      height: 60,
+                                      width: 60,
+                                    ),
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.asset(
+                                      'assets/images/logo.png',
+                                      fit: BoxFit.cover,
+                                      height: 60,
+                                      width: 60,
+                                    ),
+                                  ),
+                            title: Text(
+                              "${item["account_number"]}",
+                              style: FontConstants.body1,
+                            ),
+                            subtitle: Text(
+                              "${item["account_holder_name"]}",
+                              style: FontConstants.caption2,
+                            ),
+                          ),
+                        );
+                      }).toList(),
                     paymenttype == 'Preorder'
                         ? GestureDetector(
                             onTap: () async {
@@ -754,6 +776,7 @@ class _OrderScreenState extends State<OrderScreen> {
                             },
                             child: Container(
                               margin: EdgeInsets.only(
+                                top: 16,
                                 bottom: 8,
                               ),
                               width: double.infinity,
@@ -790,8 +813,9 @@ class _OrderScreenState extends State<OrderScreen> {
                                             ),
                                           ),
                                           Text(
-                                            language["Upload Image"] ??
-                                                "Upload Image",
+                                            language[
+                                                    "Upload transaction history screenshot"] ??
+                                                "Upload transaction history screenshot",
                                             style: FontConstants.subheadline2,
                                           ),
                                         ],

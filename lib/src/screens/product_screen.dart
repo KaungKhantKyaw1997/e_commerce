@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
@@ -7,8 +9,11 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
+import 'package:e_commerce/src/services/buyer_protections_service.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/format_amount.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:e_commerce/src/utils/toast.dart';
@@ -21,17 +26,21 @@ class ProductScreen extends StatefulWidget {
 }
 
 class _ProductScreenState extends State<ProductScreen> {
+  final crashlytic = new CrashlyticsService();
   ScrollController _scrollController = ScrollController();
+  final buyerProtectionsService = BuyerProtectionsService();
   final PageController _imageController = PageController();
   List<Map<String, dynamic>> carts = [];
   Map<String, dynamic> product = {};
   double _currentPage = 0;
   bool updateCart = false;
+  List buyerProtections = [];
 
   @override
   void initState() {
     super.initState();
     getCart();
+    getBuyerProtections();
     _imageController.addListener(() {
       setState(() {
         _currentPage = _imageController.page ?? 0;
@@ -70,6 +79,45 @@ class _ProductScreenState extends State<ProductScreen> {
           carts.add(product);
         }
       });
+    }
+  }
+
+  getBuyerProtections() async {
+    try {
+      final response = await buyerProtectionsService.getBuyerProtectionsData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          buyerProtections = response["data"];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
     }
   }
 
@@ -208,313 +256,415 @@ class _ProductScreenState extends State<ProductScreen> {
                   color: Colors.white,
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
                         top: 8,
-                        bottom: 4,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
+                      child: Text(
+                        product["brand_name"] ?? "",
+                        overflow: TextOverflow.ellipsis,
+                        style: FontConstants.headline1,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 8,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          product["model"] ?? "",
+                          style: FontConstants.body2,
+                        ),
+                      ),
+                    ),
+                    Theme(
+                      data: Theme.of(context)
+                          .copyWith(dividerColor: Colors.transparent),
+                      child: ExpansionTile(
+                        title: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            language["Description"] ?? "Description",
+                            style: FontConstants.body1,
+                          ),
+                        ),
                         children: [
-                          Text(
-                            product["brand_name"] ?? "",
-                            overflow: TextOverflow.ellipsis,
-                            style: FontConstants.headline1,
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                            ),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                product["description"] ?? "",
+                                style: FontConstants.caption1,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Theme(
+                      data: Theme.of(context)
+                          .copyWith(dividerColor: Colors.transparent),
+                      child: ExpansionTile(
+                        title: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            language["Specifications"] ?? "Specifications",
+                            style: FontConstants.body1,
+                          ),
+                        ),
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  language["Color"] ?? "Color",
+                                  style: FontConstants.caption1,
+                                ),
+                                Text(
+                                  product["color"] ?? "",
+                                  style: FontConstants.caption2,
+                                ),
+                              ],
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(
-                              left: 4,
+                              left: 16,
+                              right: 16,
+                              bottom: 8,
                             ),
-                            child: Text(
-                              '(${product["model"]})',
-                              overflow: TextOverflow.ellipsis,
-                              style: FontConstants.body2,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  language["Strap Material"] ??
+                                      "Strap Material",
+                                  style: FontConstants.caption1,
+                                ),
+                                Text(
+                                  product["strap_material"] ?? "",
+                                  style: FontConstants.caption2,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  language["Strap Color"] ?? "Strap Color",
+                                  style: FontConstants.caption1,
+                                ),
+                                Text(
+                                  product["strap_color"] ?? "",
+                                  style: FontConstants.caption2,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  language["Case Material"] ?? "Case Material",
+                                  style: FontConstants.caption1,
+                                ),
+                                Text(
+                                  product["case_material"] ?? "",
+                                  style: FontConstants.caption2,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  language["Dial Color"] ?? "Dial Color",
+                                  style: FontConstants.caption1,
+                                ),
+                                Text(
+                                  product["dial_color"] ?? "",
+                                  style: FontConstants.caption2,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  language["Movement Type"] ?? "Movement Type",
+                                  style: FontConstants.caption1,
+                                ),
+                                Text(
+                                  product["movement_type"] ?? "",
+                                  style: FontConstants.caption2,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  language["Dimensions"] ?? "Dimensions",
+                                  style: FontConstants.caption1,
+                                ),
+                                Text(
+                                  product["dimensions"] ?? "",
+                                  style: FontConstants.caption2,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  language["Water Resistance"] ??
+                                      "Water Resistance",
+                                  style: FontConstants.caption1,
+                                ),
+                                Text(
+                                  product["water_resistance"] ?? "",
+                                  style: FontConstants.caption2,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  language["Warranty Type"] ?? "Warranty Type",
+                                  style: FontConstants.caption1,
+                                ),
+                                Text(
+                                  product["warranty_type_description"] ?? "",
+                                  style: FontConstants.caption2,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  language["Warranty Period"] ??
+                                      "Warranty Period",
+                                  style: FontConstants.caption1,
+                                ),
+                                Text(
+                                  product["warranty_period"] ?? "",
+                                  style: FontConstants.caption2,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 4,
+                              bottom: 8,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  language["Condition"] ?? "Condition",
+                                  style: FontConstants.caption1,
+                                ),
+                                Text(
+                                  product["condition"] ?? "",
+                                  style: FontConstants.caption2,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  language["In Stock"] ?? "In Stock",
+                                  style: FontConstants.caption1,
+                                ),
+                                Text(
+                                  product["stock_quantity"].toString() ?? "",
+                                  style: FontConstants.caption2,
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          product["description"] ?? "",
-                          maxLines: 5,
-                          overflow: TextOverflow.ellipsis,
-                          style: FontConstants.body1,
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  top: 16,
+                ),
+                padding: EdgeInsets.all(16),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "Watch Vault by Diggie Buyer Protection",
+                            overflow: TextOverflow.ellipsis,
+                            style: FontConstants.body1,
+                          ),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        top: 16,
-                        bottom: 4,
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          language["Specifications"] ?? "Specifications",
-                          style: FontConstants.caption2,
+                        SvgPicture.asset(
+                          "assets/icons/shield_mark.svg",
+                          width: 24,
+                          height: 24,
                         ),
-                      ),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                      ),
-                      child: const Divider(
-                        height: 0,
-                        color: Colors.grey,
-                      ),
+                    SizedBox(
+                      height: 4,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        top: 8,
-                        bottom: 8,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            language["Color"] ?? "Color",
-                            style: FontConstants.caption1,
-                          ),
-                          Text(
-                            product["color"] ?? "",
-                            style: FontConstants.caption2,
-                          ),
-                        ],
-                      ),
+                    ListView.builder(
+                      controller: _scrollController,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: buyerProtections.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.done,
+                                  color: Colors.green,
+                                  size: 15,
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  buyerProtections[index]["description"],
+                                  style: FontConstants.caption2,
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      },
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 8,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            language["Strap Material"] ?? "Strap Material",
-                            style: FontConstants.caption1,
-                          ),
-                          Text(
-                            product["strap_material"] ?? "",
-                            style: FontConstants.caption2,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 8,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            language["Strap Color"] ?? "Strap Color",
-                            style: FontConstants.caption1,
-                          ),
-                          Text(
-                            product["strap_color"] ?? "",
-                            style: FontConstants.caption2,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 8,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            language["Case Material"] ?? "Case Material",
-                            style: FontConstants.caption1,
-                          ),
-                          Text(
-                            product["case_material"] ?? "",
-                            style: FontConstants.caption2,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 8,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            language["Dial Color"] ?? "Dial Color",
-                            style: FontConstants.caption1,
-                          ),
-                          Text(
-                            product["dial_color"] ?? "",
-                            style: FontConstants.caption2,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 8,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            language["Movement Type"] ?? "Movement Type",
-                            style: FontConstants.caption1,
-                          ),
-                          Text(
-                            product["movement_type"] ?? "",
-                            style: FontConstants.caption2,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 8,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            language["Dimensions"] ?? "Dimensions",
-                            style: FontConstants.caption1,
-                          ),
-                          Text(
-                            product["dimensions"] ?? "",
-                            style: FontConstants.caption2,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 8,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            language["Water Resistance"] ?? "Water Resistance",
-                            style: FontConstants.caption1,
-                          ),
-                          Text(
-                            product["water_resistance"] ?? "",
-                            style: FontConstants.caption2,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 8,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            language["Warranty Period"] ?? "Warranty Period",
-                            style: FontConstants.caption1,
-                          ),
-                          Text(
-                            product["warranty_period"] ?? "",
-                            style: FontConstants.caption2,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 8,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            language["Condition"] ?? "Condition",
-                            style: FontConstants.caption1,
-                          ),
-                          Text(
-                            product["condition"] ?? "",
-                            style: FontConstants.caption2,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 8,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            language["In Stock"] ?? "In Stock",
-                            style: FontConstants.caption1,
-                          ),
-                          Text(
-                            product["stock_quantity"].toString() ?? "",
-                            style: FontConstants.caption2,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Divider(
-                      height: 0,
-                      color: Colors.grey,
-                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  top: 16,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white,
+                ),
+                child: Column(
+                  children: [
                     Padding(
                       padding: const EdgeInsets.all(
                         16,

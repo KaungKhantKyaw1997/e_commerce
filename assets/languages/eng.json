@@ -84,7 +84,7 @@
   "Ward": "Ward",
   "Enter Ward": "Enter Ward",
   "Note": "Note",
-  "Upload Image": "Upload Image",
+  "Upload transaction history screenshot": "Upload transaction history screenshot",
   "Choose Image": "Choose Image",
   "Choose Quantity": "Choose Quantity",
   "User": "User",
@@ -125,6 +125,7 @@
   "Condition": "Condition",
   "Enter Condition": "Enter Condition",
   "Warranty Period": "Warranty Period",
+  "Warranty Type": "Warranty Type",
   "In Stock": "In Stock",
   "Color": "Color",
   "Strap Material": "Strap Material",
@@ -136,5 +137,6 @@
   "Water Resistance": "Water Resistance",
   "Try Again": "Try Again",
   "Forgot Password": "Forgot Password",
-  "Insurrance":"Insurrance"
+  "Insurrance":"Insurrance",
+  "Transfer Half-Prepaid to the mentioned account numbers only": "Transfer Half-Prepaid to the mentioned account numbers only"
 }

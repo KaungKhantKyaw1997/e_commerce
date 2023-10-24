@@ -11,6 +11,7 @@ import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/currencies_service.dart';
 import 'package:e_commerce/src/services/products_service.dart';
+import 'package:e_commerce/src/services/warranty_types_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:e_commerce/src/widgets/custom_dropdown.dart';
@@ -31,6 +32,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   final _formKey = GlobalKey<FormState>();
   final productsService = ProductsService();
   final currenciesService = CurrenciesService();
+  final warrantyTypesService = WarrantyTypesService();
   FocusNode _modelFocusNode = FocusNode();
   FocusNode _descriptionFocusNode = FocusNode();
   FocusNode _colorFocusNode = FocusNode();
@@ -73,6 +75,10 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   List<String> currencycodes = [];
   int currencyId = 0;
   String currencyCode = '';
+  List warrantytypes = [];
+  List<String> warrantytypesdesc = [];
+  int warrantyTypeId = 0;
+  String warrantyTypeDesc = '';
 
   int id = 0;
   String from = '';
@@ -80,8 +86,10 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   @override
   void initState() {
     super.initState();
+
     Future.delayed(Duration.zero, () async {
       await getCurrencies();
+      await getWarrantyTypes();
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
@@ -152,6 +160,53 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     }
   }
 
+  getWarrantyTypes() async {
+    try {
+      final response = await warrantyTypesService.getWarrantyTypesData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          warrantytypes = response["data"];
+
+          for (var data in response["data"]) {
+            if (data["description"] != null) {
+              warrantytypesdesc.add(data["description"]);
+            }
+          }
+          warrantyTypeId = warrantytypes[0]["warranty_type_id"];
+          warrantyTypeDesc = warrantytypes[0]["description"];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
   getProduct() async {
     try {
       final response = await productsService.getProductData(id);
@@ -179,6 +234,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           price.text = response["data"]["price"].toString() ?? "";
           currencyCode = response["data"]["currency_code"] ?? "";
           currencyId = response["data"]["currency_id"] ?? 0;
+          warrantyTypeDesc =
+              response["data"]["warranty_type_description"] ?? "";
+          warrantyTypeId = response["data"]["warranty_type_id"] ?? 0;
           stockQuantity.text =
               response["data"]["stock_quantity"].toString() ?? "";
           isTopModel = response["data"]["is_top_model"] ?? false;
@@ -267,7 +325,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "stock_quantity": int.parse(stockQuantity.text),
         "is_top_model": isTopModel,
         "product_images": productImages,
-        "condition": condition.text
+        "condition": condition.text,
+        "warranty_type_id": warrantyTypeId
       };
 
       final response = await productsService.addProductData(body);
@@ -342,7 +401,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "stock_quantity": int.parse(stockQuantity.text),
         "is_top_model": isTopModel,
         "product_images": productImages,
-        "condition": condition.text
+        "condition": condition.text,
+        "warranty_type_id": warrantyTypeId
       };
 
       final response = await productsService.updateProductData(body, id);
@@ -1491,189 +1551,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    language["Warranty Period"] ??
-                                        "Warranty Period",
-                                    style: FontConstants.caption1,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 4,
-                                  right: 16,
-                                  bottom: 16,
-                                ),
-                                child: TextFormField(
-                                  controller: warrantyPeriod,
-                                  focusNode: _warrantyPeriodFocusNode,
-                                  keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.done,
-                                  style: FontConstants.body1,
-                                  cursorColor: Colors.black,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: ColorConstants.fillcolor,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 14,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return language[
-                                              "Enter Warranty Period"] ??
-                                          "Enter Warranty Period";
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 4,
-                                  bottom: 4,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    language["Currency"] ?? "Currency",
-                                    style: FontConstants.caption1,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 4,
-                                  bottom: 4,
-                                ),
-                                child: CustomDropDown(
-                                  value: currencyCode,
-                                  fillColor: ColorConstants.fillcolor,
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      currencyCode =
-                                          newValue ?? currencycodes[0];
-                                    });
-                                    for (var data in currencies) {
-                                      if (data["currency_code"] ==
-                                          currencyCode) {
-                                        currencyId = data["currency_id"];
-                                      }
-                                    }
-                                  },
-                                  items: currencycodes,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 4,
-                                  right: 16,
-                                  bottom: 4,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    language["Price"] ?? "Price",
-                                    style: FontConstants.caption1,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 4,
-                                  right: 16,
-                                  bottom: 4,
-                                ),
-                                child: TextFormField(
-                                  controller: price,
-                                  focusNode: _priceFocusNode,
-                                  keyboardType: TextInputType.number,
-                                  textInputAction: TextInputAction.next,
-                                  style: FontConstants.body1,
-                                  cursorColor: Colors.black,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: ColorConstants.fillcolor,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 14,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return language["Enter Price"] ??
-                                          "Enter Price";
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 4,
-                                  bottom: 4,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
                                     language["Condition"] ?? "Condition",
                                     style: FontConstants.caption1,
                                   ),
@@ -1681,8 +1558,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 4,
+                                  left: 4,
+                                  right: 16,
                                   bottom: 16,
                                 ),
                                 child: TextFormField(
@@ -1725,6 +1602,209 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                           ),
                         ),
                       ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 4,
+                                  bottom: 16,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    language["Currency"] ?? "Currency",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 4,
+                                  bottom: 16,
+                                ),
+                                child: CustomDropDown(
+                                  value: currencyCode,
+                                  fillColor: ColorConstants.fillcolor,
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      currencyCode =
+                                          newValue ?? currencycodes[0];
+                                    });
+                                    for (var data in currencies) {
+                                      if (data["currency_code"] ==
+                                          currencyCode) {
+                                        currencyId = data["currency_id"];
+                                      }
+                                    }
+                                  },
+                                  items: currencycodes,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 4,
+                                  right: 16,
+                                  bottom: 16,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    language["Price"] ?? "Price",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 4,
+                                  right: 16,
+                                  bottom: 16,
+                                ),
+                                child: TextFormField(
+                                  controller: price,
+                                  focusNode: _priceFocusNode,
+                                  keyboardType: TextInputType.number,
+                                  textInputAction: TextInputAction.next,
+                                  style: FontConstants.body1,
+                                  cursorColor: Colors.black,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: ColorConstants.fillcolor,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 14,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return language["Enter Price"] ??
+                                          "Enter Price";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["Warranty Type"] ?? "Warranty Type",
+                          style: FontConstants.caption1,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      child: CustomDropDown(
+                        value: warrantyTypeDesc,
+                        fillColor: ColorConstants.fillcolor,
+                        onChanged: (newValue) {
+                          setState(() {
+                            warrantyTypeDesc = newValue ?? warrantytypesdesc[0];
+                          });
+                          for (var data in warrantytypes) {
+                            if (data["description"] == warrantyTypeDesc) {
+                              warrantyTypeId = data["warranty_type_id"];
+                            }
+                          }
+                        },
+                        items: warrantytypesdesc,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["Warranty Period"] ?? "Warranty Period",
+                          style: FontConstants.caption1,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: TextFormField(
+                        controller: warrantyPeriod,
+                        focusNode: _warrantyPeriodFocusNode,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.done,
+                        style: FontConstants.body1,
+                        cursorColor: Colors.black,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: ColorConstants.fillcolor,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return language["Enter Warranty Period"] ??
+                                "Enter Warranty Period";
+                          }
+                          return null;
+                        },
+                      ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,

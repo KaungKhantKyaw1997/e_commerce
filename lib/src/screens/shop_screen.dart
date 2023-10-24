@@ -353,6 +353,7 @@ class _ShopScreenState extends State<ShopScreen> {
               vertical: 24,
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   width: double.infinity,
