@@ -23,13 +23,14 @@ class _buyer_protections_setup_screenState
     extends State<BuyerProtectionsSetupScreen> {
   final crashlytic = new CrashlyticsService();
   TextEditingController search = TextEditingController(text: '');
-  final buyer_protections_service = BuyerProtectionsService();
+  final buyerProtectionsService = BuyerProtectionsService();
   final ScrollController _scrollController = ScrollController();
   String from = "";
   int page = 1;
   List buyer_protections = [];
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+
   @override
   void initState() {
     super.initState();
@@ -46,7 +47,7 @@ class _buyer_protections_setup_screenState
 
   getBuyerProtectionsData() async {
     try {
-      final response = await buyer_protections_service.getBuyerProtectionsData(
+      final response = await buyerProtectionsService.getBuyerProtectionsData(
           page: page, search: search.text);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
@@ -152,128 +153,129 @@ class _buyer_protections_setup_screenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          elevation: 0,
-          title: TextField(
-            controller: search,
-            keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.done,
-            style: FontConstants.body1,
-            cursorColor: Colors.black,
-            decoration: InputDecoration(
-              hintText: language["Search"] ?? "Search",
-              filled: true,
-              fillColor: ColorConstants.fillcolor,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none,
-              ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        elevation: 0,
+        title: TextField(
+          controller: search,
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.done,
+          style: FontConstants.body1,
+          cursorColor: Colors.black,
+          decoration: InputDecoration(
+            hintText: language["Search"] ?? "Search",
+            filled: true,
+            fillColor: ColorConstants.fillcolor,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
             ),
-            onChanged: (value) {
-              page = 1;
-              buyer_protections = [];
-              getBuyerProtectionsData();
-            },
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide.none,
+            ),
           ),
-          iconTheme: IconThemeData(
-            color: Theme.of(context).primaryColor,
-          ),
-        ),
-        body: SmartRefresher(
-          header: WaterDropMaterialHeader(
-            backgroundColor: Theme.of(context).primaryColor,
-            color: Colors.white,
-          ),
-          footer: ClassicFooter(),
-          controller: _refreshController,
-          enablePullDown: true,
-          enablePullUp: true,
-          onRefresh: () async {
+          onChanged: (value) {
             page = 1;
             buyer_protections = [];
-            await getBuyerProtectionsData();
+            getBuyerProtectionsData();
           },
-          onLoading: () async {
-            await getBuyerProtectionsData();
-          },
-          child: SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 24,
-              ),
-              width: double.infinity,
-              child: Column(
-                children: [
-                  ListView.builder(
-                    controller: _scrollController,
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: buyer_protections.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                          Navigator.pushNamed(
-                            context,
-                            Routes.buyer_protection_setup,
-                            arguments: {
-                              "id": buyer_protections[index]
-                                  ["buyer_protection_id"],
-                            },
-                          );
-                        },
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            buyerProtectionsCard(index),
-                            index < buyer_protections.length - 1
-                                ? Container(
-                                    padding: const EdgeInsets.only(
-                                      left: 16,
-                                      right: 16,
-                                    ),
-                                    child: const Divider(
-                                      height: 0,
-                                      color: Colors.grey,
-                                    ),
-                                  )
-                                : Container(),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
+        ),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).primaryColor,
+        ),
+      ),
+      body: SmartRefresher(
+        header: WaterDropMaterialHeader(
+          backgroundColor: Theme.of(context).primaryColor,
+          color: Colors.white,
+        ),
+        footer: ClassicFooter(),
+        controller: _refreshController,
+        enablePullDown: true,
+        enablePullUp: true,
+        onRefresh: () async {
+          page = 1;
+          buyer_protections = [];
+          await getBuyerProtectionsData();
+        },
+        onLoading: () async {
+          await getBuyerProtectionsData();
+        },
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 24,
+            ),
+            width: double.infinity,
+            child: Column(
+              children: [
+                ListView.builder(
+                  controller: _scrollController,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: buyer_protections.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(
+                          context,
+                          Routes.buyer_protection_setup,
+                          arguments: {
+                            "id": buyer_protections[index]
+                                ["buyer_protection_id"],
+                          },
+                        );
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          buyerProtectionsCard(index),
+                          index < buyer_protections.length - 1
+                              ? Container(
+                                  padding: const EdgeInsets.only(
+                                    left: 16,
+                                    right: 16,
+                                  ),
+                                  child: const Divider(
+                                    height: 0,
+                                    color: Colors.grey,
+                                  ),
+                                )
+                              : Container(),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.pop(context);
-            Navigator.pushNamed(
-              context,
-              Routes.buyer_protection_setup,
-              arguments: {
-                "id": 0,
-              },
-            );
-          },
-          backgroundColor: Theme.of(context).primaryColor,
-          child: Icon(
-            Icons.add,
-          ),
-        ));
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pop(context);
+          Navigator.pushNamed(
+            context,
+            Routes.buyer_protection_setup,
+            arguments: {
+              "id": 0,
+            },
+          );
+        },
+        backgroundColor: Theme.of(context).primaryColor,
+        child: Icon(
+          Icons.add,
+        ),
+      ),
+    );
   }
 }

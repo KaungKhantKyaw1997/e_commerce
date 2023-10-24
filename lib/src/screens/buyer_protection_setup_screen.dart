@@ -24,15 +24,9 @@ class _buyer_protections_screenState extends State<BuyerProtectionSetupScreen> {
   final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
-  final buyer_protections_service = BuyerProtectionsService();
-  FocusNode _nameFocusNode = FocusNode();
+  final buyerProtectionsService = BuyerProtectionsService();
   FocusNode _descriptionFocusNode = FocusNode();
-
-  TextEditingController name = TextEditingController(text: '');
   TextEditingController description = TextEditingController(text: '');
-
-  XFile? pickedFile;
-  String logoUrl = '';
 
   int id = 0;
 
@@ -46,16 +40,15 @@ class _buyer_protections_screenState extends State<BuyerProtectionSetupScreen> {
       if (arguments != null) {
         id = arguments["id"] ?? 0;
         if (id != 0) {
-          getBuyerProtectionsData();
+          getBuyerProtectionData();
         }
       }
     });
   }
 
-  getBuyerProtectionsData() async {
+  getBuyerProtectionData() async {
     try {
-      final response =
-          await buyer_protections_service.getBuyerProtectionData(id);
+      final response = await buyerProtectionsService.getBuyerProtectionData(id);
       if (response!["code"] == 200) {
         setState(() {
           description.text = response["data"]["description"] ?? "";
@@ -91,14 +84,60 @@ class _buyer_protections_screenState extends State<BuyerProtectionSetupScreen> {
     }
   }
 
-  addBuyerProtections() async {
+  addBuyerProtection() async {
     try {
       final body = {
         "description": description.text,
       };
-
       final response =
-          await buyer_protections_service.addBuyerProtectionData(body);
+          await buyerProtectionsService.addBuyerProtectionData(body);
+      Navigator.pop(context);
+      if (response!["code"] == 201) {
+        ToastUtil.showToast(response["code"], response["message"]);
+        Navigator.pop(context);
+        Navigator.pushNamed(
+          context,
+          Routes.buyer_protections_setup,
+        );
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      Navigator.pop(context);
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  updateBuyerProtection() async {
+    try {
+      final body = {
+        "description": description.text,
+      };
+      final response =
+          await buyerProtectionsService.updateBuyerProtectionData(body, id);
       Navigator.pop(context);
       if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -139,58 +178,10 @@ class _buyer_protections_screenState extends State<BuyerProtectionSetupScreen> {
     }
   }
 
-  updateBuyerProtections() async {
-    try {
-      final body = {
-        "description": description.text,
-      };
-
-      final response =
-          await buyer_protections_service.updateBuyerProtectionData(body, id);
-      Navigator.pop(context);
-      if (response!["code"] == 200) {
-        ToastUtil.showToast(response["code"], response["message"]);
-        Navigator.pop(context);
-        Navigator.pushNamed(
-          context,
-          Routes.buyer_protections_setup,
-        );
-      } else {
-        ToastUtil.showToast(response["code"], response["message"]);
-      }
-    } catch (e, s) {
-      Navigator.pop(context);
-      if (e is DioException &&
-          e.error is SocketException &&
-          !isConnectionTimeout) {
-        isConnectionTimeout = true;
-        Navigator.pushNamed(
-          context,
-          Routes.connection_timeout,
-        );
-        return;
-      }
-      crashlytic.myGlobalErrorHandler(e, s);
-      if (e is DioException && e.response != null && e.response!.data != null) {
-        if (e.response!.data["message"] == "invalid token" ||
-            e.response!.data["message"] ==
-                "invalid authorization header format") {
-          Navigator.pushNamed(
-            context,
-            Routes.unauthorized,
-          );
-        } else {
-          ToastUtil.showToast(
-              e.response!.data['code'], e.response!.data['message']);
-        }
-      }
-    }
-  }
-
-  deleteBuyerProtections() async {
+  deleteBuyerProtection() async {
     try {
       final response =
-          await buyer_protections_service.deleteBuyerProtectionData(id);
+          await buyerProtectionsService.deleteBuyerProtectionData(id);
       Navigator.pop(context);
       if (response!["code"] == 204) {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -236,7 +227,6 @@ class _buyer_protections_screenState extends State<BuyerProtectionSetupScreen> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        _nameFocusNode.unfocus();
         _descriptionFocusNode.unfocus();
       },
       child: Scaffold(
@@ -245,7 +235,7 @@ class _buyer_protections_screenState extends State<BuyerProtectionSetupScreen> {
           centerTitle: true,
           elevation: 0,
           title: Text(
-            language["Buyer Protections"] ?? "Buyer Protections",
+            language["Buyer Protection"] ?? "Buyer Protection",
             style: FontConstants.title1,
           ),
           leading: BackButton(
@@ -363,7 +353,7 @@ class _buyer_protections_screenState extends State<BuyerProtectionSetupScreen> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       showLoadingDialog(context);
-                      addBuyerProtections();
+                      addBuyerProtection();
                     }
                   },
                   child: Text(
@@ -397,7 +387,7 @@ class _buyer_protections_screenState extends State<BuyerProtectionSetupScreen> {
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               showLoadingDialog(context);
-                              deleteBuyerProtections();
+                              deleteBuyerProtection();
                             }
                           },
                           child: Text(
@@ -430,8 +420,7 @@ class _buyer_protections_screenState extends State<BuyerProtectionSetupScreen> {
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               showLoadingDialog(context);
-
-                              updateBuyerProtections();
+                              updateBuyerProtection();
                             }
                           },
                           child: Text(
