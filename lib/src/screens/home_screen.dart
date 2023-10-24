@@ -701,6 +701,7 @@ class _HomeScreenState extends State<HomeScreen>
                             vertical: 24,
                           ),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               GridView.builder(
                                 controller: _scrollController,
@@ -709,7 +710,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                   mainAxisExtent:
-                                      crossAxisCount == 1 ? 300 : 210,
+                                      crossAxisCount == 1 ? 310 : 210,
                                   childAspectRatio: 2 / 1,
                                   crossAxisSpacing: 8,
                                   crossAxisCount: crossAxisCount,
@@ -743,6 +744,7 @@ class _HomeScreenState extends State<HomeScreen>
                           bottom: 24,
                         ),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             products.isNotEmpty
                                 ? Container(

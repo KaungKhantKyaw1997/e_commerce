@@ -84,7 +84,7 @@
   "Ward": "ရပ်ကွက်",
   "Enter Ward": "ရပ်ကွက်ထည့်ပါ",
   "Note": "မှတ်ချက်",
-  "Upload Image": "ပုံတင်ပါ",
+  "Upload transaction history screenshot": "ငွေပေးငွေယူ မှတ်တမ်း ဖန်သားပြင်ဓာတ်ပုံကိုတင်ပါ",
   "Choose Image": "ပုံကိုရွေးပါ",
   "Choose Quantity": "အရေအတွက်ကိုရွေးပါ",
   "User": "အသုံးပြုသူ",
@@ -125,6 +125,7 @@
   "Condition": "အခြေအနေ",
   "Enter Condition": "အခြေအနေကိုထည့်ပါ",
   "Warranty Period": "အာမခံကာလ",
+  "Warranty Type": "အာမခံအမျိုးအစား",
   "In Stock": "ကုန်ပစ္စည်းလက်ဝယ်ရှိ",
   "Color": "အရောင်",
   "Strap Material": "လက်ပတ်ပစ္စည်း",
@@ -136,6 +137,7 @@
   "Water Resistance": "ရေခုခံမှု",
   "Try Again": "ထပ်ကြိုးစားပါ",
   "Forgot Password": "စကားဝှက်မေ့နေပါသလား",
-  "Insurrance":"အာမခံ စည်းမျဥ်းများ သတ်မှတ်ခြင်း"
+  "Insurrance":"အာမခံ စည်းမျဥ်းများ သတ်မှတ်ခြင်း",
+  "Transfer Half-Prepaid to the mentioned account numbers only": "ဖော်ပြပါ အကောင့်နံပါတ်များသို့သာ Half-Prepaid ငွေလွှဲပေးပါရန်"
 
 }
