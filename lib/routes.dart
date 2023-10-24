@@ -1,5 +1,7 @@
 import 'package:e_commerce/src/screens/brand_setup_screen.dart';
 import 'package:e_commerce/src/screens/brands_setup_screen.dart';
+import 'package:e_commerce/src/screens/buyer_protection_setup_screen.dart';
+import 'package:e_commerce/src/screens/buyer_protections_setup_screen.dart';
 import 'package:e_commerce/src/screens/categories_setup_screen.dart';
 import 'package:e_commerce/src/screens/category_setup_screen.dart';
 import 'package:e_commerce/src/screens/connection_timeout_screen.dart';
@@ -82,7 +84,9 @@ class Routes {
   static const String connection_timeout = "/connection_timeout";
   static const String unauthorized = "/unauthorized";
   static const String insurrance_rules_setup="/insurrance_rules";
-
+  static const String buyer_protections_setup="/buyer_protections_setup";
+  static const String buyer_protection_setup="/buyer_protection_setup";
+  
   static final Map<String, WidgetBuilder> routes = {
     splash: (BuildContext context) => const SplashScreen(),
     login: (BuildContext context) => const LogInScreen(),
@@ -123,9 +127,10 @@ class Routes {
     shop: (BuildContext context) => const ShopScreen(),
     reviews: (BuildContext context) => const ReviewsScreen(),
     insurrance_rules_setup:(BuildContext context) => const insurance_rules_setup_screen(),
-    image_preview: (context) => const ImagePreviewScreen(),
-    connection_timeout: (context) => const ConnectionTimeoutScreen(),
-    unauthorized: (context) => const UnauthorizedScreen(),
-
+    image_preview: (BuildContext context) => const ImagePreviewScreen(),
+    connection_timeout: (BuildContext context) => const ConnectionTimeoutScreen(),
+    unauthorized: (BuildContext context) => const UnauthorizedScreen(),
+    buyer_protections_setup:(BuildContext context)=>const BuyerProtectionsSetupScreen(),
+    buyer_protection_setup:(BuildContext context)=>const BuyerProtectionSetupScreen(),
   };
 }

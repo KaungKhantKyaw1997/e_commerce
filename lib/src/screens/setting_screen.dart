@@ -465,6 +465,62 @@ class _SettingScreenState extends State<SettingScreen> {
                               onTap: () {
                                 Navigator.pushNamed(
                                   context,
+                                  Routes.buyer_protections_setup,
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 16,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: SvgPicture.asset(
+                                        "assets/icons/shop.svg",
+                                        width: 24,
+                                        height: 24,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 16,
+                                          top: 16,
+                                          bottom: 16,
+                                        ),
+                                        child: Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text:
+                                                    language["Buyer_Protections"] ?? "Buyer_Protections",
+                                                style: FontConstants.caption2,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 20,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Container(),
+                               role == 'admin' || role == 'agent'
+                          ? GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
                                   Routes.shops_setup,
                                 );
                               },
@@ -628,65 +684,65 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
-                      role == 'admin' || role == 'agent'
-                          ? GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  Routes.insurrance_rules_setup,
-                                  arguments: {
-                                    "from": "settings",
-                                  },
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 16,
-                                        top: 16,
-                                        bottom: 16,
-                                      ),
-                                      child: SvgPicture.asset(
-                                        "assets/icons/insurrance.svg",
-                                        width: 24,
-                                        height: 24,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 16,
-                                          top: 16,
-                                          bottom: 16,
-                                        ),
-                                        child: Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: language["Insurrance"] ??
-                                                    "Insurrance",
-                                                style: FontConstants.caption2,
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Container(),
+                      // role == 'admin' || role == 'agent'
+                      //     ? GestureDetector(
+                      //         onTap: () {
+                      //           Navigator.pushNamed(
+                      //             context,
+                      //             Routes.insurrance_rules_setup,
+                      //             arguments: {
+                      //               "from": "settings",
+                      //             },
+                      //           );
+                      //         },
+                      //         child: Padding(
+                      //           padding: const EdgeInsets.only(
+                      //             left: 16,
+                      //             right: 16,
+                      //           ),
+                      //           child: Row(
+                      //             children: [
+                      //               Padding(
+                      //                 padding: const EdgeInsets.only(
+                      //                   right: 16,
+                      //                   top: 16,
+                      //                   bottom: 16,
+                      //                 ),
+                      //                 child: SvgPicture.asset(
+                      //                   "assets/icons/insurrance.svg",
+                      //                   width: 24,
+                      //                   height: 24,
+                      //                 ),
+                      //               ),
+                      //               Expanded(
+                      //                 child: Padding(
+                      //                   padding: const EdgeInsets.only(
+                      //                     right: 16,
+                      //                     top: 16,
+                      //                     bottom: 16,
+                      //                   ),
+                      //                   child: Text.rich(
+                      //                     TextSpan(
+                      //                       children: [
+                      //                         TextSpan(
+                      //                           text: language["Insurrance"] ??
+                      //                               "Insurrance",
+                      //                           style: FontConstants.caption2,
+                      //                         )
+                      //                       ],
+                      //                     ),
+                      //                   ),
+                      //                 ),
+                      //               ),
+                      //               const Icon(
+                      //                 Icons.arrow_forward_ios,
+                      //                 size: 20,
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         ),
+                      //       )
+                      //     : Container(),
                       role == 'admin'
                           ? GestureDetector(
                               onTap: () {
