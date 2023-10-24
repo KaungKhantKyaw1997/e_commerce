@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
+import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/widgets/custom_dropdown.dart';
@@ -361,7 +362,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                 ),
                 child: ListView(
                   children: [
-                    role == "admin"
+                    role == "admin" || role == "agent"
                         ? Container(
                             padding: const EdgeInsets.all(
                               16,
@@ -625,6 +626,39 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
           ],
         ),
       ),
+      bottomNavigationBar: role == 'user' && status == 'Pending'
+          ? Container(
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: 24,
+              ),
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  backgroundColor: ColorConstants.redcolor,
+                ),
+                onPressed: () async {
+                  setState(() {
+                    status = "Cancelled";
+                    orderData["status"] = "Cancelled";
+                  });
+                  updateOrder();
+                },
+                child: Text(
+                  'Order Cancel',
+                  style: FontConstants.button1,
+                ),
+              ),
+            )
+          : null,
     );
   }
 }
