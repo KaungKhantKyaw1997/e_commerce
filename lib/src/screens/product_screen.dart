@@ -310,7 +310,6 @@ class _ProductScreenState extends State<ProductScreen> {
                             ),
                           ),
                         ],
-                        initiallyExpanded: true,
                       ),
                     ),
                     Theme(
