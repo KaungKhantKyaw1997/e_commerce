@@ -23,9 +23,11 @@ class OrderScreen extends StatefulWidget {
   State<OrderScreen> createState() => _OrderScreenState();
 }
 
-class _OrderScreenState extends State<OrderScreen> {
+class _OrderScreenState extends State<OrderScreen>
+    with SingleTickerProviderStateMixin {
   final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
+  late TabController _tabController;
   final addressService = AddressService();
   final insuranceRulesService = InsuranceRulesService();
   final bankAccountsService = BankAccountsService();
@@ -73,6 +75,7 @@ class _OrderScreenState extends State<OrderScreen> {
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     Future.delayed(Duration.zero, () {
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
@@ -85,12 +88,12 @@ class _OrderScreenState extends State<OrderScreen> {
     });
     getAddress();
     getInsuranceRules();
-    getBankAccounts();
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -197,9 +200,13 @@ class _OrderScreenState extends State<OrderScreen> {
     }
   }
 
-  getBankAccounts() async {
+  getBankAccounts(accountType) async {
     try {
-      final response = await bankAccountsService.getBankAccountsData();
+      setState(() {
+        bankaccounts = [];
+      });
+      final response = await bankAccountsService.getBankAccountsData(
+          accountType: accountType);
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           bankaccounts = response["data"];
@@ -698,11 +705,60 @@ class _OrderScreenState extends State<OrderScreen> {
                             pickedFile = null;
                             paymenttype = newValue ?? "Cash on Delivery";
                           });
+                          if (paymenttype == 'Preorder') {
+                            getBankAccounts('mbanking');
+                          }
                         },
                         items: paymenttypes,
                       ),
                     ),
                     paymenttype == 'Preorder'
+                        ? TabBar(
+                            controller: _tabController,
+                            indicator: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Theme.of(context).primaryColor,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 1,
+                                  blurRadius: 3,
+                                  offset: Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                            labelColor: Colors.white,
+                            unselectedLabelColor: Colors.grey,
+                            tabs: [
+                              Tab(
+                                child: Text(
+                                  "mBanking",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+                              Tab(
+                                child: Text(
+                                  "Wallet",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+                            ],
+                            onTap: (index) {
+                              if (index == 0) {
+                                getBankAccounts('mbanking');
+                              } else {
+                                getBankAccounts('wallet');
+                              }
+                            },
+                          )
+                        : Container(),
+                    bankaccounts.isNotEmpty
                         ? Padding(
                             padding: EdgeInsets.only(
                               top: 16,

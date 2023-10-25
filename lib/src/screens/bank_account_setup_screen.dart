@@ -40,10 +40,10 @@ class _BankAccountSetupScreenState extends State<BankAccountSetupScreen> {
   String logoUrl = '';
 
   List<String> accountTypes = [
-    'wallet',
     'mbanking',
+    'wallet',
   ];
-  String accountType = 'wallet';
+  String accountType = 'mbanking';
 
   int id = 0;
 
@@ -538,7 +538,7 @@ class _BankAccountSetupScreenState extends State<BankAccountSetupScreen> {
                         onChanged: (newValue) {
                           setState(() {
                             pickedFile = null;
-                            accountType = newValue ?? "wallet";
+                            accountType = newValue ?? "mbanking";
                           });
                         },
                         items: accountTypes,
