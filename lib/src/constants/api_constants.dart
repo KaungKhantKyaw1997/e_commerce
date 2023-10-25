@@ -32,4 +32,9 @@ class ApiConstants {
   static const String bankAccountsUrl = '$baseUrl/api/bank-accounts';
   static const String warrantyTypesUrl = '$baseUrl/api/warranty-types';
   static const String buyerProtectionsUrl = '$baseUrl/api/buyer-protections';
+  static const String dialGlassTypesUrl = '$baseUrl/api/dial-glass-types';
+  static const String conditionsUrl = '$baseUrl/api/conditions';
+  static const String otherAccessoriesTypesUrl =
+      '$baseUrl/api/other-accessories-types';
+  static const String gendersUrl = '$baseUrl/api/genders';
 }
