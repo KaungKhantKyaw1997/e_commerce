@@ -81,6 +81,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   TextEditingController caseDepth = TextEditingController(text: '');
   TextEditingController caseWidth = TextEditingController(text: '');
   bool isTopModel = false;
+  bool isPreorder = false;
   List productImages = [];
   List<XFile> pickedMultiFile = <XFile>[];
 
@@ -121,12 +122,12 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     super.initState();
 
     Future.delayed(Duration.zero, () async {
-      await getCurrencies();
-      await getWarrantyTypes();
-      await getDialGlassTypes();
-      await getConditions();
-      await getOtherAccessoriesTypes();
-      await getGenders();
+      // await getCurrencies();
+      // await getWarrantyTypes();
+      // await getDialGlassTypes();
+      // await getConditions();
+      // await getOtherAccessoriesTypes();
+      // await getGenders();
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
@@ -437,50 +438,49 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     try {
       final response = await productsService.getProductData(id);
       if (response!["code"] == 200) {
-        setState(() {
-          if (from != 'shop') {
-            shopName.text = response["data"]["shop_name"] ?? "";
-            shopId = response["data"]["shop_id"] ?? 0;
-          }
-          categoryName.text = response["data"]["category_name"] ?? "";
-          categoryId = response["data"]["category_id"] ?? 0;
-          brandName.text = response["data"]["brand_name"] ?? "";
-          brandId = response["data"]["brand_id"] ?? 0;
-          model.text = response["data"]["model"] ?? "";
-          description.text = response["data"]["description"] ?? "";
-          color.text = response["data"]["color"] ?? "";
-          strapMaterial.text = response["data"]["strap_material"] ?? "";
-          strapColor.text = response["data"]["strap_color"] ?? "";
-          caseMaterial.text = response["data"]["case_material"] ?? "";
-          dialColor.text = response["data"]["dial_color"] ?? "";
-          movementType.text = response["data"]["movement_type"] ?? "";
-          waterResistance.text = response["data"]["water_resistance"] ?? "";
-          warrantyPeriod.text = response["data"]["warranty_period"] ?? "";
-          price.text = response["data"]["price"].toString() ?? "";
-          currencyCode = response["data"]["currency_code"] ?? "";
-          currencyId = response["data"]["currency_id"] ?? 0;
-          warrantyTypeDesc =
-              response["data"]["warranty_type_description"] ?? "";
-          warrantyTypeId = response["data"]["warranty_type_id"] ?? 0;
-          stockQuantity.text =
-              response["data"]["stock_quantity"].toString() ?? "";
-          isTopModel = response["data"]["is_top_model"] ?? false;
-          productImages = response["data"]["condition"] ?? [];
-          dialGlassTypeDesc =
-              response["data"]["dial_glass_type_description"] ?? "";
-          dialGlassTypeId = response["data"]["dial_glass_type_id"] ?? 0;
-          conditionDesc = response["data"]["condition"] ?? "";
-          otherAccessoriesTypeDesc =
-              response["data"]["other_accessories_type_description"] ?? "";
-          otherAccessoriesTypeId =
-              response["data"]["other_accessories_type_id"] ?? 0;
-          genderDesc = response["data"]["gender_description"] ?? "";
-          genderId = response["data"]["gender_id"] ?? 0;
-          waitingTime = response["data"]["waiting_time"] ?? "";
-          caseDepth = response["data"]["case_depth"] ?? "";
-          caseDiameter = response["data"]["case_diameter"] ?? "";
-          caseWidth = response["data"]["case_width"] ?? "";
-        });
+        if (from != 'shop') {
+          shopName.text = response["data"]["shop_name"] ?? "";
+          shopId = response["data"]["shop_id"] ?? 0;
+        }
+        categoryName.text = response["data"]["category_name"] ?? "";
+        categoryId = response["data"]["category_id"] ?? 0;
+        brandName.text = response["data"]["brand_name"] ?? "";
+        brandId = response["data"]["brand_id"] ?? 0;
+        model.text = response["data"]["model"] ?? "";
+        description.text = response["data"]["description"] ?? "";
+        color.text = response["data"]["color"] ?? "";
+        strapMaterial.text = response["data"]["strap_material"] ?? "";
+        strapColor.text = response["data"]["strap_color"] ?? "";
+        caseMaterial.text = response["data"]["case_material"] ?? "";
+        dialColor.text = response["data"]["dial_color"] ?? "";
+        movementType.text = response["data"]["movement_type"] ?? "";
+        waterResistance.text = response["data"]["water_resistance"] ?? "";
+        warrantyPeriod.text = response["data"]["warranty_period"] ?? "";
+        price.text = response["data"]["price"].toString() ?? "";
+        currencyCode = response["data"]["currency_code"] ?? "";
+        currencyId = response["data"]["currency_id"] ?? 0;
+        warrantyTypeDesc = response["data"]["warranty_type_description"] ?? "";
+        warrantyTypeId = response["data"]["warranty_type_id"] ?? 0;
+        stockQuantity.text =
+            response["data"]["stock_quantity"].toString() ?? "";
+        isTopModel = response["data"]["is_top_model"] ?? false;
+        dialGlassTypeDesc =
+            response["data"]["dial_glass_type_description"] ?? "";
+        dialGlassTypeId = response["data"]["dial_glass_type_id"] ?? 0;
+        conditionDesc = response["data"]["condition"] ?? "";
+        otherAccessoriesTypeDesc =
+            response["data"]["other_accessories_type_description"] ?? "";
+        otherAccessoriesTypeId =
+            response["data"]["other_accessories_type_id"] ?? 0;
+        genderDesc = response["data"]["gender_description"] ?? "";
+        genderId = response["data"]["gender_id"] ?? 0;
+        isPreorder = response["data"]["is_preorder"] ?? false;
+        waitingTime = response["data"]["waiting_time"] ?? "";
+        caseDepth = response["data"]["case_depth"] ?? "";
+        caseDiameter = response["data"]["case_diameter"] ?? "";
+        caseWidth = response["data"]["case_width"] ?? "";
+        productImages = response["data"]["product_images"] ?? [];
+        setState(() {});
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -568,6 +568,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "dial_glass_type_id": dialGlassTypeId,
         "other_accessories_type_id": otherAccessoriesTypeId,
         "gender_id": genderId,
+        "is_preorder": isPreorder,
         "waiting_time": waitingTime.text,
         "case_diameter": caseDiameter.text,
         "case_depth": caseDepth.text,
@@ -651,6 +652,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "dial_glass_type_id": dialGlassTypeId,
         "other_accessories_type_id": otherAccessoriesTypeId,
         "gender_id": genderId,
+        "is_preorder": isPreorder,
         "waiting_time": waitingTime.text,
         "case_diameter": caseDiameter.text,
         "case_depth": caseDepth.text,
@@ -1221,7 +1223,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    language["Color"] ?? "Color",
+                                    language["Gender"] ?? "Gender",
                                     style: FontConstants.caption1,
                                   ),
                                 ),
@@ -1230,6 +1232,48 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 padding: const EdgeInsets.only(
                                   left: 16,
                                   right: 4,
+                                  bottom: 16,
+                                ),
+                                child: CustomDropDown(
+                                  value: genderDesc,
+                                  fillColor: ColorConstants.fillcolor,
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      genderDesc = newValue ?? gendersdesc[0];
+                                    });
+                                    for (var data in genders) {
+                                      if (data["description"] == genderDesc) {
+                                        genderId = data["gender_id"];
+                                      }
+                                    }
+                                  },
+                                  items: gendersdesc,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 4,
+                                  right: 16,
+                                  bottom: 4,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    language["Color"] ?? "Color",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 4,
+                                  right: 16,
                                   bottom: 16,
                                 ),
                                 child: TextFormField(
@@ -1263,69 +1307,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                     if (value == null || value.isEmpty) {
                                       return language["Enter Color"] ??
                                           "Enter Color";
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 4,
-                                  right: 16,
-                                  bottom: 4,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    language["Movement Type"] ??
-                                        "Movement Type",
-                                    style: FontConstants.caption1,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 4,
-                                  right: 16,
-                                  bottom: 16,
-                                ),
-                                child: TextFormField(
-                                  controller: movementType,
-                                  focusNode: _movementTypeFocusNode,
-                                  keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.next,
-                                  style: FontConstants.body1,
-                                  cursorColor: Colors.black,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: ColorConstants.fillcolor,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 14,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return language["Enter Movement Type"] ??
-                                          "Enter Movement Type";
                                     }
                                     return null;
                                   },
@@ -1544,6 +1525,248 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
+                                    language["Case Diameter"] ??
+                                        "Case Diameter",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 4,
+                                  right: 16,
+                                  bottom: 16,
+                                ),
+                                child: TextFormField(
+                                  controller: caseDiameter,
+                                  focusNode: _caseDiameterFocusNode,
+                                  keyboardType: TextInputType.text,
+                                  textInputAction: TextInputAction.next,
+                                  style: FontConstants.body1,
+                                  cursorColor: Colors.black,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: ColorConstants.fillcolor,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 14,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return language["Enter Case Diameter"] ??
+                                          "Enter Case Diameter";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 4,
+                                  bottom: 4,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    language["Case Depth"] ?? "Case Depth",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 4,
+                                  bottom: 16,
+                                ),
+                                child: TextFormField(
+                                  controller: caseDepth,
+                                  focusNode: _caseDepthFocusNode,
+                                  keyboardType: TextInputType.text,
+                                  textInputAction: TextInputAction.next,
+                                  style: FontConstants.body1,
+                                  cursorColor: Colors.black,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: ColorConstants.fillcolor,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 14,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return language["Enter Case Depth"] ??
+                                          "Enter Case Depth";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 4,
+                                  right: 16,
+                                  bottom: 4,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    language["Case Width"] ?? "Case Width",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 4,
+                                  right: 16,
+                                  bottom: 16,
+                                ),
+                                child: TextFormField(
+                                  controller: caseWidth,
+                                  focusNode: _caseWidthFocusNode,
+                                  keyboardType: TextInputType.text,
+                                  textInputAction: TextInputAction.done,
+                                  style: FontConstants.body1,
+                                  cursorColor: Colors.black,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: ColorConstants.fillcolor,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 14,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return language["Enter Case Width"] ??
+                                          "Enter Case Width";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 4,
+                                  bottom: 4,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    language["Dial Glass Type"] ??
+                                        "Dial Glass Type",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 4,
+                                  bottom: 16,
+                                ),
+                                child: CustomDropDown(
+                                  value: dialGlassTypeDesc,
+                                  fillColor: ColorConstants.fillcolor,
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      dialGlassTypeDesc =
+                                          newValue ?? dialglasstypesdesc[0];
+                                    });
+                                    for (var data in dialglasstypes) {
+                                      if (data["description"] ==
+                                          dialGlassTypeDesc) {
+                                        dialGlassTypeId = data["dial_glass_id"];
+                                      }
+                                    }
+                                  },
+                                  items: dialglasstypesdesc,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 4,
+                                  right: 16,
+                                  bottom: 4,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
                                     language["Dial Color"] ?? "Dial Color",
                                     style: FontConstants.caption1,
                                   ),
@@ -1596,6 +1819,37 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                         )
                       ],
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["Condition"] ?? "Condition",
+                          style: FontConstants.caption1,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      child: CustomDropDown(
+                        value: conditionDesc,
+                        fillColor: ColorConstants.fillcolor,
+                        onChanged: (newValue) {
+                          setState(() {
+                            conditionDesc = newValue ?? conditionsdesc[0];
+                          });
+                        },
+                        items: conditionsdesc,
+                      ),
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -1611,8 +1865,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    language["Stock Quantity"] ??
-                                        "Stock Quantity",
+                                    language["Movement Type"] ??
+                                        "Movement Type",
                                     style: FontConstants.caption1,
                                   ),
                                 ),
@@ -1621,6 +1875,69 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 padding: const EdgeInsets.only(
                                   left: 16,
                                   right: 4,
+                                  bottom: 16,
+                                ),
+                                child: TextFormField(
+                                  controller: movementType,
+                                  focusNode: _movementTypeFocusNode,
+                                  keyboardType: TextInputType.text,
+                                  textInputAction: TextInputAction.next,
+                                  style: FontConstants.body1,
+                                  cursorColor: Colors.black,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: ColorConstants.fillcolor,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 14,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return language["Enter Movement Type"] ??
+                                          "Enter Movement Type";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 4,
+                                  right: 16,
+                                  bottom: 4,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    language["Stock Quantity"] ??
+                                        "Stock Quantity",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 4,
+                                  right: 16,
                                   bottom: 16,
                                 ),
                                 child: TextFormField(
@@ -1657,44 +1974,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                     }
                                     return null;
                                   },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 4,
-                                  right: 16,
-                                  bottom: 4,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    language["Condition"] ?? "Condition",
-                                    style: FontConstants.caption1,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 4,
-                                  right: 16,
-                                  bottom: 16,
-                                ),
-                                child: CustomDropDown(
-                                  value: conditionDesc,
-                                  fillColor: ColorConstants.fillcolor,
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      conditionDesc =
-                                          newValue ?? conditionsdesc[0];
-                                    });
-                                  },
-                                  items: conditionsdesc,
                                 ),
                               ),
                             ],
@@ -1991,43 +2270,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          language["Dial Glass"] ?? "Dial Glass",
-                          style: FontConstants.caption1,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 16,
-                      ),
-                      child: CustomDropDown(
-                        value: dialGlassTypeDesc,
-                        fillColor: ColorConstants.fillcolor,
-                        onChanged: (newValue) {
-                          setState(() {
-                            dialGlassTypeDesc =
-                                newValue ?? dialglasstypesdesc[0];
-                          });
-                          for (var data in dialglasstypes) {
-                            if (data["description"] == dialGlassTypeDesc) {
-                              dialGlassTypeId = data["dial_glass_type_id"];
-                            }
-                          }
-                        },
-                        items: dialglasstypesdesc,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 4,
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
                           language["Other Accessories"] ?? "Other Accessories",
                           style: FontConstants.caption1,
                         ),
@@ -2037,7 +2279,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
-                        bottom: 16,
+                        bottom: 4,
                       ),
                       child: CustomDropDown(
                         value: otherAccessoriesTypeDesc,
@@ -2059,27 +2301,133 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       ),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Checkbox(
-                          value: isTopModel,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              right: 16,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Checkbox(
+                                  value: isTopModel,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  activeColor: Theme.of(context).primaryColor,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isTopModel = value ?? false;
+                                    });
+                                  },
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    language["Top Model"] ?? "Top Model",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          activeColor: Theme.of(context).primaryColor,
-                          onChanged: (value) {
-                            setState(() {
-                              isTopModel = value ?? false;
-                            });
-                          },
                         ),
-                        Text(
-                          language["Top Model"] ?? "Top Model",
-                          style: FontConstants.caption1,
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              right: 16,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Checkbox(
+                                  value: isPreorder,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  activeColor: Theme.of(context).primaryColor,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isPreorder = value ?? false;
+                                      if (!isPreorder) {
+                                        waitingTime.text = "";
+                                      }
+                                    });
+                                  },
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    language["Preorder"] ?? "Preorder",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ],
                     ),
+                    isPreorder
+                        ? Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              bottom: 4,
+                            ),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                language["Waiting Time"] ?? "Waiting Time",
+                                style: FontConstants.caption1,
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    isPreorder
+                        ? Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                            ),
+                            child: TextFormField(
+                              controller: waitingTime,
+                              focusNode: _waitingTimeFocusNode,
+                              keyboardType: TextInputType.text,
+                              textInputAction: TextInputAction.next,
+                              style: FontConstants.body1,
+                              cursorColor: Colors.black,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: ColorConstants.fillcolor,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 14,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide.none,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedErrorBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide.none,
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return language["Enter Waiting Time"] ??
+                                      "Enter Waiting Time";
+                                }
+                                return null;
+                              },
+                            ),
+                          )
+                        : Container(),
                   ],
                 ),
               ),
