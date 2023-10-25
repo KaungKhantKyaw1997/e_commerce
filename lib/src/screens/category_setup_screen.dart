@@ -559,10 +559,8 @@ class _CategorySetupScreenState extends State<CategorySetupScreen> {
                             backgroundColor: ColorConstants.redcolor,
                           ),
                           onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              showLoadingDialog(context);
-                              deleteCategory();
-                            }
+                            showLoadingDialog(context);
+                            deleteCategory();
                           },
                           child: Text(
                             language["Delete"] ?? "Delete",

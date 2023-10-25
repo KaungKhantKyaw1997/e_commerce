@@ -121,13 +121,14 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   void initState() {
     super.initState();
 
-    Future.delayed(Duration.zero, () async {
-      // await getCurrencies();
-      // await getWarrantyTypes();
-      // await getDialGlassTypes();
-      // await getConditions();
-      // await getOtherAccessoriesTypes();
-      // await getGenders();
+    Future.delayed(Duration.zero, () {
+      getGenders();
+      getDialGlassTypes();
+      getConditions();
+      getCurrencies();
+      getWarrantyTypes();
+      getOtherAccessoriesTypes();
+
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
@@ -438,49 +439,51 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     try {
       final response = await productsService.getProductData(id);
       if (response!["code"] == 200) {
-        if (from != 'shop') {
-          shopName.text = response["data"]["shop_name"] ?? "";
-          shopId = response["data"]["shop_id"] ?? 0;
-        }
-        categoryName.text = response["data"]["category_name"] ?? "";
-        categoryId = response["data"]["category_id"] ?? 0;
-        brandName.text = response["data"]["brand_name"] ?? "";
-        brandId = response["data"]["brand_id"] ?? 0;
-        model.text = response["data"]["model"] ?? "";
-        description.text = response["data"]["description"] ?? "";
-        color.text = response["data"]["color"] ?? "";
-        strapMaterial.text = response["data"]["strap_material"] ?? "";
-        strapColor.text = response["data"]["strap_color"] ?? "";
-        caseMaterial.text = response["data"]["case_material"] ?? "";
-        dialColor.text = response["data"]["dial_color"] ?? "";
-        movementType.text = response["data"]["movement_type"] ?? "";
-        waterResistance.text = response["data"]["water_resistance"] ?? "";
-        warrantyPeriod.text = response["data"]["warranty_period"] ?? "";
-        price.text = response["data"]["price"].toString() ?? "";
-        currencyCode = response["data"]["currency_code"] ?? "";
-        currencyId = response["data"]["currency_id"] ?? 0;
-        warrantyTypeDesc = response["data"]["warranty_type_description"] ?? "";
-        warrantyTypeId = response["data"]["warranty_type_id"] ?? 0;
-        stockQuantity.text =
-            response["data"]["stock_quantity"].toString() ?? "";
-        isTopModel = response["data"]["is_top_model"] ?? false;
-        dialGlassTypeDesc =
-            response["data"]["dial_glass_type_description"] ?? "";
-        dialGlassTypeId = response["data"]["dial_glass_type_id"] ?? 0;
-        conditionDesc = response["data"]["condition"] ?? "";
-        otherAccessoriesTypeDesc =
-            response["data"]["other_accessories_type_description"] ?? "";
-        otherAccessoriesTypeId =
-            response["data"]["other_accessories_type_id"] ?? 0;
-        genderDesc = response["data"]["gender_description"] ?? "";
-        genderId = response["data"]["gender_id"] ?? 0;
-        isPreorder = response["data"]["is_preorder"] ?? false;
-        waitingTime = response["data"]["waiting_time"] ?? "";
-        caseDepth = response["data"]["case_depth"] ?? "";
-        caseDiameter = response["data"]["case_diameter"] ?? "";
-        caseWidth = response["data"]["case_width"] ?? "";
-        productImages = response["data"]["product_images"] ?? [];
-        setState(() {});
+        setState(() {
+          productImages = response["data"]["product_images"] ?? [];
+          if (from != 'shop') {
+            shopName.text = response["data"]["shop_name"] ?? "";
+            shopId = response["data"]["shop_id"] ?? 0;
+          }
+          categoryName.text = response["data"]["category_name"] ?? "";
+          categoryId = response["data"]["category_id"] ?? 0;
+          brandName.text = response["data"]["brand_name"] ?? "";
+          brandId = response["data"]["brand_id"] ?? 0;
+          model.text = response["data"]["model"] ?? "";
+          description.text = response["data"]["description"] ?? "";
+          color.text = response["data"]["color"] ?? "";
+          strapMaterial.text = response["data"]["strap_material"] ?? "";
+          strapColor.text = response["data"]["strap_color"] ?? "";
+          caseMaterial.text = response["data"]["case_material"] ?? "";
+          dialColor.text = response["data"]["dial_color"] ?? "";
+          movementType.text = response["data"]["movement_type"] ?? "";
+          waterResistance.text = response["data"]["water_resistance"] ?? "";
+          warrantyPeriod.text = response["data"]["warranty_period"] ?? "";
+          price.text = response["data"]["price"].toString() ?? "";
+          currencyCode = response["data"]["currency_code"] ?? "";
+          currencyId = response["data"]["currency_id"] ?? 0;
+          warrantyTypeDesc =
+              response["data"]["warranty_type_description"] ?? "";
+          warrantyTypeId = response["data"]["warranty_type_id"] ?? 0;
+          stockQuantity.text =
+              response["data"]["stock_quantity"].toString() ?? "";
+          isTopModel = response["data"]["is_top_model"] ?? false;
+          dialGlassTypeDesc =
+              response["data"]["dial_glass_type_description"] ?? "";
+          dialGlassTypeId = response["data"]["dial_glass_type_id"] ?? 0;
+          conditionDesc = response["data"]["condition"] ?? "";
+          otherAccessoriesTypeDesc =
+              response["data"]["other_accessories_type_description"] ?? "";
+          otherAccessoriesTypeId =
+              response["data"]["other_accessories_type_id"] ?? 0;
+          genderDesc = response["data"]["gender_description"] ?? "";
+          genderId = response["data"]["gender_id"] ?? 0;
+          isPreorder = response["data"]["is_preorder"] ?? false;
+          waitingTime = response["data"]["waiting_time"] ?? "";
+          caseDepth = response["data"]["case_depth"] ?? "";
+          caseDiameter = response["data"]["case_diameter"] ?? "";
+          caseWidth = response["data"]["case_width"] ?? "";
+        });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -1928,8 +1931,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    language["Stock Quantity"] ??
-                                        "Stock Quantity",
+                                    language["In Stock"] ?? "In Stock",
                                     style: FontConstants.caption1,
                                   ),
                                 ),
@@ -2489,10 +2491,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                             backgroundColor: ColorConstants.redcolor,
                           ),
                           onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              showLoadingDialog(context);
-                              deleteProduct();
-                            }
+                            showLoadingDialog(context);
+                            deleteProduct();
                           },
                           child: Text(
                             language["Delete"] ?? "Delete",

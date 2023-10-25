@@ -391,10 +391,8 @@ class BuyerProtectionSetupScreenState
                             backgroundColor: ColorConstants.redcolor,
                           ),
                           onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              showLoadingDialog(context);
-                              deleteBuyerProtection();
-                            }
+                            showLoadingDialog(context);
+                            deleteBuyerProtection();
                           },
                           child: Text(
                             language["Delete"] ?? "Delete",

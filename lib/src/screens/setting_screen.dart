@@ -628,7 +628,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
-                             role == 'admin' || role == 'agent'
+                      role == 'admin' || role == 'agent'
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
@@ -650,7 +650,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         bottom: 16,
                                       ),
                                       child: SvgPicture.asset(
-                                        "assets/icons/brand.svg",
+                                        "assets/icons/bank.svg",
                                         width: 24,
                                         height: 24,
                                       ),
@@ -666,8 +666,9 @@ class _SettingScreenState extends State<SettingScreen> {
                                           TextSpan(
                                             children: [
                                               TextSpan(
-                                                text: language["Bank Account"] ??
-                                                    "Bank Account",
+                                                text:
+                                                    language["Bank Account"] ??
+                                                        "Bank Account",
                                                 style: FontConstants.caption2,
                                               )
                                             ],

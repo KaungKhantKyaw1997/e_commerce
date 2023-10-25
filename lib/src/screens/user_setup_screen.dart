@@ -846,10 +846,8 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                             backgroundColor: ColorConstants.redcolor,
                           ),
                           onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              showLoadingDialog(context);
-                              deleteUser();
-                            }
+                            showLoadingDialog(context);
+                            deleteUser();
                           },
                           child: Text(
                             language["Delete"] ?? "Delete",

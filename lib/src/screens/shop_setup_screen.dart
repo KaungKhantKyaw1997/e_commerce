@@ -665,10 +665,8 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
                             backgroundColor: ColorConstants.redcolor,
                           ),
                           onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              showLoadingDialog(context);
-                              deleteShop();
-                            }
+                            showLoadingDialog(context);
+                            deleteShop();
                           },
                           child: Text(
                             language["Delete"] ?? "Delete",

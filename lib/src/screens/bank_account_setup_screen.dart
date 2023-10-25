@@ -605,10 +605,8 @@ class _BankAccountSetupScreenState extends State<BankAccountSetupScreen> {
                             backgroundColor: ColorConstants.redcolor,
                           ),
                           onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              showLoadingDialog(context);
-                              deleteBankAccount();
-                            }
+                            showLoadingDialog(context);
+                            deleteBankAccount();
                           },
                           child: Text(
                             language["Delete"] ?? "Delete",

@@ -728,6 +728,9 @@ class _ProductScreenState extends State<ProductScreen> {
                                       "Other Accessories",
                                   style: FontConstants.caption1,
                                 ),
+                                SizedBox(
+                                  width: 8,
+                                ),
                                 Expanded(
                                   child: Text(
                                     product["other_accessories_type_description"] ??
@@ -739,6 +742,34 @@ class _ProductScreenState extends State<ProductScreen> {
                               ],
                             ),
                           ),
+                          product.isNotEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 16,
+                                    right: 16,
+                                    bottom: 8,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        language["Preorder"] ?? "Preorder",
+                                        style: FontConstants.caption1,
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          product["is_preorder"] ? 'Yes' : 'No',
+                                          textAlign: TextAlign.end,
+                                          style: FontConstants.caption2,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Container(),
                           product.isNotEmpty && product["is_preorder"]
                               ? Padding(
                                   padding: const EdgeInsets.only(

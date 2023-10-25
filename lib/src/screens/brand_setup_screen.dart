@@ -559,10 +559,8 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
                             backgroundColor: ColorConstants.redcolor,
                           ),
                           onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              showLoadingDialog(context);
-                              deleteBrand();
-                            }
+                            showLoadingDialog(context);
+                            deleteBrand();
                           },
                           child: Text(
                             language["Delete"] ?? "Delete",
