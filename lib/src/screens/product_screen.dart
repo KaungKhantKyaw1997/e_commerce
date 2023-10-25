@@ -863,9 +863,11 @@ class _ProductScreenState extends State<ProductScreen> {
                                 SizedBox(
                                   width: 8,
                                 ),
-                                Text(
-                                  buyerProtections[index]["description"],
-                                  style: FontConstants.body1,
+                                Expanded(
+                                  child: Text(
+                                    buyerProtections[index]["description"],
+                                    style: FontConstants.body1,
+                                  ),
                                 ),
                               ],
                             ),
