@@ -851,7 +851,7 @@ class _OrderScreenState extends State<OrderScreen>
                                     )
                                   : Container(
                                       padding: EdgeInsets.symmetric(
-                                        vertical: 66,
+                                        vertical: 58,
                                       ),
                                       child: Column(
                                         mainAxisAlignment:
@@ -867,6 +867,9 @@ class _OrderScreenState extends State<OrderScreen>
                                               Colors.grey,
                                               BlendMode.srcIn,
                                             ),
+                                          ),
+                                          SizedBox(
+                                            height: 16,
                                           ),
                                           Text(
                                             language[
