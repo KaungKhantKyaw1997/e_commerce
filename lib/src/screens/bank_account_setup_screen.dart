@@ -17,35 +17,57 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 
-class BankAccountSetUpScreen extends StatefulWidget {
-  const BankAccountSetUpScreen({super.key});
+class BankAccountSetupScreen extends StatefulWidget {
+  const BankAccountSetupScreen({super.key});
 
   @override
-  State<BankAccountSetUpScreen> createState() => _BankAccountSetUpScreenState();
+  State<BankAccountSetupScreen> createState() => _BankAccountSetupScreenState();
 }
 
-class _BankAccountSetUpScreenState extends State<BankAccountSetUpScreen> {
+class _BankAccountSetupScreenState extends State<BankAccountSetupScreen> {
   final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
   final bankAccountsService = BankAccountsService();
-  FocusNode _nameFocusNode = FocusNode();
-  FocusNode _descriptionFocusNode = FocusNode();
+  FocusNode _accountHolderNameFocusNode = FocusNode();
+  FocusNode _accountNumberFocusNode = FocusNode();
 
-  TextEditingController account_type = TextEditingController(text: '');
-  TextEditingController account_holder_name = TextEditingController(text: '');
-  TextEditingController account_number = TextEditingController(text: '');
+  TextEditingController accountHolderName = TextEditingController(text: '');
+  TextEditingController accountNumber = TextEditingController(text: '');
 
   final ImagePicker _picker = ImagePicker();
   XFile? pickedFile;
   String logoUrl = '';
 
-  int id = 0;
-   List<String> accountTypes = [
+  List<String> accountTypes = [
     'wallet',
-    'kpay',
+    'mbanking',
   ];
-   String accountType = 'wallet';
+  String accountType = 'wallet';
+
+  int id = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      final arguments =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
+      if (arguments != null) {
+        id = arguments["id"] ?? 0;
+        if (id != 0) {
+          getBankAccount();
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   Future<void> _pickImage(source) async {
     try {
@@ -58,7 +80,8 @@ class _BankAccountSetUpScreenState extends State<BankAccountSetUpScreen> {
       print(e);
     }
   }
-   Future<void> uploadFile() async {
+
+  Future<void> uploadFile() async {
     try {
       var response = await AuthService.uploadFile(File(pickedFile!.path),
           resolution: "100x100");
@@ -77,9 +100,9 @@ class _BankAccountSetUpScreenState extends State<BankAccountSetUpScreen> {
       if (response!["code"] == 200) {
         setState(() {
           accountType = response["data"]["account_type"] ?? "";
-          account_holder_name.text =
+          accountHolderName.text =
               response["data"]["account_holder_name"] ?? "";
-
+          accountNumber.text = response["data"]["account_number"] ?? "";
           logoUrl = response["data"]["bank_logo"] ?? "";
         });
       } else {
@@ -112,66 +135,68 @@ class _BankAccountSetUpScreenState extends State<BankAccountSetUpScreen> {
       }
     }
   }
-    addBankAccount() async {
-    try {
-      final  body = {
-        "account_type": accountType,
-        "account_holder_name": account_holder_name.text,
-         "account_number": account_number.text,
-        "bank_logo": logoUrl,
-      };
 
-      final response = await bankAccountsService.addBankAccountsData(body);
-      Navigator.pop(context);
-      if (response!["code"] == 200) {
-        ToastUtil.showToast(response["code"], response["message"]);
-        Navigator.pop(context);
-        Navigator.pushNamed(
-          context,
-          Routes.bank_accounts_setup,
-        );
-      } else {
-        ToastUtil.showToast(response["code"], response["message"]);
-      }
-    } catch (e, s) {
-      Navigator.pop(context);
-      if (e is DioException &&
-          e.error is SocketException &&
-          !isConnectionTimeout) {
-        isConnectionTimeout = true;
-        Navigator.pushNamed(
-          context,
-          Routes.connection_timeout,
-        );
-        return;
-      }
-      crashlytic.myGlobalErrorHandler(e, s);
-      if (e is DioException && e.response != null && e.response!.data != null) {
-        if (e.response!.data["message"] == "invalid token" ||
-            e.response!.data["message"] ==
-                "invalid authorization header format") {
-          Navigator.pushNamed(
-            context,
-            Routes.unauthorized,
-          );
-        } else {
-          ToastUtil.showToast(
-              e.response!.data['code'], e.response!.data['message']);
-        }
-      }
-    }
-  }
-
-    updateBankAccountsData() async {
+  addBankAccount() async {
     try {
       final body = {
         "account_type": accountType,
-        "account_holder_name": account_holder_name.text,
-         "account_number": account_number.text,
+        "account_holder_name": accountHolderName.text,
+        "account_number": accountNumber.text,
         "bank_logo": logoUrl,
       };
 
-      final response = await bankAccountsService.updateBankAccountsData(body, id);
+      final response = await bankAccountsService.addBankAccountData(body);
+      Navigator.pop(context);
+      if (response!["code"] == 201) {
+        ToastUtil.showToast(response["code"], response["message"]);
+        Navigator.pop(context);
+        Navigator.pushNamed(
+          context,
+          Routes.bank_accounts_setup,
+        );
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      Navigator.pop(context);
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  updateBankAccount() async {
+    try {
+      final body = {
+        "account_type": accountType,
+        "account_holder_name": accountHolderName.text,
+        "account_number": accountNumber.text,
+        "bank_logo": logoUrl,
+      };
+
+      final response =
+          await bankAccountsService.updateBankAccountData(body, id);
       Navigator.pop(context);
       if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -212,9 +237,9 @@ class _BankAccountSetUpScreenState extends State<BankAccountSetUpScreen> {
     }
   }
 
-  deleteBankAccountsData() async {
+  deleteBankAccount() async {
     try {
-      final response = await bankAccountsService.deleteBankAccountsData(id);
+      final response = await bankAccountsService.deleteBankAccountData(id);
       Navigator.pop(context);
       if (response!["code"] == 204) {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -255,14 +280,13 @@ class _BankAccountSetUpScreenState extends State<BankAccountSetUpScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        _nameFocusNode.unfocus();
-        _descriptionFocusNode.unfocus();
+        _accountHolderNameFocusNode.unfocus();
+        _accountNumberFocusNode.unfocus();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -396,8 +420,8 @@ class _BankAccountSetUpScreenState extends State<BankAccountSetUpScreen> {
                         bottom: 16,
                       ),
                       child: TextFormField(
-                        controller: account_number,
-                        focusNode: _nameFocusNode,
+                        controller: accountNumber,
+                        focusNode: _accountNumberFocusNode,
                         keyboardType: TextInputType.text,
                         textInputAction: TextInputAction.next,
                         style: FontConstants.body1,
@@ -424,7 +448,8 @@ class _BankAccountSetUpScreenState extends State<BankAccountSetUpScreen> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return language["Enter Account Number"] ?? "Enter Account Number";
+                            return language["Enter Account Number"] ??
+                                "Enter Account Number";
                           }
                           return null;
                         },
@@ -439,7 +464,8 @@ class _BankAccountSetUpScreenState extends State<BankAccountSetUpScreen> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          language["Account Holder Name"] ?? "Account Holder Name",
+                          language["Account Holder Name"] ??
+                              "Account Holder Name",
                           style: FontConstants.caption1,
                         ),
                       ),
@@ -448,15 +474,15 @@ class _BankAccountSetUpScreenState extends State<BankAccountSetUpScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
+                        bottom: 16,
                       ),
                       child: TextFormField(
-                        controller: account_holder_name,
-                        focusNode: _descriptionFocusNode,
+                        controller: accountHolderName,
+                        focusNode: _accountHolderNameFocusNode,
                         keyboardType: TextInputType.text,
                         textInputAction: TextInputAction.done,
                         style: FontConstants.body1,
                         cursorColor: Colors.black,
-                        maxLines: 2,
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: ColorConstants.fillcolor,
@@ -486,7 +512,21 @@ class _BankAccountSetUpScreenState extends State<BankAccountSetUpScreen> {
                         },
                       ),
                     ),
-                      Padding(
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["Account Type"] ?? "Account Type",
+                          style: FontConstants.caption1,
+                        ),
+                      ),
+                    ),
+                    Padding(
                       padding: EdgeInsets.only(
                         left: 16,
                         right: 16,
@@ -567,7 +607,7 @@ class _BankAccountSetUpScreenState extends State<BankAccountSetUpScreen> {
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               showLoadingDialog(context);
-                              deleteBankAccountsData();
+                              deleteBankAccount();
                             }
                           },
                           child: Text(
@@ -603,7 +643,7 @@ class _BankAccountSetUpScreenState extends State<BankAccountSetUpScreen> {
                               if (pickedFile != null) {
                                 await uploadFile();
                               }
-                              updateBankAccountsData();
+                              updateBankAccount();
                             }
                           },
                           child: Text(

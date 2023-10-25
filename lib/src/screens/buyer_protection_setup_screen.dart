@@ -10,17 +10,17 @@ import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 class BuyerProtectionSetupScreen extends StatefulWidget {
   const BuyerProtectionSetupScreen({super.key});
 
   @override
   State<BuyerProtectionSetupScreen> createState() =>
-      _buyer_protections_screenState();
+      BuyerProtectionSetupScreenState();
 }
 
-class _buyer_protections_screenState extends State<BuyerProtectionSetupScreen> {
+class BuyerProtectionSetupScreenState
+    extends State<BuyerProtectionSetupScreen> {
   final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
@@ -44,6 +44,12 @@ class _buyer_protections_screenState extends State<BuyerProtectionSetupScreen> {
         }
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   getBuyerProtectionData() async {

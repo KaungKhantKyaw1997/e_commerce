@@ -10,7 +10,6 @@ import 'package:e_commerce/src/services/bank_accounts_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -18,20 +17,23 @@ class BankAccountsSetupScreen extends StatefulWidget {
   const BankAccountsSetupScreen({super.key});
 
   @override
-  State<BankAccountsSetupScreen> createState() => _BankAccountsSetupScreenState();
+  State<BankAccountsSetupScreen> createState() =>
+      _BankAccountsSetupScreenState();
 }
 
 class _BankAccountsSetupScreenState extends State<BankAccountsSetupScreen> {
-    final bankAccountsService = BankAccountsService();
-    List bankAccounts = [];
-    int page = 1;
-      final ScrollController _scrollController = ScrollController();
-    TextEditingController search = TextEditingController(text: '');
-     final RefreshController _refreshController =
+  final crashlytic = new CrashlyticsService();
+  final bankAccountsService = BankAccountsService();
+  final ScrollController _scrollController = ScrollController();
+  TextEditingController search = TextEditingController(text: '');
+  final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-      final crashlytic = new CrashlyticsService();
-        String from = "";
-    @override
+  List bankAccounts = [];
+  int page = 1;
+
+  String from = "";
+
+  @override
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
@@ -45,11 +47,16 @@ class _BankAccountsSetupScreenState extends State<BankAccountsSetupScreen> {
     getBankAccounts();
   }
 
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
-    getBankAccounts() async {
+  getBankAccounts() async {
     try {
-      final response =
-          await bankAccountsService.getBankAccountsData(page: page, search: search.text);
+      final response = await bankAccountsService.getBankAccountsData(
+          page: page, search: search.text);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
 
@@ -91,7 +98,8 @@ class _BankAccountsSetupScreenState extends State<BankAccountsSetupScreen> {
       }
     }
   }
-getBankAccountsCard(index) {
+
+  getBankAccountCard(index) {
     return Container(
       padding: const EdgeInsets.only(
         left: 16,
@@ -103,8 +111,10 @@ getBankAccountsCard(index) {
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(index == 0 ? 10 : 0),
           topRight: Radius.circular(index == 0 ? 10 : 0),
-          bottomLeft: Radius.circular(index == bankAccounts.length - 1 ? 10 : 0),
-          bottomRight: Radius.circular(index == bankAccounts.length - 1 ? 10 : 0),
+          bottomLeft:
+              Radius.circular(index == bankAccounts.length - 1 ? 10 : 0),
+          bottomRight:
+              Radius.circular(index == bankAccounts.length - 1 ? 10 : 0),
         ),
         color: Colors.white,
       ),
@@ -175,7 +185,6 @@ getBankAccountsCard(index) {
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -250,22 +259,20 @@ getBankAccountsCard(index) {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                     
-                          Navigator.pop(context);
-                          Navigator.pushNamed(
-                            context,
-                            Routes.bank_account_setup,
-                            arguments: {
-                              "id": bankAccounts[index]["account_id"],
-                            },
-                          );
-                      
+                        Navigator.pop(context);
+                        Navigator.pushNamed(
+                          context,
+                          Routes.bank_account_setup,
+                          arguments: {
+                            "id": bankAccounts[index]["account_id"],
+                          },
+                        );
                       },
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          getBankAccountsCard(index),
+                          getBankAccountCard(index),
                           index < bankAccounts.length - 1
                               ? Container(
                                   padding: const EdgeInsets.only(
@@ -289,21 +296,21 @@ getBankAccountsCard(index) {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(
-                  context,
-                  Routes.brand_setup,
-                  arguments: {
-                    "id": 0,
-                  },
-                );
-              },
-              backgroundColor: Theme.of(context).primaryColor,
-              child: Icon(
-                Icons.add,
-              ),
-            )
+        onPressed: () {
+          Navigator.pop(context);
+          Navigator.pushNamed(
+            context,
+            Routes.bank_account_setup,
+            arguments: {
+              "id": 0,
+            },
+          );
+        },
+        backgroundColor: Theme.of(context).primaryColor,
+        child: Icon(
+          Icons.add,
+        ),
+      ),
     );
   }
 }

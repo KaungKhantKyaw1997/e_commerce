@@ -27,6 +27,7 @@ class _TermsAndConditionsSetUpScreenState
   final _formKey = GlobalKey<FormState>();
   TextEditingController content = TextEditingController(text: '');
   FocusNode _contentFocusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();

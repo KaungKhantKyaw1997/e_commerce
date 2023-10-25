@@ -16,10 +16,10 @@ class BuyerProtectionsSetupScreen extends StatefulWidget {
 
   @override
   State<BuyerProtectionsSetupScreen> createState() =>
-      _buyer_protections_setup_screenState();
+      BuyerProtectionsSetupScreenState();
 }
 
-class _buyer_protections_setup_screenState
+class BuyerProtectionsSetupScreenState
     extends State<BuyerProtectionsSetupScreen> {
   final crashlytic = new CrashlyticsService();
   TextEditingController search = TextEditingController(text: '');
@@ -27,7 +27,7 @@ class _buyer_protections_setup_screenState
   final ScrollController _scrollController = ScrollController();
   String from = "";
   int page = 1;
-  List buyer_protections = [];
+  List buyerProtections = [];
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
@@ -45,6 +45,12 @@ class _buyer_protections_setup_screenState
     getBuyerProtectionsData();
   }
 
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   getBuyerProtectionsData() async {
     try {
       final response = await buyerProtectionsService.getBuyerProtectionsData(
@@ -54,7 +60,7 @@ class _buyer_protections_setup_screenState
 
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
-          buyer_protections += response["data"];
+          buyerProtections += response["data"];
           page++;
         }
         setState(() {});
@@ -104,9 +110,9 @@ class _buyer_protections_setup_screenState
           topLeft: Radius.circular(index == 0 ? 10 : 0),
           topRight: Radius.circular(index == 0 ? 10 : 0),
           bottomLeft:
-              Radius.circular(index == buyer_protections.length - 1 ? 10 : 0),
+              Radius.circular(index == buyerProtections.length - 1 ? 10 : 0),
           bottomRight:
-              Radius.circular(index == buyer_protections.length - 1 ? 10 : 0),
+              Radius.circular(index == buyerProtections.length - 1 ? 10 : 0),
         ),
         color: Colors.white,
       ),
@@ -126,7 +132,7 @@ class _buyer_protections_setup_screenState
                     children: [
                       Expanded(
                         child: Text(
-                          buyer_protections[index]["description"].toString(),
+                          buyerProtections[index]["description"].toString(),
                           overflow: TextOverflow.ellipsis,
                           style: FontConstants.body1,
                         ),
@@ -135,7 +141,7 @@ class _buyer_protections_setup_screenState
                   ),
                   Text(
                     Jiffy.parseFromDateTime(DateTime.parse(
-                                buyer_protections[index]["created_at"] + "Z")
+                                buyerProtections[index]["created_at"] + "Z")
                             .toLocal())
                         .format(pattern: 'dd/MM/yyyy'),
                     overflow: TextOverflow.ellipsis,
@@ -181,7 +187,7 @@ class _buyer_protections_setup_screenState
           ),
           onChanged: (value) {
             page = 1;
-            buyer_protections = [];
+            buyerProtections = [];
             getBuyerProtectionsData();
           },
         ),
@@ -200,7 +206,7 @@ class _buyer_protections_setup_screenState
         enablePullUp: true,
         onRefresh: () async {
           page = 1;
-          buyer_protections = [];
+          buyerProtections = [];
           await getBuyerProtectionsData();
         },
         onLoading: () async {
@@ -219,7 +225,7 @@ class _buyer_protections_setup_screenState
                   controller: _scrollController,
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: buyer_protections.length,
+                  itemCount: buyerProtections.length,
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
@@ -228,7 +234,7 @@ class _buyer_protections_setup_screenState
                           context,
                           Routes.buyer_protection_setup,
                           arguments: {
-                            "id": buyer_protections[index]
+                            "id": buyerProtections[index]
                                 ["buyer_protection_id"],
                           },
                         );
@@ -238,7 +244,7 @@ class _buyer_protections_setup_screenState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           buyerProtectionsCard(index),
-                          index < buyer_protections.length - 1
+                          index < buyerProtections.length - 1
                               ? Container(
                                   padding: const EdgeInsets.only(
                                     left: 16,

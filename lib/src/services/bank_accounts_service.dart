@@ -10,7 +10,8 @@ class BankAccountsService {
   final Dio dio = Dio();
   CancelToken _cancelToken = CancelToken();
 
-Future<Map<String, dynamic>?> addBankAccountsData(Map<String, dynamic> body) async {
+  Future<Map<String, dynamic>?> addBankAccountData(
+      Map<String, dynamic> body) async {
     var token = await storage.read(key: "token") ?? '';
     final response = await dio.post(
       ApiConstants.bankAccountsUrl,
@@ -26,7 +27,7 @@ Future<Map<String, dynamic>?> addBankAccountsData(Map<String, dynamic> body) asy
     return response.data;
   }
 
-    Future<Map<String, dynamic>?> updateBankAccountsData(
+  Future<Map<String, dynamic>?> updateBankAccountData(
       Map<String, dynamic> body, int id) async {
     var token = await storage.read(key: "token") ?? '';
     final response = await dio.put(
@@ -43,8 +44,7 @@ Future<Map<String, dynamic>?> addBankAccountsData(Map<String, dynamic> body) asy
     return response.data;
   }
 
-  
-  Future<Map<String, dynamic>?> deleteBankAccountsData(int id) async {
+  Future<Map<String, dynamic>?> deleteBankAccountData(int id) async {
     var token = await storage.read(key: "token") ?? '';
     final response = await dio.delete(
       '${ApiConstants.bankAccountsUrl}/$id',
@@ -59,7 +59,6 @@ Future<Map<String, dynamic>?> addBankAccountsData(Map<String, dynamic> body) asy
     return response.data;
   }
 
-
   Future<Map<String, dynamic>?> getBankAccountData(int id) async {
     var token = await storage.read(key: "token") ?? '';
     final response = await dio.get(
@@ -68,14 +67,13 @@ Future<Map<String, dynamic>?> addBankAccountsData(Map<String, dynamic> body) asy
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           if (token.isNotEmpty) 'Authorization': 'Bearer $token',
-        },    
+        },
       ),
       cancelToken: _cancelToken,
     );
 
     return response.data;
   }
-
 
   Future<Map<String, dynamic>?> getBankAccountsData(
       {int page = 1,
