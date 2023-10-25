@@ -591,34 +591,37 @@ class _ProductScreenState extends State<ProductScreen> {
                   right: 16,
                   top: 16,
                 ),
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 24,
+                ),
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
+                  color: Colors.green.withOpacity(0.2),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
                             "Watch Vault by Diggie Buyer Protection",
-                            overflow: TextOverflow.ellipsis,
-                            style: FontConstants.body1,
+                            style: FontConstants.headline1,
                           ),
                         ),
                         SvgPicture.asset(
                           "assets/icons/shield_mark.svg",
-                          width: 24,
-                          height: 24,
+                          width: 32,
+                          height: 32,
                         ),
                       ],
                     ),
                     SizedBox(
-                      height: 4,
+                      height: 16,
                     ),
                     ListView.builder(
                       controller: _scrollController,
@@ -630,6 +633,9 @@ class _ProductScreenState extends State<ProductScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            SizedBox(
+                              height: 8,
+                            ),
                             Row(
                               children: [
                                 Icon(
@@ -642,7 +648,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                 ),
                                 Text(
                                   buyerProtections[index]["description"],
-                                  style: FontConstants.caption2,
+                                  style: FontConstants.body1,
                                 ),
                               ],
                             ),

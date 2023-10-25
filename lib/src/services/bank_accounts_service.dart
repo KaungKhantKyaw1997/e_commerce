@@ -8,10 +8,17 @@ class BankAccountsService {
   final Dio dio = Dio();
   CancelToken _cancelToken = CancelToken();
 
-  Future<Map<String, dynamic>?> getBankAccountsData() async {
+  Future<Map<String, dynamic>?> getBankAccountsData(
+      {int page = 1,
+      int perPage = 10,
+      String search = '',
+      String accountType = ''}) async {
     var token = await storage.read(key: "token") ?? '';
+    var url =
+        '${ApiConstants.bankAccountsUrl}?page=$page&per_page=$perPage&search=$search';
+    url = accountType.isNotEmpty ? '${url}&account_type=$accountType' : url;
     final response = await dio.get(
-      ApiConstants.bankAccountsUrl,
+      url,
       options: Options(
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',

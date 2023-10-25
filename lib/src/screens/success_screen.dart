@@ -108,7 +108,7 @@ class _SuccessScreenState extends State<SuccessScreen>
             children: [
               Center(
                 child: RatingBar.builder(
-                  initialRating: 0,
+                  initialRating: 1,
                   minRating: 1,
                   direction: Axis.horizontal,
                   allowHalfRating: true,
