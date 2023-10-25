@@ -1931,7 +1931,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    language["In Stock"] ?? "In Stock",
+                                    language["Stock Quantity"] ??
+                                        "Stock Quantity",
                                     style: FontConstants.caption1,
                                   ),
                                 ),
