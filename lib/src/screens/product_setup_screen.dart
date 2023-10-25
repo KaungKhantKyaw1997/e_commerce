@@ -8,8 +8,12 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
+import 'package:e_commerce/src/services/conditions_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/currencies_service.dart';
+import 'package:e_commerce/src/services/dial_glass_service.dart';
+import 'package:e_commerce/src/services/gender_service.dart';
+import 'package:e_commerce/src/services/other_accessories_service.dart';
 import 'package:e_commerce/src/services/products_service.dart';
 import 'package:e_commerce/src/services/warranty_types_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
@@ -33,6 +37,10 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   final productsService = ProductsService();
   final currenciesService = CurrenciesService();
   final warrantyTypesService = WarrantyTypesService();
+  final dialGlassService = DialGlassService();
+  final conditionsService = ConditionsService();
+  final otherAccessoriesService = OtherAccessoriesService();
+  final genderService = GenderService();
   FocusNode _modelFocusNode = FocusNode();
   FocusNode _descriptionFocusNode = FocusNode();
   FocusNode _colorFocusNode = FocusNode();
@@ -43,10 +51,12 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   FocusNode _movementTypeFocusNode = FocusNode();
   FocusNode _waterResistanceFocusNode = FocusNode();
   FocusNode _warrantyPeriodFocusNode = FocusNode();
-  FocusNode _dimensionsFocusNode = FocusNode();
   FocusNode _priceFocusNode = FocusNode();
   FocusNode _stockQuantityFocusNode = FocusNode();
-  FocusNode _conditionFocusNode = FocusNode();
+  FocusNode _waitingTimeFocusNode = FocusNode();
+  FocusNode _caseDiameterFocusNode = FocusNode();
+  FocusNode _caseDepthFocusNode = FocusNode();
+  FocusNode _caseWidthFocusNode = FocusNode();
 
   TextEditingController shopName = TextEditingController(text: '');
   int shopId = 0;
@@ -64,21 +74,44 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   TextEditingController movementType = TextEditingController(text: '');
   TextEditingController waterResistance = TextEditingController(text: '');
   TextEditingController warrantyPeriod = TextEditingController(text: '');
-  TextEditingController dimensions = TextEditingController(text: '');
   TextEditingController price = TextEditingController(text: '');
   TextEditingController stockQuantity = TextEditingController(text: '');
-  TextEditingController condition = TextEditingController(text: '');
+  TextEditingController waitingTime = TextEditingController(text: '');
+  TextEditingController caseDiameter = TextEditingController(text: '');
+  TextEditingController caseDepth = TextEditingController(text: '');
+  TextEditingController caseWidth = TextEditingController(text: '');
   bool isTopModel = false;
   List productImages = [];
   List<XFile> pickedMultiFile = <XFile>[];
+
   List currencies = [];
   List<String> currencycodes = [];
   int currencyId = 0;
   String currencyCode = '';
+
   List warrantytypes = [];
   List<String> warrantytypesdesc = [];
   int warrantyTypeId = 0;
   String warrantyTypeDesc = '';
+
+  List dialglasstypes = [];
+  List<String> dialglasstypesdesc = [];
+  int dialGlassTypeId = 0;
+  String dialGlassTypeDesc = '';
+
+  List conditions = [];
+  List<String> conditionsdesc = [];
+  String conditionDesc = '';
+
+  List otheraccessoriestypes = [];
+  List<String> otheraccessoriestypesdesc = [];
+  int otherAccessoriesTypeId = 0;
+  String otherAccessoriesTypeDesc = '';
+
+  List genders = [];
+  List<String> gendersdesc = [];
+  int genderId = 0;
+  String genderDesc = '';
 
   int id = 0;
   String from = '';
@@ -90,6 +123,10 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     Future.delayed(Duration.zero, () async {
       await getCurrencies();
       await getWarrantyTypes();
+      await getDialGlassTypes();
+      await getConditions();
+      await getOtherAccessoriesTypes();
+      await getGenders();
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
@@ -207,6 +244,195 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     }
   }
 
+  getDialGlassTypes() async {
+    try {
+      final response = await dialGlassService.getDialGlassTypesData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          dialglasstypes = response["data"];
+
+          for (var data in response["data"]) {
+            if (data["description"] != null) {
+              dialglasstypesdesc.add(data["description"]);
+            }
+          }
+          dialGlassTypeId = dialglasstypes[0]["dial_glass_type_id"];
+          dialGlassTypeDesc = dialglasstypes[0]["description"];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getConditions() async {
+    try {
+      final response = await conditionsService.getConditionsData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          conditions = response["data"];
+
+          for (var data in response["data"]) {
+            if (data["description"] != null) {
+              conditionsdesc.add(data["description"]);
+            }
+          }
+          conditionDesc = conditions[0]["description"];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getOtherAccessoriesTypes() async {
+    try {
+      final response =
+          await otherAccessoriesService.getOtherAccessoriesTypesData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          otheraccessoriestypes = response["data"];
+
+          for (var data in response["data"]) {
+            if (data["description"] != null) {
+              otheraccessoriestypesdesc.add(data["description"]);
+            }
+          }
+          otherAccessoriesTypeId =
+              otheraccessoriestypes[0]["other_accessories_type_id"];
+          otherAccessoriesTypeDesc = otheraccessoriestypes[0]["description"];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getGenders() async {
+    try {
+      final response = await genderService.getGendersData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          genders = response["data"];
+
+          for (var data in response["data"]) {
+            if (data["description"] != null) {
+              gendersdesc.add(data["description"]);
+            }
+          }
+          genderId = genders[0]["gender_id"];
+          genderDesc = genders[0]["description"];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
   getProduct() async {
     try {
       final response = await productsService.getProductData(id);
@@ -230,7 +456,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           movementType.text = response["data"]["movement_type"] ?? "";
           waterResistance.text = response["data"]["water_resistance"] ?? "";
           warrantyPeriod.text = response["data"]["warranty_period"] ?? "";
-          dimensions.text = response["data"]["dimensions"] ?? "";
           price.text = response["data"]["price"].toString() ?? "";
           currencyCode = response["data"]["currency_code"] ?? "";
           currencyId = response["data"]["currency_id"] ?? 0;
@@ -240,8 +465,21 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           stockQuantity.text =
               response["data"]["stock_quantity"].toString() ?? "";
           isTopModel = response["data"]["is_top_model"] ?? false;
-          productImages = response["data"]["product_images"] ?? [];
-          condition.text = response["data"]["condition"] ?? "";
+          productImages = response["data"]["condition"] ?? [];
+          dialGlassTypeDesc =
+              response["data"]["dial_glass_type_description"] ?? "";
+          dialGlassTypeId = response["data"]["dial_glass_type_id"] ?? 0;
+          conditionDesc = response["data"]["condition"] ?? "";
+          otherAccessoriesTypeDesc =
+              response["data"]["other_accessories_type_description"] ?? "";
+          otherAccessoriesTypeId =
+              response["data"]["other_accessories_type_id"] ?? 0;
+          genderDesc = response["data"]["gender_description"] ?? "";
+          genderId = response["data"]["gender_id"] ?? 0;
+          waitingTime = response["data"]["waiting_time"] ?? "";
+          caseDepth = response["data"]["case_depth"] ?? "";
+          caseDiameter = response["data"]["case_diameter"] ?? "";
+          caseWidth = response["data"]["case_width"] ?? "";
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -319,14 +557,21 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "movement_type": movementType.text,
         "water_resistance": waterResistance.text,
         "warranty_period": warrantyPeriod.text,
-        "dimensions": dimensions.text,
+        "dimensions": "",
         "price": _price,
-        "currency_id": currencyId,
         "stock_quantity": int.parse(stockQuantity.text),
         "is_top_model": isTopModel,
         "product_images": productImages,
-        "condition": condition.text,
-        "warranty_type_id": warrantyTypeId
+        "currency_id": currencyId,
+        "condition": conditionDesc,
+        "warranty_type_id": warrantyTypeId,
+        "dial_glass_type_id": dialGlassTypeId,
+        "other_accessories_type_id": otherAccessoriesTypeId,
+        "gender_id": genderId,
+        "waiting_time": waitingTime.text,
+        "case_diameter": caseDiameter.text,
+        "case_depth": caseDepth.text,
+        "case_width": caseWidth.text,
       };
 
       final response = await productsService.addProductData(body);
@@ -395,14 +640,21 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "movement_type": movementType.text,
         "water_resistance": waterResistance.text,
         "warranty_period": warrantyPeriod.text,
-        "dimensions": dimensions.text,
+        "dimensions": "",
         "price": _price,
         "currency_id": currencyId,
         "stock_quantity": int.parse(stockQuantity.text),
         "is_top_model": isTopModel,
         "product_images": productImages,
-        "condition": condition.text,
-        "warranty_type_id": warrantyTypeId
+        "condition": conditionDesc,
+        "warranty_type_id": warrantyTypeId,
+        "dial_glass_type_id": dialGlassTypeId,
+        "other_accessories_type_id": otherAccessoriesTypeId,
+        "gender_id": genderId,
+        "waiting_time": waitingTime.text,
+        "case_diameter": caseDiameter.text,
+        "case_depth": caseDepth.text,
+        "case_width": caseWidth.text,
       };
 
       final response = await productsService.updateProductData(body, id);
@@ -548,10 +800,12 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         _movementTypeFocusNode.unfocus();
         _waterResistanceFocusNode.unfocus();
         _warrantyPeriodFocusNode.unfocus();
-        _dimensionsFocusNode.unfocus();
         _priceFocusNode.unfocus();
         _stockQuantityFocusNode.unfocus();
-        _conditionFocusNode.unfocus();
+        _waitingTimeFocusNode.unfocus();
+        _caseDiameterFocusNode.unfocus();
+        _caseDepthFocusNode.unfocus();
+        _caseWidthFocusNode.unfocus();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -1357,137 +1611,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    language["Dimensions"] ?? "Dimensions",
-                                    style: FontConstants.caption1,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 4,
-                                  bottom: 16,
-                                ),
-                                child: TextFormField(
-                                  controller: dimensions,
-                                  focusNode: _dimensionsFocusNode,
-                                  keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.next,
-                                  style: FontConstants.body1,
-                                  cursorColor: Colors.black,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: ColorConstants.fillcolor,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 14,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return language["Enter Dimensions"] ??
-                                          "Enter Dimensions";
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 4,
-                                  right: 16,
-                                  bottom: 4,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    language["Water Resistance"] ??
-                                        "Water Resistance",
-                                    style: FontConstants.caption1,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 4,
-                                  right: 16,
-                                  bottom: 16,
-                                ),
-                                child: TextFormField(
-                                  controller: waterResistance,
-                                  focusNode: _waterResistanceFocusNode,
-                                  keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.next,
-                                  style: FontConstants.body1,
-                                  cursorColor: Colors.black,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: ColorConstants.fillcolor,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 14,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return language[
-                                              "Enter Water Resistance"] ??
-                                          "Enter Water Resistance";
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 4,
-                                  bottom: 4,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
                                     language["Stock Quantity"] ??
                                         "Stock Quantity",
                                     style: FontConstants.caption1,
@@ -1562,40 +1685,16 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                   right: 16,
                                   bottom: 16,
                                 ),
-                                child: TextFormField(
-                                  controller: condition,
-                                  focusNode: _conditionFocusNode,
-                                  keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.next,
-                                  style: FontConstants.body1,
-                                  cursorColor: Colors.black,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: ColorConstants.fillcolor,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 14,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return language["Enter Condition"] ??
-                                          "Enter Condition";
-                                    }
-                                    return null;
+                                child: CustomDropDown(
+                                  value: conditionDesc,
+                                  fillColor: ColorConstants.fillcolor,
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      conditionDesc =
+                                          newValue ?? conditionsdesc[0];
+                                    });
                                   },
+                                  items: conditionsdesc,
                                 ),
                               ),
                             ],
@@ -1613,7 +1712,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 padding: const EdgeInsets.only(
                                   left: 16,
                                   right: 4,
-                                  bottom: 16,
+                                  bottom: 4,
                                 ),
                                 child: Align(
                                   alignment: Alignment.centerLeft,
@@ -1657,7 +1756,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 padding: const EdgeInsets.only(
                                   left: 4,
                                   right: 16,
-                                  bottom: 16,
+                                  bottom: 4,
                                 ),
                                 child: Align(
                                   alignment: Alignment.centerLeft,
@@ -1714,6 +1813,139 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                         ),
                       ],
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 4,
+                                  bottom: 4,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    language["Water Resistance"] ??
+                                        "Water Resistance",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 4,
+                                  bottom: 16,
+                                ),
+                                child: TextFormField(
+                                  controller: waterResistance,
+                                  focusNode: _waterResistanceFocusNode,
+                                  keyboardType: TextInputType.text,
+                                  textInputAction: TextInputAction.next,
+                                  style: FontConstants.body1,
+                                  cursorColor: Colors.black,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: ColorConstants.fillcolor,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 14,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return language[
+                                              "Enter Water Resistance"] ??
+                                          "Enter Water Resistance";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 4,
+                                  right: 16,
+                                  bottom: 4,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    language["Warranty Period"] ??
+                                        "Warranty Period",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 4,
+                                  right: 16,
+                                  bottom: 16,
+                                ),
+                                child: TextFormField(
+                                  controller: warrantyPeriod,
+                                  focusNode: _warrantyPeriodFocusNode,
+                                  keyboardType: TextInputType.text,
+                                  textInputAction: TextInputAction.done,
+                                  style: FontConstants.body1,
+                                  cursorColor: Colors.black,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: ColorConstants.fillcolor,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 14,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return language[
+                                              "Enter Warranty Period"] ??
+                                          "Enter Warranty Period";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(
                         left: 16,
@@ -1759,7 +1991,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          language["Warranty Period"] ?? "Warranty Period",
+                          language["Dial Glass"] ?? "Dial Glass",
                           style: FontConstants.caption1,
                         ),
                       ),
@@ -1768,42 +2000,62 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
+                        bottom: 16,
+                      ),
+                      child: CustomDropDown(
+                        value: dialGlassTypeDesc,
+                        fillColor: ColorConstants.fillcolor,
+                        onChanged: (newValue) {
+                          setState(() {
+                            dialGlassTypeDesc =
+                                newValue ?? dialglasstypesdesc[0];
+                          });
+                          for (var data in dialglasstypes) {
+                            if (data["description"] == dialGlassTypeDesc) {
+                              dialGlassTypeId = data["dial_glass_type_id"];
+                            }
+                          }
+                        },
+                        items: dialglasstypesdesc,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
                         bottom: 4,
                       ),
-                      child: TextFormField(
-                        controller: warrantyPeriod,
-                        focusNode: _warrantyPeriodFocusNode,
-                        keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.done,
-                        style: FontConstants.body1,
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: ColorConstants.fillcolor,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["Other Accessories"] ?? "Other Accessories",
+                          style: FontConstants.caption1,
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return language["Enter Warranty Period"] ??
-                                "Enter Warranty Period";
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      child: CustomDropDown(
+                        value: otherAccessoriesTypeDesc,
+                        fillColor: ColorConstants.fillcolor,
+                        onChanged: (newValue) {
+                          setState(() {
+                            otherAccessoriesTypeDesc =
+                                newValue ?? otheraccessoriestypesdesc[0];
+                          });
+                          for (var data in otheraccessoriestypes) {
+                            if (data["description"] ==
+                                otherAccessoriesTypeDesc) {
+                              otherAccessoriesTypeId =
+                                  data["other_accessories_type_id"];
+                            }
                           }
-                          return null;
                         },
+                        items: otheraccessoriestypesdesc,
                       ),
                     ),
                     Row(
