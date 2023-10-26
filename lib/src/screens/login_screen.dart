@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:e_commerce/palette.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
+import 'package:e_commerce/src/providers/role_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
@@ -81,6 +83,11 @@ class _LogInScreenState extends State<LogInScreen> {
         prefs.setString("email", _email);
         prefs.setString("name", response["data"]["name"]);
         prefs.setString("role", response["data"]["role"]);
+
+        RoleProvider roleProvider =
+            Provider.of<RoleProvider>(context, listen: false);
+        roleProvider.setRole(response["data"]["role"]);
+
         prefs.setString("profile_image", response["data"]["profile_image"]);
         await storage.write(key: "token", value: response["data"]["token"]);
 

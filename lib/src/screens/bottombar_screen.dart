@@ -93,9 +93,13 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
             ? BottomNavigationBar(
                 currentIndex: bottomProvider.currentIndex,
                 type: BottomNavigationBarType.fixed,
-                backgroundColor: Colors.white,
-                selectedItemColor: Theme.of(context).primaryColor,
-                unselectedItemColor: Colors.grey,
+                backgroundColor:
+                    role == 'agent' ? Color(0xff87B26A) : Colors.white,
+                selectedItemColor: role == 'agent'
+                    ? Colors.white
+                    : Theme.of(context).primaryColor,
+                unselectedItemColor:
+                    role == 'agent' ? Colors.white70 : Colors.grey,
                 selectedFontSize: FontConstants.bottom,
                 unselectedFontSize: FontConstants.bottom,
                 selectedLabelStyle: const TextStyle(
@@ -112,17 +116,31 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                               top: 8,
                               right: 8,
                             ),
-                            child: SvgPicture.asset(
-                              navItem["icon"],
-                              colorFilter: ColorFilter.mode(
-                                navItem["index"] == bottomProvider.currentIndex
-                                    ? Theme.of(context).primaryColor
-                                    : Colors.grey,
-                                BlendMode.srcIn,
-                              ),
-                              width: 24,
-                              height: 24,
-                            ),
+                            child: role == 'agent'
+                                ? SvgPicture.asset(
+                                    navItem["icon"],
+                                    colorFilter: ColorFilter.mode(
+                                      navItem["index"] ==
+                                              bottomProvider.currentIndex
+                                          ? Colors.white
+                                          : Colors.white70,
+                                      BlendMode.srcIn,
+                                    ),
+                                    width: 24,
+                                    height: 24,
+                                  )
+                                : SvgPicture.asset(
+                                    navItem["icon"],
+                                    colorFilter: ColorFilter.mode(
+                                      navItem["index"] ==
+                                              bottomProvider.currentIndex
+                                          ? Theme.of(context).primaryColor
+                                          : Colors.grey,
+                                      BlendMode.srcIn,
+                                    ),
+                                    width: 24,
+                                    height: 24,
+                                  ),
                           )
                         : Stack(
                             children: [
@@ -132,18 +150,31 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                                   top: 8,
                                   right: 8,
                                 ),
-                                child: SvgPicture.asset(
-                                  navItem["icon"],
-                                  colorFilter: ColorFilter.mode(
-                                    navItem["index"] ==
-                                            bottomProvider.currentIndex
-                                        ? Theme.of(context).primaryColor
-                                        : Colors.grey,
-                                    BlendMode.srcIn,
-                                  ),
-                                  width: 24,
-                                  height: 24,
-                                ),
+                                child: role == 'agent'
+                                    ? SvgPicture.asset(
+                                        navItem["icon"],
+                                        colorFilter: ColorFilter.mode(
+                                          navItem["index"] ==
+                                                  bottomProvider.currentIndex
+                                              ? Colors.white
+                                              : Colors.white70,
+                                          BlendMode.srcIn,
+                                        ),
+                                        width: 24,
+                                        height: 24,
+                                      )
+                                    : SvgPicture.asset(
+                                        navItem["icon"],
+                                        colorFilter: ColorFilter.mode(
+                                          navItem["index"] ==
+                                                  bottomProvider.currentIndex
+                                              ? Theme.of(context).primaryColor
+                                              : Colors.grey,
+                                          BlendMode.srcIn,
+                                        ),
+                                        width: 24,
+                                        height: 24,
+                                      ),
                               ),
                               navItem["label"] == 'Cart' &&
                                       cartProvider.count > 0

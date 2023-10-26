@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
+import 'package:e_commerce/src/providers/role_provider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:e_commerce/src/constants/api_constants.dart';
@@ -153,6 +154,10 @@ class AuthService {
 
   logout(BuildContext context) async {
     clearData();
+    RoleProvider roleProvider =
+        Provider.of<RoleProvider>(context, listen: false);
+    roleProvider.setRole('');
+
     CartProvider cartProvider =
         Provider.of<CartProvider>(context, listen: false);
     cartProvider.addCount(0);

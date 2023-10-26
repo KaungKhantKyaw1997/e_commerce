@@ -1,5 +1,7 @@
 import 'package:camera/camera.dart';
+import 'package:e_commerce/agent_palette.dart';
 import 'package:e_commerce/global.dart';
+import 'package:e_commerce/src/providers/role_provider.dart';
 import 'package:e_commerce/src/services/local_notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -32,6 +34,7 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (context) => RoleProvider()),
         ChangeNotifierProvider(create: (context) => BottomProvider()),
         ChangeNotifierProvider(create: (context) => CartProvider(cartCount)),
         ChangeNotifierProvider(create: (context) => NotiProvider(notiCount)),
@@ -80,12 +83,17 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    RoleProvider roleProvider =
+        Provider.of<RoleProvider>(context, listen: true);
+
     return MaterialApp(
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       title: 'Watch Vault by Diggie',
       theme: ThemeData(
-        primarySwatch: Palette.kToDark,
+        primarySwatch: roleProvider.role == 'agent'
+            ? AgentPalette.kToDark
+            : Palette.kToDark,
         scaffoldBackgroundColor: Color(0xFFF1F3F6),
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
         dialogTheme: DialogTheme(
