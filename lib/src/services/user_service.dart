@@ -90,6 +90,22 @@ class UserService {
     return response.data;
   }
 
+  Future<Map<String, dynamic>?> getSellerInformationData(int id) async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      '${ApiConstants.usersUrl}/$id/seller-information',
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
   void cancelRequest() {
     _cancelToken.cancel('Request canceled');
   }

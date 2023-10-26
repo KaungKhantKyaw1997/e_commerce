@@ -580,7 +580,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
       final response = await productsService.addProductData(body);
       Navigator.pop(context);
-      if (response!["code"] == 200) {
+      if (response!["code"] == 201) {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
         Navigator.pushNamed(
@@ -1748,7 +1748,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                     for (var data in dialglasstypes) {
                                       if (data["description"] ==
                                           dialGlassTypeDesc) {
-                                        dialGlassTypeId = data["dial_glass_id"];
+                                        dialGlassTypeId =
+                                            data["dial_glass_type_id"];
                                       }
                                     }
                                   },

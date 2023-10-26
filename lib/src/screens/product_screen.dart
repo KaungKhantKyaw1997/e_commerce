@@ -11,6 +11,7 @@ import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:e_commerce/src/services/buyer_protections_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
+import 'package:e_commerce/src/services/user_service.dart';
 import 'package:e_commerce/src/utils/format_amount.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -29,9 +30,11 @@ class _ProductScreenState extends State<ProductScreen> {
   final crashlytic = new CrashlyticsService();
   ScrollController _scrollController = ScrollController();
   final buyerProtectionsService = BuyerProtectionsService();
+  final userService = UserService();
   final PageController _imageController = PageController();
   List<Map<String, dynamic>> carts = [];
   Map<String, dynamic> product = {};
+  Map<String, dynamic> sellerinfo = {};
   double _currentPage = 0;
   bool updateCart = false;
   List buyerProtections = [];
@@ -51,8 +54,10 @@ class _ProductScreenState extends State<ProductScreen> {
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
       if (arguments != null) {
+        product = arguments;
+        getSellerInformation(product["creator_id"]);
+
         setState(() {
-          product = arguments;
           product["quantity"] = 0;
           product["totalamount"] = 0.0;
 
@@ -67,6 +72,12 @@ class _ProductScreenState extends State<ProductScreen> {
         });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   getCart() async {
@@ -121,10 +132,36 @@ class _ProductScreenState extends State<ProductScreen> {
     }
   }
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
+  getSellerInformation(id) async {
+    try {
+      final response = await userService.getSellerInformationData(id);
+      if (response!["code"] == 200) {
+        sellerinfo = response["data"];
+        setState(() {});
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        }
+      }
+    }
   }
 
   Future<void> saveListToSharedPreferences(
@@ -854,6 +891,7 @@ class _ProductScreenState extends State<ProductScreen> {
                               height: 8,
                             ),
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Icon(
                                   Icons.done,
@@ -878,339 +916,580 @@ class _ProductScreenState extends State<ProductScreen> {
                   ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  top: 16,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
-                ),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(
-                        16,
+              sellerinfo.isNotEmpty
+                  ? Container(
+                      margin: EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 16,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 24,
+                      ),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text(
+                            "Seller",
+                            style: FontConstants.headline1,
+                          ),
+                          SizedBox(
+                            height: 16,
+                          ),
+                          Text(
+                            sellerinfo["company_name"] ?? "",
+                            style: FontConstants.subheadline1,
+                          ),
+                          Text(
+                            sellerinfo["professional_title"] ?? "",
+                            style: FontConstants.body2,
+                          ),
+                          Text(
+                            "Active on Watch Vault by Diggie: ${sellerinfo["active_since_year"]}" ??
+                                "",
+                            style: FontConstants.body2,
+                          ),
+                          SizedBox(
+                            height: 16,
+                          ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                product["symbol"].toString(),
-                                style: FontConstants.subheadline1,
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 4,
+                                ),
+                                child: SvgPicture.asset(
+                                  "assets/icons/tags.svg",
+                                  width: 24,
+                                  height: 24,
+                                ),
                               ),
                               SizedBox(
-                                width: 4,
+                                width: 8,
                               ),
-                              product["price"] != null
-                                  ? FormattedAmount(
-                                      amount: double.parse(
-                                          product["price"].toString()),
-                                      mainTextStyle: FontConstants.subheadline1,
-                                      decimalTextStyle: FontConstants.caption3,
-                                    )
-                                  : Text(""),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Sales",
+                                      style: FontConstants.subheadline1,
+                                    ),
+                                    Text(
+                                      "Watches sold on Watch Vault by Diggie: ${sellerinfo["sold_product_counts"]}",
+                                      style: FontConstants.body2,
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ],
+                          ),
+                          SizedBox(
+                            height: 8,
                           ),
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(8),
-                                    bottomLeft: Radius.circular(8),
-                                  ),
-                                  border: Border.all(
-                                    color: Theme.of(context).primaryColorLight,
-                                    width: 1,
-                                  ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 4,
                                 ),
-                                width: 32,
-                                height: 32,
-                                child: IconButton(
-                                  icon: Icon(
-                                    Icons.remove,
-                                    size: 15,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  onPressed: () {
-                                    if (product['quantity'] > 0) {
-                                      setState(() {
-                                        product['quantity']--;
-                                        product['totalamount'] = double.parse(
-                                                product["price"].toString()) *
-                                            product['quantity'];
-                                      });
-                                    }
-                                  },
+                                child: SvgPicture.asset(
+                                  "assets/icons/trusted.svg",
+                                  width: 24,
+                                  height: 24,
                                 ),
                               ),
-                              Container(
-                                margin: EdgeInsets.symmetric(
-                                  horizontal: 4,
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Theme.of(context).primaryColorLight,
-                                    width: 1,
-                                  ),
-                                ),
-                                height: 32,
-                                child: Center(
-                                  child: Text(
-                                    product['quantity'].toString(),
-                                    textAlign: TextAlign.center,
-                                    style: FontConstants.subheadline1,
-                                  ),
-                                ),
+                              SizedBox(
+                                width: 8,
                               ),
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(8),
-                                    bottomRight: Radius.circular(8),
-                                  ),
-                                  border: Border.all(
-                                    color: Theme.of(context).primaryColorLight,
-                                    width: 1,
-                                  ),
-                                ),
-                                width: 32,
-                                height: 32,
-                                child: IconButton(
-                                  icon: Icon(
-                                    Icons.add,
-                                    size: 15,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  onPressed: () {
-                                    // if (product['quantity'] <
-                                    //     int.parse(product["stock_quantity"]
-                                    //         .toString())) {
-                                    setState(() {
-                                      product['quantity']++;
-                                      product['totalamount'] = double.parse(
-                                              product["price"].toString()) *
-                                          product['quantity'];
-                                    });
-                                    // }
-                                  },
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Watch Vault by Diggie Trusted Seller",
+                                      style: FontConstants.subheadline1,
+                                    ),
+                                    Text(
+                                      "Trusted Seller since ${sellerinfo["active_since_year"]}",
+                                      style: FontConstants.body1,
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 4,
+                                ),
+                                child: SvgPicture.asset(
+                                  "assets/icons/map.svg",
+                                  width: 24,
+                                  height: 24,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Location",
+                                      style: FontConstants.subheadline1,
+                                    ),
+                                    Text(
+                                      "${sellerinfo["location"]}",
+                                      style: FontConstants.body2,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 4,
+                                ),
+                                child: SvgPicture.asset(
+                                  "assets/icons/product.svg",
+                                  width: 24,
+                                  height: 24,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Listings",
+                                      style: FontConstants.subheadline1,
+                                    ),
+                                    Text(
+                                      "Watches listed on Watch Vault by Diggie: ${sellerinfo["product_counts"]}",
+                                      style: FontConstants.body2,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          sellerinfo.isNotEmpty && sellerinfo["offline_trader"]
+                              ? SizedBox(
+                                  height: 8,
+                                )
+                              : Container(),
+                          sellerinfo.isNotEmpty && sellerinfo["offline_trader"]
+                              ? Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: 4,
+                                      ),
+                                      child: SvgPicture.asset(
+                                        "assets/icons/shop.svg",
+                                        width: 24,
+                                        height: 24,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Offline trader",
+                                            style: FontConstants.subheadline1,
+                                          ),
+                                          Text(
+                                            "This seller has a retail location",
+                                            style: FontConstants.body2,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Container(),
                         ],
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 4,
-                      ),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          language["Total Amount"] ?? "Total Amount",
-                          style: FontConstants.caption1,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 16,
-                      ),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: product["totalamount"] != null
-                            ? FormattedAmount(
-                                amount: product['totalamount'],
-                                mainTextStyle: FontConstants.headline1,
-                                decimalTextStyle: FontConstants.body1,
-                              )
-                            : Text(""),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                    )
+                  : Container(),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: Row(
-        children: [
-          Expanded(
-            child: FractionallySizedBox(
-              widthFactor: 1,
-              child: Container(
-                padding: const EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  bottom: 24,
-                ),
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    backgroundColor: Colors.white,
-                    side: BorderSide(
-                      color: Theme.of(context).primaryColor,
-                      width: 0.5,
-                    ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(
+                16,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(
+                        product["symbol"].toString(),
+                        style: FontConstants.subheadline1,
+                      ),
+                      SizedBox(
+                        width: 4,
+                      ),
+                      product["price"] != null
+                          ? FormattedAmount(
+                              amount: double.parse(product["price"].toString()),
+                              mainTextStyle: FontConstants.subheadline1,
+                              decimalTextStyle: FontConstants.caption3,
+                            )
+                          : Text(""),
+                    ],
                   ),
-                  onPressed: () async {
-                    if (product['quantity'] <= 0) {
-                      ToastUtil.showToast(
-                          0, language["Choose Quantity"] ?? "Choose Quantity");
-                      return;
-                    }
-                    if (carts.isNotEmpty) {
-                      if (product['shop_id'] != carts[0]['shop_id']) {
-                        ToastUtil.showToast(
-                            0,
-                            language[
-                                    "You can only order items from one shop at a time. Please place separate orders for items from different shops!"] ??
-                                "You can only order items from one shop at a time. Please place separate orders for items from different shops!");
-                        return;
-                      }
-                      if (product['currency_id'] != carts[0]['currency_id']) {
-                        ToastUtil.showToast(
-                            0,
-                            language[
-                                    "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!"] ??
-                                "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!");
-                        return;
-                      }
-                    }
-                    if (updateCart) {
-                      for (var cart in carts) {
-                        if (cart["product_id"] == product["product_id"]) {
-                          cart["quantity"] = product["quantity"] ?? 0;
-                          cart["totalamount"] = product["totalamount"] ?? 0.0;
-                          break;
-                        }
-                      }
-                    } else {
-                      carts.add(product);
-                    }
-
-                    saveListToSharedPreferences(carts);
-
-                    CartProvider cartProvider =
-                        Provider.of<CartProvider>(context, listen: false);
-                    cartProvider.addCount(carts.length);
-
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    language["Add to cart"] ?? "Add to cart",
-                    style: FontConstants.button2,
+                  Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(8),
+                            bottomLeft: Radius.circular(8),
+                          ),
+                          border: Border.all(
+                            color: Theme.of(context).primaryColorLight,
+                            width: 1,
+                          ),
+                        ),
+                        width: 32,
+                        height: 32,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.remove,
+                            size: 15,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          onPressed: () {
+                            if (product['quantity'] > 0) {
+                              setState(() {
+                                product['quantity']--;
+                                product['totalamount'] =
+                                    double.parse(product["price"].toString()) *
+                                        product['quantity'];
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 4,
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).primaryColorLight,
+                            width: 1,
+                          ),
+                        ),
+                        height: 32,
+                        child: Center(
+                          child: Text(
+                            product['quantity'].toString(),
+                            textAlign: TextAlign.center,
+                            style: FontConstants.subheadline1,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(8),
+                            bottomRight: Radius.circular(8),
+                          ),
+                          border: Border.all(
+                            color: Theme.of(context).primaryColorLight,
+                            width: 1,
+                          ),
+                        ),
+                        width: 32,
+                        height: 32,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.add,
+                            size: 15,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          onPressed: () {
+                            // if (product['quantity'] <
+                            //     int.parse(product["stock_quantity"]
+                            //         .toString())) {
+                            setState(() {
+                              product['quantity']++;
+                              product['totalamount'] =
+                                  double.parse(product["price"].toString()) *
+                                      product['quantity'];
+                            });
+                            // }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: 4,
+              ),
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  language["Total Amount"] ?? "Total Amount",
+                  style: FontConstants.caption1,
                 ),
               ),
             ),
-          ),
-          Expanded(
-            child: FractionallySizedBox(
-              widthFactor: 1,
-              child: Container(
-                padding: const EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  bottom: 24,
-                ),
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    backgroundColor: Theme.of(context).primaryColor,
-                  ),
-                  onPressed: () async {
-                    if (product['quantity'] <= 0) {
-                      ToastUtil.showToast(
-                          0, language["Choose Quantity"] ?? "Choose Quantity");
-                      return;
-                    }
-                    if (carts.isNotEmpty) {
-                      if (product['shop_id'] != carts[0]['shop_id']) {
-                        ToastUtil.showToast(
-                            0,
-                            language[
-                                    "You can only order items from one shop at a time. Please place separate orders for items from different shops!"] ??
-                                "You can only order items from one shop at a time. Please place separate orders for items from different shops!");
-                        return;
-                      }
-                      if (product['currency_id'] != carts[0]['currency_id']) {
-                        ToastUtil.showToast(
-                            0,
-                            language[
-                                    "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!"] ??
-                                "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!");
-                        return;
-                      }
-                    }
-                    if (updateCart) {
-                      for (var cart in carts) {
-                        if (cart["product_id"] == product["product_id"]) {
-                          cart["quantity"] = product["quantity"] ?? 0;
-                          cart["totalamount"] = product["totalamount"] ?? 0.0;
-                          break;
-                        }
-                      }
-                    } else {
-                      carts.add(product);
-                    }
-
-                    saveListToSharedPreferences(carts);
-
-                    CartProvider cartProvider =
-                        Provider.of<CartProvider>(context, listen: false);
-                    cartProvider.addCount(carts.length);
-
-                    BottomProvider bottomProvider =
-                        Provider.of<BottomProvider>(context, listen: false);
-                    bottomProvider.selectIndex(1);
-
-                    Navigator.pushNamed(
-                      context,
-                      Routes.cart,
-                    );
-                  },
-                  child: Text(
-                    language["Buy Now"] ?? "Buy Now",
-                    style: FontConstants.button1,
-                  ),
-                ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: 16,
+              ),
+              child: Align(
+                alignment: Alignment.center,
+                child: product["totalamount"] != null
+                    ? FormattedAmount(
+                        amount: product['totalamount'],
+                        mainTextStyle: FontConstants.headline1,
+                        decimalTextStyle: FontConstants.body1,
+                      )
+                    : Text(""),
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.only(
+                bottom: 4,
+              ),
+              child: Divider(
+                height: 0,
+                thickness: 1,
+              ),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: FractionallySizedBox(
+                    widthFactor: 1,
+                    child: Container(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 24,
+                      ),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          backgroundColor: Colors.white,
+                          side: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 0.5,
+                          ),
+                        ),
+                        onPressed: () async {
+                          if (product['quantity'] <= 0) {
+                            ToastUtil.showToast(
+                                0,
+                                language["Choose Quantity"] ??
+                                    "Choose Quantity");
+                            return;
+                          }
+                          if (carts.isNotEmpty) {
+                            if (product['shop_id'] != carts[0]['shop_id']) {
+                              ToastUtil.showToast(
+                                  0,
+                                  language[
+                                          "You can only order items from one shop at a time. Please place separate orders for items from different shops!"] ??
+                                      "You can only order items from one shop at a time. Please place separate orders for items from different shops!");
+                              return;
+                            }
+                            if (product['currency_id'] !=
+                                carts[0]['currency_id']) {
+                              ToastUtil.showToast(
+                                  0,
+                                  language[
+                                          "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!"] ??
+                                      "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!");
+                              return;
+                            }
+                          }
+                          if (updateCart) {
+                            for (var cart in carts) {
+                              if (cart["product_id"] == product["product_id"]) {
+                                cart["quantity"] = product["quantity"] ?? 0;
+                                cart["totalamount"] =
+                                    product["totalamount"] ?? 0.0;
+                                break;
+                              }
+                            }
+                          } else {
+                            carts.add(product);
+                          }
+
+                          saveListToSharedPreferences(carts);
+
+                          CartProvider cartProvider =
+                              Provider.of<CartProvider>(context, listen: false);
+                          cartProvider.addCount(carts.length);
+
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          language["Add to cart"] ?? "Add to cart",
+                          style: FontConstants.button2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: FractionallySizedBox(
+                    widthFactor: 1,
+                    child: Container(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 24,
+                      ),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          backgroundColor: Theme.of(context).primaryColor,
+                        ),
+                        onPressed: () async {
+                          if (product['quantity'] <= 0) {
+                            ToastUtil.showToast(
+                                0,
+                                language["Choose Quantity"] ??
+                                    "Choose Quantity");
+                            return;
+                          }
+                          if (carts.isNotEmpty) {
+                            if (product['shop_id'] != carts[0]['shop_id']) {
+                              ToastUtil.showToast(
+                                  0,
+                                  language[
+                                          "You can only order items from one shop at a time. Please place separate orders for items from different shops!"] ??
+                                      "You can only order items from one shop at a time. Please place separate orders for items from different shops!");
+                              return;
+                            }
+                            if (product['currency_id'] !=
+                                carts[0]['currency_id']) {
+                              ToastUtil.showToast(
+                                  0,
+                                  language[
+                                          "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!"] ??
+                                      "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!");
+                              return;
+                            }
+                          }
+                          if (updateCart) {
+                            for (var cart in carts) {
+                              if (cart["product_id"] == product["product_id"]) {
+                                cart["quantity"] = product["quantity"] ?? 0;
+                                cart["totalamount"] =
+                                    product["totalamount"] ?? 0.0;
+                                break;
+                              }
+                            }
+                          } else {
+                            carts.add(product);
+                          }
+
+                          saveListToSharedPreferences(carts);
+
+                          CartProvider cartProvider =
+                              Provider.of<CartProvider>(context, listen: false);
+                          cartProvider.addCount(carts.length);
+
+                          BottomProvider bottomProvider =
+                              Provider.of<BottomProvider>(context,
+                                  listen: false);
+                          bottomProvider.selectIndex(1);
+
+                          Navigator.pushNamed(
+                            context,
+                            Routes.cart,
+                          );
+                        },
+                        child: Text(
+                          language["Buy Now"] ?? "Buy Now",
+                          style: FontConstants.button1,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

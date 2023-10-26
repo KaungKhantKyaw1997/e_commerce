@@ -516,7 +516,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
-                      role == 'admin' || role == 'agent'
+                      role == 'admin'
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
@@ -572,7 +572,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
-                      role == 'admin' || role == 'agent'
+                      role == 'admin'
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
@@ -628,7 +628,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
-                      role == 'admin' || role == 'agent'
+                      role == 'admin'
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(
@@ -685,7 +685,7 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                             )
                           : Container(),
-                      role == 'admin' || role == 'agent'
+                      role == 'admin'
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.pushNamed(

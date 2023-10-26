@@ -34,12 +34,20 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
   FocusNode _confirmPasswordFocusNode = FocusNode();
   FocusNode _nameFocusNode = FocusNode();
   FocusNode _phoneFocusNode = FocusNode();
+  FocusNode _companyNameFocusNode = FocusNode();
+  FocusNode _professionalTitleFocusNode = FocusNode();
+  FocusNode _locationFocusNode = FocusNode();
 
   TextEditingController email = TextEditingController(text: '');
   TextEditingController password = TextEditingController(text: '');
   TextEditingController confirmpassword = TextEditingController(text: '');
   TextEditingController name = TextEditingController(text: '');
   TextEditingController phone = TextEditingController(text: '');
+  TextEditingController companyName = TextEditingController(text: '');
+  TextEditingController professionalTitle = TextEditingController(text: '');
+  TextEditingController location = TextEditingController(text: '');
+  bool offlineTrader = false;
+  bool modifyOrderStatus = false;
 
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
@@ -54,6 +62,13 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
     "agent",
   ];
   String role = 'user';
+
+  List<String> statuslist = [
+    "pending",
+    "active",
+  ];
+  String status = 'pending';
+
   int id = 0;
 
   @override
@@ -86,12 +101,24 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
           password.text = response["data"]["password"] ?? "";
           confirmpassword.text = response["data"]["password"] ?? "";
           confirmpassword.text = response["data"]["password"] ?? "";
-          role = response["data"]["role"] ?? "";
+          role = response["data"]["role"] ?? "user";
           name.text = response["data"]["name"] ?? "";
           email.text = response["data"]["email"] ?? "";
           phone.text = response["data"]["phone"] ?? "";
           phone.text = phone.text.replaceAll("959", "");
           profileImage = response["data"]["profile_image"] ?? "";
+          companyName.text =
+              response["data"]["seller_information"]["company_name"] ?? "";
+          professionalTitle.text = response["data"]["seller_information"]
+                  ["professional_title"] ??
+              "";
+          location.text =
+              response["data"]["seller_information"]["location"] ?? "";
+          offlineTrader =
+              response["data"]["seller_information"]["offline_trader"] ?? false;
+          status = response["data"]["account_status"] ?? "pending";
+          modifyOrderStatus =
+              response["data"]["can_modify_order_status"] ?? false;
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -158,6 +185,14 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
         "name": name.text,
         "phone": '959${phone.text}',
         "profile_image": profileImage,
+        "account_status": status,
+        "can_modify_order_status": modifyOrderStatus,
+        "seller_information": {
+          "company_name": companyName.text,
+          "professional_title": professionalTitle.text,
+          "location": location.text,
+          "offline_trader": offlineTrader
+        }
       };
 
       final response = await userService.addUserData(body);
@@ -210,6 +245,14 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
         "name": name.text,
         "phone": '959${phone.text}',
         "profile_image": profileImage,
+        "account_status": status,
+        "can_modify_order_status": modifyOrderStatus,
+        "seller_information": {
+          "company_name": companyName.text,
+          "professional_title": professionalTitle.text,
+          "location": location.text,
+          "offline_trader": offlineTrader
+        }
       };
 
       final response = await userService.updateUserData(body, id);
@@ -306,6 +349,9 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
         _confirmPasswordFocusNode.unfocus();
         _nameFocusNode.unfocus();
         _phoneFocusNode.unfocus();
+        _companyNameFocusNode.unfocus();
+        _professionalTitleFocusNode.unfocus();
+        _locationFocusNode.unfocus();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -644,37 +690,6 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        language["Role"] ?? "Role",
-                        style: FontConstants.caption1,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
-                    ),
-                    child: CustomDropDown(
-                      value: role,
-                      fillColor: ColorConstants.fillcolor,
-                      onChanged: (newValue) {
-                        setState(() {
-                          role = newValue ?? "User";
-                        });
-                      },
-                      items: roles,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 4,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
                         language["Name"] ?? "Name",
                         style: FontConstants.caption1,
                       ),
@@ -739,7 +754,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                     padding: const EdgeInsets.only(
                       left: 16,
                       right: 16,
-                      bottom: 24,
+                      bottom: 16,
                     ),
                     child: TextFormField(
                       controller: phone,
@@ -786,6 +801,346 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       },
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 4,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        language["Role"] ?? "Role",
+                        style: FontConstants.caption1,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 16,
+                    ),
+                    child: CustomDropDown(
+                      value: role,
+                      fillColor: ColorConstants.fillcolor,
+                      onChanged: (newValue) {
+                        setState(() {
+                          role = newValue ?? "user";
+                          companyName.text = '';
+                          professionalTitle.text = '';
+                          location.text = '';
+                          offlineTrader = false;
+                          modifyOrderStatus = false;
+                        });
+                      },
+                      items: roles,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 4,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        language["Account Status"] ?? "Account Status",
+                        style: FontConstants.caption1,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: role == 'agent' ? 16 : 24,
+                    ),
+                    child: CustomDropDown(
+                      value: status,
+                      fillColor: ColorConstants.fillcolor,
+                      onChanged: (newValue) {
+                        setState(() {
+                          status = newValue ?? "pending";
+                        });
+                      },
+                      items: statuslist,
+                    ),
+                  ),
+                  role == 'agent'
+                      ? Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            bottom: 4,
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              language["Company Name"] ?? "Company Name",
+                              style: FontConstants.caption1,
+                            ),
+                          ),
+                        )
+                      : Container(),
+                  role == 'agent'
+                      ? Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            bottom: 16,
+                          ),
+                          child: TextFormField(
+                            controller: companyName,
+                            focusNode: _companyNameFocusNode,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.next,
+                            style: FontConstants.body1,
+                            cursorColor: Colors.black,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: ColorConstants.fillcolor,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return language["Enter Company Name"] ??
+                                    "Enter Company Name";
+                              }
+                              return null;
+                            },
+                          ),
+                        )
+                      : Container(),
+                  role == 'agent'
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 16,
+                                      right: 4,
+                                      bottom: 4,
+                                    ),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        language["Professional Title"] ??
+                                            "Professional Title",
+                                        style: FontConstants.caption1,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 16,
+                                      right: 4,
+                                    ),
+                                    child: TextFormField(
+                                      controller: professionalTitle,
+                                      focusNode: _professionalTitleFocusNode,
+                                      keyboardType: TextInputType.text,
+                                      textInputAction: TextInputAction.done,
+                                      style: FontConstants.body1,
+                                      cursorColor: Colors.black,
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: ColorConstants.fillcolor,
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 14,
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                        focusedErrorBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return language[
+                                                  "Enter Professional Title"] ??
+                                              "Enter Professional Title";
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 4,
+                                      right: 16,
+                                      bottom: 4,
+                                    ),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        language["Location"] ?? "Location",
+                                        style: FontConstants.caption1,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 4,
+                                      right: 16,
+                                    ),
+                                    child: TextFormField(
+                                      controller: location,
+                                      focusNode: _locationFocusNode,
+                                      keyboardType: TextInputType.text,
+                                      textInputAction: TextInputAction.done,
+                                      style: FontConstants.body1,
+                                      cursorColor: Colors.black,
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: ColorConstants.fillcolor,
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 14,
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                        focusedErrorBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return language["Enter Location"] ??
+                                              "Enter Location";
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+                      : Container(),
+                  role == 'agent'
+                      ? Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  right: 16,
+                                  bottom: 24,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Checkbox(
+                                      value: offlineTrader,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      activeColor:
+                                          Theme.of(context).primaryColor,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          offlineTrader = value ?? false;
+                                        });
+                                      },
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        language["Offline Trader"] ??
+                                            "Offline Trader",
+                                        style: FontConstants.caption1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  right: 16,
+                                  bottom: 24,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Checkbox(
+                                      value: modifyOrderStatus,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      activeColor:
+                                          Theme.of(context).primaryColor,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          modifyOrderStatus = value ?? false;
+                                        });
+                                      },
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        language["Order Status"] ??
+                                            "Order Status",
+                                        style: FontConstants.caption1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Container(),
                 ],
               ),
             ),
