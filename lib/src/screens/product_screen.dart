@@ -992,7 +992,7 @@ class _ProductScreenState extends State<ProductScreen> {
                             ],
                           ),
                           SizedBox(
-                            height: 8,
+                            height: 16,
                           ),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1020,7 +1020,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                     ),
                                     Text(
                                       "Trusted Seller since ${sellerinfo["active_since_year"]}",
-                                      style: FontConstants.body1,
+                                      style: FontConstants.body2,
                                     ),
                                   ],
                                 ),
@@ -1028,7 +1028,7 @@ class _ProductScreenState extends State<ProductScreen> {
                             ],
                           ),
                           SizedBox(
-                            height: 8,
+                            height: 16,
                           ),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1064,7 +1064,7 @@ class _ProductScreenState extends State<ProductScreen> {
                             ],
                           ),
                           SizedBox(
-                            height: 8,
+                            height: 16,
                           ),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1101,7 +1101,7 @@ class _ProductScreenState extends State<ProductScreen> {
                           ),
                           sellerinfo.isNotEmpty && sellerinfo["offline_trader"]
                               ? SizedBox(
-                                  height: 8,
+                                  height: 16,
                                 )
                               : Container(),
                           sellerinfo.isNotEmpty && sellerinfo["offline_trader"]
