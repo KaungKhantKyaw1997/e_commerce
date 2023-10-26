@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -90,6 +91,28 @@ class _LogInScreenState extends State<LogInScreen> {
 
         prefs.setString("profile_image", response["data"]["profile_image"]);
         await storage.write(key: "token", value: response["data"]["token"]);
+
+        var switchuser = await storage.read(key: 'switchuser') ?? '';
+
+        if (switchuser.isEmpty) {
+          await storage.write(
+              key: 'switchuser',
+              value: jsonEncode([
+                {
+                  "profile_image": response["data"]["profile_image"],
+                  "email": email.text,
+                  "password": password.text,
+                }
+              ]));
+        } else {
+          var users = jsonDecode(switchuser);
+          users.add({
+            "profile_image": response["data"]["profile_image"],
+            "email": email.text,
+            "password": password.text,
+          });
+          await storage.write(key: 'switchuser', value: jsonEncode(users));
+        }
 
         BottomProvider bottomProvider =
             Provider.of<BottomProvider>(context, listen: false);

@@ -21,6 +21,7 @@ import 'package:e_commerce/src/screens/shop_screen.dart';
 import 'package:e_commerce/src/screens/shop_setup_screen.dart';
 import 'package:e_commerce/src/screens/shops_setup_screen.dart';
 import 'package:e_commerce/src/screens/splash_screen.dart';
+import 'package:e_commerce/src/screens/switch_user.dart';
 import 'package:e_commerce/src/screens/termsandconditions_screen.dart';
 import 'package:e_commerce/src/screens/termsandconditions_setup_screen.dart';
 import 'package:e_commerce/src/screens/unauthorized_screen.dart';
@@ -90,6 +91,7 @@ class Routes {
   static const String buyer_protection_setup = "/buyer_protection_setup";
   static const String bank_accounts_setup = "/bank_accounts_setup";
   static const String bank_account_setup = "/bank_account_setup";
+  static const String switch_user = "/switch_user";
 
   static final Map<String, WidgetBuilder> routes = {
     splash: (BuildContext context) => const SplashScreen(),
@@ -144,5 +146,6 @@ class Routes {
         const BankAccountsSetupScreen(),
     bank_account_setup: (BuildContext context) =>
         const BankAccountSetupScreen(),
+    switch_user: (BuildContext context) => const SwitchUserScreen(),
   };
 }
