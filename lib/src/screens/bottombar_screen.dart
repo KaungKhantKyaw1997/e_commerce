@@ -93,8 +93,9 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
             ? BottomNavigationBar(
                 currentIndex: bottomProvider.currentIndex,
                 type: BottomNavigationBarType.fixed,
-                backgroundColor:
-                    role == 'agent' ? Color(0xff87B26A) : Colors.white,
+                backgroundColor: role == 'agent'
+                    ? ColorConstants.primarycolor
+                    : Colors.white,
                 selectedItemColor: role == 'agent'
                     ? Colors.white
                     : Theme.of(context).primaryColor,
