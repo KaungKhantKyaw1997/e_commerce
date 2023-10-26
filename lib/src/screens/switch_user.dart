@@ -55,16 +55,6 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
     setState(() {});
   }
 
-  getFCMToken(index) {
-    _firebaseMessaging.getToken().then((token) {
-      _fcmToken = token ?? '';
-      login(index);
-    }).catchError((error) {
-      _fcmToken = '';
-      login(index);
-    });
-  }
-
   login(index) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
@@ -92,7 +82,37 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
             Provider.of<BottomProvider>(context, listen: false);
         bottomProvider.selectIndex(0);
 
-        fcm(response["data"]["role"] ?? "", _email, index);
+        bool termsandconditions = prefs.getBool("termsandconditions") ?? false;
+
+        Navigator.pop(context);
+        if (response["data"]["role"] == 'admin') {
+          Navigator.pushNamed(
+            context,
+            Routes.history,
+          );
+        } else if ((termsandconditions && _email == users[index]["email"]) ||
+            response["data"]["role"] == 'agent') {
+          Navigator.pushNamed(
+            context,
+            Routes.home,
+          );
+        } else {
+          Navigator.pushNamed(
+            context,
+            Routes.termsandconditions,
+            arguments: {
+              "from": "login",
+            },
+          );
+        }
+
+        _firebaseMessaging.getToken().then((token) {
+          _fcmToken = token ?? '';
+          fcm();
+        }).catchError((error) {
+          _fcmToken = '';
+          fcm();
+        });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
@@ -126,129 +146,108 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
     }
   }
 
-  fcm(role, _email, index) async {
+  fcm() {
     var deviceType = Platform.isIOS ? "ios" : "android";
     final body = {
       "token": _fcmToken,
       "device_type": deviceType,
     };
 
-    await authService.addFCMData(body);
-    Navigator.pop(context);
-
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool termsandconditions = prefs.getBool("termsandconditions") ?? false;
-
-    Navigator.pop(context);
-    if (role == 'admin') {
-      Navigator.pushNamed(
-        context,
-        Routes.history,
-      );
-    } else if ((termsandconditions && _email == users[index]["email"]) ||
-        role == 'agent') {
-      Navigator.pushNamed(
-        context,
-        Routes.home,
-      );
-    } else {
-      Navigator.pushNamed(
-        context,
-        Routes.termsandconditions,
-        arguments: {
-          "from": "login",
-        },
-      );
-    }
+    authService.addFCMData(body);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 24,
-          ),
-          width: double.infinity,
-          child: Column(
-            children: [
-              ListView.builder(
-                controller: _scrollController,
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: users.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () async {
-                      showLoadingDialog(context);
-                      await storage.delete(key: "token");
-                      await FirebaseMessaging.instance.deleteToken();
-                      getFCMToken(index);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                      ),
-                      margin: EdgeInsets.only(
-                        bottom: 16,
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.all(
-                              16,
-                            ),
-                            width: 40,
-                            height: 40,
-                            decoration: users[index]["profile_image"].isEmpty
-                                ? BoxDecoration(
-                                    color: ColorConstants.fillcolor,
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                          "assets/images/profile.png"),
-                                      fit: BoxFit.cover,
-                                    ),
-                                    borderRadius: BorderRadius.circular(50),
-                                  )
-                                : BoxDecoration(
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                          '${ApiConstants.baseUrl}${users[index]["profile_image"].toString()}'),
-                                      fit: BoxFit.cover,
-                                    ),
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                right: 16,
-                                top: 16,
-                                bottom: 16,
+      body: WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 24,
+            ),
+            width: double.infinity,
+            child: Column(
+              children: [
+                ListView.builder(
+                  controller: _scrollController,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: users.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () async {
+                        showLoadingDialog(context);
+                        await storage.delete(key: "token");
+                        await FirebaseMessaging.instance.deleteToken();
+                        login(index);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white,
+                        ),
+                        margin: EdgeInsets.only(
+                          bottom: 16,
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.all(
+                                16,
                               ),
-                              child: Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: users[index]["email"],
-                                      style: FontConstants.subheadline1,
+                              width: 40,
+                              height: 40,
+                              decoration: users[index]["profile_image"].isEmpty
+                                  ? BoxDecoration(
+                                      color: ColorConstants.fillcolor,
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            "assets/images/profile.png"),
+                                        fit: BoxFit.cover,
+                                      ),
+                                      borderRadius: BorderRadius.circular(50),
                                     )
-                                  ],
+                                  : BoxDecoration(
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                            '${ApiConstants.baseUrl}${users[index]["profile_image"].toString()}'),
+                                        fit: BoxFit.cover,
+                                      ),
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  right: 16,
+                                  top: 16,
+                                  bottom: 16,
+                                ),
+                                child: Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: users[index]["email"],
+                                        style: FontConstants.subheadline1,
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          )
-                        ],
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
-            ],
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -71,6 +71,10 @@ class _MyAppState extends State<MyApp> {
 
     LocalNotificationService.setup(context);
 
+    FirebaseMessaging.instance.onTokenRefresh.listen((String token) {
+      print("Refreshed Token: $token");
+    });
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
         LocalNotificationService.display(

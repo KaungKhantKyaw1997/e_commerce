@@ -54,19 +54,9 @@ class _LogInScreenState extends State<LogInScreen> {
 
   void _handleSubmitted(String value) {
     if (value.isNotEmpty) {
-      getFCMToken();
+      showLoadingDialog(context);
+      login();
     }
-  }
-
-  getFCMToken() {
-    showLoadingDialog(context);
-    _firebaseMessaging.getToken().then((token) {
-      _fcmToken = token ?? '';
-      login();
-    }).catchError((error) {
-      _fcmToken = '';
-      login();
-    });
   }
 
   login() async {
@@ -95,7 +85,7 @@ class _LogInScreenState extends State<LogInScreen> {
         var switchuser = await storage.read(key: 'switchuser') ?? '';
 
         if (switchuser.isEmpty) {
-          await storage.write(
+          storage.write(
               key: 'switchuser',
               value: jsonEncode([
                 {
@@ -106,19 +96,59 @@ class _LogInScreenState extends State<LogInScreen> {
               ]));
         } else {
           var users = jsonDecode(switchuser);
-          users.add({
-            "profile_image": response["data"]["profile_image"],
-            "email": email.text,
-            "password": password.text,
-          });
-          await storage.write(key: 'switchuser', value: jsonEncode(users));
+          bool contain = false;
+          for (var user in users) {
+            if (user["email"] == email.text) {
+              contain = true;
+              break;
+            }
+          }
+          if (!contain) {
+            users.add({
+              "profile_image": response["data"]["profile_image"],
+              "email": email.text,
+              "password": password.text,
+            });
+            storage.write(key: 'switchuser', value: jsonEncode(users));
+          }
         }
 
         BottomProvider bottomProvider =
             Provider.of<BottomProvider>(context, listen: false);
         bottomProvider.selectIndex(0);
 
-        fcm(response["data"]["role"] ?? "", _email);
+        bool termsandconditions = prefs.getBool("termsandconditions") ?? false;
+
+        Navigator.pop(context);
+        if (response["data"]["role"] == 'admin') {
+          Navigator.pushNamed(
+            context,
+            Routes.history,
+          );
+        } else if ((termsandconditions && _email == email.text) ||
+            response["data"]["role"] == 'agent') {
+          Navigator.pushNamed(
+            context,
+            Routes.home,
+          );
+        } else {
+          Navigator.pushNamed(
+            context,
+            Routes.termsandconditions,
+            arguments: {
+              "from": "login",
+            },
+          );
+        }
+
+        _firebaseMessaging.getToken().then((token) {
+          _fcmToken = token ?? '';
+          print("Token: $token");
+          fcm();
+        }).catchError((error) {
+          _fcmToken = '';
+          fcm();
+        });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
@@ -152,40 +182,14 @@ class _LogInScreenState extends State<LogInScreen> {
     }
   }
 
-  fcm(role, _email) async {
+  fcm() {
     var deviceType = Platform.isIOS ? "ios" : "android";
     final body = {
       "token": _fcmToken,
       "device_type": deviceType,
     };
 
-    await authService.addFCMData(body);
-    Navigator.pop(context);
-
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool termsandconditions = prefs.getBool("termsandconditions") ?? false;
-
-    Navigator.pop(context);
-    if (role == 'admin') {
-      Navigator.pushNamed(
-        context,
-        Routes.history,
-      );
-    } else if ((termsandconditions && _email == email.text) ||
-        role == 'agent') {
-      Navigator.pushNamed(
-        context,
-        Routes.home,
-      );
-    } else {
-      Navigator.pushNamed(
-        context,
-        Routes.termsandconditions,
-        arguments: {
-          "from": "login",
-        },
-      );
-    }
+    authService.addFCMData(body);
   }
 
   @override
@@ -410,7 +414,8 @@ class _LogInScreenState extends State<LogInScreen> {
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        getFCMToken();
+                        showLoadingDialog(context);
+                        login();
                       }
                     },
                     child: Text(
