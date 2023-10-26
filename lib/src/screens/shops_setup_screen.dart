@@ -29,11 +29,20 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
       RefreshController(initialRefresh: false);
   List shops = [];
   int page = 1;
+  String status = 'Active';
 
   @override
   void initState() {
     super.initState();
-    getShops();
+    Future.delayed(Duration.zero, () {
+      final arguments =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
+      if (arguments != null) {
+        status = arguments["status"] ?? "Active";
+        getShops(status);
+      }
+    });
   }
 
   @override
@@ -42,10 +51,10 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
     super.dispose();
   }
 
-  getShops() async {
+  getShops(status) async {
     try {
-      final response =
-          await shopsService.getShopsData(page: page, search: search.text);
+      final response = await shopsService.getShopsData(
+          page: page, search: search.text, status: status);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
 
@@ -160,9 +169,27 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
                   ),
                   Text(
                     shops[index]["description"].toString(),
-                    maxLines: 3,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: FontConstants.caption1,
+                  ),
+                  SizedBox(
+                    height: 17,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        shops[index]["status"].toString(),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: shops[index]["status"] == "Active"
+                              ? const Color.fromARGB(255, 5, 141, 9)
+                              : Color.fromARGB(255, 170, 104, 4),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -205,7 +232,7 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
           onChanged: (value) {
             page = 1;
             shops = [];
-            getShops();
+            getShops(status);
           },
         ),
         iconTheme: IconThemeData(
@@ -224,10 +251,10 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
         onRefresh: () async {
           page = 1;
           shops = [];
-          await getShops();
+          await getShops(status);
         },
         onLoading: () async {
-          await getShops();
+          await getShops(status);
         },
         child: SingleChildScrollView(
           child: Container(
@@ -252,6 +279,7 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
                           Routes.shop_setup,
                           arguments: {
                             "id": shops[index]["shop_id"],
+                            "status": status,
                           },
                         );
                       },
@@ -282,22 +310,25 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pop(context);
-          Navigator.pushNamed(
-            context,
-            Routes.shop_setup,
-            arguments: {
-              "id": 0,
-            },
-          );
-        },
-        backgroundColor: Theme.of(context).primaryColor,
-        child: Icon(
-          Icons.add,
-        ),
-      ),
+      floatingActionButton: status == 'Active'
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(
+                  context,
+                  Routes.shop_setup,
+                  arguments: {
+                    "id": 0,
+                    "status": status,
+                  },
+                );
+              },
+              backgroundColor: Theme.of(context).primaryColor,
+              child: Icon(
+                Icons.add,
+              ),
+            )
+          : null,
     );
   }
 }

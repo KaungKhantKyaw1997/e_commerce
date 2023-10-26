@@ -58,10 +58,17 @@ class ShopsService {
   }
 
   Future<Map<String, dynamic>?> getShopsData(
-      {int page = 1, int perPage = 10, String search = ''}) async {
+      {int page = 1,
+      int perPage = 10,
+      String search = '',
+      String status = 'Active',
+      String view = ''}) async {
     var token = await storage.read(key: "token") ?? '';
+    var url =
+        '${ApiConstants.shopsUrl}?page=$page&per_page=$perPage&search=$search&status=$status';
+    url = view.isNotEmpty ? '$url&view=$view' : url;
     final response = await dio.get(
-      '${ApiConstants.shopsUrl}?page=$page&per_page=$perPage&search=$search',
+      url,
       options: Options(
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',

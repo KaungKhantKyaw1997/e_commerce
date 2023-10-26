@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
   getData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String role = prefs.getString('role') ?? "";
-    if (role == 'admin' || role == 'agent') {
+    if (role == 'admin') {
       Navigator.pushNamed(context, Routes.history);
     } else {
       Navigator.pushNamed(context, Routes.home);

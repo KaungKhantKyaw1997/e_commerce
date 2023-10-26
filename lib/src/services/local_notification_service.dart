@@ -30,7 +30,7 @@ class LocalNotificationService {
 
         BottomProvider bottomProvider =
             Provider.of<BottomProvider>(context, listen: false);
-        bottomProvider.selectIndex(role == 'admin' || role == 'agent' ? 1 : 3);
+        bottomProvider.selectIndex(role == 'admin' ? 1 : 3);
         navigatorKey.currentState!.pushNamed(Routes.noti);
       },
     );

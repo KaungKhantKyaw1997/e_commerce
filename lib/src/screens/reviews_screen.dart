@@ -1,8 +1,16 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
+import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
+import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
+import 'package:e_commerce/src/services/rating_service.dart';
+import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class ReviewsScreen extends StatefulWidget {
   const ReviewsScreen({super.key});
@@ -12,7 +20,11 @@ class ReviewsScreen extends StatefulWidget {
 }
 
 class _ReviewsScreenState extends State<ReviewsScreen> {
+  final crashlytic = new CrashlyticsService();
+  final ratingService = RatingService();
   final ScrollController _scrollController = ScrollController();
+  TextEditingController comment = TextEditingController(text: '');
+  double rating = 0.0;
   List reviews = [];
 
   @override
@@ -33,6 +45,47 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  addSellerReviews() async {
+    try {
+      final body = {
+        "shop_id": "",
+        "rating": rating,
+        "comment": comment.text,
+      };
+      final response = await ratingService.addSellerReviewsData(body);
+      Navigator.pop(context);
+      if (response!["code"] != 200) {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      Navigator.pop(context);
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
   }
 
   reviewCard(index) {
@@ -182,6 +235,104 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
           ),
         ),
       ),
+      // bottomNavigationBar: Container(
+      //   decoration: BoxDecoration(
+      //     borderRadius: BorderRadius.circular(20),
+      //     color: Colors.white,
+      //   ),
+      //   child: Column(
+      //     mainAxisSize: MainAxisSize.min,
+      //     children: [
+      //       Padding(
+      //         padding: const EdgeInsets.only(
+      //           top: 16,
+      //         ),
+      //         child: Center(
+      //           child: RatingBar.builder(
+      //             initialRating: 1,
+      //             minRating: 1,
+      //             direction: Axis.horizontal,
+      //             allowHalfRating: true,
+      //             itemCount: 5,
+      //             glowColor: Colors.amber,
+      //             unratedColor: Colors.amber.withOpacity(0.2),
+      //             itemPadding: EdgeInsets.symmetric(
+      //               horizontal: 3.0,
+      //             ),
+      //             itemBuilder: (context, _) => Icon(
+      //               Icons.star,
+      //               color: Colors.amber,
+      //             ),
+      //             onRatingUpdate: (r) {
+      //               rating = r;
+      //             },
+      //           ),
+      //         ),
+      //       ),
+      //       Padding(
+      //         padding: const EdgeInsets.only(
+      //           left: 16,
+      //           right: 16,
+      //           top: 24,
+      //           bottom: 16,
+      //         ),
+      //         child: TextFormField(
+      //           controller: comment,
+      //           keyboardType: TextInputType.text,
+      //           textInputAction: TextInputAction.done,
+      //           style: FontConstants.body1,
+      //           cursorColor: Colors.black,
+      //           decoration: InputDecoration(
+      //             hintText: language["Comment"] ?? "Comment",
+      //             filled: true,
+      //             fillColor: ColorConstants.fillcolor,
+      //             contentPadding: const EdgeInsets.symmetric(
+      //               horizontal: 16,
+      //               vertical: 14,
+      //             ),
+      //             border: OutlineInputBorder(
+      //               borderRadius: BorderRadius.circular(8),
+      //               borderSide: BorderSide.none,
+      //             ),
+      //             enabledBorder: OutlineInputBorder(
+      //               borderRadius: BorderRadius.circular(8),
+      //               borderSide: BorderSide.none,
+      //             ),
+      //             focusedErrorBorder: OutlineInputBorder(
+      //               borderRadius: BorderRadius.circular(8),
+      //               borderSide: BorderSide.none,
+      //             ),
+      //           ),
+      //         ),
+      //       ),
+      //       Container(
+      //         padding: const EdgeInsets.only(
+      //           left: 16,
+      //           right: 16,
+      //           bottom: 24,
+      //         ),
+      //         width: double.infinity,
+      //         child: ElevatedButton(
+      //           style: ElevatedButton.styleFrom(
+      //             padding: const EdgeInsets.symmetric(
+      //               horizontal: 14,
+      //               vertical: 12,
+      //             ),
+      //             shape: RoundedRectangleBorder(
+      //               borderRadius: BorderRadius.circular(8),
+      //             ),
+      //             backgroundColor: Theme.of(context).primaryColor,
+      //           ),
+      //           onPressed: () async {},
+      //           child: Text(
+      //             language["Post"] ?? "Post",
+      //             style: FontConstants.button1,
+      //           ),
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+      // ),
     );
   }
 }

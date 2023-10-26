@@ -82,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen>
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       role = prefs.getString('role') ?? "";
-      if (role == 'user') {
+      if (role == 'user' && role == 'agent') {
         unreadNotifications();
       }
     });
@@ -135,7 +135,8 @@ class _HomeScreenState extends State<HomeScreen>
 
   getShops() async {
     try {
-      final response = await shopsService.getShopsData(page: page);
+      final response =
+          await shopsService.getShopsData(page: page, view: "user");
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
 

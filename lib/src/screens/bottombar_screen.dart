@@ -26,7 +26,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
     setState(() {
       role = prefs.getString('role') ?? "";
       navItems = [];
-      if (role == 'admin' || role == 'agent') {
+      if (role == 'admin') {
         navItems = [
           {"index": 0, "icon": "assets/icons/order.svg", "label": "Order"},
           {
@@ -36,7 +36,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
           },
           {"index": 2, "icon": "assets/icons/setting.svg", "label": "Settings"}
         ];
-      } else if (role == 'user') {
+      } else {
         navItems = [
           {"index": 0, "icon": "assets/icons/home.svg", "label": "Home"},
           {"index": 1, "icon": "assets/icons/cart.svg", "label": "Cart"},
@@ -47,12 +47,6 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
             "label": "Notification"
           },
           {"index": 4, "icon": "assets/icons/setting.svg", "label": "Settings"}
-        ];
-      } else {
-        navItems = [
-          {"index": 0, "icon": "assets/icons/home.svg", "label": "Home"},
-          {"index": 1, "icon": "assets/icons/cart.svg", "label": "Cart"},
-          {"index": 2, "icon": "assets/icons/setting.svg", "label": "Settings"}
         ];
       }
     });

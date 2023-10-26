@@ -41,6 +41,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
   String coverImage = '';
 
   int id = 0;
+  String status = 'Active';
 
   @override
   void initState() {
@@ -51,6 +52,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
 
       if (arguments != null) {
         id = arguments["id"] ?? 0;
+        status = arguments["status"] ?? "Active";
         if (id != 0) {
           getShop();
         }
@@ -156,6 +158,9 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
         Navigator.pushNamed(
           context,
           Routes.shops_setup,
+          arguments: {
+            "status": status,
+          },
         );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -215,6 +220,9 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
         Navigator.pushNamed(
           context,
           Routes.shops_setup,
+          arguments: {
+            "status": status,
+          },
         );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -258,6 +266,9 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
         Navigator.pushNamed(
           context,
           Routes.shops_setup,
+          arguments: {
+            "status": status,
+          },
         );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -315,11 +326,14 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
               Navigator.pushNamed(
                 context,
                 Routes.shops_setup,
+                arguments: {
+                  "status": status,
+                },
               );
             },
           ),
           actions: [
-            id != 0
+            id != 0 && status != "Pending Approval"
                 ? IconButton(
                     icon: SvgPicture.asset(
                       "assets/icons/product.svg",
@@ -352,6 +366,9 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
             Navigator.pushNamed(
               context,
               Routes.shops_setup,
+              arguments: {
+                "status": status,
+              },
             );
             return true;
           },
@@ -610,7 +627,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
             ),
           ),
         ),
-        bottomNavigationBar: id == 0
+        bottomNavigationBar: status == "Pending Approval"
             ? Container(
                 margin: EdgeInsets.only(
                   left: 16,
@@ -633,87 +650,119 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
                       if (pickedFile != null) {
                         await uploadFile();
                       }
-                      addShop();
+                      updateShop();
                     }
                   },
                   child: Text(
-                    language["Save"] ?? "Save",
+                    language["Approve"] ?? "Approve",
                     style: FontConstants.button1,
                   ),
                 ),
               )
-            : Row(
-                children: [
-                  Expanded(
-                    child: FractionallySizedBox(
-                      widthFactor: 1,
-                      child: Container(
-                        margin: EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          bottom: 24,
+            : id == 0
+                ? Container(
+                    margin: EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 24,
+                    ),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 12,
                         ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 12,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          showLoadingDialog(context);
+                          if (pickedFile != null) {
+                            await uploadFile();
+                          }
+                          addShop();
+                        }
+                      },
+                      child: Text(
+                        language["Save"] ?? "Save",
+                        style: FontConstants.button1,
+                      ),
+                    ),
+                  )
+                : Row(
+                    children: [
+                      Expanded(
+                        child: FractionallySizedBox(
+                          widthFactor: 1,
+                          child: Container(
+                            margin: EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              bottom: 24,
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 12,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                backgroundColor: ColorConstants.redcolor,
+                              ),
+                              onPressed: () async {
+                                showLoadingDialog(context);
+                                deleteShop();
+                              },
+                              child: Text(
+                                language["Delete"] ?? "Delete",
+                                style: FontConstants.button1,
+                              ),
                             ),
-                            backgroundColor: ColorConstants.redcolor,
-                          ),
-                          onPressed: () async {
-                            showLoadingDialog(context);
-                            deleteShop();
-                          },
-                          child: Text(
-                            language["Delete"] ?? "Delete",
-                            style: FontConstants.button1,
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  Expanded(
-                    child: FractionallySizedBox(
-                      widthFactor: 1,
-                      child: Container(
-                        margin: EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          bottom: 24,
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 12,
+                      Expanded(
+                        child: FractionallySizedBox(
+                          widthFactor: 1,
+                          child: Container(
+                            margin: EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              bottom: 24,
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 12,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  showLoadingDialog(context);
+                                  if (pickedFile != null) {
+                                    await uploadFile();
+                                  }
+                                  updateShop();
+                                }
+                              },
+                              child: Text(
+                                language["Update"] ?? "Update",
+                                style: FontConstants.button1,
+                              ),
                             ),
-                          ),
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              showLoadingDialog(context);
-                              if (pickedFile != null) {
-                                await uploadFile();
-                              }
-                              updateShop();
-                            }
-                          },
-                          child: Text(
-                            language["Update"] ?? "Update",
-                            style: FontConstants.button1,
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
       ),
     );
   }

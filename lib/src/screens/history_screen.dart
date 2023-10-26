@@ -65,7 +65,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       role = prefs.getString('role') ?? "";
-      if (role == 'admin' || role == 'agent') {
+      if (role == 'admin') {
         unreadNotifications();
       }
     });
@@ -265,7 +265,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         enablePullDown: true,
         enablePullUp: true,
         onRefresh: () async {
-          if (role == 'admin' || role == 'agent') {
+          if (role == 'admin') {
             unreadNotifications();
           }
           page = 1;

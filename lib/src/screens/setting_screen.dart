@@ -466,6 +466,9 @@ class _SettingScreenState extends State<SettingScreen> {
                                 Navigator.pushNamed(
                                   context,
                                   Routes.shops_setup,
+                                  arguments: {
+                                    "status": "Active",
+                                  },
                                 );
                               },
                               child: Padding(
@@ -500,6 +503,66 @@ class _SettingScreenState extends State<SettingScreen> {
                                               TextSpan(
                                                 text:
                                                     language["Shop"] ?? "Shop",
+                                                style: FontConstants.caption2,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 20,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Container(),
+                      role == 'admin'
+                          ? GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  Routes.shops_setup,
+                                  arguments: {
+                                    "status": "Pending Approval",
+                                  },
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 16,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: SvgPicture.asset(
+                                        "assets/icons/shop_approve.svg",
+                                        width: 24,
+                                        height: 24,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 16,
+                                          top: 16,
+                                          bottom: 16,
+                                        ),
+                                        child: Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text:
+                                                    language["Shop Approval"] ??
+                                                        "Shop Approval",
                                                 style: FontConstants.caption2,
                                               )
                                             ],

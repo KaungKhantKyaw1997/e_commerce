@@ -136,12 +136,13 @@ class _LogInScreenState extends State<LogInScreen> {
     bool termsandconditions = prefs.getBool("termsandconditions") ?? false;
 
     Navigator.pop(context);
-    if (role == 'admin' || role == 'agent') {
+    if (role == 'admin') {
       Navigator.pushNamed(
         context,
         Routes.history,
       );
-    } else if (termsandconditions && _email == email.text) {
+    } else if ((termsandconditions && _email == email.text) ||
+        role == 'agent') {
       Navigator.pushNamed(
         context,
         Routes.home,
