@@ -192,6 +192,7 @@ class _HomeScreenState extends State<HomeScreen>
         "is_top_model": true,
         "page": 1,
         "per_page": 10,
+        "view": "user"
       };
       final response = await productsService.getProductsData(body);
       if (response!["code"] == 200) {

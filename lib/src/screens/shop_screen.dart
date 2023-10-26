@@ -116,6 +116,7 @@ class _ShopScreenState extends State<ShopScreen> {
         "page": 1,
         "per_page": 10,
         "shop_id": shop["shop_id"],
+        "view": "user"
       };
       final response = await productsService.getProductsData(body);
       if (response!["code"] == 200) {

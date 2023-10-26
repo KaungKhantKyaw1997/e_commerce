@@ -75,6 +75,7 @@ class _SearchScreenState extends State<SearchScreen>
         "page": page,
         "per_page": 10,
         "search": search.text,
+        "view": "user"
       };
 
       final response = await productsService.getProductsData(body);
