@@ -10,6 +10,7 @@ class ToastUtil {
       backgroundColor: Colors.black.withOpacity(0.7),
       textColor: Colors.white,
       fontSize: 16,
+      timeInSecForIosWeb: 3,
     );
   }
 }

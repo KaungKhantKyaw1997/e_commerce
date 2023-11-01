@@ -479,10 +479,10 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           genderDesc = response["data"]["gender_description"] ?? "";
           genderId = response["data"]["gender_id"] ?? 0;
           isPreorder = response["data"]["is_preorder"] ?? false;
-          waitingTime = response["data"]["waiting_time"] ?? "";
-          caseDepth = response["data"]["case_depth"] ?? "";
-          caseDiameter = response["data"]["case_diameter"] ?? "";
-          caseWidth = response["data"]["case_width"] ?? "";
+          waitingTime.text = response["data"]["waiting_time"] ?? "";
+          caseDepth.text = response["data"]["case_depth"] ?? "";
+          caseDiameter.text = response["data"]["case_diameter"] ?? "";
+          caseWidth.text = response["data"]["case_width"] ?? "";
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);

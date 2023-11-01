@@ -37,4 +37,5 @@ class ApiConstants {
   static const String otherAccessoriesTypesUrl =
       '$baseUrl/api/other-accessories-types';
   static const String gendersUrl = '$baseUrl/api/genders';
+  static const String settingsUrl = '$baseUrl/api/settings';
 }
