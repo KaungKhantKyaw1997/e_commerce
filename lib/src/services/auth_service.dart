@@ -6,6 +6,8 @@ import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/providers/role_provider.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
+import 'package:e_commerce/src/services/settings_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:e_commerce/src/constants/api_constants.dart';
@@ -16,6 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
+  final crashlytic = new CrashlyticsService();
   final storage = FlutterSecureStorage();
 
   final Dio dio = Dio();
@@ -170,7 +173,30 @@ class AuthService {
         Provider.of<BottomProvider>(context, listen: false);
     bottomProvider.selectIndex(0);
 
-    Navigator.pushNamed(context, Routes.home);
+    getSettings(context);
+  }
+
+  getSettings(context) async {
+    try {
+      var deviceType = Platform.isIOS ? "ios" : "android";
+      final settingsService = SettingsService();
+      final response = await settingsService.getSettingsData();
+      if (response!["code"] == 200) {
+        if (response["data"]["platform_required_signin"] == deviceType) {
+          Navigator.pushNamed(
+            context,
+            Routes.login,
+            arguments: {
+              'first_page': true,
+            },
+          );
+        } else {
+          Navigator.pushNamed(context, Routes.home);
+        }
+      }
+    } catch (e, s) {
+      crashlytic.myGlobalErrorHandler(e, s);
+    }
   }
 
   clearData() async {

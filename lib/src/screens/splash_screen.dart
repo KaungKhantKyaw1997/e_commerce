@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:dio/dio.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/settings_service.dart';
-import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -73,34 +71,9 @@ class _SplashScreenState extends State<SplashScreen> {
         } else {
           getData();
         }
-      } else {
-        ToastUtil.showToast(response["code"], response["message"]);
       }
     } catch (e, s) {
-      if (e is DioException &&
-          e.error is SocketException &&
-          !isConnectionTimeout) {
-        isConnectionTimeout = true;
-        Navigator.pushNamed(
-          context,
-          Routes.connection_timeout,
-        );
-        return;
-      }
       crashlytic.myGlobalErrorHandler(e, s);
-      if (e is DioException && e.response != null && e.response!.data != null) {
-        if (e.response!.data["message"] == "invalid token" ||
-            e.response!.data["message"] ==
-                "invalid authorization header format") {
-          Navigator.pushNamed(
-            context,
-            Routes.unauthorized,
-          );
-        } else {
-          ToastUtil.showToast(
-              e.response!.data['code'], e.response!.data['message']);
-        }
-      }
     }
   }
 
