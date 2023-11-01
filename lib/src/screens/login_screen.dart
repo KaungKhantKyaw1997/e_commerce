@@ -444,40 +444,42 @@ class _LogInScreenState extends State<LogInScreen> {
                       ),
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 24,
-                    ),
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        backgroundColor: Colors.white,
-                        side: BorderSide(
-                          width: 0.5,
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Navigator.pushNamed(
-                          context,
-                          Routes.register,
-                        );
-                      },
-                      child: Text(
-                        language["Register"] ?? "Register",
-                        style: FontConstants.button2,
-                      ),
-                    ),
-                  ),
+                  !firstPage
+                      ? Container(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            bottom: 24,
+                          ),
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              backgroundColor: Colors.white,
+                              side: BorderSide(
+                                width: 0.5,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.pushNamed(
+                                context,
+                                Routes.register,
+                              );
+                            },
+                            child: Text(
+                              language["Register"] ?? "Register",
+                              style: FontConstants.button2,
+                            ),
+                          ),
+                        )
+                      : Container(),
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 16,

@@ -163,8 +163,7 @@ class _TermsAndConditionsSetUpScreenState
               child: TextFormField(
                 controller: content,
                 focusNode: _contentFocusNode,
-                keyboardType: TextInputType.text,
-                textInputAction: TextInputAction.done,
+                keyboardType: TextInputType.multiline,
                 style: FontConstants.body1,
                 cursorColor: Colors.black,
                 maxLines: null,
