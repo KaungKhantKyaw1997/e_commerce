@@ -8,6 +8,7 @@ import 'package:e_commerce/src/screens/categories_setup_screen.dart';
 import 'package:e_commerce/src/screens/category_setup_screen.dart';
 import 'package:e_commerce/src/screens/chat_screen.dart';
 import 'package:e_commerce/src/screens/connection_timeout_screen.dart';
+import 'package:e_commerce/src/screens/contactus_screen.dart';
 import 'package:e_commerce/src/screens/forgot_password_screen.dart';
 import 'package:e_commerce/src/screens/image_preview_screen.dart';
 import 'package:e_commerce/src/screens/insurance_rules_setup_screen.dart';
@@ -94,7 +95,7 @@ class Routes {
   static const String bank_account_setup = "/bank_account_setup";
   static const String switch_user = "/switch_user";
   static const String chat_screen = "/chat_screen";
-
+  static const String contact_us = "/contact_us";
 
   static final Map<String, WidgetBuilder> routes = {
     splash: (BuildContext context) => const SplashScreen(),
@@ -151,6 +152,6 @@ class Routes {
         const BankAccountSetupScreen(),
     switch_user: (BuildContext context) => const SwitchUserScreen(),
     chat_screen: (BuildContext context) => const ChatScreen(),
-
+    contact_us: (BuildContext context) => const ContactUsScreen(),
   };
 }

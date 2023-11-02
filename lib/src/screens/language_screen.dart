@@ -73,7 +73,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
         child: SingleChildScrollView(
           controller: _scrollController,
           child: Container(
-            width: MediaQuery.of(context).size.width,
+            width: double.infinity,
             margin: EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 24,
