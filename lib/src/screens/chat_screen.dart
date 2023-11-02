@@ -12,15 +12,33 @@ class ChatScreen extends StatefulWidget {
 }
 
 class ChatScreenState extends State<ChatScreen> {
-  final String lastSeenTime = '10 hours ago';
+  String lastSeenTime = "Last seen: 10:30 PM";
+  String username = "MgKaung";
   final String profilePhotoUrl = 'your_profile_photo_url_here';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-
-        title: Text(lastSeenTime),
-      ),
+       appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                username,
+                style: FontConstants.title1,
+              ),
+              Text(
+                lastSeenTime,
+                style: TextStyle(color: Colors.black, fontSize: 12),
+              ),
+            ],
+          ),
+          iconTheme: IconThemeData(
+            color: Colors.black,
+          ),
+        ),
+    
       body: Column(
         
         children: [
@@ -75,14 +93,7 @@ class ChatScreenState extends State<ChatScreen> {
             child: Row(
               children: [
                 Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      right: BorderSide(
-                        width: 2,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                  ),
+                 
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 5),
                     child: SvgPicture.asset(
