@@ -642,8 +642,22 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
               ),
               onPressed: () {
-                Navigator.of(context).pushNamed(Routes.search);
+                Navigator.of(context).pushNamed(
+                  Routes.search,
+                );
               },
+            ),
+            IconButton(
+              icon: SvgPicture.asset(
+                "assets/icons/message.svg",
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  Colors.black,
+                  BlendMode.srcIn,
+                ),
+              ),
+              onPressed: () {},
             ),
           ],
           bottom: TabBar(
