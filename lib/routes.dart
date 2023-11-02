@@ -94,7 +94,7 @@ class Routes {
   static const String bank_accounts_setup = "/bank_accounts_setup";
   static const String bank_account_setup = "/bank_account_setup";
   static const String switch_user = "/switch_user";
-  static const String chat_screen = "/chat_screen";
+  static const String chat = "/chat";
   static const String contact_us = "/contact_us";
 
   static final Map<String, WidgetBuilder> routes = {
@@ -151,7 +151,7 @@ class Routes {
     bank_account_setup: (BuildContext context) =>
         const BankAccountSetupScreen(),
     switch_user: (BuildContext context) => const SwitchUserScreen(),
-    chat_screen: (BuildContext context) => const ChatScreen(),
+    chat: (BuildContext context) => const ChatScreen(),
     contact_us: (BuildContext context) => const ContactUsScreen(),
   };
 }

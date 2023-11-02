@@ -660,7 +660,7 @@ class _HomeScreenState extends State<HomeScreen>
               onPressed: () {
                 Navigator.pushNamed(
                   context,
-                  Routes.chat_screen,
+                  Routes.chat,
                 );
               },
             ),
