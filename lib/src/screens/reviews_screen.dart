@@ -25,6 +25,8 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
   final ratingService = RatingService();
   final ScrollController _scrollController = ScrollController();
   TextEditingController comment = TextEditingController(text: '');
+  FocusNode _commentFocusNode = FocusNode();
+
   double rating = 1.0;
   List reviews = [];
   Map<String, dynamic> shop = {};
@@ -47,6 +49,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _commentFocusNode.dispose();
     super.dispose();
   }
 
@@ -144,6 +147,9 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
       ),
       width: double.infinity,
       margin: EdgeInsets.only(
+        top: index == 0 ? 24 : 0,
+        left: 16,
+        right: 16,
         bottom: 8,
       ),
       child: Padding(
@@ -244,48 +250,45 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        elevation: 0,
-        title: Text(
-          language["Reviews"] ?? "Reviews",
-          style: FontConstants.title1,
+    return GestureDetector(
+      onTap: () {
+        _commentFocusNode.unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          centerTitle: true,
+          elevation: 0,
+          title: Text(
+            language["Reviews"] ?? "Reviews",
+            style: FontConstants.title1,
+          ),
+          leading: BackButton(
+            color: Colors.black,
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.pushNamed(
+                context,
+                Routes.shop,
+                arguments: shop,
+              );
+            },
+          ),
         ),
-        leading: BackButton(
-          color: Colors.black,
-          onPressed: () {
+        body: WillPopScope(
+          onWillPop: () async {
             Navigator.of(context).pop();
             Navigator.pushNamed(
               context,
               Routes.shop,
               arguments: shop,
             );
+            return true;
           },
-        ),
-      ),
-      body: WillPopScope(
-        onWillPop: () async {
-          Navigator.of(context).pop();
-          Navigator.pushNamed(
-            context,
-            Routes.shop,
-            arguments: shop,
-          );
-          return true;
-        },
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 24,
-            ),
-            width: double.infinity,
-            child: Column(
-              children: [
-                ListView.builder(
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
                   controller: _scrollController,
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
@@ -294,110 +297,111 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                     return reviewCard(index);
                   },
                 ),
-              ],
-            ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 16,
+                      ),
+                      child: Center(
+                        child: RatingBar.builder(
+                          initialRating: 1,
+                          minRating: 1,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          glowColor: Colors.amber,
+                          unratedColor: Colors.amber.withOpacity(0.2),
+                          itemPadding: EdgeInsets.symmetric(
+                            horizontal: 3.0,
+                          ),
+                          itemBuilder: (context, _) => Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                          onRatingUpdate: (r) {
+                            rating = r;
+                          },
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 24,
+                        bottom: 16,
+                      ),
+                      child: TextFormField(
+                        controller: comment,
+                        focusNode: _commentFocusNode,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.done,
+                        style: FontConstants.body1,
+                        cursorColor: Colors.black,
+                        decoration: InputDecoration(
+                          hintText: language["Comment"] ?? "Comment",
+                          filled: true,
+                          fillColor: ColorConstants.fillcolor,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 24,
+                      ),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          backgroundColor: Theme.of(context).primaryColor,
+                        ),
+                        onPressed: () async {
+                          showLoadingDialog(context);
+                          addSellerReviews();
+                        },
+                        child: Text(
+                          language["Post"] ?? "Post",
+                          style: FontConstants.button1,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ),
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.white,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 16,
-              ),
-              child: Center(
-                child: RatingBar.builder(
-                  initialRating: 1,
-                  minRating: 1,
-                  direction: Axis.horizontal,
-                  allowHalfRating: true,
-                  itemCount: 5,
-                  glowColor: Colors.amber,
-                  unratedColor: Colors.amber.withOpacity(0.2),
-                  itemPadding: EdgeInsets.symmetric(
-                    horizontal: 3.0,
-                  ),
-                  itemBuilder: (context, _) => Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                  ),
-                  onRatingUpdate: (r) {
-                    rating = r;
-                  },
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 16,
-                right: 16,
-                top: 24,
-                bottom: 16,
-              ),
-              child: TextFormField(
-                controller: comment,
-                keyboardType: TextInputType.text,
-                textInputAction: TextInputAction.done,
-                style: FontConstants.body1,
-                cursorColor: Colors.black,
-                decoration: InputDecoration(
-                  hintText: language["Comment"] ?? "Comment",
-                  filled: true,
-                  fillColor: ColorConstants.fillcolor,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.only(
-                left: 16,
-                right: 16,
-                bottom: 24,
-              ),
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  backgroundColor: Theme.of(context).primaryColor,
-                ),
-                onPressed: () async {
-                  showLoadingDialog(context);
-                  addSellerReviews();
-                },
-                child: Text(
-                  language["Post"] ?? "Post",
-                  style: FontConstants.button1,
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );
