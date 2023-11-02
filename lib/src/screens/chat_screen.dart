@@ -97,7 +97,7 @@ class ChatScreenState extends State<ChatScreen> {
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 5),
                     child: SvgPicture.asset(
-                      "assets/icons/shop.svg",
+                      "assets/icons/camera.svg",
                       width: 30,
                       height: 30,
                     ),
@@ -138,9 +138,10 @@ class ChatScreenState extends State<ChatScreen> {
                       backgroundColor: ColorConstants.primarycolor,
                     ),
                     onPressed: () async {},
-                    child: Text(
-                      language["Send"] ?? "Send",
-                      style: FontConstants.button1,
+                    child: SvgPicture.asset(
+                      "assets/icons/camera.svg",
+                      width: 30,
+                      height: 30,
                     ),
                   ),
                 ),
