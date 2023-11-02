@@ -63,7 +63,6 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
       final response = await ratingService.addSellerReviewsData(body);
       Navigator.pop(context);
       if (response!["code"] == 200) {
-        comment.text = '';
         getSellerReviews();
       }
     } catch (e, s) {
@@ -102,6 +101,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           setState(() {
+            comment.text = '';
             reviews = response["data"];
           });
         }
@@ -388,6 +388,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                           backgroundColor: Theme.of(context).primaryColor,
                         ),
                         onPressed: () async {
+                          _commentFocusNode.unfocus();
                           showLoadingDialog(context);
                           addSellerReviews();
                         },

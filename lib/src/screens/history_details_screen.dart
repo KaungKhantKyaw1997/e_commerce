@@ -44,6 +44,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
   ];
   String status = "Pending";
   String role = "";
+  String shopName = "";
   Map<String, dynamic> orderData = {
     "order_id": 0,
     "user_name": "",
@@ -78,6 +79,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
       if (arguments != null) {
         getOrderDetails(arguments["order_id"]);
+        getShopName(arguments["order_id"]);
         setState(() {
           orderData = arguments;
           status = orderData['status'];
@@ -106,6 +108,43 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
         if (response["data"].isNotEmpty) {
           orderItems = (response["data"] as List).cast<Map<String, dynamic>>();
         }
+        setState(() {});
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getShopName(int order_id) async {
+    try {
+      final response = await orderService.getShopNameData(order_id);
+      if (response!["code"] == 200) {
+        shopName = response["data"] ?? "";
         setState(() {});
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -464,6 +503,29 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                                       ),
                                     ],
                                   ),
+                                ),
+                                SizedBox(
+                                  height: 8,
+                                ),
+                                Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/icons/shop.svg",
+                                      width: 20,
+                                      height: 20,
+                                      colorFilter: ColorFilter.mode(
+                                        Colors.white,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Text(
+                                      shopName,
+                                      style: FontConstants.body3,
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
