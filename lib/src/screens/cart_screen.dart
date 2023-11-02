@@ -378,9 +378,7 @@ class _CartScreenState extends State<CartScreen> {
                                                         icon: Icon(
                                                           Icons.remove,
                                                           size: 15,
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
+                                                          color: Colors.black,
                                                         ),
                                                         onPressed: () {
                                                           if (carts[index]
@@ -472,9 +470,7 @@ class _CartScreenState extends State<CartScreen> {
                                                         icon: Icon(
                                                           Icons.add,
                                                           size: 15,
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
+                                                          color: Colors.black,
                                                         ),
                                                         onPressed: () {
                                                           // if (product['quantity'] <

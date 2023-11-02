@@ -218,7 +218,7 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
           },
         ),
         iconTheme: IconThemeData(
-          color: Theme.of(context).primaryColor,
+          color: Colors.black,
         ),
       ),
       body: SmartRefresher(

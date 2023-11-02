@@ -296,7 +296,7 @@ class _ProductsScreenState extends State<ProductsScreen>
           ),
         ],
         iconTheme: IconThemeData(
-          color: Theme.of(context).primaryColor,
+          color: Colors.black,
         ),
       ),
       body: SmartRefresher(

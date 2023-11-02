@@ -193,7 +193,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
           },
         ),
         iconTheme: IconThemeData(
-          color: Theme.of(context).primaryColor,
+          color: Colors.black,
         ),
       ),
       body: SmartRefresher(

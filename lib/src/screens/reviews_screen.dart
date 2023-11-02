@@ -165,22 +165,30 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                   margin: EdgeInsets.only(
                     right: 8,
                   ),
-                  decoration: BoxDecoration(
-                    image: reviews[index]["profile_image"].isNotEmpty
-                        ? DecorationImage(
+                  decoration: reviews[index]["profile_image"].isNotEmpty
+                      ? BoxDecoration(
+                          color: ColorConstants.fillcolor,
+                          image: DecorationImage(
                             image: NetworkImage(
                                 '${ApiConstants.baseUrl}${reviews[index]["profile_image"].toString()}'),
                             fit: BoxFit.cover,
-                          )
-                        : DecorationImage(
+                          ),
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(
+                            color: Colors.transparent,
+                          ),
+                        )
+                      : BoxDecoration(
+                          color: ColorConstants.fillcolor,
+                          image: DecorationImage(
                             image: AssetImage('assets/images/profile.png'),
                             fit: BoxFit.cover,
                           ),
-                    borderRadius: BorderRadius.circular(50),
-                    border: Border.all(
-                      color: Colors.transparent,
-                    ),
-                  ),
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(
+                            color: Colors.transparent,
+                          ),
+                        ),
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -218,15 +226,16 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 8,
+            if (reviews[index]["comment"].isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 8,
+                ),
+                child: Text(
+                  reviews[index]["comment"].toString(),
+                  style: FontConstants.caption1,
+                ),
               ),
-              child: Text(
-                reviews[index]["comment"].toString(),
-                style: FontConstants.caption1,
-              ),
-            ),
           ],
         ),
       ),
@@ -245,7 +254,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
           style: FontConstants.title1,
         ),
         leading: BackButton(
-          color: Theme.of(context).primaryColor,
+          color: Colors.black,
           onPressed: () {
             Navigator.of(context).pop();
             Navigator.pushNamed(

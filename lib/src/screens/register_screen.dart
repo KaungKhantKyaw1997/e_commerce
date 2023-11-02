@@ -153,7 +153,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             style: FontConstants.title1,
           ),
           leading: BackButton(
-            color: Theme.of(context).primaryColor,
+            color: Colors.black,
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.pushNamed(
@@ -365,7 +365,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             width: 24,
                             height: 24,
                             colorFilter: ColorFilter.mode(
-                              Theme.of(context).primaryColor,
+                              Colors.black,
                               BlendMode.srcIn,
                             ),
                           ),
@@ -442,7 +442,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             width: 24,
                             height: 24,
                             colorFilter: ColorFilter.mode(
-                              Theme.of(context).primaryColor,
+                              Colors.black,
                               BlendMode.srcIn,
                             ),
                           ),

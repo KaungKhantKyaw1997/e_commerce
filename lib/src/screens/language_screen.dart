@@ -57,7 +57,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
           style: FontConstants.title1,
         ),
         leading: BackButton(
-          color: Theme.of(context).primaryColor,
+          color: Colors.black,
           onPressed: () {
             Navigator.of(context).pop();
             Navigator.pushNamed(context, Routes.setting);

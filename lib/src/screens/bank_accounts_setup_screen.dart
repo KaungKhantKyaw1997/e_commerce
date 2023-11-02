@@ -222,7 +222,7 @@ class _BankAccountsSetupScreenState extends State<BankAccountsSetupScreen> {
           },
         ),
         iconTheme: IconThemeData(
-          color: Theme.of(context).primaryColor,
+          color: Colors.black,
         ),
       ),
       body: SmartRefresher(

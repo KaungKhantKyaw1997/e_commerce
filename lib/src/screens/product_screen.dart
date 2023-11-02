@@ -186,7 +186,7 @@ class _ProductScreenState extends State<ProductScreen> {
           style: FontConstants.title1,
         ),
         iconTheme: IconThemeData(
-          color: Theme.of(context).primaryColor,
+          color: Colors.black,
         ),
       ),
       body: SingleChildScrollView(
@@ -1204,7 +1204,7 @@ class _ProductScreenState extends State<ProductScreen> {
                           icon: Icon(
                             Icons.remove,
                             size: 15,
-                            color: Theme.of(context).primaryColor,
+                            color: Colors.black,
                           ),
                           onPressed: () {
                             if (product['quantity'] > 0) {
@@ -1257,7 +1257,7 @@ class _ProductScreenState extends State<ProductScreen> {
                           icon: Icon(
                             Icons.add,
                             size: 15,
-                            color: Theme.of(context).primaryColor,
+                            color: Colors.black,
                           ),
                           onPressed: () {
                             // if (product['quantity'] <

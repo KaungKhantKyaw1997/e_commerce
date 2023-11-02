@@ -109,7 +109,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             style: FontConstants.title1,
           ),
           iconTheme: IconThemeData(
-            color: Theme.of(context).primaryColor,
+            color: Colors.black,
           ),
         ),
         backgroundColor: Colors.white,
@@ -186,7 +186,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             width: 24,
                             height: 24,
                             colorFilter: ColorFilter.mode(
-                              Theme.of(context).primaryColor,
+                              Colors.black,
                               BlendMode.srcIn,
                             ),
                           ),
@@ -260,7 +260,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             width: 24,
                             height: 24,
                             colorFilter: ColorFilter.mode(
-                              Theme.of(context).primaryColor,
+                              Colors.black,
                               BlendMode.srcIn,
                             ),
                           ),
@@ -330,7 +330,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           width: 24,
                           height: 24,
                           colorFilter: ColorFilter.mode(
-                            Theme.of(context).primaryColor,
+                            Colors.black,
                             BlendMode.srcIn,
                           ),
                         ),

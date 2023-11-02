@@ -218,7 +218,7 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
           },
         ),
         iconTheme: IconThemeData(
-          color: Theme.of(context).primaryColor,
+          color: Colors.black,
         ),
       ),
       body: SmartRefresher(

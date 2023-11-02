@@ -193,7 +193,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           },
         ),
         iconTheme: IconThemeData(
-          color: Theme.of(context).primaryColor,
+          color: Colors.black,
         ),
       ),
       body: SmartRefresher(

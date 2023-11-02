@@ -227,7 +227,7 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
           },
         ),
         leading: BackButton(
-          color: Theme.of(context).primaryColor,
+          color: Colors.black,
           onPressed: () {
             Navigator.of(context).pop();
           },

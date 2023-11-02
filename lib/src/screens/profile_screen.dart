@@ -205,7 +205,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             style: FontConstants.title1,
           ),
           leading: BackButton(
-            color: Theme.of(context).primaryColor,
+            color: Colors.black,
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.pushNamed(

@@ -18,25 +18,27 @@ class insurance_rules_setup_screen extends StatefulWidget {
   const insurance_rules_setup_screen({super.key});
 
   @override
-  State<insurance_rules_setup_screen> createState() => _insurance_rules_setup_screenState();
+  State<insurance_rules_setup_screen> createState() =>
+      _insurance_rules_setup_screenState();
 }
 
-class _insurance_rules_setup_screenState extends State<insurance_rules_setup_screen> {
-   String logoUrl = '';
+class _insurance_rules_setup_screenState
+    extends State<insurance_rules_setup_screen> {
+  String logoUrl = '';
 
-  final  insurranceService=InsuranceRulesService();
+  final insurranceService = InsuranceRulesService();
   TextEditingController name = TextEditingController(text: '');
   TextEditingController description = TextEditingController(text: '');
-   TextEditingController search = TextEditingController(text: '');
-    final crashlytic = new CrashlyticsService();
+  TextEditingController search = TextEditingController(text: '');
+  final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-       List insurrances = [];
-     int page = 1;
+  List insurrances = [];
+  int page = 1;
   String from = "";
-  
-    @override
+
+  @override
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
@@ -52,8 +54,8 @@ class _insurance_rules_setup_screenState extends State<insurance_rules_setup_scr
 
   getInsurrances() async {
     try {
-      final response =
-          await insurranceService.getInsuranceRulesDataList(page: page, search: search.text);
+      final response = await insurranceService.getInsuranceRulesDataList(
+          page: page, search: search.text);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
 
@@ -132,7 +134,7 @@ class _insurance_rules_setup_screenState extends State<insurance_rules_setup_scr
           },
         ),
         iconTheme: IconThemeData(
-          color: Theme.of(context).primaryColor,
+          color: Colors.black,
         ),
       ),
       body: SmartRefresher(
@@ -243,7 +245,8 @@ class _insurance_rules_setup_screenState extends State<insurance_rules_setup_scr
           topLeft: Radius.circular(index == 0 ? 10 : 0),
           topRight: Radius.circular(index == 0 ? 10 : 0),
           bottomLeft: Radius.circular(index == insurrances.length - 1 ? 10 : 0),
-          bottomRight: Radius.circular(index == insurrances.length - 1 ? 10 : 0),
+          bottomRight:
+              Radius.circular(index == insurrances.length - 1 ? 10 : 0),
         ),
         color: Colors.white,
       ),
@@ -278,7 +281,7 @@ class _insurance_rules_setup_screenState extends State<insurance_rules_setup_scr
                         overflow: TextOverflow.ellipsis,
                         style: FontConstants.caption1,
                       ),
-                       Text(
+                      Text(
                         Jiffy.parseFromDateTime(DateTime.parse(
                                     insurrances[index]["effective_to"] + "Z")
                                 .toLocal())
@@ -302,5 +305,4 @@ class _insurance_rules_setup_screenState extends State<insurance_rules_setup_scr
       ),
     );
   }
-
 }

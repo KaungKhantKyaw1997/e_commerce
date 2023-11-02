@@ -235,7 +235,7 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
           },
         ),
         iconTheme: IconThemeData(
-          color: Theme.of(context).primaryColor,
+          color: Colors.black,
         ),
       ),
       body: SmartRefresher(

@@ -100,7 +100,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
           style: FontConstants.title1,
         ),
         leading: BackButton(
-          color: Theme.of(context).primaryColor,
+          color: Colors.black,
           onPressed: () {
             Navigator.of(context).pop();
           },

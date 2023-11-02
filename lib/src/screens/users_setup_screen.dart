@@ -211,7 +211,7 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
           },
         ),
         iconTheme: IconThemeData(
-          color: Theme.of(context).primaryColor,
+          color: Colors.black,
         ),
       ),
       body: SmartRefresher(
