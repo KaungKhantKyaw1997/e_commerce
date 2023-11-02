@@ -657,7 +657,12 @@ class _HomeScreenState extends State<HomeScreen>
                   BlendMode.srcIn,
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  Routes.chat_screen,
+                );
+              },
             ),
           ],
           bottom: TabBar(
