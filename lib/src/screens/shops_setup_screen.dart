@@ -169,7 +169,6 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
                   ),
                   Text(
                     shops[index]["description"].toString(),
-                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: FontConstants.caption1,
                   ),

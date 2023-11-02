@@ -51,8 +51,6 @@ class _HomeScreenState extends State<HomeScreen>
   List categories = [];
   int page = 1;
   int crossAxisCount = 1;
-  bool shopTab = false;
-  bool productTab = false;
   String profileImage = '';
   String profileName = '';
   String role = "";
@@ -144,7 +142,6 @@ class _HomeScreenState extends State<HomeScreen>
         if (response["data"].isNotEmpty) {
           shops += response["data"];
           page++;
-          shopTab = true;
         }
         setState(() {});
       } else {
@@ -279,7 +276,6 @@ class _HomeScreenState extends State<HomeScreen>
         if (response["data"].isNotEmpty) {
           setState(() {
             categories = response["data"];
-            productTab = true;
           });
         }
       } else {
@@ -678,7 +674,7 @@ class _HomeScreenState extends State<HomeScreen>
           child: TabBarView(
             controller: _tabController,
             children: [
-              shopTab
+              shops.isNotEmpty
                   ? SmartRefresher(
                       header: WaterDropMaterialHeader(
                         backgroundColor: Theme.of(context).primaryColor,
@@ -737,7 +733,7 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                     )
                   : Container(),
-              productTab
+              products.isNotEmpty || brands.isNotEmpty || categories.isNotEmpty
                   ? SingleChildScrollView(
                       child: Container(
                         padding: const EdgeInsets.only(

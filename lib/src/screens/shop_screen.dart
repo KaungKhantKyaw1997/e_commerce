@@ -62,7 +62,6 @@ class _ShopScreenState extends State<ShopScreen> {
             for (var item in reviews) {
               ratings.add(item["rating"]);
             }
-            print(ratings);
           });
         }
       } else {
@@ -159,11 +158,13 @@ class _ShopScreenState extends State<ShopScreen> {
   averageRatingCard() {
     return GestureDetector(
       onTap: () {
+        Navigator.of(context).pop();
         Navigator.pushNamed(
           context,
           Routes.reviews,
           arguments: {
             "reviews": reviews,
+            "shop": shop,
           },
         );
       },
@@ -403,7 +404,7 @@ class _ShopScreenState extends State<ShopScreen> {
                     ),
                   ),
                 ),
-                reviews.isNotEmpty ? averageRatingCard() : Container(),
+                averageRatingCard(),
                 products.isNotEmpty
                     ? Container(
                         padding: EdgeInsets.only(

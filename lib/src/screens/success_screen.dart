@@ -29,7 +29,7 @@ class _SuccessScreenState extends State<SuccessScreen>
   int id = 0;
   int shopId = 0;
   bool isAlreadyReviewed = true;
-  double rating = 0.0;
+  double rating = 1.0;
 
   @override
   void initState() {
