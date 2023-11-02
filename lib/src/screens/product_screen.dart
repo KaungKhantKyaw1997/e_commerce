@@ -1260,16 +1260,16 @@ class _ProductScreenState extends State<ProductScreen> {
                             color: Colors.black,
                           ),
                           onPressed: () {
-                            // if (product['quantity'] <
-                            //     int.parse(product["stock_quantity"]
-                            //         .toString())) {
-                            setState(() {
-                              product['quantity']++;
-                              product['totalamount'] =
-                                  double.parse(product["price"].toString()) *
-                                      product['quantity'];
-                            });
-                            // }
+                            if (product['quantity'] <
+                                int.parse(
+                                    product["stock_quantity"].toString())) {
+                              setState(() {
+                                product['quantity']++;
+                                product['totalamount'] =
+                                    double.parse(product["price"].toString()) *
+                                        product['quantity'];
+                              });
+                            }
                           },
                         ),
                       ),

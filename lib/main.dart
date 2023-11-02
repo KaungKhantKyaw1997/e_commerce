@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:e_commerce/palette.dart';
 import 'package:e_commerce/routes.dart';
@@ -45,6 +46,10 @@ Future<void> main() async {
       // ),
     ),
   );
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 }
 
 Future<void> backgroundMessageHandler(RemoteMessage message) async {

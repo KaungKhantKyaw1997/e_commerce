@@ -473,24 +473,27 @@ class _CartScreenState extends State<CartScreen> {
                                                           color: Colors.black,
                                                         ),
                                                         onPressed: () {
-                                                          // if (product['quantity'] <
-                                                          //     int.parse(product["stock_quantity"]
-                                                          //         .toString())) {
-                                                          carts[index]
-                                                              ['quantity']++;
-                                                          carts[index][
-                                                              'totalamount'] = double
-                                                                  .parse(carts[
-                                                                              index]
-                                                                          [
-                                                                          "price"]
-                                                                      .toString()) *
-                                                              carts[index]
-                                                                  ['quantity'];
-                                                          calculateSubTotal();
-                                                          saveListToSharedPreferences(
-                                                              carts);
-                                                          // }
+                                                          if (carts[index]
+                                                                  ['quantity'] <
+                                                              int.parse(carts[
+                                                                          index]
+                                                                      [
+                                                                      "stock_quantity"]
+                                                                  .toString())) {
+                                                            carts[index]
+                                                                ['quantity']++;
+                                                            carts[index][
+                                                                'totalamount'] = double.parse(
+                                                                    carts[index]
+                                                                            [
+                                                                            "price"]
+                                                                        .toString()) *
+                                                                carts[index][
+                                                                    'quantity'];
+                                                            calculateSubTotal();
+                                                            saveListToSharedPreferences(
+                                                                carts);
+                                                          }
                                                         },
                                                       ),
                                                     ),
