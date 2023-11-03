@@ -36,7 +36,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
           },
           {"index": 2, "icon": "assets/icons/setting.svg", "label": "Settings"}
         ];
-      } else {
+      } else if (role == 'user'||role == 'agent') {
         navItems = [
           {"index": 0, "icon": "assets/icons/home.svg", "label": "Home"},
           {"index": 1, "icon": "assets/icons/cart.svg", "label": "Cart"},
@@ -47,6 +47,12 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
             "label": "Notification"
           },
           {"index": 4, "icon": "assets/icons/setting.svg", "label": "Settings"}
+        ];
+      } else {
+        navItems = [
+          {"index": 0, "icon": "assets/icons/home.svg", "label": "Home"},
+          {"index": 1, "icon": "assets/icons/cart.svg", "label": "Cart"},
+          {"index": 2, "icon": "assets/icons/setting.svg", "label": "Settings"}
         ];
       }
     });
