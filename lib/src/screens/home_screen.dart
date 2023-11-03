@@ -647,23 +647,23 @@ class _HomeScreenState extends State<HomeScreen>
                 );
               },
             ),
-            IconButton(
-              icon: SvgPicture.asset(
-                "assets/icons/message.svg",
-                width: 24,
-                height: 24,
-                colorFilter: const ColorFilter.mode(
-                  Colors.black,
-                  BlendMode.srcIn,
-                ),
-              ),
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  Routes.chat,
-                );
-              },
-            ),
+            // IconButton(
+            //   icon: SvgPicture.asset(
+            //     "assets/icons/message.svg",
+            //     width: 24,
+            //     height: 24,
+            //     colorFilter: const ColorFilter.mode(
+            //       Colors.black,
+            //       BlendMode.srcIn,
+            //     ),
+            //   ),
+            //   onPressed: () {
+            //     Navigator.pushNamed(
+            //       context,
+            //       Routes.chat,
+            //     );
+            //   },
+            // ),
           ],
           bottom: TabBar(
             controller: _tabController,

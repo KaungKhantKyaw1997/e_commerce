@@ -19,10 +19,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class AuthService {
-  IO.Socket socket = IO.io(ApiConstants.socketServerURL, <String, dynamic>{
-    'autoConnect': true,
-    'transports': ['websocket'],
-  });
+  IO.Socket? socket;
 
   final crashlytic = new CrashlyticsService();
   final storage = FlutterSecureStorage();
@@ -159,17 +156,24 @@ class AuthService {
     return response.data;
   }
 
-  initSocket(String token) {
-    socket.onConnect((_) {
-      socket.emit('join', {'token': token});
+  void initSocket(String token) {
+    socket = IO.io(ApiConstants.socketServerURL, <String, dynamic>{
+      'autoConnect': false,
+      'transports': ['websocket'],
+    });
+
+    socket!.connect();
+    socket!.onConnect((_) {
+      socket!.emit('join', {'token': token});
       print('Connection established');
-      socket.on("chat", (data) {
+      socket!.on("chat", (data) {
         print(data);
       });
     });
-    socket.onDisconnect((_) => print('Connection Disconnection'));
-    socket.onConnectError((err) => print(err));
-    socket.onError((err) => print(err));
+
+    socket!.onDisconnect((_) => print('Connection Disconnection'));
+    socket!.onConnectError((err) => print(err));
+    socket!.onError((err) => print(err));
   }
 
   getSettings(context) async {
@@ -227,8 +231,13 @@ class AuthService {
     prefs.setBool("termsandconditions", termsandconditions);
     prefs.setString("searchhistories", searchhistoriesJson);
 
-    socket.disconnect();
-    socket.dispose();
+    if (socket == null) {
+      socket = IO.io(ApiConstants.socketServerURL, <String, dynamic>{
+        'autoConnect': true,
+        'transports': ['websocket'],
+      });
+    }
+    await socket!.disconnect();
 
     await storage.delete(key: "token");
     await FirebaseMessaging.instance.deleteToken();

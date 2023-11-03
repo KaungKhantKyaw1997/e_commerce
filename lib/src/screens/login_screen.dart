@@ -156,7 +156,6 @@ class _LogInScreenState extends State<LogInScreen> {
 
         _firebaseMessaging.getToken().then((token) {
           _fcmToken = token ?? '';
-          print("Token: $token");
           fcm();
         }).catchError((error) {
           _fcmToken = '';
