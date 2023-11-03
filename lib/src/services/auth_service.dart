@@ -16,8 +16,11 @@ import 'package:e_commerce/routes.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class AuthService {
+  late IO.Socket socket;
+
   final crashlytic = new CrashlyticsService();
   final storage = FlutterSecureStorage();
 
@@ -155,25 +158,21 @@ class AuthService {
     return response.data;
   }
 
-  logout(BuildContext context) async {
-    clearData();
-    RoleProvider roleProvider =
-        Provider.of<RoleProvider>(context, listen: false);
-    roleProvider.setRole('');
-
-    CartProvider cartProvider =
-        Provider.of<CartProvider>(context, listen: false);
-    cartProvider.addCount(0);
-
-    NotiProvider notiProvider =
-        Provider.of<NotiProvider>(context, listen: false);
-    notiProvider.addCount(0);
-
-    BottomProvider bottomProvider =
-        Provider.of<BottomProvider>(context, listen: false);
-    bottomProvider.selectIndex(0);
-
-    getSettings(context);
+  initSocket(String token) {
+    socket = IO.io(ApiConstants.socketServerURL, <String, dynamic>{
+      'autoConnect': true,
+      'transports': ['websocket'],
+    });
+    socket.onConnect((_) {
+      socket.emit('join', {'token': token});
+      print('Connection established');
+      socket.on("chat", (data) {
+        print(data);
+      });
+    });
+    socket.onDisconnect((_) => print('Connection Disconnection'));
+    socket.onConnectError((err) => print(err));
+    socket.onError((err) => print(err));
   }
 
   getSettings(context) async {
@@ -199,6 +198,27 @@ class AuthService {
     }
   }
 
+  logout(BuildContext context) async {
+    clearData();
+    RoleProvider roleProvider =
+        Provider.of<RoleProvider>(context, listen: false);
+    roleProvider.setRole('');
+
+    CartProvider cartProvider =
+        Provider.of<CartProvider>(context, listen: false);
+    cartProvider.addCount(0);
+
+    NotiProvider notiProvider =
+        Provider.of<NotiProvider>(context, listen: false);
+    notiProvider.addCount(0);
+
+    BottomProvider bottomProvider =
+        Provider.of<BottomProvider>(context, listen: false);
+    bottomProvider.selectIndex(0);
+
+    getSettings(context);
+  }
+
   clearData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String _email = prefs.getString("email") ?? "";
@@ -209,6 +229,11 @@ class AuthService {
     prefs.setString("email", _email);
     prefs.setBool("termsandconditions", termsandconditions);
     prefs.setString("searchhistories", searchhistoriesJson);
+
+    if (socket != null) {
+      socket.disconnect();
+      socket.dispose();
+    }
 
     await storage.delete(key: "token");
     await FirebaseMessaging.instance.deleteToken();

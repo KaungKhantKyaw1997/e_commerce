@@ -38,4 +38,5 @@ class ApiConstants {
       '$baseUrl/api/other-accessories-types';
   static const String gendersUrl = '$baseUrl/api/genders';
   static const String settingsUrl = '$baseUrl/api/settings';
+  static const String socketServerURL = 'http://150.95.82.125:8002';
 }
