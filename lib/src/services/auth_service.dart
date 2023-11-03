@@ -19,7 +19,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class AuthService {
-  late IO.Socket socket;
+  IO.Socket socket = IO.io(ApiConstants.socketServerURL, <String, dynamic>{
+    'autoConnect': true,
+    'transports': ['websocket'],
+  });
 
   final crashlytic = new CrashlyticsService();
   final storage = FlutterSecureStorage();
@@ -41,9 +44,9 @@ class AuthService {
     return response.data;
   }
 
-  Future<Map<String, dynamic>?> addFCMData(Map<String, dynamic> body) async {
+  addFCMData(Map<String, dynamic> body) async {
     var token = await storage.read(key: "token") ?? '';
-    final response = await dio.post(
+    dio.post(
       ApiConstants.fcmUrl,
       options: Options(
         headers: {
@@ -53,8 +56,6 @@ class AuthService {
       ),
       data: jsonEncode(body),
     );
-
-    return response.data;
   }
 
   Future<Map<String, dynamic>?> registerData(Map<String, dynamic> body) async {
@@ -159,10 +160,6 @@ class AuthService {
   }
 
   initSocket(String token) {
-    socket = IO.io(ApiConstants.socketServerURL, <String, dynamic>{
-      'autoConnect': true,
-      'transports': ['websocket'],
-    });
     socket.onConnect((_) {
       socket.emit('join', {'token': token});
       print('Connection established');
@@ -230,10 +227,8 @@ class AuthService {
     prefs.setBool("termsandconditions", termsandconditions);
     prefs.setString("searchhistories", searchhistoriesJson);
 
-    if (socket != null) {
-      socket.disconnect();
-      socket.dispose();
-    }
+    socket.disconnect();
+    socket.dispose();
 
     await storage.delete(key: "token");
     await FirebaseMessaging.instance.deleteToken();

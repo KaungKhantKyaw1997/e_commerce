@@ -96,14 +96,15 @@ class _LogInScreenState extends State<LogInScreen> {
 
         if (switchuser.isEmpty) {
           storage.write(
-              key: 'switchuser',
-              value: jsonEncode([
-                {
-                  "profile_image": response["data"]["profile_image"],
-                  "email": email.text,
-                  "password": password.text,
-                }
-              ]));
+            key: 'switchuser',
+            value: jsonEncode([
+              {
+                "profile_image": response["data"]["profile_image"],
+                "email": email.text,
+                "password": password.text,
+              }
+            ]),
+          );
         } else {
           var users = jsonDecode(switchuser);
           bool contain = false;
@@ -152,7 +153,7 @@ class _LogInScreenState extends State<LogInScreen> {
         }
 
         authService.initSocket(response["data"]["token"]);
-        
+
         _firebaseMessaging.getToken().then((token) {
           _fcmToken = token ?? '';
           print("Token: $token");
