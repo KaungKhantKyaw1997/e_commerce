@@ -35,11 +35,11 @@ class ChatScreenState extends State<ChatScreen> {
   List<XFile> pickedMultiFile = <XFile>[];
   int receiverId = 0;
   int chatId = 0;
-  String username = "MgKaung";
-  String lastSeenTime = "Last seen: 10:30 PM";
+  String chatName = '';
+  String lastSeenTime = '';
+  String from = '';
   List chatData = [];
   int page = 1;
-  int indexStatus = -1;
 
   @override
   void initState() {
@@ -51,6 +51,9 @@ class ChatScreenState extends State<ChatScreen> {
       if (arguments != null) {
         receiverId = arguments["receiver_id"] ?? 0;
         chatId = arguments["chat_id"] ?? 0;
+        chatName = arguments["chat_name"] ?? '';
+        lastSeenTime = arguments["created_at"] ?? '';
+        from = arguments["from"] ?? '';
       }
       await getChatMessages();
       WidgetsBinding.instance?.addPostFrameCallback((_) {
@@ -228,208 +231,207 @@ class ChatScreenState extends State<ChatScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  username,
+                  chatName,
                   style: FontConstants.body1,
                 ),
-                Text(
-                  lastSeenTime,
-                  style: FontConstants.caption2,
+                lastSeenTime.isNotEmpty
+                    ? Text(
+                        'Last seen: ${Jiffy.parseFromDateTime(DateTime.parse(lastSeenTime + "Z").toLocal()).format(pattern: "hh:mm a")}',
+                        style: FontConstants.caption1,
+                      )
+                    : Text(''),
+              ],
+            ),
+          ),
+          leading: BackButton(
+            color: Colors.black,
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.pushNamed(
+                context,
+                from == 'chat_history' ? Routes.chat_history : Routes.product,
+              );
+            },
+          ),
+        ),
+        body: WillPopScope(
+          onWillPop: () async {
+            Navigator.of(context).pop();
+            Navigator.pushNamed(
+              context,
+              from == 'chat_history' ? Routes.chat_history : Routes.product,
+            );
+            return true;
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(
+              top: 24,
+            ),
+            child: Column(
+              children: [
+                Expanded(
+                  child: SmartRefresher(
+                    header: ClassicHeader(),
+                    footer: ClassicFooter(),
+                    controller: _refreshController,
+                    enablePullDown: true,
+                    enablePullUp: false,
+                    onRefresh: () async {
+                      await getChatMessages();
+                    },
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      itemCount: chatData.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final message = chatData[index];
+                        return Column(
+                          children: [
+                            Center(
+                              child: Text(
+                                formatTime(message["created_at"]),
+                                style: FontConstants.smallText1,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 8,
+                                right: 8,
+                                bottom: 16,
+                              ),
+                              child: Align(
+                                alignment: message["is_my_message"]
+                                    ? Alignment.topRight
+                                    : Alignment.topLeft,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: message["is_my_message"]
+                                        ? Theme.of(context).primaryColor
+                                        : Color(0xffE0E6EC),
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(
+                                          message["is_my_message"] ? 26 : 0),
+                                      topRight: Radius.circular(26.0),
+                                      bottomRight: Radius.circular(
+                                          message["is_my_message"] ? 0 : 26),
+                                      bottomLeft: Radius.circular(26.0),
+                                    ),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16.0,
+                                    vertical: 10.0,
+                                  ),
+                                  margin: EdgeInsets.only(
+                                    left: message["is_my_message"] ? 100 : 0,
+                                    right: message["is_my_message"] ? 0 : 100,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        message["message_text"],
+                                        style: message["is_my_message"]
+                                            ? FontConstants.caption4
+                                            : FontConstants.caption2,
+                                      ),
+                                      if (message["is_my_message"])
+                                        Icon(
+                                          Icons.done_all,
+                                          color: message["status"] == 'send'
+                                              ? Colors.grey
+                                              : Colors.white,
+                                          size: 12,
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(
+                    top: 8,
+                    left: 16,
+                    right: 16,
+                    bottom: 24,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.white,
+                  ),
+                  child: Row(
+                    children: [
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     _pickMultiImage();
+                      //   },
+                      //   child: Container(
+                      //     margin: EdgeInsets.only(
+                      //       right: 16,
+                      //     ),
+                      //     child: SvgPicture.asset(
+                      //       "assets/icons/camera.svg",
+                      //       width: 24,
+                      //       height: 24,
+                      //     ),
+                      //   ),
+                      // ),
+                      Expanded(
+                        child: TextFormField(
+                          controller: message,
+                          focusNode: _messageFocusNode,
+                          keyboardType: TextInputType.text,
+                          textInputAction: TextInputAction.done,
+                          style: FontConstants.body1,
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            hintText: language["Message"] ?? "Message",
+                            filled: true,
+                            fillColor: ColorConstants.fillcolor,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          sendMessage();
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            left: 16,
+                          ),
+                          child: SvgPicture.asset(
+                            "assets/icons/send.svg",
+                            height: 24,
+                            width: 24,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-          iconTheme: IconThemeData(
-            color: Colors.black,
-          ),
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              child: SmartRefresher(
-                header: ClassicHeader(),
-                footer: ClassicFooter(),
-                controller: _refreshController,
-                enablePullDown: true,
-                enablePullUp: false,
-                onRefresh: () async {
-                  await getChatMessages();
-                },
-                child: ListView.builder(
-                  controller: _scrollController,
-                  itemCount: chatData.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final message = chatData[index];
-                    return Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 16,
-                          ),
-                          child: Center(
-                            child: Text(
-                              formatTime(message["created_at"]),
-                              style: FontConstants.smallText1,
-                            ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              if (indexStatus == index) {
-                                indexStatus = -1;
-                              } else {
-                                indexStatus = index;
-                              }
-                            });
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              left: 8,
-                              right: 8,
-                            ),
-                            child: Align(
-                              alignment: message["is_my_message"]
-                                  ? Alignment.topRight
-                                  : Alignment.topLeft,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: message["is_my_message"]
-                                      ? Theme.of(context).primaryColor
-                                      : Color(0xffE0E6EC),
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(
-                                        message["is_my_message"] ? 26 : 0),
-                                    topRight: Radius.circular(26.0),
-                                    bottomRight: Radius.circular(
-                                        message["is_my_message"] ? 0 : 26),
-                                    bottomLeft: Radius.circular(26.0),
-                                  ),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 16.0,
-                                  vertical: 10.0,
-                                ),
-                                margin: EdgeInsets.only(
-                                  left: message["is_my_message"] ? 100 : 0,
-                                  right: message["is_my_message"] ? 0 : 100,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      message["message_text"],
-                                      style: message["is_my_message"]
-                                          ? FontConstants.caption4
-                                          : FontConstants.caption2,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        indexStatus == index
-                            ? Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 4,
-                                  left: 8,
-                                  right: 8,
-                                ),
-                                child: Align(
-                                  alignment: message["is_my_message"]
-                                      ? Alignment.topRight
-                                      : Alignment.topLeft,
-                                  child: Text(
-                                    message["status"],
-                                    style: FontConstants.smallText1,
-                                  ),
-                                ),
-                              )
-                            : Text(''),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.only(
-                top: 8,
-                left: 16,
-                right: 16,
-                bottom: 24,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.white,
-              ),
-              child: Row(
-                children: [
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     _pickMultiImage();
-                  //   },
-                  //   child: Container(
-                  //     margin: EdgeInsets.only(
-                  //       right: 16,
-                  //     ),
-                  //     child: SvgPicture.asset(
-                  //       "assets/icons/camera.svg",
-                  //       width: 24,
-                  //       height: 24,
-                  //     ),
-                  //   ),
-                  // ),
-                  Expanded(
-                    child: TextFormField(
-                      controller: message,
-                      focusNode: _messageFocusNode,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.done,
-                      style: FontConstants.body1,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        hintText: language["Message"] ?? "Message",
-                        filled: true,
-                        fillColor: ColorConstants.fillcolor,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      sendMessage();
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(
-                        left: 16,
-                      ),
-                      child: SvgPicture.asset(
-                        "assets/icons/send.svg",
-                        height: 24,
-                        width: 24,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ),
       ),
     );

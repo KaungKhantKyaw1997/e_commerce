@@ -176,6 +176,7 @@ class _ProductScreenState extends State<ProductScreen> {
         Routes.chat,
         arguments: {
           'receiver_id': product["creator_id"],
+          'from': 'product',
         },
       );
       // } else {

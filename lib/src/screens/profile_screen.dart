@@ -50,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
       if (arguments != null) {
-        from = arguments["from"];
+        from = arguments["from"] ?? '';
       }
     });
     getData();

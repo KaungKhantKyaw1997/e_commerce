@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
+import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
@@ -10,6 +11,7 @@ import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ChatHistoryScreen extends StatefulWidget {
@@ -20,19 +22,31 @@ class ChatHistoryScreen extends StatefulWidget {
 }
 
 class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
-  bool isSearching = true;
+  final crashlytic = new CrashlyticsService();
+  ScrollController _scrollController = ScrollController();
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+  TextEditingController search = TextEditingController(text: '');
   List chats = [];
   int crossAxisCount = 1;
   final chatService = ChatService();
   int page = 1;
-final RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
-  TextEditingController search = TextEditingController(text: '');
-   final crashlytic = new CrashlyticsService();
-  getChatHistory() async {
+
+  @override
+  void initState() {
+    super.initState();
+    getChatSessions();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  getChatSessions() async {
     try {
-      final response =
-          await chatService.getChatSessionsData(page: page);
+      final response = await chatService.getChatSessionsData(page: page);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
 
@@ -75,139 +89,247 @@ final RefreshController _refreshController =
     }
   }
 
-    @override
-  void initState() {
-    super.initState();
-    getChatHistory();
+  chatCard(index) {
+    return Container(
+      padding: const EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 8,
+        bottom: 8,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(index == 0 ? 10 : 0),
+          topRight: Radius.circular(index == 0 ? 10 : 0),
+          bottomLeft: Radius.circular(index == chats.length - 1 ? 10 : 0),
+          bottomRight: Radius.circular(index == chats.length - 1 ? 10 : 0),
+        ),
+        color: Colors.white,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: chats[index]["profile_image"].isNotEmpty
+                ? BoxDecoration(
+                    color: ColorConstants.fillcolor,
+                    image: DecorationImage(
+                      image: NetworkImage(
+                          '${ApiConstants.baseUrl}${chats[index]["profile_image"].toString()}'),
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(
+                      color: Colors.transparent,
+                    ),
+                  )
+                : BoxDecoration(
+                    color: ColorConstants.fillcolor,
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/profile.png'),
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(
+                      color: Colors.transparent,
+                    ),
+                  ),
+          ),
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.only(
+                left: 15,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          chats[index]["sender_name"].toString(),
+                          overflow: TextOverflow.ellipsis,
+                          style: FontConstants.body1,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 8,
+                        ),
+                        child: Text(
+                          Jiffy.parseFromDateTime(DateTime.parse(
+                                      chats[index]["created_at"] + "Z")
+                                  .toLocal())
+                              .format(pattern: 'dd/MM/yyyy'),
+                          overflow: TextOverflow.ellipsis,
+                          style: FontConstants.caption1,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '${chats[index]["sender_name"]}: ${chats[index]["last_message_text"]}',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          style: FontConstants.caption1,
+                        ),
+                      ),
+                      chats[index]["unread_counts"] != 0
+                          ? Container(
+                              margin: EdgeInsets.only(
+                                left: 8,
+                              ),
+                              padding: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColor,
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 20,
+                                minHeight: 20,
+                              ),
+                              child: Text(
+                                chats[index]["unread_counts"].toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: FontConstants.bottom,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            )
+                          : Text(''),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          elevation: 0,
-          title: isSearching
-              ? TextField(
-                  controller: search,
-                  keyboardType: TextInputType.text,
-                  textInputAction: TextInputAction.done,
-                  style: FontConstants.body1,
-                  cursorColor: Colors.black,
-                  decoration: InputDecoration(
-                    hintText: language["Search"] ?? "Search",
-                    filled: true,
-                    fillColor: ColorConstants.fillcolor,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  onSubmitted: (value) {
-                    page = 1;
-                    chats = [];
-                    if (value.isEmpty) {
-                      setState(() {});
-                      return;
-                    }
-                    // getProducts();
-                  },
-                )
-              : Text(
-                  'Chat History',
-                  style: TextStyle(color: Colors.black),
-                ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right : 18.0),
-              child: IconButton(
-                icon: SvgPicture.asset(
-                  "assets/icons/search.svg",
-                  width: 24,
-                  height: 24,
-                  
-                  colorFilter: const ColorFilter.mode(
-                    Colors.black,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                onPressed: () {
-                  page = 1;
-                  chats = [];
-                  if (search.text.isEmpty) {
-                    setState(() {});
-                    return;
-                  }
-                  getChatHistory();
-                },
-              ),
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        elevation: 0,
+        title: TextField(
+          controller: search,
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.done,
+          style: FontConstants.body1,
+          cursorColor: Colors.black,
+          decoration: InputDecoration(
+            hintText: language["Search"] ?? "Search",
+            filled: true,
+            fillColor: ColorConstants.fillcolor,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
             ),
-          ],
-          iconTheme: IconThemeData(
-            color: Colors.black,
-          )
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide.none,
+            ),
           ),
-      body: ListView.builder(
-        itemCount: 10, 
-        itemBuilder: (BuildContext context, int index) {
-          String lastMessageTime = "Yesterday";
-          String senderName =
-              'Who sent the last message will be many time';
-          return ListTile(
-              //  contentPadding: EdgeInsets.only(right: ,left:10),
-            leading: CircleAvatar(
-              
-              backgroundImage: NetworkImage('https://via.placeholder.com/150'),
-            ),
-            title: Text('User Name'),
-            subtitle: Row(
-              children: [
-                Text('You: '),
-                Expanded(
-                  child: Text(
-                    senderName,
-                    overflow: TextOverflow.ellipsis,
-                    style: crossAxisCount == 1
-                        ? FontConstants.body1
-                        : FontConstants.caption2,
-                  ),
-                ),
-              ],
-            ),
-            trailing: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: 25,
-                  height: 25,
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      '3',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-                Text(
-                  lastMessageTime,
-                  style: FontConstants.smallText1,
-                ),
-              ],
-            ),
-          );
+          onChanged: (value) {
+            page = 1;
+            chats = [];
+            getChatSessions();
+          },
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
+      ),
+      body: SmartRefresher(
+        header: WaterDropMaterialHeader(
+          backgroundColor: Theme.of(context).primaryColor,
+          color: Colors.white,
+        ),
+        footer: ClassicFooter(),
+        controller: _refreshController,
+        enablePullDown: true,
+        enablePullUp: true,
+        onRefresh: () async {
+          page = 1;
+          chats = [];
+          await getChatSessions();
         },
+        onLoading: () async {
+          await getChatSessions();
+        },
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 24,
+            ),
+            width: double.infinity,
+            child: Column(
+              children: [
+                ListView.builder(
+                  controller: _scrollController,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: chats.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(
+                          context,
+                          Routes.chat,
+                          arguments: {
+                            'chat_id': chats[index]["chat_id"],
+                            'chat_name': chats[index]["chat_name"],
+                            'created_at': chats[index]["created_at"],
+                            'from': 'chat_history',
+                          },
+                        );
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          chatCard(index),
+                          index < chats.length - 1
+                              ? Container(
+                                  padding: const EdgeInsets.only(
+                                    left: 16,
+                                    right: 16,
+                                  ),
+                                  child: const Divider(
+                                    height: 0,
+                                    color: Colors.grey,
+                                  ),
+                                )
+                              : Container(),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
