@@ -338,27 +338,26 @@ class ChatScreenState extends State<ChatScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          if (!message["is_my_message"])
-                                            Container(
-                                              margin: const EdgeInsets.only(
-                                                right: 8,
-                                              ),
-                                              child: message["profile_image"]
-                                                      .isEmpty
-                                                  ? CircleAvatar(
-                                                      radius: 10,
-                                                      backgroundImage: AssetImage(
-                                                          "assets/images/profile.png"),
-                                                      backgroundColor:
-                                                          ColorConstants
-                                                              .fillcolor,
-                                                    )
-                                                  : CircleAvatar(
-                                                      radius: 10,
-                                                      backgroundImage: NetworkImage(
-                                                          '${ApiConstants.baseUrl}${message["profile_image"].toString()}'),
-                                                    ),
+                                          Container(
+                                            margin: const EdgeInsets.only(
+                                              right: 8,
                                             ),
+                                            child: message["profile_image"]
+                                                    .isEmpty
+                                                ? CircleAvatar(
+                                                    radius: 10,
+                                                    backgroundImage: AssetImage(
+                                                        "assets/images/profile.png"),
+                                                    backgroundColor:
+                                                        ColorConstants
+                                                            .fillcolor,
+                                                  )
+                                                : CircleAvatar(
+                                                    radius: 10,
+                                                    backgroundImage: NetworkImage(
+                                                        '${ApiConstants.baseUrl}${message["profile_image"].toString()}'),
+                                                  ),
+                                          ),
                                           Expanded(
                                             child: Container(
                                               decoration: BoxDecoration(
