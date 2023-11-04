@@ -329,10 +329,12 @@ class ChatScreenState extends State<ChatScreen> {
                   Provider.of<ChatHistoriesProvider>(context, listen: false);
               chatHistoriesProvider.setChatHistories([]);
               Navigator.of(context).pop();
-              Navigator.pushNamed(
-                context,
-                from == 'chat_history' ? Routes.chat_history : Routes.product,
-              );
+              if (from == 'chat_history') {
+                Navigator.pushNamed(
+                  context,
+                  Routes.chat_history,
+                );
+              }
             },
           ),
         ),
@@ -343,10 +345,12 @@ class ChatScreenState extends State<ChatScreen> {
                 Provider.of<ChatHistoriesProvider>(context, listen: false);
             chatHistoriesProvider.setChatHistories([]);
             Navigator.of(context).pop();
-            Navigator.pushNamed(
-              context,
-              from == 'chat_history' ? Routes.chat_history : Routes.product,
-            );
+            if (from == 'chat_history') {
+              Navigator.pushNamed(
+                context,
+                Routes.chat_history,
+              );
+            }
             return true;
           },
           child: Column(
