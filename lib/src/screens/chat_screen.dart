@@ -13,6 +13,7 @@ import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -37,11 +38,13 @@ class ChatScreenState extends State<ChatScreen> {
   String username = "MgKaung";
   String lastSeenTime = "Last seen: 10:30 PM";
   List chatData = [];
+  int page = 1;
+  int indexStatus = -1;
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
+    Future.delayed(Duration.zero, () async {
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
@@ -49,7 +52,10 @@ class ChatScreenState extends State<ChatScreen> {
         receiverId = arguments["receiver_id"] ?? 0;
         chatId = arguments["chat_id"] ?? 0;
       }
-      getChatMessages();
+      await getChatMessages();
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      });
     });
   }
 
@@ -62,14 +68,21 @@ class ChatScreenState extends State<ChatScreen> {
 
   getChatMessages() async {
     try {
-      final response =
-          await chatService.getChatMessagesData(chatId, receiverId);
+      final response = await chatService.getChatMessagesData(
+          chatId: chatId, receiverId: receiverId, page: page);
       _refreshController.refreshCompleted();
-      _refreshController.loadComplete();
 
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
-          // updateMessageStatus();
+          for (var message in response["data"]) {
+            if (message["status"] == "sent") {
+              updateMessageStatus(message["message_id"]);
+            }
+          }
+
+          chatData += response["data"];
+          chatData.sort((a, b) => a["created_at"].compareTo(b["created_at"]));
+          page++;
         }
         setState(() {});
       } else {
@@ -77,7 +90,6 @@ class ChatScreenState extends State<ChatScreen> {
       }
     } catch (e, s) {
       _refreshController.refreshCompleted();
-      _refreshController.loadComplete();
       if (e is DioException &&
           e.error is SocketException &&
           !isConnectionTimeout) {
@@ -122,8 +134,11 @@ class ChatScreenState extends State<ChatScreen> {
       };
       final response = await chatService.sendMessageData(body);
       if (response!["code"] == 201) {
+        _messageFocusNode.unfocus();
         message.text = '';
-        setState(() {});
+        this.chatData = [];
+        this.page = 1;
+        getChatMessages();
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -186,64 +201,12 @@ class ChatScreenState extends State<ChatScreen> {
 
     if (currentTime.difference(messageTime).inDays < 7) {
       return messageTime.weekday == currentTime.weekday
-          ? 'Today at ${messageTime.hour}:${messageTime.minute}'
-          : '${_getWeekday(messageTime.weekday)} at ${messageTime.hour}:${messageTime.minute}';
+          ? '${Jiffy.parseFromDateTime(DateTime.parse(time + "Z").toLocal()).format(pattern: "hh:mm a")}'
+          : '${Jiffy.parseFromDateTime(DateTime.parse(time + "Z").toLocal()).format(pattern: "EEE AT hh:mm a")}';
     } else if (currentTime.year == messageTime.year) {
-      return '${_getMonth(messageTime.month)} ${messageTime.day} at ${messageTime.hour}:${messageTime.minute}';
+      return '${Jiffy.parseFromDateTime(DateTime.parse(time + "Z").toLocal()).format(pattern: "MMM dd AT hh:mm a")}';
     } else {
-      return '${messageTime.year} ${_getMonth(messageTime.month)} ${messageTime.day} at ${messageTime.hour}:${messageTime.minute}';
-    }
-  }
-
-  String _getWeekday(int weekday) {
-    switch (weekday) {
-      case 1:
-        return 'Mon';
-      case 2:
-        return 'Tue';
-      case 3:
-        return 'Wed';
-      case 4:
-        return 'Thu';
-      case 5:
-        return 'Fri';
-      case 6:
-        return 'Sat';
-      case 7:
-        return 'Sun';
-      default:
-        return '';
-    }
-  }
-
-  String _getMonth(int month) {
-    switch (month) {
-      case 1:
-        return 'Jan';
-      case 2:
-        return 'Feb';
-      case 3:
-        return 'Mar';
-      case 4:
-        return 'Apr';
-      case 5:
-        return 'May';
-      case 6:
-        return 'Jun';
-      case 7:
-        return 'Jul';
-      case 8:
-        return 'Aug';
-      case 9:
-        return 'Sep';
-      case 10:
-        return 'Oct';
-      case 11:
-        return 'Nov';
-      case 12:
-        return 'Dec';
-      default:
-        return '';
+      return '${Jiffy.parseFromDateTime(DateTime.parse(time + "Z").toLocal()).format(pattern: "yyyy MMM dd AT hh:mm a")}';
     }
   }
 
@@ -251,162 +214,223 @@ class ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Align(
-          alignment: Alignment.centerLeft,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                username,
-                style: FontConstants.body1,
-              ),
-              Text(
-                lastSeenTime,
-                style: FontConstants.caption2,
-              ),
-            ],
-          ),
-        ),
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: 0,
-              itemBuilder: (BuildContext context, int index) {
-                final message = chatData[index];
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Align(
-                    alignment:
-                        message.isMe ? Alignment.topRight : Alignment.topLeft,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: message.isMe
-                            ? Theme.of(context).primaryColor
-                            : Color(0xffE0E6EC),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(message.isMe ? 26 : 0),
-                          topRight: Radius.circular(26.0),
-                          bottomRight: Radius.circular(message.isMe ? 0 : 26),
-                          bottomLeft: Radius.circular(26.0),
-                        ),
-                      ),
-                      width: MediaQuery.of(context).size.width - 100,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 10.0,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            formatTime(message.time),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            message.message,
-                            style: TextStyle(
-                              color: message.isMe ? Colors.white : Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(
-              top: 8,
-              left: 16,
-              right: 16,
-              bottom: 24,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.white,
-            ),
-            child: Row(
+    return GestureDetector(
+      onTap: () {
+        _messageFocusNode.unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  onTap: () {
-                    // _pickMultiImage();
-                  },
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      right: 16,
-                    ),
-                    child: SvgPicture.asset(
-                      "assets/icons/camera.svg",
-                      width: 24,
-                      height: 24,
-                    ),
-                  ),
+                Text(
+                  username,
+                  style: FontConstants.body1,
                 ),
-                Expanded(
-                  child: TextFormField(
-                    controller: message,
-                    focusNode: _messageFocusNode,
-                    keyboardType: TextInputType.text,
-                    textInputAction: TextInputAction.done,
-                    style: FontConstants.body1,
-                    cursorColor: Colors.black,
-                    decoration: InputDecoration(
-                      hintText: language["Message"] ?? "Message",
-                      filled: true,
-                      fillColor: ColorConstants.fillcolor,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    sendMessage();
-                  },
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      left: 16,
-                    ),
-                    child: SvgPicture.asset(
-                      "assets/icons/send.svg",
-                      height: 24,
-                      width: 24,
-                    ),
-                  ),
+                Text(
+                  lastSeenTime,
+                  style: FontConstants.caption2,
                 ),
               ],
             ),
           ),
-        ],
+          iconTheme: IconThemeData(
+            color: Colors.black,
+          ),
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: SmartRefresher(
+                header: ClassicHeader(),
+                footer: ClassicFooter(),
+                controller: _refreshController,
+                enablePullDown: true,
+                enablePullUp: false,
+                onRefresh: () async {
+                  await getChatMessages();
+                },
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: chatData.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final message = chatData[index];
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 16,
+                          ),
+                          child: Center(
+                            child: Text(
+                              formatTime(message["created_at"]),
+                              style: FontConstants.smallText1,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              if (indexStatus == index) {
+                                indexStatus = -1;
+                              } else {
+                                indexStatus = index;
+                              }
+                            });
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              left: 8,
+                              right: 8,
+                            ),
+                            child: Align(
+                              alignment: message["is_my_message"]
+                                  ? Alignment.topRight
+                                  : Alignment.topLeft,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: message["is_my_message"]
+                                      ? Theme.of(context).primaryColor
+                                      : Color(0xffE0E6EC),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(
+                                        message["is_my_message"] ? 26 : 0),
+                                    topRight: Radius.circular(26.0),
+                                    bottomRight: Radius.circular(
+                                        message["is_my_message"] ? 0 : 26),
+                                    bottomLeft: Radius.circular(26.0),
+                                  ),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16.0,
+                                  vertical: 10.0,
+                                ),
+                                margin: EdgeInsets.only(
+                                  left: message["is_my_message"] ? 100 : 0,
+                                  right: message["is_my_message"] ? 0 : 100,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      message["message_text"],
+                                      style: message["is_my_message"]
+                                          ? FontConstants.caption4
+                                          : FontConstants.caption2,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        indexStatus == index
+                            ? Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 4,
+                                  left: 8,
+                                  right: 8,
+                                ),
+                                child: Align(
+                                  alignment: message["is_my_message"]
+                                      ? Alignment.topRight
+                                      : Alignment.topLeft,
+                                  child: Text(
+                                    message["status"],
+                                    style: FontConstants.smallText1,
+                                  ),
+                                ),
+                              )
+                            : Text(''),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(
+                top: 8,
+                left: 16,
+                right: 16,
+                bottom: 24,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.white,
+              ),
+              child: Row(
+                children: [
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     _pickMultiImage();
+                  //   },
+                  //   child: Container(
+                  //     margin: EdgeInsets.only(
+                  //       right: 16,
+                  //     ),
+                  //     child: SvgPicture.asset(
+                  //       "assets/icons/camera.svg",
+                  //       width: 24,
+                  //       height: 24,
+                  //     ),
+                  //   ),
+                  // ),
+                  Expanded(
+                    child: TextFormField(
+                      controller: message,
+                      focusNode: _messageFocusNode,
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.done,
+                      style: FontConstants.body1,
+                      cursorColor: Colors.black,
+                      decoration: InputDecoration(
+                        hintText: language["Message"] ?? "Message",
+                        filled: true,
+                        fillColor: ColorConstants.fillcolor,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      sendMessage();
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(
+                        left: 16,
+                      ),
+                      child: SvgPicture.asset(
+                        "assets/icons/send.svg",
+                        height: 24,
+                        width: 24,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

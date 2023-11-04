@@ -10,6 +10,7 @@ import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:e_commerce/src/services/buyer_protections_service.dart';
+import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/user_service.dart';
 import 'package:e_commerce/src/utils/format_amount.dart';
@@ -30,6 +31,7 @@ class _ProductScreenState extends State<ProductScreen> {
   final crashlytic = new CrashlyticsService();
   ScrollController _scrollController = ScrollController();
   final buyerProtectionsService = BuyerProtectionsService();
+  final chatService = ChatService();
   final userService = UserService();
   final PageController _imageController = PageController();
   List<Map<String, dynamic>> carts = [];
@@ -159,6 +161,49 @@ class _ProductScreenState extends State<ProductScreen> {
             context,
             Routes.unauthorized,
           );
+        }
+      }
+    }
+  }
+
+  getChatSession() async {
+    try {
+      // final response = await chatService.getChatSessionData(
+      //     receiverId: product["creator_id"]);
+      // if (response!["code"] == 200) {
+      Navigator.pushNamed(
+        context,
+        Routes.chat,
+        arguments: {
+          'receiver_id': product["creator_id"],
+        },
+      );
+      // } else {
+      //   ToastUtil.showToast(response["code"], response["message"]);
+      // }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
         }
       }
     }
@@ -965,13 +1010,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      Routes.chat,
-                                      arguments: {
-                                        'receiver_id': product["creator_id"],
-                                      },
-                                    );
+                                    getChatSession();
                                   },
                                 ),
                               ),

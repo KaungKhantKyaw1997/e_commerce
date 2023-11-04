@@ -44,11 +44,30 @@ class ChatService {
     return response.data;
   }
 
-  Future<Map<String, dynamic>?> getChatMessagesData(
-      int chatId, int receiverId) async {
+  Future<Map<String, dynamic>?> getChatSessionData({int receiverId = 0}) async {
     var token = await storage.read(key: "token") ?? '';
     final response = await dio.get(
-      '${ApiConstants.chatSessionsUrl}/$chatId/chat-messages?page=1&per_page=10&receiver_id=$receiverId',
+      '${ApiConstants.chatSessionsUrl}/0?receiver_id=$receiverId',
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>?> getChatMessagesData(
+      {int chatId = 0,
+      int receiverId = 0,
+      int page = 1,
+      int perPage = 10}) async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      '${ApiConstants.chatSessionsUrl}/$chatId/chat-messages?page=$page&per_page=$perPage&receiver_id=$receiverId',
       options: Options(
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
