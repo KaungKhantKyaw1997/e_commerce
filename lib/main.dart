@@ -4,6 +4,7 @@ import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
 import 'package:e_commerce/src/providers/role_provider.dart';
+import 'package:e_commerce/src/providers/socket_provider.dart';
 import 'package:e_commerce/src/services/local_notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -37,6 +38,7 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (context) => SocketProvider()),
         ChangeNotifierProvider(create: (context) => ChatHistoriesProvider()),
         ChangeNotifierProvider(create: (context) => ChatsProvider()),
         ChangeNotifierProvider(create: (context) => RoleProvider()),

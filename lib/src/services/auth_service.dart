@@ -7,6 +7,7 @@ import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/providers/role_provider.dart';
+import 'package:e_commerce/src/providers/socket_provider.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/settings_service.dart';
@@ -21,8 +22,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class AuthService {
-  IO.Socket? socket;
-
   final crashlytic = new CrashlyticsService();
   final storage = FlutterSecureStorage();
 
@@ -159,25 +158,25 @@ class AuthService {
   }
 
   void initSocket(String token, context) {
-    socket = IO.io(ApiConstants.socketServerURL, <String, dynamic>{
-      'autoConnect': false,
-      'transports': ['websocket'],
-    });
+    SocketProvider socketProvider =
+        Provider.of<SocketProvider>(context, listen: false);
 
-    socket!.connect();
-    socket!.onConnect((_) {
-      socket!.emit('join', {'token': token});
+    socketProvider.socket!.clearListeners();
+    socketProvider.socket!.connect();
+    socketProvider.socket!.onConnect((_) {
+      socketProvider.socket!.emit('join', {'token': token});
       print('Connection established');
 
-      socket!.on("new-chat", (data) {
+      socketProvider.socket!.on("new-chat", (data) {
         getChatSession(data["chat_id"], context);
       });
 
-      socket!.on("new-message", (data) {
+      socketProvider.socket!.on("new-message", (data) {
         getChatMessages(data["message_id"], context);
+        // getChatSession(data["chat_id"], context);
       });
 
-      socket!.on("update-message-status", (data) {
+      socketProvider.socket!.on("update-message-status", (data) {
         ChatsProvider chatProvider =
             Provider.of<ChatsProvider>(context, listen: false);
         var chats = chatProvider.chats;
@@ -187,12 +186,14 @@ class AuthService {
           }
         }
         chatProvider.setChats(chats);
+        getChatSession(data["chat_id"], context);
       });
     });
 
-    socket!.onDisconnect((_) => print('Connection Disconnection'));
-    socket!.onConnectError((err) => print(err));
-    socket!.onError((err) => print(err));
+    socketProvider.socket!
+        .onDisconnect((_) => print('Connection Disconnection'));
+    socketProvider.socket!.onConnectError((err) => print(err));
+    socketProvider.socket!.onError((err) => print(err));
   }
 
   getChatSession(chatId, context) async {
@@ -254,7 +255,7 @@ class AuthService {
   }
 
   logout(context) async {
-    clearData();
+    clearData(context);
     RoleProvider roleProvider =
         Provider.of<RoleProvider>(context, listen: false);
     roleProvider.setRole('');
@@ -274,7 +275,10 @@ class AuthService {
     getSettings(context);
   }
 
-  clearData() async {
+  clearData(context) async {
+    SocketProvider socketProvider =
+        Provider.of<SocketProvider>(context, listen: false);
+
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String _email = prefs.getString("email") ?? "";
     bool termsandconditions = prefs.getBool("termsandconditions") ?? false;
@@ -285,13 +289,7 @@ class AuthService {
     prefs.setBool("termsandconditions", termsandconditions);
     prefs.setString("searchhistories", searchhistoriesJson);
 
-    if (socket == null) {
-      socket = IO.io(ApiConstants.socketServerURL, <String, dynamic>{
-        'autoConnect': true,
-        'transports': ['websocket'],
-      });
-    }
-    await socket!.disconnect();
+    await socketProvider.socket!.disconnect();
 
     await storage.delete(key: "token");
     await FirebaseMessaging.instance.deleteToken();
