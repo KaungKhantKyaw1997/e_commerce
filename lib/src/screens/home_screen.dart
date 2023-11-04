@@ -6,6 +6,7 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/src/providers/chat_histories_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/screens/bottombar_screen.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
@@ -658,6 +659,9 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
               ),
               onPressed: () {
+                ChatHistoriesProvider chatHistoriesProvider =
+                    Provider.of<ChatHistoriesProvider>(context, listen: false);
+                chatHistoriesProvider.setChatHistories([]);
                 Navigator.pushNamed(
                   context,
                   Routes.chat_history,

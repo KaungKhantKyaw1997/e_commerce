@@ -7,7 +7,8 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
-import 'package:e_commerce/src/providers/chat_provider.dart';
+import 'package:e_commerce/src/providers/chat_histories_provider.dart';
+import 'package:e_commerce/src/providers/chats_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
@@ -41,7 +42,6 @@ class ChatScreenState extends State<ChatScreen> {
   String chatName = '';
   String lastSeenTime = '';
   String profileImage = '';
-  int senderId = 0;
   String from = '';
   int page = 1;
 
@@ -58,7 +58,6 @@ class ChatScreenState extends State<ChatScreen> {
         chatName = arguments["chat_name"] ?? '';
         lastSeenTime = arguments["created_at"] ?? '';
         profileImage = arguments["profile_image"] ?? '';
-        senderId = arguments["sender_id"] ?? 0;
         from = arguments["from"] ?? '';
       }
       await getChatMessages();
@@ -76,8 +75,8 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   getChatMessages() async {
-    ChatProvider chatProvider =
-        Provider.of<ChatProvider>(context, listen: false);
+    ChatsProvider chatProvider =
+        Provider.of<ChatsProvider>(context, listen: false);
     try {
       final response = await chatService.getChatMessagesData(
           chatId: chatId, receiverId: receiverId, page: page);
@@ -92,11 +91,11 @@ class ChatScreenState extends State<ChatScreen> {
               updateMessageStatus(message["message_id"]);
             }
           }
-          List chats = chatProvider.chatData;
+
+          List chats = chatProvider.chats;
           chats += response["data"];
           chats.sort((a, b) => a["created_at"].compareTo(b["created_at"]));
-          chatProvider.setChatData(chats);
-
+          chatProvider.setChats(chats);
           page++;
         }
         setState(() {});
@@ -140,8 +139,8 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   sendMessage() async {
-    ChatProvider chatProvider =
-        Provider.of<ChatProvider>(context, listen: false);
+    ChatsProvider chatProvider =
+        Provider.of<ChatsProvider>(context, listen: false);
     try {
       final body = {
         "receiver_id": receiverId,
@@ -153,7 +152,7 @@ class ChatScreenState extends State<ChatScreen> {
       if (response!["code"] == 201) {
         _messageFocusNode.unfocus();
         message.text = '';
-        chatProvider.setChatData([]);
+        chatProvider.setChats([]);
         this.page = 1;
         getChatMessages();
       } else {
@@ -266,8 +265,8 @@ class ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ChatProvider chatProvider =
-        Provider.of<ChatProvider>(context, listen: false);
+    ChatsProvider chatProvider =
+        Provider.of<ChatsProvider>(context, listen: true);
 
     return GestureDetector(
       onTap: () {
@@ -323,6 +322,9 @@ class ChatScreenState extends State<ChatScreen> {
           leading: BackButton(
             color: Colors.black,
             onPressed: () {
+              ChatHistoriesProvider chatHistoriesProvider =
+                  Provider.of<ChatHistoriesProvider>(context, listen: false);
+              chatHistoriesProvider.setChatHistories([]);
               Navigator.of(context).pop();
               Navigator.pushNamed(
                 context,
@@ -331,8 +333,12 @@ class ChatScreenState extends State<ChatScreen> {
             },
           ),
         ),
+        backgroundColor: Colors.white,
         body: WillPopScope(
           onWillPop: () async {
+            ChatHistoriesProvider chatHistoriesProvider =
+                Provider.of<ChatHistoriesProvider>(context, listen: false);
+            chatHistoriesProvider.setChatHistories([]);
             Navigator.of(context).pop();
             Navigator.pushNamed(
               context,
@@ -354,9 +360,9 @@ class ChatScreenState extends State<ChatScreen> {
                   },
                   child: ListView.builder(
                     controller: _scrollController,
-                    itemCount: chatProvider.chatData.length,
+                    itemCount: chatProvider.chats.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final message = chatProvider.chatData[index];
+                      final message = chatProvider.chats[index];
                       return Column(
                         children: [
                           Center(
@@ -374,7 +380,7 @@ class ChatScreenState extends State<ChatScreen> {
                             padding: EdgeInsets.only(
                               left: 8,
                               right: 8,
-                              bottom: chatProvider.chatData.length - 1 == index
+                              bottom: chatProvider.chats.length - 1 == index
                                   ? 16
                                   : 0,
                             ),

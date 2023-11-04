@@ -6,11 +6,14 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/src/providers/chat_histories_provider.dart';
+import 'package:e_commerce/src/providers/chats_provider.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ChatHistoryScreen extends StatefulWidget {
@@ -26,7 +29,6 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   TextEditingController search = TextEditingController(text: '');
-  List chats = [];
   int crossAxisCount = 1;
   final chatService = ChatService();
   int page = 1;
@@ -44,6 +46,8 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
   }
 
   getChatSessions() async {
+    ChatHistoriesProvider chatHistoriesProvider =
+        Provider.of<ChatHistoriesProvider>(context, listen: false);
     try {
       final response = await chatService.getChatSessionsData(page: page);
       _refreshController.refreshCompleted();
@@ -51,7 +55,9 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
 
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
-          chats += response["data"];
+          List chatHistories = chatHistoriesProvider.chatHistories;
+          chatHistories += response["data"];
+          chatHistoriesProvider.setChatHistories(chatHistories);
           page++;
         }
         setState(() {});
@@ -89,6 +95,9 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
   }
 
   chatCard(index) {
+    ChatHistoriesProvider chatHistoriesProvider =
+        Provider.of<ChatHistoriesProvider>(context, listen: true);
+
     return Container(
       padding: const EdgeInsets.only(
         left: 16,
@@ -100,8 +109,10 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(index == 0 ? 10 : 0),
           topRight: Radius.circular(index == 0 ? 10 : 0),
-          bottomLeft: Radius.circular(index == chats.length - 1 ? 10 : 0),
-          bottomRight: Radius.circular(index == chats.length - 1 ? 10 : 0),
+          bottomLeft: Radius.circular(
+              index == chatHistoriesProvider.chatHistories.length - 1 ? 10 : 0),
+          bottomRight: Radius.circular(
+              index == chatHistoriesProvider.chatHistories.length - 1 ? 10 : 0),
         ),
         color: Colors.white,
       ),
@@ -112,12 +123,13 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
           Container(
             width: 60,
             height: 60,
-            decoration: chats[index]["profile_image"].isNotEmpty
+            decoration: chatHistoriesProvider
+                    .chatHistories[index]["profile_image"].isNotEmpty
                 ? BoxDecoration(
                     color: ColorConstants.fillcolor,
                     image: DecorationImage(
                       image: NetworkImage(
-                          '${ApiConstants.baseUrl}${chats[index]["profile_image"].toString()}'),
+                          '${ApiConstants.baseUrl}${chatHistoriesProvider.chatHistories[index]["profile_image"].toString()}'),
                       fit: BoxFit.cover,
                     ),
                     borderRadius: BorderRadius.circular(50),
@@ -151,7 +163,9 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          chats[index]["sender_name"].toString(),
+                          chatHistoriesProvider.chatHistories[index]
+                                  ["sender_name"]
+                              .toString(),
                           overflow: TextOverflow.ellipsis,
                           style: FontConstants.body1,
                         ),
@@ -162,7 +176,9 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                         ),
                         child: Text(
                           Jiffy.parseFromDateTime(DateTime.parse(
-                                      chats[index]["created_at"] + "Z")
+                                      chatHistoriesProvider.chatHistories[index]
+                                              ["created_at"] +
+                                          "Z")
                                   .toLocal())
                               .format(pattern: 'dd/MM/yyyy'),
                           overflow: TextOverflow.ellipsis,
@@ -177,13 +193,15 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          '${chats[index]["sender_name"]}: ${chats[index]["last_message_text"]}',
+                          '${chatHistoriesProvider.chatHistories[index]["sender_name"]}: ${chatHistoriesProvider.chatHistories[index]["last_message_text"]}',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                           style: FontConstants.caption1,
                         ),
                       ),
-                      chats[index]["unread_counts"] != 0
+                      chatHistoriesProvider.chatHistories[index]
+                                  ["unread_counts"] !=
+                              0
                           ? Container(
                               margin: EdgeInsets.only(
                                 left: 8,
@@ -198,7 +216,9 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                                 minHeight: 20,
                               ),
                               child: Text(
-                                chats[index]["unread_counts"].toString(),
+                                chatHistoriesProvider.chatHistories[index]
+                                        ["unread_counts"]
+                                    .toString(),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: FontConstants.bottom,
@@ -220,6 +240,9 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ChatHistoriesProvider chatHistoriesProvider =
+        Provider.of<ChatHistoriesProvider>(context, listen: true);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -249,7 +272,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
           ),
           onChanged: (value) {
             page = 1;
-            chats = [];
+            chatHistoriesProvider.setChatHistories([]);
             getChatSessions();
           },
         ),
@@ -268,7 +291,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
         enablePullUp: true,
         onRefresh: () async {
           page = 1;
-          chats = [];
+          chatHistoriesProvider.setChatHistories([]);
           await getChatSessions();
         },
         onLoading: () async {
@@ -287,20 +310,27 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                   controller: _scrollController,
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: chats.length,
+                  itemCount: chatHistoriesProvider.chatHistories.length,
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
+                        ChatsProvider chatProvider =
+                            Provider.of<ChatsProvider>(context, listen: false);
+                        chatProvider.setChats([]);
+
                         Navigator.pop(context);
                         Navigator.pushNamed(
                           context,
                           Routes.chat,
                           arguments: {
-                            'chat_id': chats[index]["chat_id"],
-                            'chat_name': chats[index]["chat_name"],
-                            'created_at': chats[index]["created_at"],
-                            'profile_image': chats[index]["profile_image"],
-                            'sender_id': chats[index]["sender_id"],
+                            'chat_id': chatHistoriesProvider
+                                .chatHistories[index]["chat_id"],
+                            'chat_name': chatHistoriesProvider
+                                .chatHistories[index]["chat_name"],
+                            'created_at': chatHistoriesProvider
+                                .chatHistories[index]["created_at"],
+                            'profile_image': chatHistoriesProvider
+                                .chatHistories[index]["profile_image"],
                             'from': 'chat_history',
                           },
                         );
@@ -310,7 +340,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           chatCard(index),
-                          index < chats.length - 1
+                          index < chatHistoriesProvider.chatHistories.length - 1
                               ? Container(
                                   padding: const EdgeInsets.only(
                                     left: 16,

@@ -1,7 +1,8 @@
 import 'package:camera/camera.dart';
 import 'package:e_commerce/agent_palette.dart';
 import 'package:e_commerce/global.dart';
-import 'package:e_commerce/src/providers/chat_provider.dart';
+import 'package:e_commerce/src/providers/chat_histories_provider.dart';
+import 'package:e_commerce/src/providers/chats_provider.dart';
 import 'package:e_commerce/src/providers/role_provider.dart';
 import 'package:e_commerce/src/services/local_notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -36,7 +37,8 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => ChatProvider()),
+        ChangeNotifierProvider(create: (context) => ChatHistoriesProvider()),
+        ChangeNotifierProvider(create: (context) => ChatsProvider()),
         ChangeNotifierProvider(create: (context) => RoleProvider()),
         ChangeNotifierProvider(create: (context) => BottomProvider()),
         ChangeNotifierProvider(create: (context) => CartProvider(cartCount)),

@@ -44,10 +44,11 @@ class ChatService {
     return response.data;
   }
 
-  Future<Map<String, dynamic>?> getChatSessionData({int receiverId = 0}) async {
+  Future<Map<String, dynamic>?> getChatSessionData(
+      {int chatId = 0, int receiverId = 0}) async {
     var token = await storage.read(key: "token") ?? '';
     final response = await dio.get(
-      '${ApiConstants.chatSessionsUrl}/0?receiver_id=$receiverId',
+      '${ApiConstants.chatSessionsUrl}/$chatId?receiver_id=$receiverId',
       options: Options(
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',

@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
-import 'package:e_commerce/src/providers/chat_provider.dart';
+import 'package:e_commerce/src/providers/chats_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/providers/role_provider.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
@@ -170,7 +170,7 @@ class AuthService {
       print('Connection established');
 
       socket!.on("new-chat", (data) {
-        print(data);
+        getChatSession(data["chat_id"], context);
       });
 
       socket!.on("new-message", (data) {
@@ -183,18 +183,35 @@ class AuthService {
     socket!.onError((err) => print(err));
   }
 
+  getChatSession(chatId, context) async {
+    ChatsProvider chatProvider =
+        Provider.of<ChatsProvider>(context, listen: false);
+    try {
+      final chatService = ChatService();
+      final response = await chatService.getChatSessionData(chatId: chatId);
+      if (response!["code"] == 200) {
+        List chats = chatProvider.chats;
+        chats.add(response["data"]);
+        chats.sort((a, b) => a["created_at"].compareTo(b["created_at"]));
+        chatProvider.setChats(chats);
+      }
+    } catch (e, s) {
+      crashlytic.myGlobalErrorHandler(e, s);
+    }
+  }
+
   getChatMessages(messageId, context) async {
-    ChatProvider chatProvider =
-        Provider.of<ChatProvider>(context, listen: false);
+    ChatsProvider chatProvider =
+        Provider.of<ChatsProvider>(context, listen: false);
     try {
       final chatService = ChatService();
       final response =
           await chatService.getChatMessageData(messageId: messageId);
       if (response!["code"] == 200) {
-        List chats = chatProvider.chatData;
+        List chats = chatProvider.chats;
         chats.add(response["data"]);
         chats.sort((a, b) => a["created_at"].compareTo(b["created_at"]));
-        chatProvider.setChatData(chats);
+        chatProvider.setChats(chats);
       }
     } catch (e, s) {
       crashlytic.myGlobalErrorHandler(e, s);

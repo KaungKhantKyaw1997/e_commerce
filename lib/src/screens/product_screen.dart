@@ -9,6 +9,7 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
+import 'package:e_commerce/src/providers/chats_provider.dart';
 import 'package:e_commerce/src/services/buyer_protections_service.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
@@ -167,21 +168,26 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   getChatSession() async {
+    ChatsProvider chatProvider =
+        Provider.of<ChatsProvider>(context, listen: false);
+    chatProvider.setChats([]);
     try {
-      // final response = await chatService.getChatSessionData(
-      //     receiverId: product["creator_id"]);
-      // if (response!["code"] == 200) {
-      Navigator.pushNamed(
-        context,
-        Routes.chat,
-        arguments: {
-          'receiver_id': product["creator_id"],
-          'from': 'product',
-        },
-      );
-      // } else {
-      //   ToastUtil.showToast(response["code"], response["message"]);
-      // }
+      final response = await chatService.getChatSessionData(
+          receiverId: product["creator_id"]);
+      if (response!["code"] == 200) {
+        Navigator.pushNamed(
+          context,
+          Routes.chat,
+          arguments: {
+            'receiver_id': product["creator_id"],
+            'chat_name': sellerinfo["seller_name"],
+            'profile_image': sellerinfo["seller_profile_image"],
+            'from': 'product',
+          },
+        );
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
     } catch (e, s) {
       if (e is DioException &&
           e.error is SocketException &&
@@ -203,8 +209,16 @@ class _ProductScreenState extends State<ProductScreen> {
             Routes.unauthorized,
           );
         } else {
-          ToastUtil.showToast(
-              e.response!.data['code'], e.response!.data['message']);
+          Navigator.pushNamed(
+            context,
+            Routes.chat,
+            arguments: {
+              'receiver_id': product["creator_id"],
+              'chat_name': sellerinfo["seller_name"],
+              'profile_image': sellerinfo["seller_profile_image"],
+              'from': 'product',
+            },
+          );
         }
       }
     }
