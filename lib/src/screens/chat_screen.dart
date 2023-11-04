@@ -83,8 +83,9 @@ class ChatScreenState extends State<ChatScreen> {
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           for (var message in response["data"]) {
-            if (message["status"] == "sent" &&
-                message["sender_id"] != senderId) {
+            if ((message["status"] == "sent" ||
+                    message["status"] == "delivered") &&
+                !message["is_my_message"]) {
               updateMessageStatus(message["message_id"]);
             }
           }
@@ -204,6 +205,43 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  deleteMessage(messageId) async {
+    try {
+      final response = await chatService.deleteMessageData(messageId);
+      if (response!["code"] == 200) {
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
   String formatTime(String time) {
     final currentTime = DateTime.now();
     final messageTime = DateTime.parse(time);
@@ -218,8 +256,6 @@ class ChatScreenState extends State<ChatScreen> {
       return '${Jiffy.parseFromDateTime(DateTime.parse(time + "Z").toLocal()).format(pattern: "yyyy MMM dd AT hh:mm a")}';
     }
   }
-
-  final String profilePhotoUrl = 'your_profile_photo_url_here';
 
   @override
   Widget build(BuildContext context) {
@@ -294,220 +330,221 @@ class ChatScreenState extends State<ChatScreen> {
             );
             return true;
           },
-          child: Padding(
-            padding: const EdgeInsets.only(
-              top: 24,
-            ),
-            child: Column(
-              children: [
-                Expanded(
-                  child: SmartRefresher(
-                    header: ClassicHeader(),
-                    footer: ClassicFooter(),
-                    controller: _refreshController,
-                    enablePullDown: true,
-                    enablePullUp: false,
-                    onRefresh: () async {
-                      await getChatMessages();
-                    },
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      itemCount: chatData.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final message = chatData[index];
-                        return Column(
-                          children: [
-                            Center(
+          child: Column(
+            children: [
+              Expanded(
+                child: SmartRefresher(
+                  header: ClassicHeader(),
+                  footer: ClassicFooter(),
+                  controller: _refreshController,
+                  enablePullDown: true,
+                  enablePullUp: false,
+                  onRefresh: () async {
+                    await getChatMessages();
+                  },
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount: chatData.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final message = chatData[index];
+                      return Column(
+                        children: [
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                top: 16,
+                              ),
                               child: Text(
                                 formatTime(message["created_at"]),
                                 style: FontConstants.smallText1,
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                left: 8,
-                                right: 8,
-                                bottom: 16,
-                              ),
-                              child: Align(
-                                alignment: message["is_my_message"]
-                                    ? Alignment.topRight
-                                    : Alignment.topLeft,
-                                child: !message["is_my_message"]
-                                    ? Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            margin: const EdgeInsets.only(
-                                              right: 8,
-                                            ),
-                                            child: message["profile_image"]
-                                                    .isEmpty
-                                                ? CircleAvatar(
-                                                    radius: 10,
-                                                    backgroundImage: AssetImage(
-                                                        "assets/images/profile.png"),
-                                                    backgroundColor:
-                                                        ColorConstants
-                                                            .fillcolor,
-                                                  )
-                                                : CircleAvatar(
-                                                    radius: 10,
-                                                    backgroundImage: NetworkImage(
-                                                        '${ApiConstants.baseUrl}${message["profile_image"].toString()}'),
-                                                  ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: 8,
+                              right: 8,
+                              bottom: chatData.length - 1 == index ? 16 : 0,
+                            ),
+                            child: Align(
+                              alignment: message["is_my_message"]
+                                  ? Alignment.topRight
+                                  : Alignment.topLeft,
+                              child: !message["is_my_message"]
+                                  ? Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          margin: const EdgeInsets.only(
+                                            right: 8,
                                           ),
-                                          Expanded(
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: Color(0xffE0E6EC),
-                                                borderRadius: BorderRadius.only(
-                                                  topRight: Radius.circular(26),
-                                                  bottomRight:
-                                                      Radius.circular(26),
-                                                  bottomLeft:
-                                                      Radius.circular(26),
+                                          child: message["profile_image"]
+                                                  .isEmpty
+                                              ? CircleAvatar(
+                                                  radius: 10,
+                                                  backgroundImage: AssetImage(
+                                                      "assets/images/profile.png"),
+                                                  backgroundColor:
+                                                      ColorConstants.fillcolor,
+                                                )
+                                              : CircleAvatar(
+                                                  radius: 10,
+                                                  backgroundImage: NetworkImage(
+                                                      '${ApiConstants.baseUrl}${message["profile_image"].toString()}'),
                                                 ),
-                                              ),
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 16.0,
-                                                vertical: 10.0,
-                                              ),
-                                              margin: EdgeInsets.only(
-                                                right: 100,
-                                              ),
-                                              child: Text(
-                                                message["message_text"],
-                                                style: FontConstants.caption2,
+                                        ),
+                                        Flexible(
+                                          fit: FlexFit.loose,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: Color(0xffE0E6EC),
+                                              borderRadius: BorderRadius.only(
+                                                topRight: Radius.circular(26),
+                                                bottomRight:
+                                                    Radius.circular(26),
+                                                bottomLeft: Radius.circular(26),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(context).primaryColor,
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(26),
-                                            topRight: Radius.circular(26),
-                                            bottomLeft: Radius.circular(26),
-                                          ),
-                                        ),
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 16.0,
-                                          vertical: 10.0,
-                                        ),
-                                        margin: EdgeInsets.only(
-                                          left: 100,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 16.0,
+                                              vertical: 10.0,
+                                            ),
+                                            margin: EdgeInsets.only(
+                                              right: 100,
+                                            ),
+                                            child: Text(
                                               message["message_text"],
-                                              style: FontConstants.caption4,
+                                              style: FontConstants.caption2,
+                                              softWrap: true,
                                             ),
-                                            if (message["is_my_message"])
-                                              Icon(
-                                                Icons.done_all,
-                                                color:
-                                                    message["status"] == 'sent'
-                                                        ? Colors.grey
-                                                        : Colors.white,
-                                                size: 12,
-                                              ),
-                                          ],
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Container(
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).primaryColor,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(26),
+                                          topRight: Radius.circular(26),
+                                          bottomLeft: Radius.circular(26),
                                         ),
                                       ),
-                              ),
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 16.0,
+                                        vertical: 10.0,
+                                      ),
+                                      margin: EdgeInsets.only(
+                                        left: 100,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            message["message_text"],
+                                            style: FontConstants.caption4,
+                                          ),
+                                          if (message["is_my_message"])
+                                            Icon(
+                                              message["status"] == 'sent'
+                                                  ? Icons.done
+                                                  : Icons.done_all,
+                                              color: message["status"] == 'read'
+                                                  ? Colors.white
+                                                  : Colors.grey,
+                                              size: 12,
+                                            ),
+                                        ],
+                                      ),
+                                    ),
                             ),
-                          ],
-                        );
-                      },
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(
+                  top: 8,
+                  left: 16,
+                  right: 16,
+                  bottom: 24,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white,
+                ),
+                child: Row(
+                  children: [
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     _pickMultiImage();
+                    //   },
+                    //   child: Container(
+                    //     margin: EdgeInsets.only(
+                    //       right: 16,
+                    //     ),
+                    //     child: SvgPicture.asset(
+                    //       "assets/icons/camera.svg",
+                    //       width: 24,
+                    //       height: 24,
+                    //     ),
+                    //   ),
+                    // ),
+                    Expanded(
+                      child: TextFormField(
+                        controller: message,
+                        focusNode: _messageFocusNode,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.done,
+                        style: FontConstants.body1,
+                        cursorColor: Colors.black,
+                        decoration: InputDecoration(
+                          hintText: language["Message"] ?? "Message",
+                          filled: true,
+                          fillColor: ColorConstants.fillcolor,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(
-                    top: 8,
-                    left: 16,
-                    right: 16,
-                    bottom: 24,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.white,
-                  ),
-                  child: Row(
-                    children: [
-                      // GestureDetector(
-                      //   onTap: () {
-                      //     _pickMultiImage();
-                      //   },
-                      //   child: Container(
-                      //     margin: EdgeInsets.only(
-                      //       right: 16,
-                      //     ),
-                      //     child: SvgPicture.asset(
-                      //       "assets/icons/camera.svg",
-                      //       width: 24,
-                      //       height: 24,
-                      //     ),
-                      //   ),
-                      // ),
-                      Expanded(
-                        child: TextFormField(
-                          controller: message,
-                          focusNode: _messageFocusNode,
-                          keyboardType: TextInputType.text,
-                          textInputAction: TextInputAction.done,
-                          style: FontConstants.body1,
-                          cursorColor: Colors.black,
-                          decoration: InputDecoration(
-                            hintText: language["Message"] ?? "Message",
-                            filled: true,
-                            fillColor: ColorConstants.fillcolor,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 14,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide.none,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide.none,
-                            ),
-                            focusedErrorBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
+                    GestureDetector(
+                      onTap: () {
+                        sendMessage();
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          left: 16,
+                        ),
+                        child: SvgPicture.asset(
+                          "assets/icons/send.svg",
+                          height: 24,
+                          width: 24,
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          sendMessage();
-                        },
-                        child: Container(
-                          margin: EdgeInsets.only(
-                            left: 16,
-                          ),
-                          child: SvgPicture.asset(
-                            "assets/icons/send.svg",
-                            height: 24,
-                            width: 24,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

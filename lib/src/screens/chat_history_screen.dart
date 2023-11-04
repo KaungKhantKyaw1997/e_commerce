@@ -350,30 +350,31 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Slidable(
-                            key: const ValueKey(0),
-                            endActionPane: ActionPane(
-                              motion: const BehindMotion(),
-                              children: [
-                                SlidableAction(
-                                  onPressed: (BuildContext context) {
-                                    deleteMessage(chats[index]["chat_id"]);
-                                  },
-                                  backgroundColor: ColorConstants.redcolor,
-                                  foregroundColor: Colors.white,
-                                  borderRadius: BorderRadius.only(
-                                    topRight:
-                                        Radius.circular(index == 0 ? 10 : 0),
-                                    bottomRight: Radius.circular(
-                                        index == chats.length - 1 ? 10 : 0),
-                                  ),
-                                  icon: Icons.delete,
-                                  label: language["Delete"] ?? "Delete",
-                                ),
-                              ],
-                            ),
-                            child: chatCard(index),
-                          ),
+                          // Slidable(
+                          //   key: const ValueKey(0),
+                          //   endActionPane: ActionPane(
+                          //     motion: const BehindMotion(),
+                          //     children: [
+                          //       SlidableAction(
+                          //         onPressed: (BuildContext context) {
+                          //           deleteMessage(chats[index]["chat_id"]);
+                          //         },
+                          //         backgroundColor: ColorConstants.redcolor,
+                          //         foregroundColor: Colors.white,
+                          //         borderRadius: BorderRadius.only(
+                          //           topRight:
+                          //               Radius.circular(index == 0 ? 10 : 0),
+                          //           bottomRight: Radius.circular(
+                          //               index == chats.length - 1 ? 10 : 0),
+                          //         ),
+                          //         icon: Icons.delete,
+                          //         label: language["Delete"] ?? "Delete",
+                          //       ),
+                          //     ],
+                          //   ),
+                          //   child: chatCard(index),
+                          // ),
+                          chatCard(index),
                           index < chats.length - 1
                               ? Container(
                                   padding: const EdgeInsets.only(
