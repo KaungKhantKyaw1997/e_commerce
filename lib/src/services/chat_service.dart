@@ -94,10 +94,10 @@ class ChatService {
     );
   }
 
-  Future<Map<String, dynamic>?> deleteMessageData(int id) async {
+  Future<Map<String, dynamic>?> deleteMessageData(int chatId) async {
     var token = await storage.read(key: "token") ?? '';
     final response = await dio.delete(
-      '${ApiConstants.messagesUrl}/$id',
+      '${ApiConstants.messagesUrl}/$chatId',
       options: Options(
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',

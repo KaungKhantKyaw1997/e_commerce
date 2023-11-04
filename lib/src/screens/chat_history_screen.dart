@@ -10,7 +10,7 @@ import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -56,6 +56,46 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
           page++;
         }
         setState(() {});
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  deleteMessage(chatId) async {
+    try {
+      final response = await chatService.deleteMessageData(chatId);
+      if (response!["code"] == 200) {
+        page = 1;
+        chats = [];
+        getChatSessions();
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -300,6 +340,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                             'chat_id': chats[index]["chat_id"],
                             'chat_name': chats[index]["chat_name"],
                             'created_at': chats[index]["created_at"],
+                            'profile_image': chats[index]["profile_image"],
                             'from': 'chat_history',
                           },
                         );
@@ -308,7 +349,30 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          chatCard(index),
+                          Slidable(
+                            key: const ValueKey(0),
+                            endActionPane: ActionPane(
+                              motion: const BehindMotion(),
+                              children: [
+                                SlidableAction(
+                                  onPressed: (BuildContext context) {
+                                    deleteMessage(chats[index]["chat_id"]);
+                                  },
+                                  backgroundColor: ColorConstants.redcolor,
+                                  foregroundColor: Colors.white,
+                                  borderRadius: BorderRadius.only(
+                                    topRight:
+                                        Radius.circular(index == 0 ? 10 : 0),
+                                    bottomRight: Radius.circular(
+                                        index == chats.length - 1 ? 10 : 0),
+                                  ),
+                                  icon: Icons.delete,
+                                  label: language["Delete"] ?? "Delete",
+                                ),
+                              ],
+                            ),
+                            child: chatCard(index),
+                          ),
                           index < chats.length - 1
                               ? Container(
                                   padding: const EdgeInsets.only(

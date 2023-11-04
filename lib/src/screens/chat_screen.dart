@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
+import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
@@ -37,6 +38,7 @@ class ChatScreenState extends State<ChatScreen> {
   int chatId = 0;
   String chatName = '';
   String lastSeenTime = '';
+  String profileImage = '';
   String from = '';
   List chatData = [];
   int page = 1;
@@ -53,6 +55,7 @@ class ChatScreenState extends State<ChatScreen> {
         chatId = arguments["chat_id"] ?? 0;
         chatName = arguments["chat_name"] ?? '';
         lastSeenTime = arguments["created_at"] ?? '';
+        profileImage = arguments["profile_image"] ?? '';
         from = arguments["from"] ?? '';
       }
       await getChatMessages();
@@ -225,24 +228,49 @@ class ChatScreenState extends State<ChatScreen> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-          title: Align(
-            alignment: Alignment.centerLeft,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  chatName,
-                  style: FontConstants.body1,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(
+                  right: 8,
                 ),
-                lastSeenTime.isNotEmpty
-                    ? Text(
-                        'Last seen: ${Jiffy.parseFromDateTime(DateTime.parse(lastSeenTime + "Z").toLocal()).format(pattern: "hh:mm a")}',
-                        style: FontConstants.caption1,
+                child: profileImage.isEmpty
+                    ? CircleAvatar(
+                        radius: 20,
+                        backgroundImage:
+                            AssetImage("assets/images/profile.png"),
+                        backgroundColor: ColorConstants.fillcolor,
                       )
-                    : Text(''),
-              ],
-            ),
+                    : CircleAvatar(
+                        radius: 25,
+                        backgroundImage: NetworkImage(
+                            '${ApiConstants.baseUrl}${profileImage.toString()}'),
+                      ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      chatName,
+                      style: FontConstants.body1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    lastSeenTime.isNotEmpty
+                        ? Text(
+                            'Last seen: ${Jiffy.parseFromDateTime(DateTime.parse(lastSeenTime + "Z").toLocal()).format(pattern: "hh:mm a")}',
+                            style: FontConstants.caption1,
+                          )
+                        : Text(''),
+                  ],
+                ),
+              ),
+            ],
           ),
+          titleSpacing: 0,
+          leadingWidth: 50,
           leading: BackButton(
             color: Colors.black,
             onPressed: () {
@@ -302,48 +330,95 @@ class ChatScreenState extends State<ChatScreen> {
                                 alignment: message["is_my_message"]
                                     ? Alignment.topRight
                                     : Alignment.topLeft,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: message["is_my_message"]
-                                        ? Theme.of(context).primaryColor
-                                        : Color(0xffE0E6EC),
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(
-                                          message["is_my_message"] ? 26 : 0),
-                                      topRight: Radius.circular(26.0),
-                                      bottomRight: Radius.circular(
-                                          message["is_my_message"] ? 0 : 26),
-                                      bottomLeft: Radius.circular(26.0),
-                                    ),
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 16.0,
-                                    vertical: 10.0,
-                                  ),
-                                  margin: EdgeInsets.only(
-                                    left: message["is_my_message"] ? 100 : 0,
-                                    right: message["is_my_message"] ? 0 : 100,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        message["message_text"],
-                                        style: message["is_my_message"]
-                                            ? FontConstants.caption4
-                                            : FontConstants.caption2,
-                                      ),
-                                      if (message["is_my_message"])
-                                        Icon(
-                                          Icons.done_all,
-                                          color: message["status"] == 'send'
-                                              ? Colors.grey
-                                              : Colors.white,
-                                          size: 12,
+                                child: !message["is_my_message"]
+                                    ? Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          if (!message["is_my_message"])
+                                            Container(
+                                              margin: const EdgeInsets.only(
+                                                right: 8,
+                                              ),
+                                              child: message["profile_image"]
+                                                      .isEmpty
+                                                  ? CircleAvatar(
+                                                      radius: 10,
+                                                      backgroundImage: AssetImage(
+                                                          "assets/images/profile.png"),
+                                                      backgroundColor:
+                                                          ColorConstants
+                                                              .fillcolor,
+                                                    )
+                                                  : CircleAvatar(
+                                                      radius: 10,
+                                                      backgroundImage: NetworkImage(
+                                                          '${ApiConstants.baseUrl}${message["profile_image"].toString()}'),
+                                                    ),
+                                            ),
+                                          Expanded(
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: Color(0xffE0E6EC),
+                                                borderRadius: BorderRadius.only(
+                                                  topRight: Radius.circular(26),
+                                                  bottomRight:
+                                                      Radius.circular(26),
+                                                  bottomLeft:
+                                                      Radius.circular(26),
+                                                ),
+                                              ),
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 16.0,
+                                                vertical: 10.0,
+                                              ),
+                                              margin: EdgeInsets.only(
+                                                right: 100,
+                                              ),
+                                              child: Text(
+                                                message["message_text"],
+                                                style: FontConstants.caption2,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : Container(
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).primaryColor,
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(26),
+                                            topRight: Radius.circular(26),
+                                            bottomLeft: Radius.circular(26),
+                                          ),
                                         ),
-                                    ],
-                                  ),
-                                ),
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 16.0,
+                                          vertical: 10.0,
+                                        ),
+                                        margin: EdgeInsets.only(
+                                          left: 100,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              message["message_text"],
+                                              style: FontConstants.caption4,
+                                            ),
+                                            if (message["is_my_message"])
+                                              Icon(
+                                                Icons.done_all,
+                                                color:
+                                                    message["status"] == 'sent'
+                                                        ? Colors.grey
+                                                        : Colors.white,
+                                                size: 12,
+                                              ),
+                                          ],
+                                        ),
+                                      ),
                               ),
                             ),
                           ],
