@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
+import 'package:e_commerce/src/providers/chat_histories_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/providers/role_provider.dart';
@@ -193,16 +194,15 @@ class AuthService {
   }
 
   getChatSession(chatId, context) async {
-    ChatsProvider chatProvider =
-        Provider.of<ChatsProvider>(context, listen: false);
+    ChatHistoriesProvider chatHistoriesProvider =
+        Provider.of<ChatHistoriesProvider>(context, listen: false);
     try {
       final chatService = ChatService();
       final response = await chatService.getChatSessionData(chatId: chatId);
       if (response!["code"] == 200) {
-        List chats = chatProvider.chats;
-        chats.add(response["data"]);
-        chats.sort((a, b) => a["created_at"].compareTo(b["created_at"]));
-        chatProvider.setChats(chats);
+        List chatHistories = chatHistoriesProvider.chatHistories;
+        chatHistories.add(response["data"]);
+        chatHistoriesProvider.setChatHistories(chatHistories);
       }
     } catch (e, s) {
       crashlytic.myGlobalErrorHandler(e, s);
