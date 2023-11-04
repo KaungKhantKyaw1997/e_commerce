@@ -341,6 +341,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                             'chat_name': chats[index]["chat_name"],
                             'created_at': chats[index]["created_at"],
                             'profile_image': chats[index]["profile_image"],
+                            'sender_id': chats[index]["sender_id"],
                             'from': 'chat_history',
                           },
                         );

@@ -39,6 +39,7 @@ class ChatScreenState extends State<ChatScreen> {
   String chatName = '';
   String lastSeenTime = '';
   String profileImage = '';
+  int senderId = 0;
   String from = '';
   List chatData = [];
   int page = 1;
@@ -56,6 +57,7 @@ class ChatScreenState extends State<ChatScreen> {
         chatName = arguments["chat_name"] ?? '';
         lastSeenTime = arguments["created_at"] ?? '';
         profileImage = arguments["profile_image"] ?? '';
+        senderId = arguments["sender_id"] ?? 0;
         from = arguments["from"] ?? '';
       }
       await getChatMessages();
@@ -81,7 +83,8 @@ class ChatScreenState extends State<ChatScreen> {
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           for (var message in response["data"]) {
-            if (message["status"] == "sent") {
+            if (message["status"] == "sent" &&
+                message["sender_id"] != senderId) {
               updateMessageStatus(message["message_id"]);
             }
           }
