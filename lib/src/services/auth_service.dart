@@ -195,7 +195,6 @@ class AuthService {
         chats.add(response["data"]);
         chats.sort((a, b) => a["created_at"].compareTo(b["created_at"]));
         chatProvider.setChatData(chats);
-        chatProvider.setChatData(chats);
       }
     } catch (e, s) {
       crashlytic.myGlobalErrorHandler(e, s);
