@@ -80,6 +80,22 @@ class ChatService {
     return response.data;
   }
 
+  Future<Map<String, dynamic>?> getChatMessageData({int messageId = 0}) async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      '${ApiConstants.chatMessagesUrl}/$messageId',
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
   updateMessageStatusData(Map<String, dynamic> body, int id) async {
     var token = await storage.read(key: "token") ?? '';
     dio.put(

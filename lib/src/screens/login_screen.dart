@@ -152,7 +152,7 @@ class _LogInScreenState extends State<LogInScreen> {
           );
         }
 
-        authService.initSocket(response["data"]["token"]);
+        authService.initSocket(response["data"]["token"], context);
 
         _firebaseMessaging.getToken().then((token) {
           _fcmToken = token ?? '';

@@ -4,8 +4,10 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
+import 'package:e_commerce/src/providers/chat_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/providers/role_provider.dart';
+import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/settings_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -156,7 +158,7 @@ class AuthService {
     return response.data;
   }
 
-  void initSocket(String token) {
+  void initSocket(String token, context) {
     socket = IO.io(ApiConstants.socketServerURL, <String, dynamic>{
       'autoConnect': false,
       'transports': ['websocket'],
@@ -166,17 +168,38 @@ class AuthService {
     socket!.onConnect((_) {
       socket!.emit('join', {'token': token});
       print('Connection established');
+
       socket!.on("new-chat", (data) {
         print(data);
       });
+
       socket!.on("new-message", (data) {
-        print(data);
+        getChatMessages(data["message_id"], context);
       });
     });
 
     socket!.onDisconnect((_) => print('Connection Disconnection'));
     socket!.onConnectError((err) => print(err));
     socket!.onError((err) => print(err));
+  }
+
+  getChatMessages(messageId, context) async {
+    ChatProvider chatProvider =
+        Provider.of<ChatProvider>(context, listen: false);
+    try {
+      final chatService = ChatService();
+      final response =
+          await chatService.getChatMessageData(messageId: messageId);
+      if (response!["code"] == 200) {
+        List chats = chatProvider.chatData;
+        chats.add(response["data"]);
+        chats.sort((a, b) => a["created_at"].compareTo(b["created_at"]));
+        chatProvider.setChatData(chats);
+        chatProvider.setChatData(chats);
+      }
+    } catch (e, s) {
+      crashlytic.myGlobalErrorHandler(e, s);
+    }
   }
 
   getSettings(context) async {
@@ -202,7 +225,7 @@ class AuthService {
     }
   }
 
-  logout(BuildContext context) async {
+  logout(context) async {
     clearData();
     RoleProvider roleProvider =
         Provider.of<RoleProvider>(context, listen: false);

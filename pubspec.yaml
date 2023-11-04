@@ -70,7 +70,6 @@ dependencies:
   firebase_auth: ^4.11.1
   google_sign_in: ^6.1.5
   socket_io_client: ^2.0.3+1
-  pull_down_button: ^0.9.3
 
 dev_dependencies:
   flutter_test:

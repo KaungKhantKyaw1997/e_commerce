@@ -7,6 +7,7 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/src/providers/chat_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -41,7 +43,6 @@ class ChatScreenState extends State<ChatScreen> {
   String profileImage = '';
   int senderId = 0;
   String from = '';
-  List chatData = [];
   int page = 1;
 
   @override
@@ -75,6 +76,8 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   getChatMessages() async {
+    ChatProvider chatProvider =
+        Provider.of<ChatProvider>(context, listen: false);
     try {
       final response = await chatService.getChatMessagesData(
           chatId: chatId, receiverId: receiverId, page: page);
@@ -89,9 +92,11 @@ class ChatScreenState extends State<ChatScreen> {
               updateMessageStatus(message["message_id"]);
             }
           }
+          List chats = chatProvider.chatData;
+          chats += response["data"];
+          chats.sort((a, b) => a["created_at"].compareTo(b["created_at"]));
+          chatProvider.setChatData(chats);
 
-          chatData += response["data"];
-          chatData.sort((a, b) => a["created_at"].compareTo(b["created_at"]));
           page++;
         }
         setState(() {});
@@ -139,6 +144,8 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   sendMessage() async {
+    ChatProvider chatProvider =
+        Provider.of<ChatProvider>(context, listen: false);
     try {
       final body = {
         "receiver_id": receiverId,
@@ -150,7 +157,7 @@ class ChatScreenState extends State<ChatScreen> {
       if (response!["code"] == 201) {
         _messageFocusNode.unfocus();
         message.text = '';
-        this.chatData = [];
+        chatProvider.setChatData([]);
         this.page = 1;
         getChatMessages();
       } else {
@@ -263,6 +270,9 @@ class ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ChatProvider chatProvider =
+        Provider.of<ChatProvider>(context, listen: false);
+
     return GestureDetector(
       onTap: () {
         _messageFocusNode.unfocus();
@@ -348,9 +358,9 @@ class ChatScreenState extends State<ChatScreen> {
                   },
                   child: ListView.builder(
                     controller: _scrollController,
-                    itemCount: chatData.length,
+                    itemCount: chatProvider.chatData.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final message = chatData[index];
+                      final message = chatProvider.chatData[index];
                       return Column(
                         children: [
                           Center(
@@ -368,7 +378,9 @@ class ChatScreenState extends State<ChatScreen> {
                             padding: EdgeInsets.only(
                               left: 8,
                               right: 8,
-                              bottom: chatData.length - 1 == index ? 16 : 0,
+                              bottom: chatProvider.chatData.length - 1 == index
+                                  ? 16
+                                  : 0,
                             ),
                             child: Align(
                               alignment: message["is_my_message"]
@@ -426,41 +438,72 @@ class ChatScreenState extends State<ChatScreen> {
                                         ),
                                       ],
                                     )
-                                  : Container(
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context).primaryColor,
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(26),
-                                          topRight: Radius.circular(26),
-                                          bottomLeft: Radius.circular(26),
-                                        ),
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 16.0,
-                                        vertical: 10.0,
-                                      ),
-                                      margin: EdgeInsets.only(
-                                        left: 100,
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            message["message_text"],
-                                            style: FontConstants.caption4,
-                                          ),
-                                          if (message["is_my_message"])
-                                            Icon(
-                                              message["status"] == 'sent'
-                                                  ? Icons.done
-                                                  : Icons.done_all,
-                                              color: message["status"] == 'read'
-                                                  ? Colors.white
-                                                  : Colors.grey,
-                                              size: 12,
+                                  : GestureDetector(
+                                      onLongPress: () {
+                                        final RenderBox overlay =
+                                            Overlay.of(context)
+                                                    .context
+                                                    .findRenderObject()
+                                                as RenderBox;
+                                        final RenderBox subjectBox = context
+                                            .findRenderObject() as RenderBox;
+                                        final offset = subjectBox.localToGlobal(
+                                            Offset.zero,
+                                            ancestor: overlay);
+
+                                        showMenu(
+                                          context: context,
+                                          position: RelativeRect.fromLTRB(
+                                              offset.dx, offset.dy, 0, 0),
+                                          items: [
+                                            PopupMenuItem(
+                                              child: Text('Delete'),
+                                              onTap: () {
+                                                // Call your delete method here
+                                                // Delete logic goes here
+                                              },
                                             ),
-                                        ],
+                                          ],
+                                          elevation: 8.0,
+                                        );
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).primaryColor,
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(26),
+                                            topRight: Radius.circular(26),
+                                            bottomLeft: Radius.circular(26),
+                                          ),
+                                        ),
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 16.0,
+                                          vertical: 10.0,
+                                        ),
+                                        margin: EdgeInsets.only(
+                                          left: 100,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              message["message_text"],
+                                              style: FontConstants.caption4,
+                                            ),
+                                            if (message["is_my_message"])
+                                              Icon(
+                                                message["status"] == 'sent'
+                                                    ? Icons.done
+                                                    : Icons.done_all,
+                                                color:
+                                                    message["status"] == 'read'
+                                                        ? Colors.white
+                                                        : Colors.grey,
+                                                size: 12,
+                                              ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                             ),

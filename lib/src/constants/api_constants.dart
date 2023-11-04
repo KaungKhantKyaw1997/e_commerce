@@ -40,6 +40,7 @@ class ApiConstants {
   static const String settingsUrl = '$baseUrl/api/settings';
   static const String sendMessageUrl = '$baseUrl/api/send-message';
   static const String chatSessionsUrl = '$baseUrl/api/chat-sessions';
+  static const String chatMessagesUrl = '$baseUrl/api/chat-messages';
   static const String messagesUrl = '$baseUrl/api/messages';
   static const String totalUnreadCountsUrl = '$baseUrl/api/total-unread-counts';
   static const String socketServerURL = 'http://150.95.82.125:8002';
