@@ -923,9 +923,11 @@ class _ProductScreenState extends State<ProductScreen> {
                         right: 16,
                         top: 16,
                       ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 24,
+                      padding: EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 16,
+                        bottom: 24,
                       ),
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -935,9 +937,45 @@ class _ProductScreenState extends State<ProductScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Seller",
-                            style: FontConstants.headline1,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "Seller",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: FontConstants.headline1,
+                                ),
+                              ),
+                              Container(
+                                width: 37,
+                                height: 37,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Theme.of(context).primaryColorLight,
+                                ),
+                                child: IconButton(
+                                  icon: SvgPicture.asset(
+                                    "assets/icons/message.svg",
+                                    width: 24,
+                                    height: 24,
+                                    colorFilter: const ColorFilter.mode(
+                                      Colors.black,
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      Routes.chat,
+                                      arguments: {
+                                        'receiver_id': product["creator_id"],
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
                           SizedBox(
                             height: 16,

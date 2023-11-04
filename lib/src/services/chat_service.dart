@@ -44,10 +44,11 @@ class ChatService {
     return response.data;
   }
 
-  Future<Map<String, dynamic>?> getChatMessagesData(int id) async {
+  Future<Map<String, dynamic>?> getChatMessagesData(
+      int chatId, int receiverId) async {
     var token = await storage.read(key: "token") ?? '';
     final response = await dio.get(
-      '${ApiConstants.chatSessionsUrl}/$id/chat-messages',
+      '${ApiConstants.chatSessionsUrl}/$chatId/chat-messages?page=1&per_page=10&receiver_id=$receiverId',
       options: Options(
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
@@ -60,10 +61,9 @@ class ChatService {
     return response.data;
   }
 
-  Future<Map<String, dynamic>?> updateMessageStatusData(
-      Map<String, dynamic> body, int id) async {
+  updateMessageStatusData(Map<String, dynamic> body, int id) async {
     var token = await storage.read(key: "token") ?? '';
-    final response = await dio.put(
+    dio.put(
       '${ApiConstants.messagesUrl}/$id/status',
       options: Options(
         headers: {
@@ -73,8 +73,6 @@ class ChatService {
       ),
       data: jsonEncode(body),
     );
-
-    return response.data;
   }
 
   Future<Map<String, dynamic>?> deleteMessageData(int id) async {

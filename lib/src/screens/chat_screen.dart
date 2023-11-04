@@ -1,7 +1,19 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:e_commerce/global.dart';
+import 'package:e_commerce/routes.dart';
+import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/src/services/auth_service.dart';
+import 'package:e_commerce/src/services/chat_service.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
+import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -11,6 +23,162 @@ class ChatScreen extends StatefulWidget {
 }
 
 class ChatScreenState extends State<ChatScreen> {
+  final crashlytic = new CrashlyticsService();
+  final chatService = ChatService();
+  ScrollController _scrollController = ScrollController();
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+  TextEditingController message = TextEditingController(text: '');
+  FocusNode _messageFocusNode = FocusNode();
+  List imageUrls = [];
+  List<XFile> pickedMultiFile = <XFile>[];
+  int receiverId = 0;
+  int chatId = 0;
+  String username = "MgKaung";
+  String lastSeenTime = "Last seen: 10:30 PM";
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      final arguments =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
+      if (arguments != null) {
+        receiverId = arguments["receiver_id"] ?? 0;
+        chatId = arguments["chat_id"] ?? 0;
+      }
+      getChatMessages();
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _messageFocusNode.dispose();
+    super.dispose();
+  }
+
+  getChatMessages() async {
+    try {
+      final response =
+          await chatService.getChatMessagesData(chatId, receiverId);
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          // updateMessageStatus();
+        }
+        setState(() {});
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  updateMessageStatus(id) {
+    final body = {
+      "status": "read",
+    };
+    chatService.updateMessageStatusData(body, id);
+  }
+
+  sendMessage() async {
+    try {
+      final body = {
+        "receiver_id": receiverId,
+        "chat_id": chatId,
+        "message_text": message.text,
+        "image_urls": imageUrls,
+      };
+      final response = await chatService.sendMessageData(body);
+      if (response!["code"] == 201) {
+        message.text = '';
+        setState(() {});
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  Future<void> _pickMultiImage() async {
+    try {
+      pickedMultiFile = await ImagePicker().pickMultiImage();
+      imageUrls = [];
+      setState(() {});
+    } on Exception catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> uploadFile() async {
+    for (var pickedFile in pickedMultiFile) {
+      try {
+        var response = await AuthService.uploadFile(File(pickedFile.path),
+            resolution: "800x800");
+        var res = jsonDecode(response.body);
+        if (res["code"] == 200) {
+          imageUrls.add(res["url"]);
+        }
+      } catch (error) {
+        print('Error uploading file: $error');
+      }
+    }
+  }
+
   String formatTime(String time) {
     final currentTime = DateTime.now();
     final messageTime = DateTime.parse(time);
@@ -78,27 +246,29 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  String lastSeenTime = "Last seen: 10:30 PM";
-  String username = "MgKaung";
   final String profilePhotoUrl = 'your_profile_photo_url_here';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              username,
-              style: FontConstants.title1,
-            ),
-            Text(
-              lastSeenTime,
-              style: TextStyle(color: Colors.black, fontSize: 12),
-            ),
-          ],
+        title: Align(
+          alignment: Alignment.centerLeft,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                username,
+                style: FontConstants.body1,
+              ),
+              Text(
+                lastSeenTime,
+                style: FontConstants.caption2,
+              ),
+            ],
+          ),
         ),
         iconTheme: IconThemeData(
           color: Colors.black,
@@ -159,57 +329,76 @@ class ChatScreenState extends State<ChatScreen> {
             ),
           ),
           Container(
-            margin: EdgeInsets.only(
-              top: 10,
-              left: 10,
-              right: 10,
-              bottom: 10,
+            padding: EdgeInsets.only(
+              top: 8,
+              left: 16,
+              right: 16,
+              bottom: 24,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
             ),
             child: Row(
               children: [
-                Container(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 5),
+                GestureDetector(
+                  onTap: () {
+                    // _pickMultiImage();
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      right: 16,
+                    ),
                     child: SvgPicture.asset(
                       "assets/icons/camera.svg",
-                      width: 30,
-                      height: 30,
+                      width: 24,
+                      height: 24,
                     ),
                   ),
                 ),
                 Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 5, right: 5),
-                    child: SizedBox(
-                      height: 50, 
-                      child: TextField(
-                        style: TextStyle(fontSize: 14),
-                        decoration: InputDecoration(
-                          hintText: 'Message',
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 10,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                        ),
+                  child: TextFormField(
+                    controller: message,
+                    focusNode: _messageFocusNode,
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.done,
+                    style: FontConstants.body1,
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      hintText: language["Message"] ?? "Message",
+                      filled: true,
+                      fillColor: ColorConstants.fillcolor,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
                       ),
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5),
-                  child: InkWell(
-                    onTap: () async {
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SvgPicture.asset(
-                        "assets/icons/send.svg",
-                        height: 24,
-                        width: 24,
-                      ),
+                GestureDetector(
+                  onTap: () {
+                    sendMessage();
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      left: 16,
+                    ),
+                    child: SvgPicture.asset(
+                      "assets/icons/send.svg",
+                      height: 24,
+                      width: 24,
                     ),
                   ),
                 ),
