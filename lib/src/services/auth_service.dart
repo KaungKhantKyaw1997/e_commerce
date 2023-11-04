@@ -166,7 +166,10 @@ class AuthService {
     socket!.onConnect((_) {
       socket!.emit('join', {'token': token});
       print('Connection established');
-      socket!.on("chat", (data) {
+      socket!.on("new-chat", (data) {
+        print(data);
+      });
+      socket!.on("new-message", (data) {
         print(data);
       });
     });
