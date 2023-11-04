@@ -4,7 +4,6 @@ import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 class ChatHistoryScreen extends StatefulWidget {
   const ChatHistoryScreen({Key? key}) : super(key: key);
 
@@ -12,7 +11,7 @@ class ChatHistoryScreen extends StatefulWidget {
   State<ChatHistoryScreen> createState() => _ChatHistoryScreenState();
 }
 
-class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
+class _ChatHistoryScreenState  extends State<ChatHistoryScreen> {
   int crossAxisCount = 1;
   final chatService=ChatService();
   int page = 1;

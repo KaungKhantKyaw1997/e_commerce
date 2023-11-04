@@ -1,9 +1,13 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:e_commerce/global.dart';
+import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
+import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
+import 'package:e_commerce/src/screens/bottombar_screen.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/brands_service.dart';
 import 'package:e_commerce/src/services/categories_service.dart';
@@ -15,10 +19,6 @@ import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:e_commerce/global.dart';
-import 'package:e_commerce/src/constants/font_constants.dart';
-import 'package:e_commerce/routes.dart';
-import 'package:e_commerce/src/screens/bottombar_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -647,23 +647,23 @@ class _HomeScreenState extends State<HomeScreen>
                 );
               },
             ),
-            // IconButton(
-            //   icon: SvgPicture.asset(
-            //     "assets/icons/message.svg",
-            //     width: 24,
-            //     height: 24,
-            //     colorFilter: const ColorFilter.mode(
-            //       Colors.black,
-            //       BlendMode.srcIn,
-            //     ),
-            //   ),
-            //   onPressed: () {
-            //     Navigator.pushNamed(
-            //       context,
-            //       Routes.chat,
-            //     );
-            //   },
-            // ),
+            IconButton(
+              icon: SvgPicture.asset(
+                "assets/icons/message.svg",
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  Colors.black,
+                  BlendMode.srcIn,
+                ),
+              ),
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  Routes.chat_history,
+                );
+              },
+            ),
           ],
           bottom: TabBar(
             controller: _tabController,
