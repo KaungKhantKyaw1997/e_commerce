@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -60,8 +61,9 @@ class BrandsService {
   Future<Map<String, dynamic>?> getBrandsData(
       {int page = 1, int perPage = 10, String search = ''}) async {
     var token = await storage.read(key: "token") ?? '';
+    var deviceType = Platform.isIOS ? "ios" : "android";
     final response = await dio.get(
-      '${ApiConstants.brandsUrl}?page=$page&per_page=$perPage&search=$search',
+      '${ApiConstants.brandsUrl}?page=$page&per_page=$perPage&search=$search&platform=$deviceType',
       options: Options(
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
@@ -82,7 +84,7 @@ class BrandsService {
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           if (token.isNotEmpty) 'Authorization': 'Bearer $token',
-        },    
+        },
       ),
       cancelToken: _cancelToken,
     );

@@ -96,7 +96,7 @@ class _ProductsScreenState extends State<ProductsScreen>
         "models": models,
         "products": productIds,
         if (isTopModel) "is_top_model": isTopModel,
-        "view": "user"
+        "view": "user",
       };
 
       if (shopId == 0) body.remove("shop_id");
