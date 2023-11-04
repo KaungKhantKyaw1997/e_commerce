@@ -134,6 +134,10 @@ class ChatScreenState extends State<ChatScreen> {
     chatService.updateMessageStatusData(body, id);
   }
 
+  handleSendMessage(value) {
+    sendMessage();
+  }
+
   sendMessage() async {
     try {
       final body = {
@@ -524,6 +528,7 @@ class ChatScreenState extends State<ChatScreen> {
                             borderSide: BorderSide.none,
                           ),
                         ),
+                        onFieldSubmitted: handleSendMessage,
                       ),
                     ),
                     GestureDetector(
