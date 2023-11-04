@@ -648,26 +648,29 @@ class _HomeScreenState extends State<HomeScreen>
                 );
               },
             ),
-            IconButton(
-              icon: SvgPicture.asset(
-                "assets/icons/message.svg",
-                width: 24,
-                height: 24,
-                colorFilter: const ColorFilter.mode(
-                  Colors.black,
-                  BlendMode.srcIn,
-                ),
-              ),
-              onPressed: () {
-                ChatHistoriesProvider chatHistoriesProvider =
-                    Provider.of<ChatHistoriesProvider>(context, listen: false);
-                chatHistoriesProvider.setChatHistories([]);
-                Navigator.pushNamed(
-                  context,
-                  Routes.chat_history,
-                );
-              },
-            ),
+            role.isNotEmpty
+                ? IconButton(
+                    icon: SvgPicture.asset(
+                      "assets/icons/message.svg",
+                      width: 24,
+                      height: 24,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.black,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    onPressed: () {
+                      ChatHistoriesProvider chatHistoriesProvider =
+                          Provider.of<ChatHistoriesProvider>(context,
+                              listen: false);
+                      chatHistoriesProvider.setChatHistories([]);
+                      Navigator.pushNamed(
+                        context,
+                        Routes.chat_history,
+                      );
+                    },
+                  )
+                : Text(''),
           ],
           bottom: TabBar(
             controller: _tabController,
