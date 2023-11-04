@@ -584,7 +584,9 @@ class ChatScreenState extends State<ChatScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        sendMessage();
+                        if (message.text.isNotEmpty) {
+                          sendMessage();
+                        }
                       },
                       child: Container(
                         margin: EdgeInsets.only(

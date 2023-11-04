@@ -201,7 +201,7 @@ class AuthService {
       final response = await chatService.getChatSessionData(chatId: chatId);
       if (response!["code"] == 200) {
         List chatHistories = chatHistoriesProvider.chatHistories;
-        chatHistories.add(response["data"]);
+        chatHistories.insert(0, (response["data"]));
         chatHistoriesProvider.setChatHistories(chatHistories);
       }
     } catch (e, s) {
