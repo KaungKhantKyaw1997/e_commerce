@@ -167,13 +167,9 @@ class AuthService {
       socketProvider.socket!.emit('join', {'token': token});
       print('Connection established');
 
-      socketProvider.socket!.on("new-chat", (data) {
-        getChatSession(data["chat_id"], context);
-      });
-
       socketProvider.socket!.on("new-message", (data) {
         getChatMessages(data["message_id"], context);
-        // getChatSession(data["chat_id"], context);
+        getChatSession(data["chat_id"], context);
       });
 
       socketProvider.socket!.on("update-message-status", (data) {
