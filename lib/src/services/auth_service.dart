@@ -176,6 +176,18 @@ class AuthService {
       socket!.on("new-message", (data) {
         getChatMessages(data["message_id"], context);
       });
+
+      socket!.on("update-message-status", (data) {
+        ChatsProvider chatProvider =
+            Provider.of<ChatsProvider>(context, listen: false);
+        var chats = chatProvider.chats;
+        for (var chat in chats) {
+          if (chat["message_id"] == data["message_id"]) {
+            chat["status"] = data["status"];
+          }
+        }
+        chatProvider.setChats(chats);
+      });
     });
 
     socket!.onDisconnect((_) => print('Connection Disconnection'));

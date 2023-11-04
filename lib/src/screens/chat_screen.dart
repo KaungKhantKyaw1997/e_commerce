@@ -152,6 +152,9 @@ class ChatScreenState extends State<ChatScreen> {
       if (response!["code"] == 201) {
         _messageFocusNode.unfocus();
         message.text = '';
+        // WidgetsBinding.instance?.addPostFrameCallback((_) {
+        //   _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        // });
         chatProvider.setChats([]);
         this.page = 1;
         getChatMessages();
