@@ -139,10 +139,6 @@ class ChatScreenState extends State<ChatScreen> {
     chatService.updateMessageStatusData(body, id);
   }
 
-  handleSendMessage(value) {
-    sendMessage();
-  }
-
   sendMessage() async {
     ChatProvider chatProvider =
         Provider.of<ChatProvider>(context, listen: false);
@@ -546,10 +542,10 @@ class ChatScreenState extends State<ChatScreen> {
                       child: TextFormField(
                         controller: message,
                         focusNode: _messageFocusNode,
-                        keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.done,
+                        keyboardType: TextInputType.multiline,
                         style: FontConstants.body1,
                         cursorColor: Colors.black,
+                        maxLines: null,
                         decoration: InputDecoration(
                           hintText: language["Message"] ?? "Message",
                           filled: true,
@@ -571,7 +567,6 @@ class ChatScreenState extends State<ChatScreen> {
                             borderSide: BorderSide.none,
                           ),
                         ),
-                        onFieldSubmitted: handleSendMessage,
                       ),
                     ),
                     GestureDetector(
