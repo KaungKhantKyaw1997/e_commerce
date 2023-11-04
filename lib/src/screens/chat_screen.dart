@@ -36,6 +36,7 @@ class ChatScreenState extends State<ChatScreen> {
   int chatId = 0;
   String username = "MgKaung";
   String lastSeenTime = "Last seen: 10:30 PM";
+  List chatData = [];
 
   @override
   void initState() {
@@ -278,7 +279,7 @@ class ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: chatData.length,
+              itemCount: 0,
               itemBuilder: (BuildContext context, int index) {
                 final message = chatData[index];
                 return Padding(
@@ -410,80 +411,3 @@ class ChatScreenState extends State<ChatScreen> {
     );
   }
 }
-
-class ChatMessage {
-  final String message;
-  final bool isMe;
-  final String profileImageUrl;
-  final String time;
-
-  ChatMessage({
-    required this.message,
-    required this.isMe,
-    required this.profileImageUrl,
-    required this.time,
-  });
-}
-
-List<ChatMessage> chatData = [
-  ChatMessage(
-    message: 'Hey, what are you up to?',
-    isMe: true,
-    profileImageUrl: 'https://via.placeholder.com/150',
-    time: '2022-10-30 23:18:00',
-  ),
-  ChatMessage(
-    message: 'Just working on some Flutter code. You?',
-    isMe: false,
-    profileImageUrl: 'https://via.placeholder.com/150',
-    time: '2022-10-30 23:18:00',
-  ),
-  ChatMessage(
-    message: 'That\'s cool! I am watching a movie.',
-    isMe: true,
-    profileImageUrl: 'https://via.placeholder.com/150',
-    time: '2022-10-30 23:18:00',
-  ),
-  ChatMessage(
-    message: 'Just working on some Flutter code. You?',
-    isMe: false,
-    profileImageUrl: 'https://via.placeholder.com/150',
-    time: '2023-10-30 23:18:00',
-  ),
-  ChatMessage(
-    message: 'Just working on some Flutter code. You?',
-    isMe: false,
-    profileImageUrl: 'https://via.placeholder.com/150',
-    time: '2023-10-30 23:18:00',
-  ),
-  ChatMessage(
-    message: 'Just working on some Flutter code. You?',
-    isMe: false,
-    profileImageUrl: 'https://via.placeholder.com/150',
-    time: '2023-10-30 23:18:00',
-  ),
-  ChatMessage(
-    message: 'Just working on some Flutter code. You?',
-    isMe: false,
-    profileImageUrl: 'https://via.placeholder.com/150',
-    time: '2023-10-30 23:18:00',
-  ),
-  ChatMessage(
-    message: 'Just working on some Flutter code. You?',
-    isMe: false,
-    profileImageUrl: 'https://via.placeholder.com/150',
-    time: '2023-10-30 23:18:00',
-  ),
-  ChatMessage(
-    message: 'Just working on some Flutter code. You?',
-    isMe: false,
-    profileImageUrl: 'https://via.placeholder.com/150',
-    time: '2023-10-30 23:18:00',
-  ),
-  ChatMessage(
-    message: 'Just working on some Flutter code. You?',
-    isMe: false,
-    profileImageUrl: 'https://via.placeholder.com/150',
-    time: '2023-10-30 23:18:00',
-  ),
-];
