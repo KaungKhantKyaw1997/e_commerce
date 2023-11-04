@@ -346,6 +346,8 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                         textInputAction: TextInputAction.done,
                         style: FontConstants.body1,
                         cursorColor: Colors.black,
+                        maxLines: null,
+                         minLines: 1, 
                         decoration: InputDecoration(
                           hintText: language["Comment"] ?? "Comment",
                           filled: true,
