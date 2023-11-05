@@ -270,11 +270,15 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   deleteMessage(messageId) async {
+    ChatsProvider chatProvider =
+        Provider.of<ChatsProvider>(context, listen: false);
     try {
       final response = await chatService.deleteMessageData(messageId);
-      if (response!["code"] == 200) {
-      } else {
-        ToastUtil.showToast(response["code"], response["message"]);
+      if (response!["code"] == 204) {
+        List chats = (chatProvider.chats as List)
+            .where((element) => element["message_id"] != messageId)
+            .toList();
+        chatProvider.setChats(chats);
       }
     } catch (e, s) {
       _refreshController.refreshCompleted();
@@ -678,8 +682,10 @@ class ChatScreenState extends State<ChatScreen> {
                                         motion: const BehindMotion(),
                                         children: [
                                           SlidableAction(
-                                            onPressed:
-                                                (BuildContext context) {},
+                                            onPressed: (BuildContext context) {
+                                              deleteMessage(
+                                                  message["message_id"]);
+                                            },
                                             backgroundColor: Colors.transparent,
                                             foregroundColor:
                                                 ColorConstants.redcolor,
