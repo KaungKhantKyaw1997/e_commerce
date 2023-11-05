@@ -66,8 +66,11 @@ class ChatScreenState extends State<ChatScreen> {
           Provider.of<ChatScrollProvider>(context, listen: false);
       await getChatMessages();
       WidgetsBinding.instance?.addPostFrameCallback((_) {
-        chatScrollProvider.chatScrollController.jumpTo(
-            chatScrollProvider.chatScrollController.position.maxScrollExtent);
+        chatScrollProvider.chatScrollController.animateTo(
+          chatScrollProvider.chatScrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
       });
     });
   }
@@ -202,8 +205,11 @@ class ChatScreenState extends State<ChatScreen> {
         this.page = 1;
         await getChatMessages();
         WidgetsBinding.instance?.addPostFrameCallback((_) {
-          chatScrollProvider.chatScrollController.jumpTo(
-              chatScrollProvider.chatScrollController.position.maxScrollExtent);
+          chatScrollProvider.chatScrollController.animateTo(
+            chatScrollProvider.chatScrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -621,9 +627,12 @@ class ChatScreenState extends State<ChatScreen> {
                   onRefresh: () async {
                     await getChatMessages();
                     WidgetsBinding.instance?.addPostFrameCallback((_) {
-                      chatScrollProvider.chatScrollController.jumpTo(
-                          chatScrollProvider
-                              .chatScrollController.position.minScrollExtent);
+                      chatScrollProvider.chatScrollController.animateTo(
+                        chatScrollProvider
+                            .chatScrollController.position.minScrollExtent,
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
                     });
                   },
                   child: ListView.builder(

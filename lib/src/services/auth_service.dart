@@ -246,8 +246,11 @@ class AuthService {
           chats.sort((a, b) => a["created_at"].compareTo(b["created_at"]));
           chatProvider.setChats(chats);
           WidgetsBinding.instance?.addPostFrameCallback((_) {
-            chatScrollProvider.chatScrollController.jumpTo(chatScrollProvider
-                .chatScrollController.position.maxScrollExtent);
+            chatScrollProvider.chatScrollController.animateTo(
+              chatScrollProvider.chatScrollController.position.maxScrollExtent,
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
           });
         }
       }
