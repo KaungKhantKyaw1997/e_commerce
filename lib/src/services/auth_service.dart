@@ -201,8 +201,8 @@ class AuthService {
       final chatService = ChatService();
       final response = await chatService.getChatSessionData(chatId: chatId);
       if (response!["code"] == 200) {
-        bool history = false;
         List chatHistories = chatHistoriesProvider.chatHistories;
+        bool history = false;
         int index = 0;
         for (var chatHistory in chatHistories) {
           if (chatHistory["chat_id"] == chatId) {

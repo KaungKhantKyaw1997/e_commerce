@@ -65,11 +65,9 @@ class ChatScreenState extends State<ChatScreen> {
       ChatScrollProvider chatScrollProvider =
           Provider.of<ChatScrollProvider>(context, listen: false);
       await getChatMessages();
-      Future.delayed(Duration(milliseconds: 100), () {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
-          chatScrollProvider.chatScrollController.jumpTo(
-              chatScrollProvider.chatScrollController.position.maxScrollExtent);
-        });
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        chatScrollProvider.chatScrollController.jumpTo(
+            chatScrollProvider.chatScrollController.position.maxScrollExtent);
       });
     });
   }
@@ -145,7 +143,6 @@ class ChatScreenState extends State<ChatScreen> {
           chatProvider.setChats(chats);
           page++;
         }
-        setState(() {});
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -204,11 +201,9 @@ class ChatScreenState extends State<ChatScreen> {
         chatProvider.setChats([]);
         this.page = 1;
         await getChatMessages();
-        Future.delayed(Duration(milliseconds: 100), () {
-          WidgetsBinding.instance?.addPostFrameCallback((_) {
-            chatScrollProvider.chatScrollController.jumpTo(chatScrollProvider
-                .chatScrollController.position.maxScrollExtent);
-          });
+        WidgetsBinding.instance?.addPostFrameCallback((_) {
+          chatScrollProvider.chatScrollController.jumpTo(
+              chatScrollProvider.chatScrollController.position.maxScrollExtent);
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -625,12 +620,10 @@ class ChatScreenState extends State<ChatScreen> {
                   enablePullUp: false,
                   onRefresh: () async {
                     await getChatMessages();
-                    Future.delayed(Duration(milliseconds: 100), () {
-                      WidgetsBinding.instance?.addPostFrameCallback((_) {
-                        chatScrollProvider.chatScrollController.jumpTo(
-                            chatScrollProvider
-                                .chatScrollController.position.minScrollExtent);
-                      });
+                    WidgetsBinding.instance?.addPostFrameCallback((_) {
+                      chatScrollProvider.chatScrollController.jumpTo(
+                          chatScrollProvider
+                              .chatScrollController.position.minScrollExtent);
                     });
                   },
                   child: ListView.builder(
