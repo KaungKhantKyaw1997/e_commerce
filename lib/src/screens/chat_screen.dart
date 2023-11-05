@@ -339,41 +339,45 @@ class ChatScreenState extends State<ChatScreen> {
               mainAxisSpacing: 8,
             ),
             itemBuilder: (context, index) {
-              return InkWell(
-                onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    Routes.image_preview,
-                    arguments: {
-                      "image_url":
-                          '${ApiConstants.baseUrl}${message["image_urls"][index].toString()}'
-                    },
-                  );
-                },
-                child: Container(
-                  margin: EdgeInsets.only(
-                    left: 100,
-                  ),
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          '${ApiConstants.baseUrl}${message["image_urls"][index].toString()}'),
-                      fit: BoxFit.cover,
+              return Padding(
+                padding: EdgeInsets.only(
+                  left: 100,
+                ),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      Routes.image_preview,
+                      arguments: {
+                        "image_url":
+                            '${ApiConstants.baseUrl}${message["image_urls"][index].toString()}'
+                      },
+                    );
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(
+                            '${ApiConstants.baseUrl}${message["image_urls"][index].toString()}'),
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: Colors.transparent,
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: Colors.transparent,
-                    ),
-                  ),
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: Icon(
-                      message["status"] == 'sent' ? Icons.done : Icons.done_all,
-                      color: message["status"] == 'read'
-                          ? Theme.of(context).primaryColor
-                          : Colors.grey,
-                      size: 12,
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: Icon(
+                        message["status"] == 'sent'
+                            ? Icons.done
+                            : Icons.done_all,
+                        color: message["status"] == 'read'
+                            ? Theme.of(context).primaryColor
+                            : Colors.grey,
+                        size: 12,
+                      ),
                     ),
                   ),
                 ),
@@ -453,31 +457,33 @@ class ChatScreenState extends State<ChatScreen> {
                     mainAxisSpacing: 8,
                   ),
                   itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          Routes.image_preview,
-                          arguments: {
-                            "image_url":
-                                '${ApiConstants.baseUrl}${message["image_urls"][index].toString()}'
-                          },
-                        );
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(
-                          right: 100,
-                        ),
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(
-                                '${ApiConstants.baseUrl}${message["image_urls"][index].toString()}'),
-                            fit: BoxFit.cover,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Colors.transparent,
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        right: 100,
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            Routes.image_preview,
+                            arguments: {
+                              "image_url":
+                                  '${ApiConstants.baseUrl}${message["image_urls"][index].toString()}'
+                            },
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                  '${ApiConstants.baseUrl}${message["image_urls"][index].toString()}'),
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: Colors.transparent,
+                            ),
                           ),
                         ),
                       ),
