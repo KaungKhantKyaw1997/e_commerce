@@ -15,6 +15,7 @@ import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jiffy/jiffy.dart';
@@ -667,7 +668,23 @@ class ChatScreenState extends State<ChatScreen> {
                                   : Alignment.topLeft,
                               child: !message["is_my_message"]
                                   ? isNotMyMessage(message)
-                                  : isMyMessage(message),
+                                  : Slidable(
+                                      key: const ValueKey(0),
+                                      endActionPane: ActionPane(
+                                        motion: const BehindMotion(),
+                                        children: [
+                                          SlidableAction(
+                                            onPressed:
+                                                (BuildContext context) {},
+                                            backgroundColor: Colors.transparent,
+                                            foregroundColor:
+                                                ColorConstants.redcolor,
+                                            icon: Icons.delete,
+                                          ),
+                                        ],
+                                      ),
+                                      child: isMyMessage(message),
+                                    ),
                             ),
                           ),
                         ],
