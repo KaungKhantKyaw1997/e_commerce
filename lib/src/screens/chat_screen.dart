@@ -376,36 +376,40 @@ class ChatScreenState extends State<ChatScreen> {
               );
             },
           )
-        : Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(26),
-                topRight: Radius.circular(26),
-                bottomLeft: Radius.circular(26),
+        : Align(
+            alignment: Alignment.bottomRight,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(26),
+                  topRight: Radius.circular(26),
+                  bottomLeft: Radius.circular(26),
+                ),
               ),
-            ),
-            padding: EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 10.0,
-            ),
-            margin: EdgeInsets.only(
-              left: 100,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  message["message_text"],
-                  style: FontConstants.caption4,
-                ),
-                Icon(
-                  message["status"] == 'sent' ? Icons.done : Icons.done_all,
-                  color:
-                      message["status"] == 'read' ? Colors.white : Colors.grey,
-                  size: 12,
-                ),
-              ],
+              padding: EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 10.0,
+              ),
+              margin: EdgeInsets.only(
+                left: 100,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    message["message_text"],
+                    style: FontConstants.caption4,
+                  ),
+                  Icon(
+                    message["status"] == 'sent' ? Icons.done : Icons.done_all,
+                    color: message["status"] == 'read'
+                        ? Colors.white
+                        : Colors.grey,
+                    size: 12,
+                  ),
+                ],
+              ),
             ),
           );
   }
