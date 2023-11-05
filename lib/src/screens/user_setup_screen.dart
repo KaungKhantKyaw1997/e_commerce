@@ -453,7 +453,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                               color: Theme.of(context).primaryColorLight,
                             ),
                             child: SvgPicture.asset(
-                              "assets/icons/camera.svg",
+                              "assets/icons/gallery.svg",
                               width: 16,
                               height: 16,
                               colorFilter: ColorFilter.mode(

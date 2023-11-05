@@ -31,6 +31,7 @@ class ChatScreenState extends State<ChatScreen> {
   final crashlytic = new CrashlyticsService();
   final chatService = ChatService();
   ScrollController _scrollController = ScrollController();
+  ScrollController _imageController = ScrollController();
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   TextEditingController message = TextEditingController(text: '');
@@ -152,9 +153,6 @@ class ChatScreenState extends State<ChatScreen> {
       if (response!["code"] == 201) {
         _messageFocusNode.unfocus();
         message.text = '';
-        // WidgetsBinding.instance?.addPostFrameCallback((_) {
-        //   _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-        // });
         chatProvider.setChats([]);
         this.page = 1;
         getChatMessages();
@@ -193,7 +191,8 @@ class ChatScreenState extends State<ChatScreen> {
     try {
       pickedMultiFile = await ImagePicker().pickMultiImage();
       imageUrls = [];
-      setState(() {});
+      await uploadFile();
+      sendMessage();
     } on Exception catch (e) {
       print(e.toString());
     }
@@ -264,6 +263,213 @@ class ChatScreenState extends State<ChatScreen> {
     } else {
       return '${Jiffy.parseFromDateTime(DateTime.parse(time + "Z").toLocal()).format(pattern: "yyyy MMM dd AT hh:mm a")}';
     }
+  }
+
+  isMyMessage(message) {
+    return message["image_urls"].isNotEmpty
+        ? GridView.builder(
+            controller: _imageController,
+            shrinkWrap: true,
+            itemCount: message["image_urls"].length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              mainAxisExtent: MediaQuery.of(context).size.width * 0.75,
+              childAspectRatio: 2 / 1,
+              crossAxisSpacing: 8,
+              crossAxisCount: 1,
+              mainAxisSpacing: 8,
+            ),
+            itemBuilder: (context, index) {
+              return InkWell(
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    Routes.image_preview,
+                    arguments: {
+                      "image_url":
+                          '${ApiConstants.baseUrl}${message["image_urls"][index].toString()}'
+                    },
+                  );
+                },
+                child: Container(
+                  margin: EdgeInsets.only(
+                    left: 100,
+                  ),
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(
+                          '${ApiConstants.baseUrl}${message["image_urls"][index].toString()}'),
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: Colors.transparent,
+                    ),
+                  ),
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: Icon(
+                      message["status"] == 'sent' ? Icons.done : Icons.done_all,
+                      color: message["status"] == 'read'
+                          ? Theme.of(context).primaryColor
+                          : Colors.grey,
+                      size: 12,
+                    ),
+                  ),
+                ),
+              );
+            },
+          )
+        : Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(26),
+                topRight: Radius.circular(26),
+                bottomLeft: Radius.circular(26),
+              ),
+            ),
+            padding: EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 10.0,
+            ),
+            margin: EdgeInsets.only(
+              left: 100,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  message["message_text"],
+                  style: FontConstants.caption4,
+                ),
+                Icon(
+                  message["status"] == 'sent' ? Icons.done : Icons.done_all,
+                  color:
+                      message["status"] == 'read' ? Colors.white : Colors.grey,
+                  size: 12,
+                ),
+              ],
+            ),
+          );
+  }
+
+  isNotMyMessage(message) {
+    return message["image_urls"].isNotEmpty
+        ? Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(
+                  right: 8,
+                ),
+                child: message["profile_image"].isEmpty
+                    ? CircleAvatar(
+                        radius: 10,
+                        backgroundImage:
+                            AssetImage("assets/images/profile.png"),
+                        backgroundColor: ColorConstants.fillcolor,
+                      )
+                    : CircleAvatar(
+                        radius: 10,
+                        backgroundImage: NetworkImage(
+                            '${ApiConstants.baseUrl}${message["profile_image"].toString()}'),
+                      ),
+              ),
+              Expanded(
+                child: GridView.builder(
+                  controller: _imageController,
+                  shrinkWrap: true,
+                  itemCount: message["image_urls"].length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    mainAxisExtent: MediaQuery.of(context).size.width * 0.75,
+                    childAspectRatio: 2 / 1,
+                    crossAxisSpacing: 8,
+                    crossAxisCount: 1,
+                    mainAxisSpacing: 8,
+                  ),
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          Routes.image_preview,
+                          arguments: {
+                            "image_url":
+                                '${ApiConstants.baseUrl}${message["image_urls"][index].toString()}'
+                          },
+                        );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          right: 100,
+                        ),
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(
+                                '${ApiConstants.baseUrl}${message["image_urls"][index].toString()}'),
+                            fit: BoxFit.cover,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.transparent,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              )
+            ],
+          )
+        : Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(
+                  right: 8,
+                ),
+                child: message["profile_image"].isEmpty
+                    ? CircleAvatar(
+                        radius: 10,
+                        backgroundImage:
+                            AssetImage("assets/images/profile.png"),
+                        backgroundColor: ColorConstants.fillcolor,
+                      )
+                    : CircleAvatar(
+                        radius: 10,
+                        backgroundImage: NetworkImage(
+                            '${ApiConstants.baseUrl}${message["profile_image"].toString()}'),
+                      ),
+              ),
+              Flexible(
+                fit: FlexFit.loose,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Color(0xffE0E6EC),
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(26),
+                      bottomRight: Radius.circular(26),
+                      bottomLeft: Radius.circular(26),
+                    ),
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 10.0,
+                  ),
+                  margin: EdgeInsets.only(
+                    right: 100,
+                  ),
+                  child: Text(
+                    message["message_text"],
+                    style: FontConstants.caption2,
+                    softWrap: true,
+                  ),
+                ),
+              ),
+            ],
+          );
   }
 
   @override
@@ -338,7 +544,6 @@ class ChatScreenState extends State<ChatScreen> {
             },
           ),
         ),
-        backgroundColor: Colors.white,
         body: WillPopScope(
           onWillPop: () async {
             ChatHistoriesProvider chatHistoriesProvider =
@@ -396,125 +601,8 @@ class ChatScreenState extends State<ChatScreen> {
                                   ? Alignment.topRight
                                   : Alignment.topLeft,
                               child: !message["is_my_message"]
-                                  ? Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          margin: const EdgeInsets.only(
-                                            right: 8,
-                                          ),
-                                          child: message["profile_image"]
-                                                  .isEmpty
-                                              ? CircleAvatar(
-                                                  radius: 10,
-                                                  backgroundImage: AssetImage(
-                                                      "assets/images/profile.png"),
-                                                  backgroundColor:
-                                                      ColorConstants.fillcolor,
-                                                )
-                                              : CircleAvatar(
-                                                  radius: 10,
-                                                  backgroundImage: NetworkImage(
-                                                      '${ApiConstants.baseUrl}${message["profile_image"].toString()}'),
-                                                ),
-                                        ),
-                                        Flexible(
-                                          fit: FlexFit.loose,
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: Color(0xffE0E6EC),
-                                              borderRadius: BorderRadius.only(
-                                                topRight: Radius.circular(26),
-                                                bottomRight:
-                                                    Radius.circular(26),
-                                                bottomLeft: Radius.circular(26),
-                                              ),
-                                            ),
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: 16.0,
-                                              vertical: 10.0,
-                                            ),
-                                            margin: EdgeInsets.only(
-                                              right: 100,
-                                            ),
-                                            child: Text(
-                                              message["message_text"],
-                                              style: FontConstants.caption2,
-                                              softWrap: true,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : GestureDetector(
-                                      onLongPress: () {
-                                        final RenderBox overlay =
-                                            Overlay.of(context)
-                                                    .context
-                                                    .findRenderObject()
-                                                as RenderBox;
-                                        final RenderBox subjectBox = context
-                                            .findRenderObject() as RenderBox;
-                                        final offset = subjectBox.localToGlobal(
-                                            Offset.zero,
-                                            ancestor: overlay);
-
-                                        showMenu(
-                                          context: context,
-                                          position: RelativeRect.fromLTRB(
-                                              offset.dx, offset.dy, 0, 0),
-                                          items: [
-                                            PopupMenuItem(
-                                              child: Text('Delete'),
-                                              onTap: () {
-                                                // Call your delete method here
-                                                // Delete logic goes here
-                                              },
-                                            ),
-                                          ],
-                                          elevation: 8.0,
-                                        );
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(context).primaryColor,
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(26),
-                                            topRight: Radius.circular(26),
-                                            bottomLeft: Radius.circular(26),
-                                          ),
-                                        ),
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 16.0,
-                                          vertical: 10.0,
-                                        ),
-                                        margin: EdgeInsets.only(
-                                          left: 100,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              message["message_text"],
-                                              style: FontConstants.caption4,
-                                            ),
-                                            if (message["is_my_message"])
-                                              Icon(
-                                                message["status"] == 'sent'
-                                                    ? Icons.done
-                                                    : Icons.done_all,
-                                                color:
-                                                    message["status"] == 'read'
-                                                        ? Colors.white
-                                                        : Colors.grey,
-                                                size: 12,
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                  ? isNotMyMessage(message)
+                                  : isMyMessage(message),
                             ),
                           ),
                         ],
@@ -536,21 +624,21 @@ class ChatScreenState extends State<ChatScreen> {
                 ),
                 child: Row(
                   children: [
-                    // GestureDetector(
-                    //   onTap: () {
-                    //     _pickMultiImage();
-                    //   },
-                    //   child: Container(
-                    //     margin: EdgeInsets.only(
-                    //       right: 16,
-                    //     ),
-                    //     child: SvgPicture.asset(
-                    //       "assets/icons/camera.svg",
-                    //       width: 24,
-                    //       height: 24,
-                    //     ),
-                    //   ),
-                    // ),
+                    GestureDetector(
+                      onTap: () {
+                        _pickMultiImage();
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          right: 16,
+                        ),
+                        child: SvgPicture.asset(
+                          "assets/icons/gallery.svg",
+                          width: 24,
+                          height: 24,
+                        ),
+                      ),
+                    ),
                     Expanded(
                       child: TextFormField(
                         controller: message,

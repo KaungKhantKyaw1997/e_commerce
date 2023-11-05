@@ -49,7 +49,8 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
     ChatHistoriesProvider chatHistoriesProvider =
         Provider.of<ChatHistoriesProvider>(context, listen: false);
     try {
-      final response = await chatService.getChatSessionsData(page: page);
+      final response = await chatService.getChatSessionsData(
+          page: page, search: search.text);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
 
