@@ -692,6 +692,7 @@ class ChatScreenState extends State<ChatScreen> {
                                             icon: Icons.delete,
                                           ),
                                         ],
+                                        extentRatio: 0.15,
                                       ),
                                       child: isMyMessage(message),
                                     ),
