@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -57,10 +58,10 @@ class ChatScreenState extends State<ChatScreen> {
         receiverId = arguments["receiver_id"] ?? 0;
         chatId = arguments["chat_id"] ?? 0;
         chatName = arguments["chat_name"] ?? '';
-        lastSeenTime = arguments["created_at"] ?? '';
         profileImage = arguments["profile_image"] ?? '';
         from = arguments["from"] ?? '';
       }
+      getLastActiveAt(arguments!["user_id"]);
       await getChatMessages();
       WidgetsBinding.instance?.addPostFrameCallback((_) {
         _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
@@ -73,6 +74,45 @@ class ChatScreenState extends State<ChatScreen> {
     _scrollController.dispose();
     _messageFocusNode.dispose();
     super.dispose();
+  }
+
+  getLastActiveAt(userId) async {
+    try {
+      final response =
+          await chatService.getLastActiveAtData(int.parse(userId.toString()));
+      if (response!["code"] == 200) {
+        lastSeenTime = response["data"] ?? "";
+        setState(() {});
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      _refreshController.refreshCompleted();
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
   }
 
   getChatMessages() async {

@@ -315,6 +315,8 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
+                        print(chatHistoriesProvider.chatHistories[index]
+                            ["chat_participants"]);
                         ChatsProvider chatProvider =
                             Provider.of<ChatsProvider>(context, listen: false);
                         chatProvider.setChats([]);
@@ -328,10 +330,15 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                                 .chatHistories[index]["chat_id"],
                             'chat_name': chatHistoriesProvider
                                 .chatHistories[index]["chat_name"],
-                            'created_at': chatHistoriesProvider
-                                .chatHistories[index]["created_at"],
                             'profile_image': chatHistoriesProvider
                                 .chatHistories[index]["profile_image"],
+                            'user_id':
+                                (chatHistoriesProvider.chatHistories[index]
+                                        ["chat_participants"] as List)
+                                    .where((element) => !element["is_me"])
+                                    .map<String>((participant) =>
+                                        participant["user_id"].toString())
+                                    .toList()[0],
                             'from': 'chat_history',
                           },
                         );

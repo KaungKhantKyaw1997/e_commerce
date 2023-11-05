@@ -182,6 +182,7 @@ class _ProductScreenState extends State<ProductScreen> {
             'receiver_id': product["creator_id"],
             'chat_name': sellerinfo["seller_name"],
             'profile_image': sellerinfo["seller_profile_image"],
+            'user_id': product["creator_id"],
             'from': 'product',
           },
         );
