@@ -203,16 +203,20 @@ class AuthService {
       if (response!["code"] == 200) {
         bool history = false;
         List chatHistories = chatHistoriesProvider.chatHistories;
+        int index = 0;
         for (var chatHistory in chatHistories) {
           if (chatHistory["chat_id"] == chatId) {
             history = true;
             break;
           }
+          index++;
         }
         if (!history) {
           chatHistories.insert(0, (response["data"]));
-          chatHistoriesProvider.setChatHistories(chatHistories);
+        } else {
+          chatHistories[index] = response["data"];
         }
+        chatHistoriesProvider.setChatHistories(chatHistories);
       }
     } catch (e, s) {
       crashlytic.myGlobalErrorHandler(e, s);
