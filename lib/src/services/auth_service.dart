@@ -202,16 +202,16 @@ class AuthService {
       final response = await chatService.getChatSessionData(chatId: chatId);
       if (response!["code"] == 200) {
         List chatHistories = chatHistoriesProvider.chatHistories;
-        bool history = false;
+        bool flag = false;
         int index = 0;
         for (var chatHistory in chatHistories) {
           if (chatHistory["chat_id"] == chatId) {
-            history = true;
+            flag = true;
             break;
           }
           index++;
         }
-        if (!history) {
+        if (!flag) {
           chatHistories.insert(0, (response["data"]));
         } else {
           chatHistories[index] = response["data"];
@@ -234,13 +234,22 @@ class AuthService {
           await chatService.getChatMessageData(messageId: messageId);
       if (response!["code"] == 200) {
         List chats = chatProvider.chats;
-        chats.add(response["data"]);
-        chats.sort((a, b) => a["created_at"].compareTo(b["created_at"]));
-        chatProvider.setChats(chats);
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
-          chatScrollProvider.chatScrollController.jumpTo(
-              chatScrollProvider.chatScrollController.position.maxScrollExtent);
-        });
+        bool flag = false;
+        for (var chat in chats) {
+          if (chat["message_id"] == messageId) {
+            flag = true;
+            break;
+          }
+        }
+        if (!flag) {
+          chats.add(response["data"]);
+          chats.sort((a, b) => a["created_at"].compareTo(b["created_at"]));
+          chatProvider.setChats(chats);
+          WidgetsBinding.instance?.addPostFrameCallback((_) {
+            chatScrollProvider.chatScrollController.jumpTo(chatScrollProvider
+                .chatScrollController.position.maxScrollExtent);
+          });
+        }
       }
     } catch (e, s) {
       crashlytic.myGlobalErrorHandler(e, s);
