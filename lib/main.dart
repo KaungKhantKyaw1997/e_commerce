@@ -90,10 +90,13 @@ class _MyAppState extends State<MyApp> {
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
-        LocalNotificationService.display(
-          message.notification!.title.toString(),
-          message.notification!.body.toString(),
-        );
+        if (message.notification!.title!.isNotEmpty &&
+            message.notification!.body!.isNotEmpty) {
+          LocalNotificationService.display(
+            message.notification!.title.toString(),
+            message.notification!.body.toString(),
+          );
+        }
       }
     });
   }
