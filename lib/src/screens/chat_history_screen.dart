@@ -315,8 +315,6 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        print(chatHistoriesProvider.chatHistories[index]
-                            ["chat_participants"]);
                         ChatsProvider chatProvider =
                             Provider.of<ChatsProvider>(context, listen: false);
                         chatProvider.setChats([]);

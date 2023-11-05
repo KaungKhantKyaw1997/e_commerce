@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -9,6 +8,7 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
+import 'package:e_commerce/src/providers/chat_scroll_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
@@ -31,7 +31,6 @@ class ChatScreen extends StatefulWidget {
 class ChatScreenState extends State<ChatScreen> {
   final crashlytic = new CrashlyticsService();
   final chatService = ChatService();
-  ScrollController _scrollController = ScrollController();
   ScrollController _imageController = ScrollController();
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -62,16 +61,22 @@ class ChatScreenState extends State<ChatScreen> {
         from = arguments["from"] ?? '';
       }
       getLastActiveAt(arguments!["user_id"]);
+
+      ChatScrollProvider chatScrollProvider =
+          Provider.of<ChatScrollProvider>(context, listen: false);
       await getChatMessages();
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
-        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      Future.delayed(Duration(milliseconds: 100), () {
+        WidgetsBinding.instance?.addPostFrameCallback((_) {
+          chatScrollProvider.chatScrollController.jumpTo(
+              chatScrollProvider.chatScrollController.position.maxScrollExtent);
+        });
       });
     });
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _imageController.dispose();
     _messageFocusNode.dispose();
     super.dispose();
   }
@@ -118,6 +123,7 @@ class ChatScreenState extends State<ChatScreen> {
   getChatMessages() async {
     ChatsProvider chatProvider =
         Provider.of<ChatsProvider>(context, listen: false);
+
     try {
       final response = await chatService.getChatMessagesData(
           chatId: chatId, receiverId: receiverId, page: page);
@@ -180,6 +186,8 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   sendMessage() async {
+    ChatScrollProvider chatScrollProvider =
+        Provider.of<ChatScrollProvider>(context, listen: false);
     ChatsProvider chatProvider =
         Provider.of<ChatsProvider>(context, listen: false);
     try {
@@ -195,7 +203,13 @@ class ChatScreenState extends State<ChatScreen> {
         message.text = '';
         chatProvider.setChats([]);
         this.page = 1;
-        getChatMessages();
+        await getChatMessages();
+        Future.delayed(Duration(milliseconds: 100), () {
+          WidgetsBinding.instance?.addPostFrameCallback((_) {
+            chatScrollProvider.chatScrollController.jumpTo(chatScrollProvider
+                .chatScrollController.position.maxScrollExtent);
+          });
+        });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -514,6 +528,8 @@ class ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ChatScrollProvider chatScrollProvider =
+        Provider.of<ChatScrollProvider>(context, listen: true);
     ChatsProvider chatProvider =
         Provider.of<ChatsProvider>(context, listen: true);
 
@@ -609,9 +625,16 @@ class ChatScreenState extends State<ChatScreen> {
                   enablePullUp: false,
                   onRefresh: () async {
                     await getChatMessages();
+                    Future.delayed(Duration(milliseconds: 100), () {
+                      WidgetsBinding.instance?.addPostFrameCallback((_) {
+                        chatScrollProvider.chatScrollController.jumpTo(
+                            chatScrollProvider
+                                .chatScrollController.position.minScrollExtent);
+                      });
+                    });
                   },
                   child: ListView.builder(
-                    controller: _scrollController,
+                    controller: chatScrollProvider.chatScrollController,
                     itemCount: chatProvider.chats.length,
                     itemBuilder: (BuildContext context, int index) {
                       final message = chatProvider.chats[index];

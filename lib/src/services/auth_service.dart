@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
+import 'package:e_commerce/src/providers/chat_scroll_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/providers/role_provider.dart';
@@ -200,9 +201,18 @@ class AuthService {
       final chatService = ChatService();
       final response = await chatService.getChatSessionData(chatId: chatId);
       if (response!["code"] == 200) {
+        bool history = false;
         List chatHistories = chatHistoriesProvider.chatHistories;
-        chatHistories.insert(0, (response["data"]));
-        chatHistoriesProvider.setChatHistories(chatHistories);
+        for (var chatHistory in chatHistories) {
+          if (chatHistory["chat_id"] == chatId) {
+            history = true;
+            break;
+          }
+        }
+        if (!history) {
+          chatHistories.insert(0, (response["data"]));
+          chatHistoriesProvider.setChatHistories(chatHistories);
+        }
       }
     } catch (e, s) {
       crashlytic.myGlobalErrorHandler(e, s);
@@ -210,6 +220,8 @@ class AuthService {
   }
 
   getChatMessages(messageId, context) async {
+    ChatScrollProvider chatScrollProvider =
+        Provider.of<ChatScrollProvider>(context, listen: false);
     ChatsProvider chatProvider =
         Provider.of<ChatsProvider>(context, listen: false);
     try {
@@ -221,6 +233,10 @@ class AuthService {
         chats.add(response["data"]);
         chats.sort((a, b) => a["created_at"].compareTo(b["created_at"]));
         chatProvider.setChats(chats);
+        WidgetsBinding.instance?.addPostFrameCallback((_) {
+          chatScrollProvider.chatScrollController.jumpTo(
+              chatScrollProvider.chatScrollController.position.maxScrollExtent);
+        });
       }
     } catch (e, s) {
       crashlytic.myGlobalErrorHandler(e, s);

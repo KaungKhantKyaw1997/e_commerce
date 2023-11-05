@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:e_commerce/agent_palette.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
+import 'package:e_commerce/src/providers/chat_scroll_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
 import 'package:e_commerce/src/providers/role_provider.dart';
 import 'package:e_commerce/src/providers/socket_provider.dart';
@@ -38,6 +39,7 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (context) => ChatScrollProvider()),
         ChangeNotifierProvider(create: (context) => SocketProvider()),
         ChangeNotifierProvider(create: (context) => ChatHistoriesProvider()),
         ChangeNotifierProvider(create: (context) => ChatsProvider()),
