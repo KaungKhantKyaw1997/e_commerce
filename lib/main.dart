@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:e_commerce/agent_palette.dart';
 import 'package:e_commerce/global.dart';
+import 'package:e_commerce/socket_manager.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
 import 'package:e_commerce/src/providers/chat_scroll_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
@@ -33,9 +34,9 @@ Future<void> main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   int cartCount = prefs.getInt('cartCount') ?? 0;
   int notiCount = prefs.getInt('notiCount') ?? 0;
-
   // final cameras = await availableCameras();
   // final firstCamera = cameras.first;
+
   runApp(
     MultiProvider(
       providers: [
@@ -81,7 +82,8 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
+    SocketManager socketManager = SocketManager(context);
+    WidgetsBinding.instance?.addObserver(socketManager);
     LocalNotificationService.setup(context);
 
     // FirebaseMessaging.instance.onTokenRefresh.listen((String token) {

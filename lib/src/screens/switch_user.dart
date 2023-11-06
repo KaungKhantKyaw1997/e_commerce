@@ -159,6 +159,27 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+         appBar: AppBar(
+          backgroundColor: Colors.white,
+          centerTitle: true,
+          elevation: 0,
+          title: Text(
+            language["Switch User"] ?? "Switch User",
+            style: FontConstants.title1,
+          ),
+          leading: BackButton(
+            color: Colors.black,
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.pushNamed(
+                context,
+                Routes.setting,
+                arguments: {
+                },
+              );
+            },
+          ),
+        ),
       body: WillPopScope(
         onWillPop: () async {
           return false;
