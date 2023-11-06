@@ -7,16 +7,18 @@ import 'package:provider/provider.dart';
 class SocketManager with WidgetsBindingObserver {
   final BuildContext context;
   SocketManager(this.context);
+
   @override
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
-    final AuthService authService = AuthService();
+    final authService = new AuthService();
     final storage = FlutterSecureStorage();
+    SocketProvider socketProvider =
+        Provider.of<SocketProvider>(context, listen: false);
     var token = await storage.read(key: "token") ?? '';
+
     if (token.isNotEmpty && state == AppLifecycleState.resumed) {
       authService.initSocket(token, context);
     } else if (state == AppLifecycleState.paused) {
-      SocketProvider socketProvider =
-          Provider.of<SocketProvider>(context, listen: false);
       await socketProvider.socket!.disconnect();
     }
   }
