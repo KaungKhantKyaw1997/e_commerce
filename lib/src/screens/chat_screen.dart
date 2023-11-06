@@ -202,6 +202,7 @@ class ChatScreenState extends State<ChatScreen> {
       if (response!["code"] == 201) {
         _messageFocusNode.unfocus();
         message.text = '';
+        imageUrls = [];
         chatProvider.setChats([]);
         this.page = 1;
         await getChatMessages();
@@ -247,8 +248,11 @@ class ChatScreenState extends State<ChatScreen> {
     try {
       pickedMultiFile = await ImagePicker().pickMultiImage();
       imageUrls = [];
-      await uploadFile();
-      sendMessage();
+      if (pickedMultiFile.isNotEmpty) {
+        message.text = '';
+        await uploadFile();
+        sendMessage();
+      }
     } on Exception catch (e) {
       print(e.toString());
     }
@@ -772,6 +776,7 @@ class ChatScreenState extends State<ChatScreen> {
                     GestureDetector(
                       onTap: () {
                         if (message.text.isNotEmpty) {
+                          imageUrls = [];
                           sendMessage();
                         }
                       },
