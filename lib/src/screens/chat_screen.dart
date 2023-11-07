@@ -134,6 +134,8 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   }
 
   resumeChatMessages() async {
+    ChatScrollProvider chatScrollProvider =
+        Provider.of<ChatScrollProvider>(context, listen: false);
     ChatsProvider chatProvider =
         Provider.of<ChatsProvider>(context, listen: false);
 
@@ -146,14 +148,22 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           status: 'sent');
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
+          List chats = chatProvider.chats;
+
           for (var message in response["data"]) {
+            chats.insert(0, (response["data"]));
             updateMessageStatus(message["message_id"]);
           }
-
-          List chats = chatProvider.chats;
-          chats += response["data"];
           chatProvider.setChats(chats);
           page++;
+
+          WidgetsBinding.instance?.addPostFrameCallback((_) {
+            chatScrollProvider.chatScrollController.animateTo(
+              chatScrollProvider.chatScrollController.position.minScrollExtent,
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          });
         }
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
