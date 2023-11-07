@@ -105,6 +105,10 @@ class _MyAppState extends State<MyApp> {
         }
       }
     });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print(message);
+    });
   }
 
   @override
