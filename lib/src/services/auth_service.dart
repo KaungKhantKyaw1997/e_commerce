@@ -244,13 +244,16 @@ class AuthService {
         if (!flag) {
           chats.insert(0, (response["data"]));
           chatProvider.setChats(chats);
-          WidgetsBinding.instance?.addPostFrameCallback((_) {
-            chatScrollProvider.chatScrollController.animateTo(
-              chatScrollProvider.chatScrollController.position.minScrollExtent,
-              duration: Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-          });
+          if (ModalRoute.of(context)!.settings.name == '/chat') {
+            WidgetsBinding.instance?.addPostFrameCallback((_) {
+              chatScrollProvider.chatScrollController.animateTo(
+                chatScrollProvider
+                    .chatScrollController.position.minScrollExtent,
+                duration: Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            });
+          }
         }
       }
     } catch (e, s) {
