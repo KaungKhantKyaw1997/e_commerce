@@ -7,6 +7,8 @@ import 'package:e_commerce/src/providers/chat_scroll_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
 import 'package:e_commerce/src/providers/role_provider.dart';
 import 'package:e_commerce/src/providers/socket_provider.dart';
+import 'package:e_commerce/src/services/chat_service.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/local_notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -79,6 +81,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final crashlytic = new CrashlyticsService();
+  final chatService = ChatService();
+
   @override
   void initState() {
     super.initState();
@@ -92,11 +97,11 @@ class _MyAppState extends State<MyApp> {
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
+        String chatId =
+            message.data.isNotEmpty ? message.data["chat_id"].toString() : '0';
+
         if (message.notification!.title!.isNotEmpty &&
             message.notification!.body!.isNotEmpty) {
-          String chatId = message.data.isNotEmpty
-              ? message.data["chat_id"].toString()
-              : '0';
           LocalNotificationService.display(
             message.notification!.title.toString(),
             message.notification!.body.toString(),
@@ -106,18 +111,43 @@ class _MyAppState extends State<MyApp> {
       }
     });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       if (message.notification != null) {
-        if (message.notification!.title!.isNotEmpty &&
-            message.notification!.body!.isNotEmpty) {
-          String chatId = message.data.isNotEmpty
-              ? message.data["chat_id"].toString()
-              : '0';
-          LocalNotificationService.display(
-            message.notification!.title.toString(),
-            message.notification!.body.toString(),
-            chatId,
-          );
+        int chatId = message.data.isNotEmpty
+            ? int.parse(message.data["chat_id"].toString())
+            : 0;
+
+        if (chatId != 0) {
+          try {
+            final response =
+                await chatService.getChatSessionData(chatId: chatId);
+            if (response!["code"] == 200) {
+              navigatorKey.currentState!.pushNamed(
+                Routes.chat,
+                arguments: {
+                  'chat_id': response["data"]["chat_id"],
+                  'chat_name': response["data"]["chat_name"],
+                  'profile_image': response["data"]["profile_image"],
+                  'user_id': (response["data"]["chat_participants"] as List)
+                      .where((element) => !element["is_me"])
+                      .map<String>(
+                          (participant) => participant["user_id"].toString())
+                      .toList()[0],
+                  'from': 'home',
+                },
+              );
+            }
+          } catch (e, s) {
+            crashlytic.myGlobalErrorHandler(e, s);
+          }
+        } else {
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          String role = prefs.getString('role') ?? "";
+
+          BottomProvider bottomProvider =
+              Provider.of<BottomProvider>(context, listen: false);
+          bottomProvider.selectIndex(role == 'admin' ? 1 : 3);
+          navigatorKey.currentState!.pushNamed(Routes.noti);
         }
       }
     });
