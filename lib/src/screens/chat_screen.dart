@@ -141,7 +141,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       final response = await chatService.getChatMessagesData(
           chatId: chatId,
           receiverId: receiverId,
-          page: page,
+          page: 1,
           perPage: 999999,
           status: 'sent');
       if (response!["code"] == 200) {
