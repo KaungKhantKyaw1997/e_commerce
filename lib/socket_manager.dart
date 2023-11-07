@@ -16,10 +16,9 @@ class SocketManager with WidgetsBindingObserver {
         Provider.of<SocketProvider>(context, listen: false);
     var token = await storage.read(key: "token") ?? '';
 
+    await socketProvider.socket!.disconnect();
     if (token.isNotEmpty && state == AppLifecycleState.resumed) {
       authService.initSocket(token, context);
-    } else if (state == AppLifecycleState.paused) {
-      await socketProvider.socket!.disconnect();
     }
   }
 }
