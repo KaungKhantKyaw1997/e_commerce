@@ -102,11 +102,14 @@ class _MyAppState extends State<MyApp> {
 
         if (message.notification!.title!.isNotEmpty &&
             message.notification!.body!.isNotEmpty) {
-          LocalNotificationService.display(
-            message.notification!.title.toString(),
-            message.notification!.body.toString(),
-            chatId,
-          );
+          if (ModalRoute.of(context)!.settings.name != '/chat' &&
+              ModalRoute.of(context)!.settings.name != '/noti') {
+            LocalNotificationService.display(
+              message.notification!.title.toString(),
+              message.notification!.body.toString(),
+              chatId,
+            );
+          }
         }
       }
     });
