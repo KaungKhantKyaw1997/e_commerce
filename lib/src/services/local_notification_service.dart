@@ -61,6 +61,7 @@ class LocalNotificationService {
       title,
       body,
       notificationDetails,
+      payload: 'test',
     );
   }
 }
