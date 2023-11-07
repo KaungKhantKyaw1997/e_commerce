@@ -107,7 +107,19 @@ class _MyAppState extends State<MyApp> {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print(message);
+      if (message.notification != null) {
+        if (message.notification!.title!.isNotEmpty &&
+            message.notification!.body!.isNotEmpty) {
+          String chatId = message.data.isNotEmpty
+              ? message.data["chat_id"].toString()
+              : '0';
+          LocalNotificationService.display(
+            message.notification!.title.toString(),
+            message.notification!.body.toString(),
+            chatId,
+          );
+        }
+      }
     });
   }
 
