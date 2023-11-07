@@ -84,7 +84,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   @override
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == _lastLifecycleState) {
-      return; // Ignore duplicate calls if the state hasn't actually changed.
+      return;
     }
 
     _lastLifecycleState = state;
