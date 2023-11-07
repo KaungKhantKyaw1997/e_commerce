@@ -143,7 +143,7 @@ class _MyAppState extends State<MyApp> {
                       .map<String>(
                           (participant) => participant["user_id"].toString())
                       .toList()[0],
-                  'from': 'home',
+                  'from': role == 'admin' ? 'bottom' : 'home',
                 },
               );
             }
