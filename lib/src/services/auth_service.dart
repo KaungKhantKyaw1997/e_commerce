@@ -242,7 +242,7 @@ class AuthService {
           }
         }
         if (!flag) {
-          chats.add(response["data"]);
+          chats.insert(0, (response["data"]));
           chatProvider.setChats(chats);
           WidgetsBinding.instance?.addPostFrameCallback((_) {
             chatScrollProvider.chatScrollController.animateTo(
