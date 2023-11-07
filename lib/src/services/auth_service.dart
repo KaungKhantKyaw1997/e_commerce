@@ -25,6 +25,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class AuthService {
   final crashlytic = new CrashlyticsService();
+  final chatService = ChatService();
   final storage = FlutterSecureStorage();
 
   final Dio dio = Dio();
@@ -170,7 +171,8 @@ class AuthService {
       print('Connection established');
 
       socketProvider.socket!.on("new-message", (data) {
-        getChatMessages(data["message_id"], context);
+        getChatMessage(data["message_id"], context);
+        updateMessageStatus(data["message_id"]);
         getChatSession(data["chat_id"], context);
       });
 
@@ -198,7 +200,6 @@ class AuthService {
     ChatHistoriesProvider chatHistoriesProvider =
         Provider.of<ChatHistoriesProvider>(context, listen: false);
     try {
-      final chatService = ChatService();
       final response = await chatService.getChatSessionData(chatId: chatId);
       if (response!["code"] == 200) {
         List chatHistories = chatHistoriesProvider.chatHistories;
@@ -223,13 +224,12 @@ class AuthService {
     }
   }
 
-  getChatMessages(messageId, context) async {
+  getChatMessage(messageId, context) async {
     ChatScrollProvider chatScrollProvider =
         Provider.of<ChatScrollProvider>(context, listen: false);
     ChatsProvider chatProvider =
         Provider.of<ChatsProvider>(context, listen: false);
     try {
-      final chatService = ChatService();
       final response =
           await chatService.getChatMessageData(messageId: messageId);
       if (response!["code"] == 200) {
@@ -259,6 +259,13 @@ class AuthService {
     } catch (e, s) {
       crashlytic.myGlobalErrorHandler(e, s);
     }
+  }
+
+  updateMessageStatus(id) {
+    final body = {
+      "status": "delivered",
+    };
+    chatService.updateMessageStatusData(body, id);
   }
 
   getSettings(context) async {

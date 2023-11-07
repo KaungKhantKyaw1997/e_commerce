@@ -30,7 +30,7 @@ class ChatScreen extends StatefulWidget {
   State<ChatScreen> createState() => ChatScreenState();
 }
 
-class ChatScreenState extends State<ChatScreen> {
+class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   final crashlytic = new CrashlyticsService();
   final chatService = ChatService();
   ScrollController _imageController = ScrollController();
@@ -47,11 +47,14 @@ class ChatScreenState extends State<ChatScreen> {
   String profileImage = '';
   String from = '';
   int page = 1;
+  String status = '';
   String role = "";
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance?.addObserver(this);
+
     Future.delayed(Duration.zero, () {
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
@@ -71,9 +74,17 @@ class ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
     _imageController.dispose();
     _messageFocusNode.dispose();
     super.dispose();
+  }
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.resumed) {
+      resumeChatMessages();
+    }
   }
 
   getData() async {
@@ -90,6 +101,60 @@ class ChatScreenState extends State<ChatScreen> {
       if (response!["code"] == 200) {
         lastSeenTime = response["data"] ?? "";
         setState(() {});
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      _refreshController.loadComplete();
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  resumeChatMessages() async {
+    ChatsProvider chatProvider =
+        Provider.of<ChatsProvider>(context, listen: false);
+
+    try {
+      final response = await chatService.getChatMessagesData(
+          chatId: chatId,
+          receiverId: receiverId,
+          page: page,
+          perPage: 999999,
+          status: 'sent');
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          for (var message in response["data"]) {
+            updateMessageStatus(message["message_id"]);
+          }
+
+          List chats = chatProvider.chats;
+          chats += response["data"];
+          chatProvider.setChats(chats);
+          page++;
+        }
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -204,7 +269,7 @@ class ChatScreenState extends State<ChatScreen> {
         _messageFocusNode.unfocus();
         message.text = '';
         imageUrls = [];
-        this.page = 1;
+        page = 1;
         await getChatMessages();
         WidgetsBinding.instance?.addPostFrameCallback((_) {
           chatScrollProvider.chatScrollController.animateTo(

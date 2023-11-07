@@ -66,10 +66,11 @@ class ChatService {
       {int chatId = 0,
       int receiverId = 0,
       int page = 1,
-      int perPage = 10}) async {
+      int perPage = 10,
+      String status = ''}) async {
     var token = await storage.read(key: "token") ?? '';
     final response = await dio.get(
-      '${ApiConstants.chatSessionsUrl}/$chatId/chat-messages?page=$page&per_page=$perPage&receiver_id=$receiverId',
+      '${ApiConstants.chatSessionsUrl}/$chatId/chat-messages?page=$page&per_page=$perPage&receiver_id=$receiverId&status=$status',
       options: Options(
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
