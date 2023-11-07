@@ -21,6 +21,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -44,10 +45,9 @@ class ChatScreenState extends State<ChatScreen> {
   String chatName = '';
   String lastSeenTime = '';
   String profileImage = '';
-  String profileImage1 = '';
-  String profileImage2 = '';
   String from = '';
   int page = 1;
+  String role = "";
 
   @override
   void initState() {
@@ -63,6 +63,7 @@ class ChatScreenState extends State<ChatScreen> {
         profileImage = arguments["profile_image"] ?? '';
         from = arguments["from"] ?? '';
       }
+      getData();
       getLastActiveAt(arguments!["user_id"]);
       getChatMessages();
     });
@@ -73,6 +74,13 @@ class ChatScreenState extends State<ChatScreen> {
     _imageController.dispose();
     _messageFocusNode.dispose();
     super.dispose();
+  }
+
+  getData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      role = prefs.getString('role') ?? "";
+    });
   }
 
   getLastActiveAt(userId) async {
@@ -545,11 +553,10 @@ class ChatScreenState extends State<ChatScreen> {
     ChatsProvider chatProvider =
         Provider.of<ChatsProvider>(context, listen: true);
 
+    List<String> profiles = [];
     if (profileImage.isNotEmpty) {
-      List<String> profiles =
-          profileImage.split(",").map((e) => e.trim()).toList();
-      profileImage1 = profiles[0] ?? '';
-      profileImage2 = profiles[1] ?? '';
+      profiles =
+          profileImage.split(",").map((e) => e.trim()).toList().cast<String>();
     }
 
     return GestureDetector(
@@ -570,36 +577,59 @@ class ChatScreenState extends State<ChatScreen> {
                 ),
                 child: Stack(
                   children: [
-                    // Positioned(
-                    //   left: 0,
-                    //   child: profileImage1.isEmpty
-                    //       ? CircleAvatar(
-                    //           radius: 20,
-                    //           backgroundImage:
-                    //               AssetImage("assets/images/profile.png"),
-                    //           backgroundColor: ColorConstants.fillcolor,
-                    //         )
-                    //       : CircleAvatar(
-                    //           radius: 25,
-                    //           backgroundImage: NetworkImage(
-                    //               '${ApiConstants.baseUrl}${profileImage1}'),
-                    //         ),
-                    // ),
-                    // Positioned(
-                    //   left: 120,
-                    //   child: profileImage2.isEmpty
-                    //       ? CircleAvatar(
-                    //           radius: 20,
-                    //           backgroundImage:
-                    //               AssetImage("assets/images/profile.png"),
-                    //           backgroundColor: ColorConstants.fillcolor,
-                    //         )
-                    //       : CircleAvatar(
-                    //           radius: 25,
-                    //           backgroundImage: NetworkImage(
-                    //               '${ApiConstants.baseUrl}${profileImage2}'),
-                    //         ),
-                    // ),
+                    Center(
+                      child: ClipOval(
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          color: ColorConstants.fillcolor,
+                          child: profiles.isNotEmpty
+                              ? Stack(
+                                  children: <Widget>[
+                                    Positioned(
+                                      left: 0,
+                                      child: profiles[0].isNotEmpty
+                                          ? Image.network(
+                                              '${ApiConstants.baseUrl}${profiles[0]}',
+                                              width: role == 'admin' ? 20 : 40,
+                                              height: 40,
+                                              fit: BoxFit.cover,
+                                            )
+                                          : Image.asset(
+                                              'assets/images/profile.png',
+                                              width: role == 'admin' ? 20 : 40,
+                                              height: 40,
+                                              fit: BoxFit.cover,
+                                            ),
+                                    ),
+                                    if (role == 'admin')
+                                      Positioned(
+                                        right: 0,
+                                        child: profiles[1].isNotEmpty
+                                            ? Image.network(
+                                                '${ApiConstants.baseUrl}${profiles[1]}',
+                                                width: 20,
+                                                height: 40,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Image.asset(
+                                                'assets/images/profile.png',
+                                                width: 20,
+                                                height: 40,
+                                                fit: BoxFit.cover,
+                                              ),
+                                      ),
+                                  ],
+                                )
+                              : Image.asset(
+                                  'assets/images/profile.png',
+                                  width: 40,
+                                  height: 40,
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

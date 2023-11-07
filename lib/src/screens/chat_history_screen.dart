@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatHistoryScreen extends StatefulWidget {
   const ChatHistoryScreen({Key? key}) : super(key: key);
@@ -34,6 +35,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
   final chatService = ChatService();
   int page = 1;
   String from = '';
+  String role = "";
 
   @override
   void initState() {
@@ -46,7 +48,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
         from = arguments["from"] ?? '';
       }
     });
-
+    getData();
     getChatSessions();
   }
 
@@ -54,6 +56,13 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  getData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      role = prefs.getString('role') ?? "";
+    });
   }
 
   getChatSessions() async {
@@ -142,6 +151,59 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Center(
+            child: ClipOval(
+              child: Container(
+                width: 50,
+                height: 50,
+                color: ColorConstants.fillcolor,
+                child: profiles.isNotEmpty
+                    ? Stack(
+                        children: <Widget>[
+                          Positioned(
+                            left: 0,
+                            child: profiles[0].isNotEmpty
+                                ? Image.network(
+                                    '${ApiConstants.baseUrl}${profiles[0]}',
+                                    width: role == 'admin' ? 25 : 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.asset(
+                                    'assets/images/profile.png',
+                                    width: role == 'admin' ? 25 : 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                  ),
+                          ),
+                          if (role == 'admin')
+                            Positioned(
+                              right: 0,
+                              child: profiles[1].isNotEmpty
+                                  ? Image.network(
+                                      '${ApiConstants.baseUrl}${profiles[1]}',
+                                      width: 25,
+                                      height: 50,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Image.asset(
+                                      'assets/images/profile.png',
+                                      width: 25,
+                                      height: 50,
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
+                        ],
+                      )
+                    : Image.asset(
+                        'assets/images/profile.png',
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                      ),
+              ),
+            ),
+          ),
           Expanded(
             child: Container(
               margin: const EdgeInsets.only(
