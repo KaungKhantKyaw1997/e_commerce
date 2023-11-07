@@ -34,9 +34,10 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
             "icon": "assets/icons/noti.svg",
             "label": "Notification"
           },
-          {"index": 2, "icon": "assets/icons/setting.svg", "label": "Settings"}
+          {"index": 2, "icon": "assets/icons/message.svg", "label": "Chat"},
+          {"index": 3, "icon": "assets/icons/setting.svg", "label": "Settings"}
         ];
-      } else if (role == 'user'||role == 'agent') {
+      } else if (role == 'user' || role == 'agent') {
         navItems = [
           {"index": 0, "icon": "assets/icons/home.svg", "label": "Home"},
           {"index": 1, "icon": "assets/icons/cart.svg", "label": "Cart"},
@@ -67,15 +68,38 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
 
       var data = navItems[index];
       if (data["label"] == 'Home') {
-        Navigator.pushNamed(context, Routes.home);
+        Navigator.pushNamed(
+          context,
+          Routes.home,
+        );
       } else if (data["label"] == 'Cart') {
-        Navigator.pushNamed(context, Routes.cart);
+        Navigator.pushNamed(
+          context,
+          Routes.cart,
+        );
       } else if (data["label"] == 'History' || data["label"] == 'Order') {
-        Navigator.pushNamed(context, Routes.history);
+        Navigator.pushNamed(
+          context,
+          Routes.history,
+        );
       } else if (data["label"] == 'Notification') {
-        Navigator.pushNamed(context, Routes.noti);
+        Navigator.pushNamed(
+          context,
+          Routes.noti,
+        );
+      } else if (data["label"] == 'Chat') {
+        Navigator.pushNamed(
+          context,
+          Routes.chat_history,
+          arguments: {
+            'from': 'bottom',
+          },
+        );
       } else if (data["label"] == 'Settings') {
-        Navigator.pushNamed(context, Routes.setting);
+        Navigator.pushNamed(
+          context,
+          Routes.setting,
+        );
       }
     }
   }

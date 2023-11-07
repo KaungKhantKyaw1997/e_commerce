@@ -8,6 +8,7 @@ import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
+import 'package:e_commerce/src/screens/bottombar_screen.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
@@ -32,10 +33,20 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
   int crossAxisCount = 1;
   final chatService = ChatService();
   int page = 1;
+  String from = '';
 
   @override
   void initState() {
     super.initState();
+    Future.delayed(Duration.zero, () async {
+      final arguments =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
+      if (arguments != null) {
+        from = arguments["from"] ?? '';
+      }
+    });
+
     getChatSessions();
   }
 
@@ -99,6 +110,16 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
     ChatHistoriesProvider chatHistoriesProvider =
         Provider.of<ChatHistoriesProvider>(context, listen: true);
 
+    List<String> profiles = [];
+    if (chatHistoriesProvider
+        .chatHistories[index]["profile_image"].isNotEmpty) {
+      profiles = (chatHistoriesProvider.chatHistories[index]["profile_image"]
+              .split(",")
+              .map((e) => e.trim())
+              .toList() as List)
+          .cast<String>();
+    }
+
     return Container(
       padding: const EdgeInsets.only(
         left: 16,
@@ -121,35 +142,6 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: chatHistoriesProvider
-                    .chatHistories[index]["profile_image"].isNotEmpty
-                ? BoxDecoration(
-                    color: ColorConstants.fillcolor,
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          '${ApiConstants.baseUrl}${chatHistoriesProvider.chatHistories[index]["profile_image"].toString()}'),
-                      fit: BoxFit.cover,
-                    ),
-                    borderRadius: BorderRadius.circular(50),
-                    border: Border.all(
-                      color: Colors.transparent,
-                    ),
-                  )
-                : BoxDecoration(
-                    color: ColorConstants.fillcolor,
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/profile.png'),
-                      fit: BoxFit.cover,
-                    ),
-                    borderRadius: BorderRadius.circular(50),
-                    border: Border.all(
-                      color: Colors.transparent,
-                    ),
-                  ),
-          ),
           Expanded(
             child: Container(
               margin: const EdgeInsets.only(
@@ -165,7 +157,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                       Expanded(
                         child: Text(
                           chatHistoriesProvider.chatHistories[index]
-                                  ["sender_name"]
+                                  ["chat_name"]
                               .toString(),
                           overflow: TextOverflow.ellipsis,
                           style: FontConstants.body1,
@@ -246,6 +238,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: from == 'bottom' ? false : true,
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
@@ -277,97 +270,114 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
             getChatSessions();
           },
         ),
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
+        leading: from == 'home'
+            ? BackButton(
+                color: Colors.black,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            : null,
       ),
-      body: SmartRefresher(
-        header: WaterDropMaterialHeader(
-          backgroundColor: Theme.of(context).primaryColor,
-          color: Colors.white,
-        ),
-        footer: ClassicFooter(),
-        controller: _refreshController,
-        enablePullDown: true,
-        enablePullUp: true,
-        onRefresh: () async {
-          page = 1;
-          chatHistoriesProvider.setChatHistories([]);
-          await getChatSessions();
+      body: WillPopScope(
+        onWillPop: () async {
+          if (from == 'home') {
+            Navigator.of(context).pop();
+          }
+          return true;
         },
-        onLoading: () async {
-          await getChatSessions();
-        },
-        child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 24,
-            ),
-            width: double.infinity,
-            child: Column(
-              children: [
-                ListView.builder(
-                  controller: _scrollController,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: chatHistoriesProvider.chatHistories.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        ChatsProvider chatProvider =
-                            Provider.of<ChatsProvider>(context, listen: false);
-                        chatProvider.setChats([]);
+        child: SmartRefresher(
+          header: WaterDropMaterialHeader(
+            backgroundColor: Theme.of(context).primaryColor,
+            color: Colors.white,
+          ),
+          footer: ClassicFooter(),
+          controller: _refreshController,
+          enablePullDown: true,
+          enablePullUp: true,
+          onRefresh: () async {
+            page = 1;
+            chatHistoriesProvider.setChatHistories([]);
+            await getChatSessions();
+          },
+          onLoading: () async {
+            await getChatSessions();
+          },
+          child: SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 24,
+              ),
+              width: double.infinity,
+              child: Column(
+                children: [
+                  ListView.builder(
+                    controller: _scrollController,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: chatHistoriesProvider.chatHistories.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          ChatsProvider chatProvider =
+                              Provider.of<ChatsProvider>(context,
+                                  listen: false);
+                          chatProvider.setChats([]);
 
-                        Navigator.pop(context);
-                        Navigator.pushNamed(
-                          context,
-                          Routes.chat,
-                          arguments: {
-                            'chat_id': chatHistoriesProvider
-                                .chatHistories[index]["chat_id"],
-                            'chat_name': chatHistoriesProvider
-                                .chatHistories[index]["chat_name"],
-                            'profile_image': chatHistoriesProvider
-                                .chatHistories[index]["profile_image"],
-                            'user_id':
-                                (chatHistoriesProvider.chatHistories[index]
-                                        ["chat_participants"] as List)
-                                    .where((element) => !element["is_me"])
-                                    .map<String>((participant) =>
-                                        participant["user_id"].toString())
-                                    .toList()[0],
-                            'from': 'chat_history',
-                          },
-                        );
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          chatCard(index),
-                          index < chatHistoriesProvider.chatHistories.length - 1
-                              ? Container(
-                                  padding: const EdgeInsets.only(
-                                    left: 16,
-                                    right: 16,
-                                  ),
-                                  child: const Divider(
-                                    height: 0,
-                                    color: Colors.grey,
-                                  ),
-                                )
-                              : Container(),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ],
+                          Navigator.pop(context);
+                          Navigator.pushNamed(
+                            context,
+                            Routes.chat,
+                            arguments: {
+                              'chat_id': chatHistoriesProvider
+                                  .chatHistories[index]["chat_id"],
+                              'chat_name': chatHistoriesProvider
+                                  .chatHistories[index]["chat_name"],
+                              'profile_image': chatHistoriesProvider
+                                  .chatHistories[index]["profile_image"],
+                              'user_id':
+                                  (chatHistoriesProvider.chatHistories[index]
+                                          ["chat_participants"] as List)
+                                      .where((element) => !element["is_me"])
+                                      .map<String>((participant) =>
+                                          participant["user_id"].toString())
+                                      .toList()[0],
+                              'from': 'chat_history',
+                            },
+                          );
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            chatCard(index),
+                            index <
+                                    chatHistoriesProvider.chatHistories.length -
+                                        1
+                                ? Container(
+                                    padding: const EdgeInsets.only(
+                                      left: 16,
+                                      right: 16,
+                                    ),
+                                    child: const Divider(
+                                      height: 0,
+                                      color: Colors.grey,
+                                    ),
+                                  )
+                                : Container(),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
+      bottomNavigationBar: from == 'bottom' ? const BottomBarScreen() : null,
     );
   }
 }

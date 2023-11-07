@@ -667,6 +667,9 @@ class _HomeScreenState extends State<HomeScreen>
                       Navigator.pushNamed(
                         context,
                         Routes.chat_history,
+                        arguments: {
+                          'from': 'home',
+                        },
                       );
                     },
                   )

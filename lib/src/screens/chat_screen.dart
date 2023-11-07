@@ -44,13 +44,15 @@ class ChatScreenState extends State<ChatScreen> {
   String chatName = '';
   String lastSeenTime = '';
   String profileImage = '';
+  String profileImage1 = '';
+  String profileImage2 = '';
   String from = '';
   int page = 1;
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () async {
+    Future.delayed(Duration.zero, () {
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
@@ -62,17 +64,7 @@ class ChatScreenState extends State<ChatScreen> {
         from = arguments["from"] ?? '';
       }
       getLastActiveAt(arguments!["user_id"]);
-
-      ChatScrollProvider chatScrollProvider =
-          Provider.of<ChatScrollProvider>(context, listen: false);
-      await getChatMessages();
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
-        chatScrollProvider.chatScrollController.animateTo(
-          chatScrollProvider.chatScrollController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      });
+      getChatMessages();
     });
   }
 
@@ -94,7 +86,7 @@ class ChatScreenState extends State<ChatScreen> {
         ToastUtil.showToast(response["code"], response["message"]);
       }
     } catch (e, s) {
-      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
       if (e is DioException &&
           e.error is SocketException &&
           !isConnectionTimeout) {
@@ -122,14 +114,14 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  getChatMessages() async {
+  getChatMessages({String type = ''}) async {
     ChatsProvider chatProvider =
         Provider.of<ChatsProvider>(context, listen: false);
 
     try {
       final response = await chatService.getChatMessagesData(
           chatId: chatId, receiverId: receiverId, page: page);
-      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
 
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
@@ -142,8 +134,11 @@ class ChatScreenState extends State<ChatScreen> {
           }
 
           List chats = chatProvider.chats;
-          chats += response["data"];
-          chats.sort((a, b) => a["created_at"].compareTo(b["created_at"]));
+          if (type == 'onload') {
+            chats += response["data"];
+          } else {
+            chats = response["data"];
+          }
           chatProvider.setChats(chats);
           page++;
         }
@@ -151,7 +146,7 @@ class ChatScreenState extends State<ChatScreen> {
         ToastUtil.showToast(response["code"], response["message"]);
       }
     } catch (e, s) {
-      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
       if (e is DioException &&
           e.error is SocketException &&
           !isConnectionTimeout) {
@@ -189,8 +184,6 @@ class ChatScreenState extends State<ChatScreen> {
   sendMessage() async {
     ChatScrollProvider chatScrollProvider =
         Provider.of<ChatScrollProvider>(context, listen: false);
-    ChatsProvider chatProvider =
-        Provider.of<ChatsProvider>(context, listen: false);
     try {
       final body = {
         "receiver_id": receiverId,
@@ -203,12 +196,11 @@ class ChatScreenState extends State<ChatScreen> {
         _messageFocusNode.unfocus();
         message.text = '';
         imageUrls = [];
-        chatProvider.setChats([]);
         this.page = 1;
         await getChatMessages();
         WidgetsBinding.instance?.addPostFrameCallback((_) {
           chatScrollProvider.chatScrollController.animateTo(
-            chatScrollProvider.chatScrollController.position.maxScrollExtent,
+            chatScrollProvider.chatScrollController.position.minScrollExtent,
             duration: Duration(milliseconds: 300),
             curve: Curves.easeInOut,
           );
@@ -285,7 +277,7 @@ class ChatScreenState extends State<ChatScreen> {
         chatProvider.setChats(chats);
       }
     } catch (e, s) {
-      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
       _refreshController.loadComplete();
       if (e is DioException &&
           e.error is SocketException &&
@@ -553,6 +545,13 @@ class ChatScreenState extends State<ChatScreen> {
     ChatsProvider chatProvider =
         Provider.of<ChatsProvider>(context, listen: true);
 
+    if (profileImage.isNotEmpty) {
+      List<String> profiles =
+          profileImage.split(",").map((e) => e.trim()).toList();
+      profileImage1 = profiles[0] ?? '';
+      profileImage2 = profiles[1] ?? '';
+    }
+
     return GestureDetector(
       onTap: () {
         _messageFocusNode.unfocus();
@@ -569,18 +568,40 @@ class ChatScreenState extends State<ChatScreen> {
                 margin: const EdgeInsets.only(
                   right: 8,
                 ),
-                child: profileImage.isEmpty
-                    ? CircleAvatar(
-                        radius: 20,
-                        backgroundImage:
-                            AssetImage("assets/images/profile.png"),
-                        backgroundColor: ColorConstants.fillcolor,
-                      )
-                    : CircleAvatar(
-                        radius: 25,
-                        backgroundImage: NetworkImage(
-                            '${ApiConstants.baseUrl}${profileImage.toString()}'),
-                      ),
+                child: Stack(
+                  children: [
+                    // Positioned(
+                    //   left: 0,
+                    //   child: profileImage1.isEmpty
+                    //       ? CircleAvatar(
+                    //           radius: 20,
+                    //           backgroundImage:
+                    //               AssetImage("assets/images/profile.png"),
+                    //           backgroundColor: ColorConstants.fillcolor,
+                    //         )
+                    //       : CircleAvatar(
+                    //           radius: 25,
+                    //           backgroundImage: NetworkImage(
+                    //               '${ApiConstants.baseUrl}${profileImage1}'),
+                    //         ),
+                    // ),
+                    // Positioned(
+                    //   left: 120,
+                    //   child: profileImage2.isEmpty
+                    //       ? CircleAvatar(
+                    //           radius: 20,
+                    //           backgroundImage:
+                    //               AssetImage("assets/images/profile.png"),
+                    //           backgroundColor: ColorConstants.fillcolor,
+                    //         )
+                    //       : CircleAvatar(
+                    //           radius: 25,
+                    //           backgroundImage: NetworkImage(
+                    //               '${ApiConstants.baseUrl}${profileImage2}'),
+                    //         ),
+                    // ),
+                  ],
+                ),
               ),
               Expanded(
                 child: Column(
@@ -638,25 +659,17 @@ class ChatScreenState extends State<ChatScreen> {
             children: [
               Expanded(
                 child: SmartRefresher(
-                  header: ClassicHeader(),
                   footer: ClassicFooter(),
                   controller: _refreshController,
-                  enablePullDown: true,
-                  enablePullUp: false,
-                  onRefresh: () async {
-                    await getChatMessages();
-                    WidgetsBinding.instance?.addPostFrameCallback((_) {
-                      chatScrollProvider.chatScrollController.animateTo(
-                        chatScrollProvider
-                            .chatScrollController.position.minScrollExtent,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    });
+                  enablePullDown: false,
+                  enablePullUp: true,
+                  onLoading: () async {
+                    await getChatMessages(type: 'onload');
                   },
                   child: ListView.builder(
                     controller: chatScrollProvider.chatScrollController,
                     itemCount: chatProvider.chats.length,
+                    reverse: true,
                     itemBuilder: (BuildContext context, int index) {
                       final message = chatProvider.chats[index];
                       return Column(
@@ -664,7 +677,7 @@ class ChatScreenState extends State<ChatScreen> {
                           Center(
                             child: Padding(
                               padding: const EdgeInsets.only(
-                                top: 16,
+                                bottom: 16,
                               ),
                               child: Text(
                                 formatTime(message["created_at"]),
@@ -677,15 +690,32 @@ class ChatScreenState extends State<ChatScreen> {
                               left: 8,
                               right: 8,
                               bottom: chatProvider.chats.length - 1 == index
-                                  ? 16
-                                  : 0,
+                                  ? 0
+                                  : 16,
                             ),
                             child: Align(
                               alignment: message["is_my_message"]
                                   ? Alignment.topRight
                                   : Alignment.topLeft,
                               child: !message["is_my_message"]
-                                  ? isNotMyMessage(message)
+                                  ? Column(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                            left: 26,
+                                            bottom: 2,
+                                          ),
+                                          child: Align(
+                                            alignment: Alignment.bottomLeft,
+                                            child: Text(
+                                              message["sender_name"],
+                                              style: FontConstants.smallText1,
+                                            ),
+                                          ),
+                                        ),
+                                        isNotMyMessage(message),
+                                      ],
+                                    )
                                   : Slidable(
                                       key: const ValueKey(0),
                                       endActionPane: ActionPane(

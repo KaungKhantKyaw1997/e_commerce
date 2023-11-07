@@ -247,7 +247,7 @@ class AuthService {
           chatProvider.setChats(chats);
           WidgetsBinding.instance?.addPostFrameCallback((_) {
             chatScrollProvider.chatScrollController.animateTo(
-              chatScrollProvider.chatScrollController.position.maxScrollExtent,
+              chatScrollProvider.chatScrollController.position.minScrollExtent,
               duration: Duration(milliseconds: 300),
               curve: Curves.easeInOut,
             );
