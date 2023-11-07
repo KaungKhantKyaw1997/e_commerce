@@ -36,7 +36,23 @@ class LocalNotificationService {
           try {
             final response =
                 await chatService.getChatSessionData(chatId: chatId);
-            if (response!["code"] == 200) {}
+            if (response!["code"] == 200) {
+              Navigator.pushNamed(
+                context,
+                Routes.chat,
+                arguments: {
+                  'chat_id': response["data"]["chat_id"],
+                  'chat_name': response["data"]["chat_name"],
+                  'profile_image': response["data"]["profile_image"],
+                  'user_id': (response["data"]["chat_participants"] as List)
+                      .where((element) => !element["is_me"])
+                      .map<String>(
+                          (participant) => participant["user_id"].toString())
+                      .toList()[0],
+                  'from': 'home',
+                },
+              );
+            }
           } catch (e, s) {
             crashlytic.myGlobalErrorHandler(e, s);
           }
