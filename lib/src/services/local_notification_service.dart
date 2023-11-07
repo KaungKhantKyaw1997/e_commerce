@@ -2,6 +2,9 @@ import 'dart:math';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
+import 'package:e_commerce/src/providers/chat_histories_provider.dart';
+import 'package:e_commerce/src/services/chat_service.dart';
+import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +15,9 @@ class LocalNotificationService {
       FlutterLocalNotificationsPlugin();
 
   static Future<void> setup(BuildContext context) async {
+    final crashlytic = new CrashlyticsService();
+    final chatService = ChatService();
+
     const androidInitializationSetting =
         AndroidInitializationSettings('@mipmap/launcher_icon');
 
@@ -25,18 +31,29 @@ class LocalNotificationService {
     flutterLocalNotificationsPlugin.initialize(
       initSettings,
       onDidReceiveNotificationResponse: (details) async {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        String role = prefs.getString('role') ?? "";
+        if (details.payload!.isNotEmpty) {
+          int chatId = int.parse(details.payload.toString());
+          try {
+            final response =
+                await chatService.getChatSessionData(chatId: chatId);
+            if (response!["code"] == 200) {}
+          } catch (e, s) {
+            crashlytic.myGlobalErrorHandler(e, s);
+          }
+        } else {
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          String role = prefs.getString('role') ?? "";
 
-        BottomProvider bottomProvider =
-            Provider.of<BottomProvider>(context, listen: false);
-        bottomProvider.selectIndex(role == 'admin' ? 1 : 3);
-        navigatorKey.currentState!.pushNamed(Routes.noti);
+          BottomProvider bottomProvider =
+              Provider.of<BottomProvider>(context, listen: false);
+          bottomProvider.selectIndex(role == 'admin' ? 1 : 3);
+          navigatorKey.currentState!.pushNamed(Routes.noti);
+        }
       },
     );
   }
 
-  static Future<void> display(String title, String body) async {
+  static Future<void> display(String title, String body, String chatId) async {
     var random = Random();
     final id = random.nextInt(pow(2, 31).toInt() - 1);
 
@@ -61,7 +78,7 @@ class LocalNotificationService {
       title,
       body,
       notificationDetails,
-      payload: 'test',
+      payload: chatId,
     );
   }
 }
