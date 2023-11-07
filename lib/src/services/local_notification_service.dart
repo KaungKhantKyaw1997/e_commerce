@@ -37,8 +37,7 @@ class LocalNotificationService {
             final response =
                 await chatService.getChatSessionData(chatId: chatId);
             if (response!["code"] == 200) {
-              Navigator.pushNamed(
-                context,
+              navigatorKey.currentState!.pushNamed(
                 Routes.chat,
                 arguments: {
                   'chat_id': response["data"]["chat_id"],
