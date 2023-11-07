@@ -176,7 +176,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                                     fit: BoxFit.cover,
                                   ),
                           ),
-                          if (role == 'admin')
+                          if (role == 'admin' && profiles.length > 1)
                             Positioned(
                               right: 0,
                               child: profiles[1].isNotEmpty
@@ -336,7 +336,10 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
             ? BackButton(
                 color: Colors.black,
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.pushNamed(
+                    context,
+                    Routes.home,
+                  );
                 },
               )
             : null,
@@ -344,7 +347,10 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
       body: WillPopScope(
         onWillPop: () async {
           if (from == 'home') {
-            Navigator.of(context).pop();
+            Navigator.pushNamed(
+              context,
+              Routes.home,
+            );
           }
           return true;
         },
@@ -387,7 +393,6 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                                   listen: false);
                           chatProvider.setChats([]);
 
-                          Navigator.pop(context);
                           Navigator.pushNamed(
                             context,
                             Routes.chat,
@@ -405,7 +410,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                                       .map<String>((participant) =>
                                           participant["user_id"].toString())
                                       .toList()[0],
-                              'from': 'chat_history',
+                              'from': from,
                             },
                           );
                         },

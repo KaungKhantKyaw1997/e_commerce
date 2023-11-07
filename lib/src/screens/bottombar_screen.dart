@@ -1,4 +1,5 @@
 import 'package:e_commerce/src/constants/color_constants.dart';
+import 'package:e_commerce/src/providers/chat_histories_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -60,6 +61,8 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
   }
 
   Future<void> _onTabSelected(int index) async {
+    ChatHistoriesProvider chatHistoriesProvider =
+        Provider.of<ChatHistoriesProvider>(context, listen: false);
     BottomProvider bottomProvider =
         Provider.of<BottomProvider>(context, listen: false);
 
@@ -88,6 +91,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
           Routes.noti,
         );
       } else if (data["label"] == 'Chat') {
+        chatHistoriesProvider.setChatHistories([]);
         Navigator.pushNamed(
           context,
           Routes.chat_history,

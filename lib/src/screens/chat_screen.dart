@@ -642,12 +642,11 @@ class ChatScreenState extends State<ChatScreen> {
                       style: FontConstants.body1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    lastSeenTime.isNotEmpty
-                        ? Text(
-                            'Last seen: ${Jiffy.parseFromDateTime(DateTime.parse(lastSeenTime + "Z").toLocal()).format(pattern: "hh:mm a")}',
-                            style: FontConstants.caption1,
-                          )
-                        : Text(''),
+                    if (lastSeenTime.isNotEmpty)
+                      Text(
+                        'Last seen: ${Jiffy.parseFromDateTime(DateTime.parse(lastSeenTime + "Z").toLocal()).format(pattern: "hh:mm a")}',
+                        style: FontConstants.caption1,
+                      ),
                   ],
                 ),
               ),
@@ -661,12 +660,16 @@ class ChatScreenState extends State<ChatScreen> {
               ChatHistoriesProvider chatHistoriesProvider =
                   Provider.of<ChatHistoriesProvider>(context, listen: false);
               chatHistoriesProvider.setChatHistories([]);
-              Navigator.of(context).pop();
-              if (from == 'chat_history') {
+              if (from == 'home' || from == 'bottom') {
                 Navigator.pushNamed(
                   context,
                   Routes.chat_history,
+                  arguments: {
+                    'from': from,
+                  },
                 );
+              } else {
+                Navigator.of(context).pop();
               }
             },
           ),
@@ -676,12 +679,16 @@ class ChatScreenState extends State<ChatScreen> {
             ChatHistoriesProvider chatHistoriesProvider =
                 Provider.of<ChatHistoriesProvider>(context, listen: false);
             chatHistoriesProvider.setChatHistories([]);
-            Navigator.of(context).pop();
-            if (from == 'chat_history') {
+            if (from == 'home' || from == 'bottom') {
               Navigator.pushNamed(
                 context,
                 Routes.chat_history,
+                arguments: {
+                  'from': from,
+                },
               );
+            } else {
+              Navigator.of(context).pop();
             }
             return true;
           },
