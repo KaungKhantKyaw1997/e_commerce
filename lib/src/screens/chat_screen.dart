@@ -165,13 +165,13 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
             }
           }
           chatProvider.setChats(chats);
-          // WidgetsBinding.instance?.addPostFrameCallback((_) {
-          //   chatScrollProvider.chatScrollController.animateTo(
-          //     chatScrollProvider.chatScrollController.position.minScrollExtent,
-          //     duration: Duration(milliseconds: 300),
-          //     curve: Curves.easeInOut,
-          //   );
-          // });
+          WidgetsBinding.instance?.addPostFrameCallback((_) {
+            chatScrollProvider.chatScrollController.animateTo(
+              chatScrollProvider.chatScrollController.position.minScrollExtent,
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          });
         }
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
