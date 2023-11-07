@@ -49,6 +49,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   int page = 1;
   String status = '';
   String role = "";
+  AppLifecycleState? _lastLifecycleState;
 
   @override
   void initState() {
@@ -82,6 +83,11 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
   @override
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == _lastLifecycleState) {
+      return; // Ignore duplicate calls if the state hasn't actually changed.
+    }
+
+    _lastLifecycleState = state;
     if (state == AppLifecycleState.resumed) {
       resumeChatMessages();
     }
@@ -149,21 +155,23 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           List chats = chatProvider.chats;
+          var message_id_list = chats.map((e) => e["message_id"]).toList();
 
-          for (var message in response["data"]) {
-            chats.insert(0, (response["data"]));
-            updateMessageStatus(message["message_id"]);
+          for (var message in (response["data"] as List).reversed.toList()) {
+            if (!message_id_list.contains(message["message_id"])) {
+              chats.insert(0, (message));
+              message_id_list.add(message["message_id"]);
+              updateMessageStatus(message["message_id"]);
+            }
           }
           chatProvider.setChats(chats);
-          page++;
-
-          WidgetsBinding.instance?.addPostFrameCallback((_) {
-            chatScrollProvider.chatScrollController.animateTo(
-              chatScrollProvider.chatScrollController.position.minScrollExtent,
-              duration: Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-          });
+          // WidgetsBinding.instance?.addPostFrameCallback((_) {
+          //   chatScrollProvider.chatScrollController.animateTo(
+          //     chatScrollProvider.chatScrollController.position.minScrollExtent,
+          //     duration: Duration(milliseconds: 300),
+          //     curve: Curves.easeInOut,
+          //   );
+          // });
         }
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
