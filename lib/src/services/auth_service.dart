@@ -243,7 +243,6 @@ class AuthService {
         }
         if (!flag) {
           chats.add(response["data"]);
-          chats.sort((a, b) => a["created_at"].compareTo(b["created_at"]));
           chatProvider.setChats(chats);
           WidgetsBinding.instance?.addPostFrameCallback((_) {
             chatScrollProvider.chatScrollController.animateTo(
