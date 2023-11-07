@@ -112,6 +112,12 @@ class _MyAppState extends State<MyApp> {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      String role = prefs.getString('role') ?? "";
+
+      BottomProvider bottomProvider =
+          Provider.of<BottomProvider>(context, listen: false);
+
       if (message.notification != null) {
         int chatId = message.data.isNotEmpty
             ? int.parse(message.data["chat_id"].toString())
@@ -122,6 +128,10 @@ class _MyAppState extends State<MyApp> {
             final response =
                 await chatService.getChatSessionData(chatId: chatId);
             if (response!["code"] == 200) {
+              if (role == 'admin') {
+                bottomProvider.selectIndex(2);
+              }
+
               navigatorKey.currentState!.pushNamed(
                 Routes.chat,
                 arguments: {
@@ -141,11 +151,6 @@ class _MyAppState extends State<MyApp> {
             crashlytic.myGlobalErrorHandler(e, s);
           }
         } else {
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-          String role = prefs.getString('role') ?? "";
-
-          BottomProvider bottomProvider =
-              Provider.of<BottomProvider>(context, listen: false);
           bottomProvider.selectIndex(role == 'admin' ? 1 : 3);
           navigatorKey.currentState!.pushNamed(Routes.noti);
         }

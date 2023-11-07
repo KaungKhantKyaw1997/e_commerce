@@ -30,12 +30,22 @@ class LocalNotificationService {
     flutterLocalNotificationsPlugin.initialize(
       initSettings,
       onDidReceiveNotificationResponse: (details) async {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        String role = prefs.getString('role') ?? "";
+
+        BottomProvider bottomProvider =
+            Provider.of<BottomProvider>(context, listen: false);
+
         if (details.payload!.isNotEmpty) {
           int chatId = int.parse(details.payload.toString());
           try {
             final response =
                 await chatService.getChatSessionData(chatId: chatId);
             if (response!["code"] == 200) {
+              if (role == 'admin') {
+                bottomProvider.selectIndex(2);
+              }
+
               navigatorKey.currentState!.pushNamed(
                 Routes.chat,
                 arguments: {
@@ -55,11 +65,6 @@ class LocalNotificationService {
             crashlytic.myGlobalErrorHandler(e, s);
           }
         } else {
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-          String role = prefs.getString('role') ?? "";
-
-          BottomProvider bottomProvider =
-              Provider.of<BottomProvider>(context, listen: false);
           bottomProvider.selectIndex(role == 'admin' ? 1 : 3);
           navigatorKey.currentState!.pushNamed(Routes.noti);
         }
