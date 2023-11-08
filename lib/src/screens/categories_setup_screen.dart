@@ -256,13 +256,13 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
                     return GestureDetector(
                       onTap: () {
                         if (from != "product") {
-                          Navigator.pop(context);
-                          Navigator.pushNamed(
+                          Navigator.pushNamedAndRemoveUntil(
                             context,
                             Routes.category_setup,
                             arguments: {
                               "id": categories[index]["category_id"],
                             },
+                            (route) => true,
                           );
                         } else {
                           Navigator.of(context).pop(categories[index]);
@@ -298,13 +298,13 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
       floatingActionButton: from != "product"
           ? FloatingActionButton(
               onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(
+                Navigator.pushNamedAndRemoveUntil(
                   context,
                   Routes.category_setup,
                   arguments: {
                     "id": 0,
                   },
+                  (route) => true,
                 );
               },
               backgroundColor: Theme.of(context).primaryColor,

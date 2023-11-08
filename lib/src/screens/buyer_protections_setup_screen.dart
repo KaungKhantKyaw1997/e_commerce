@@ -229,14 +229,14 @@ class BuyerProtectionsSetupScreenState
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
-                        Navigator.pushNamed(
+                        Navigator.pushNamedAndRemoveUntil(
                           context,
                           Routes.buyer_protection_setup,
                           arguments: {
                             "id": buyerProtections[index]
                                 ["buyer_protection_id"],
                           },
+                          (route) => true,
                         );
                       },
                       child: Column(
@@ -268,13 +268,13 @@ class BuyerProtectionsSetupScreenState
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pop(context);
-          Navigator.pushNamed(
+          Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.buyer_protection_setup,
             arguments: {
               "id": 0,
             },
+            (route) => true,
           );
         },
         backgroundColor: Theme.of(context).primaryColor,

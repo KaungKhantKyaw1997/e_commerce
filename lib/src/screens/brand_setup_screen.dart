@@ -140,6 +140,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
       if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
+        Navigator.pop(context);
         Navigator.pushNamed(
           context,
           Routes.brands_setup,
@@ -189,6 +190,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
       if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
+        Navigator.pop(context);
         Navigator.pushNamed(
           context,
           Routes.brands_setup,
@@ -231,6 +233,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
       Navigator.pop(context);
       if (response!["code"] == 204) {
         ToastUtil.showToast(response["code"], response["message"]);
+        Navigator.pop(context);
         Navigator.pop(context);
         Navigator.pushNamed(
           context,
@@ -285,221 +288,204 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
             language["Brand"] ?? "Brand",
             style: FontConstants.title1,
           ),
-          leading: BackButton(
+          iconTheme: IconThemeData(
             color: Colors.black,
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.pushNamed(
-                context,
-                Routes.brands_setup,
-              );
-            },
           ),
         ),
         backgroundColor: Colors.white,
-        body: WillPopScope(
-          onWillPop: () async {
-            Navigator.of(context).pop();
-            Navigator.pushNamed(
-              context,
-              Routes.brands_setup,
-            );
-            return true;
-          },
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            child: Form(
-              key: _formKey,
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: 24,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        GestureDetector(
+        body: SingleChildScrollView(
+          controller: _scrollController,
+          child: Form(
+            key: _formKey,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                vertical: 24,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          _pickImage(ImageSource.gallery);
+                        },
+                        child: logoUrl.isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.network(
+                                  '${ApiConstants.baseUrl}${logoUrl.toString()}',
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : pickedFile != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.file(
+                                      File(pickedFile!.path),
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.asset(
+                                      'assets/images/logo.png',
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                      ),
+                      Positioned(
+                        bottom: -5,
+                        right: -10,
+                        child: GestureDetector(
                           onTap: () {
                             _pickImage(ImageSource.gallery);
                           },
-                          child: logoUrl.isNotEmpty
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(
-                                    '${ApiConstants.baseUrl}${logoUrl.toString()}',
-                                    width: 100,
-                                    height: 100,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )
-                              : pickedFile != null
-                                  ? ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Image.file(
-                                        File(pickedFile!.path),
-                                        width: 100,
-                                        height: 100,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )
-                                  : ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Image.asset(
-                                        'assets/images/logo.png',
-                                        width: 100,
-                                        height: 100,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                        ),
-                        Positioned(
-                          bottom: -5,
-                          right: -10,
-                          child: GestureDetector(
-                            onTap: () {
-                              _pickImage(ImageSource.gallery);
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 3,
-                                ),
-                                color: Theme.of(context).primaryColorLight,
+                          child: Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 3,
                               ),
-                              child: SvgPicture.asset(
-                                "assets/icons/gallery.svg",
-                                width: 16,
-                                height: 16,
-                                colorFilter: ColorFilter.mode(
-                                  Theme.of(context).primaryColor,
-                                  BlendMode.srcIn,
-                                ),
+                              color: Theme.of(context).primaryColorLight,
+                            ),
+                            child: SvgPicture.asset(
+                              "assets/icons/gallery.svg",
+                              width: 16,
+                              height: 16,
+                              colorFilter: ColorFilter.mode(
+                                Theme.of(context).primaryColor,
+                                BlendMode.srcIn,
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        top: 24,
-                        bottom: 4,
                       ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          language["Name"] ?? "Name",
-                          style: FontConstants.caption1,
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      top: 24,
+                      bottom: 4,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        language["Name"] ?? "Name",
+                        style: FontConstants.caption1,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 16,
+                    ),
+                    child: TextFormField(
+                      controller: name,
+                      focusNode: _nameFocusNode,
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.next,
+                      style: FontConstants.body1,
+                      cursorColor: Colors.black,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: ColorConstants.fillcolor,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
                         ),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return language["Enter Name"] ?? "Enter Name";
+                        }
+                        return null;
+                      },
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 16,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 4,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        language["Description"] ?? "Description",
+                        style: FontConstants.caption1,
                       ),
-                      child: TextFormField(
-                        controller: name,
-                        focusNode: _nameFocusNode,
-                        keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.next,
-                        style: FontConstants.body1,
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: ColorConstants.fillcolor,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                    ),
+                    child: TextFormField(
+                      controller: description,
+                      focusNode: _descriptionFocusNode,
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.done,
+                      style: FontConstants.body1,
+                      cursorColor: Colors.black,
+                      maxLines: 2,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: ColorConstants.fillcolor,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return language["Enter Name"] ?? "Enter Name";
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 4,
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          language["Description"] ?? "Description",
-                          style: FontConstants.caption1,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
                         ),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return language["Enter Description"] ??
+                              "Enter Description";
+                        }
+                        return null;
+                      },
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                      ),
-                      child: TextFormField(
-                        controller: description,
-                        focusNode: _descriptionFocusNode,
-                        keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.done,
-                        style: FontConstants.body1,
-                        cursorColor: Colors.black,
-                        maxLines: 2,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: ColorConstants.fillcolor,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return language["Enter Description"] ??
-                                "Enter Description";
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

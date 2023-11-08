@@ -101,6 +101,7 @@ class BuyerProtectionSetupScreenState
       if (response!["code"] == 201) {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
+        Navigator.pop(context);
         Navigator.pushNamed(
           context,
           Routes.buyer_protections_setup,
@@ -148,6 +149,7 @@ class BuyerProtectionSetupScreenState
       if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
+        Navigator.pop(context);
         Navigator.pushNamed(
           context,
           Routes.buyer_protections_setup,
@@ -191,6 +193,7 @@ class BuyerProtectionSetupScreenState
       Navigator.pop(context);
       if (response!["code"] == 204) {
         ToastUtil.showToast(response["code"], response["message"]);
+        Navigator.pop(context);
         Navigator.pop(context);
         Navigator.pushNamed(
           context,
@@ -244,97 +247,80 @@ class BuyerProtectionSetupScreenState
             language["Buyer Protection"] ?? "Buyer Protection",
             style: FontConstants.title1,
           ),
-          leading: BackButton(
+          iconTheme: IconThemeData(
             color: Colors.black,
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.pushNamed(
-                context,
-                Routes.buyer_protections_setup,
-              );
-            },
           ),
         ),
         backgroundColor: Colors.white,
-        body: WillPopScope(
-          onWillPop: () async {
-            Navigator.of(context).pop();
-            Navigator.pushNamed(
-              context,
-              Routes.buyer_protections_setup,
-            );
-            return true;
-          },
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            child: Form(
-              key: _formKey,
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: 24,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 4,
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          language["Description"] ?? "Description",
-                          style: FontConstants.caption1,
-                        ),
+        body: SingleChildScrollView(
+          controller: _scrollController,
+          child: Form(
+            key: _formKey,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                vertical: 24,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 4,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        language["Description"] ?? "Description",
+                        style: FontConstants.caption1,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                      ),
-                      child: TextFormField(
-                        controller: description,
-                        focusNode: _descriptionFocusNode,
-                        keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.done,
-                        style: FontConstants.body1,
-                        cursorColor: Colors.black,
-                        maxLines: 2,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: ColorConstants.fillcolor,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return language["Enter Description"] ??
-                                "Enter Description";
-                          }
-                          return null;
-                        },
-                      ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
                     ),
-                  ],
-                ),
+                    child: TextFormField(
+                      controller: description,
+                      focusNode: _descriptionFocusNode,
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.done,
+                      style: FontConstants.body1,
+                      cursorColor: Colors.black,
+                      maxLines: 2,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: ColorConstants.fillcolor,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return language["Enter Description"] ??
+                              "Enter Description";
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

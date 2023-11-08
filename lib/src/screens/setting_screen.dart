@@ -583,9 +583,10 @@ class _SettingScreenState extends State<SettingScreen> {
                       role == 'admin'
                           ? GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(
+                                Navigator.pushNamedAndRemoveUntil(
                                   context,
                                   Routes.categories_setup,
+                                  (route) => true,
                                 );
                               },
                               child: Padding(
@@ -639,9 +640,10 @@ class _SettingScreenState extends State<SettingScreen> {
                       role == 'admin'
                           ? GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(
+                                Navigator.pushNamedAndRemoveUntil(
                                   context,
                                   Routes.brands_setup,
+                                  (route) => true,
                                 );
                               },
                               child: Padding(
@@ -695,9 +697,10 @@ class _SettingScreenState extends State<SettingScreen> {
                       role == 'admin'
                           ? GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(
+                                Navigator.pushNamedAndRemoveUntil(
                                   context,
                                   Routes.bank_accounts_setup,
+                                  (route) => true,
                                 );
                               },
                               child: Padding(
@@ -752,9 +755,10 @@ class _SettingScreenState extends State<SettingScreen> {
                       role == 'admin'
                           ? GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(
+                                Navigator.pushNamedAndRemoveUntil(
                                   context,
                                   Routes.buyer_protections_setup,
+                                  (route) => true,
                                 );
                               },
                               child: Padding(
@@ -809,9 +813,10 @@ class _SettingScreenState extends State<SettingScreen> {
                       role == 'admin'
                           ? GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(
+                                Navigator.pushNamedAndRemoveUntil(
                                   context,
                                   Routes.termsandconditions_setup,
+                                  (route) => true,
                                 );
                               },
                               child: Padding(
