@@ -175,7 +175,7 @@ class _ProductScreenState extends State<ProductScreen> {
       final response = await chatService.getChatSessionData(
           receiverId: product["creator_id"]);
       if (response!["code"] == 200) {
-        Navigator.pushNamed(
+        Navigator.pushNamedAndRemoveUntil(
           context,
           Routes.chat,
           arguments: {
@@ -185,6 +185,7 @@ class _ProductScreenState extends State<ProductScreen> {
             'user_id': product["creator_id"],
             'from': 'product',
           },
+          (route) => true,
         );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -210,7 +211,7 @@ class _ProductScreenState extends State<ProductScreen> {
             Routes.unauthorized,
           );
         } else {
-          Navigator.pushNamed(
+          Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.chat,
             arguments: {
@@ -220,6 +221,7 @@ class _ProductScreenState extends State<ProductScreen> {
               'user_id': product["creator_id"],
               'from': 'product',
             },
+            (route) => true,
           );
         }
       }
@@ -1567,9 +1569,10 @@ class _ProductScreenState extends State<ProductScreen> {
                                   listen: false);
                           bottomProvider.selectIndex(1);
 
-                          Navigator.pushNamed(
+                          Navigator.pushNamedAndRemoveUntil(
                             context,
                             Routes.cart,
+                            (route) => false,
                           );
                         },
                         child: Text(

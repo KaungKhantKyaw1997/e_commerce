@@ -280,9 +280,10 @@ class _SuccessScreenState extends State<SuccessScreen>
             BottomProvider bottomProvider =
                 Provider.of<BottomProvider>(context, listen: false);
             bottomProvider.selectIndex(0);
-            Navigator.pushNamed(
+            Navigator.pushNamedAndRemoveUntil(
               context,
               Routes.home,
+              (route) => false,
             );
           },
           child: Text(

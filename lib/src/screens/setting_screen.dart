@@ -263,15 +263,21 @@ class _SettingScreenState extends State<SettingScreen> {
                   child: Column(
                     children: [
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           if (role.isNotEmpty) {
-                            Navigator.pushNamed(
+                            var result =
+                                await Navigator.pushNamedAndRemoveUntil(
                               context,
                               Routes.profile,
-                              arguments: {
-                                'from': 'setting',
-                              },
+                              (route) => true,
                             );
+                            if (result != null &&
+                                result is Map<String, dynamic>) {
+                              setState(() {
+                                profileImage = result["profileImage"];
+                                profileName = result["profileName"];
+                              });
+                            }
                           }
                         },
                         child: Container(

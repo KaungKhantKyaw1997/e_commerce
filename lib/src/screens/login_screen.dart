@@ -132,15 +132,17 @@ class _LogInScreenState extends State<LogInScreen> {
 
         Navigator.pop(context);
         if (response["data"]["role"] == 'admin') {
-          Navigator.pushNamed(
+          Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.history,
+            (route) => false,
           );
         } else if ((termsandconditions && _email == email.text) ||
             response["data"]["role"] == 'agent') {
-          Navigator.pushNamed(
+          Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.home,
+            (route) => false,
           );
         } else {
           Navigator.pushNamedAndRemoveUntil(

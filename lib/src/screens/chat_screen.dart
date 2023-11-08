@@ -747,215 +747,179 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           ),
           titleSpacing: 0,
           leadingWidth: 50,
-          leading: BackButton(
+          iconTheme: IconThemeData(
             color: Colors.black,
-            onPressed: () {
-              ChatHistoriesProvider chatHistoriesProvider =
-                  Provider.of<ChatHistoriesProvider>(context, listen: false);
-              chatHistoriesProvider.setChatHistories([]);
-              if (from == 'home' || from == 'bottom') {
-                Navigator.pushNamed(
-                  context,
-                  Routes.chat_history,
-                  arguments: {
-                    'from': from,
-                  },
-                );
-              } else {
-                Navigator.of(context).pop();
-              }
-            },
           ),
         ),
-        body: WillPopScope(
-          onWillPop: () async {
-            ChatHistoriesProvider chatHistoriesProvider =
-                Provider.of<ChatHistoriesProvider>(context, listen: false);
-            chatHistoriesProvider.setChatHistories([]);
-            if (from == 'home' || from == 'bottom') {
-              Navigator.pushNamed(
-                context,
-                Routes.chat_history,
-                arguments: {
-                  'from': from,
+        body: Column(
+          children: [
+            Expanded(
+              child: SmartRefresher(
+                footer: ClassicFooter(),
+                controller: _refreshController,
+                enablePullDown: false,
+                enablePullUp: true,
+                onLoading: () async {
+                  await getChatMessages(type: 'onload');
                 },
-              );
-            } else {
-              Navigator.of(context).pop();
-            }
-            return true;
-          },
-          child: Column(
-            children: [
-              Expanded(
-                child: SmartRefresher(
-                  footer: ClassicFooter(),
-                  controller: _refreshController,
-                  enablePullDown: false,
-                  enablePullUp: true,
-                  onLoading: () async {
-                    await getChatMessages(type: 'onload');
-                  },
-                  child: ListView.builder(
-                    controller: chatScrollProvider.chatScrollController,
-                    itemCount: chatProvider.chats.length,
-                    reverse: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      final message = chatProvider.chats[index];
-                      return Column(
-                        children: [
-                          Center(
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: 16,
-                              ),
-                              child: Text(
-                                formatTime(message["created_at"]),
-                                style: FontConstants.smallText1,
-                              ),
+                child: ListView.builder(
+                  controller: chatScrollProvider.chatScrollController,
+                  itemCount: chatProvider.chats.length,
+                  reverse: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    final message = chatProvider.chats[index];
+                    return Column(
+                      children: [
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: 16,
+                            ),
+                            child: Text(
+                              formatTime(message["created_at"]),
+                              style: FontConstants.smallText1,
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              left: 8,
-                              right: 8,
-                              bottom: chatProvider.chats.length - 1 == index
-                                  ? 0
-                                  : 16,
-                            ),
-                            child: Align(
-                              alignment: message["is_my_message"]
-                                  ? Alignment.topRight
-                                  : Alignment.topLeft,
-                              child: !message["is_my_message"]
-                                  ? Column(
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            left: 26,
-                                            bottom: 2,
-                                          ),
-                                          child: Align(
-                                            alignment: Alignment.bottomLeft,
-                                            child: Text(
-                                              message["sender_name"],
-                                              style: FontConstants.smallText1,
-                                            ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: 8,
+                            right: 8,
+                            bottom:
+                                chatProvider.chats.length - 1 == index ? 0 : 16,
+                          ),
+                          child: Align(
+                            alignment: message["is_my_message"]
+                                ? Alignment.topRight
+                                : Alignment.topLeft,
+                            child: !message["is_my_message"]
+                                ? Column(
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 26,
+                                          bottom: 2,
+                                        ),
+                                        child: Align(
+                                          alignment: Alignment.bottomLeft,
+                                          child: Text(
+                                            message["sender_name"],
+                                            style: FontConstants.smallText1,
                                           ),
                                         ),
-                                        isNotMyMessage(message),
-                                      ],
-                                    )
-                                  : Slidable(
-                                      key: const ValueKey(0),
-                                      endActionPane: ActionPane(
-                                        motion: const BehindMotion(),
-                                        children: [
-                                          SlidableAction(
-                                            onPressed: (BuildContext context) {
-                                              deleteMessage(
-                                                  message["message_id"]);
-                                            },
-                                            backgroundColor: Colors.transparent,
-                                            foregroundColor:
-                                                ColorConstants.redcolor,
-                                            icon: Icons.delete,
-                                          ),
-                                        ],
-                                        extentRatio: 0.15,
                                       ),
-                                      child: isMyMessage(message),
+                                      isNotMyMessage(message),
+                                    ],
+                                  )
+                                : Slidable(
+                                    key: const ValueKey(0),
+                                    endActionPane: ActionPane(
+                                      motion: const BehindMotion(),
+                                      children: [
+                                        SlidableAction(
+                                          onPressed: (BuildContext context) {
+                                            deleteMessage(
+                                                message["message_id"]);
+                                          },
+                                          backgroundColor: Colors.transparent,
+                                          foregroundColor:
+                                              ColorConstants.redcolor,
+                                          icon: Icons.delete,
+                                        ),
+                                      ],
+                                      extentRatio: 0.15,
                                     ),
-                            ),
+                                    child: isMyMessage(message),
+                                  ),
                           ),
-                        ],
-                      );
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(
+                top: 8,
+                left: 16,
+                right: 16,
+                bottom: 24,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.white,
+              ),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      _pickMultiImage();
                     },
+                    child: Container(
+                      margin: EdgeInsets.only(
+                        right: 16,
+                      ),
+                      child: SvgPicture.asset(
+                        "assets/icons/gallery.svg",
+                        width: 24,
+                        height: 24,
+                      ),
+                    ),
                   ),
-                ),
+                  Expanded(
+                    child: TextFormField(
+                      controller: message,
+                      focusNode: _messageFocusNode,
+                      keyboardType: TextInputType.multiline,
+                      style: FontConstants.body1,
+                      cursorColor: Colors.black,
+                      maxLines: null,
+                      decoration: InputDecoration(
+                        hintText: language["Message"] ?? "Message",
+                        filled: true,
+                        fillColor: ColorConstants.fillcolor,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      if (message.text.isNotEmpty) {
+                        imageUrls = [];
+                        sendMessage();
+                      }
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(
+                        left: 16,
+                      ),
+                      child: SvgPicture.asset(
+                        "assets/icons/send.svg",
+                        height: 24,
+                        width: 24,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              Container(
-                padding: EdgeInsets.only(
-                  top: 8,
-                  left: 16,
-                  right: 16,
-                  bottom: 24,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.white,
-                ),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        _pickMultiImage();
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(
-                          right: 16,
-                        ),
-                        child: SvgPicture.asset(
-                          "assets/icons/gallery.svg",
-                          width: 24,
-                          height: 24,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: TextFormField(
-                        controller: message,
-                        focusNode: _messageFocusNode,
-                        keyboardType: TextInputType.multiline,
-                        style: FontConstants.body1,
-                        cursorColor: Colors.black,
-                        maxLines: null,
-                        decoration: InputDecoration(
-                          hintText: language["Message"] ?? "Message",
-                          filled: true,
-                          fillColor: ColorConstants.fillcolor,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide.none,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        if (message.text.isNotEmpty) {
-                          imageUrls = [];
-                          sendMessage();
-                        }
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(
-                          left: 16,
-                        ),
-                        child: SvgPicture.asset(
-                          "assets/icons/send.svg",
-                          height: 24,
-                          width: 24,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

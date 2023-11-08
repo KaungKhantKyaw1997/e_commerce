@@ -294,7 +294,11 @@ class AuthService {
             },
           );
         } else {
-          Navigator.pushNamed(context, Routes.home);
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            Routes.home,
+            (route) => false,
+          );
         }
       }
     } catch (e, s) {

@@ -638,17 +638,20 @@ class _HomeScreenState extends State<HomeScreen>
               },
             ),
           ),
-          automaticallyImplyLeading: role.isNotEmpty ? true : false,
           leading: role.isNotEmpty
               ? GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(
+                  onTap: () async {
+                    var result = await Navigator.pushNamedAndRemoveUntil(
                       context,
                       Routes.profile,
-                      arguments: {
-                        'from': 'home',
-                      },
+                      (route) => true,
                     );
+                    if (result != null && result is Map<String, dynamic>) {
+                      setState(() {
+                        profileImage = result["profileImage"];
+                        profileName = result["profileName"];
+                      });
+                    }
                   },
                   child: Container(
                     margin: const EdgeInsets.only(
@@ -715,12 +718,13 @@ class _HomeScreenState extends State<HomeScreen>
                             Provider.of<ChatHistoriesProvider>(context,
                                 listen: false);
                         chatHistoriesProvider.setChatHistories([]);
-                        Navigator.pushNamed(
+                        Navigator.pushNamedAndRemoveUntil(
                           context,
                           Routes.chat_history,
                           arguments: {
                             'from': 'home',
                           },
+                          (route) => true,
                         );
                       },
                     ),
@@ -773,307 +777,296 @@ class _HomeScreenState extends State<HomeScreen>
             ],
           ),
         ),
-        body: WillPopScope(
-          onWillPop: () async {
-            return false;
-          },
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              shops.isNotEmpty
-                  ? SmartRefresher(
-                      header: WaterDropMaterialHeader(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        color: Colors.white,
-                      ),
-                      footer: ClassicFooter(),
-                      controller: _refreshController,
-                      enablePullDown: true,
-                      enablePullUp: true,
-                      onRefresh: () async {
-                        page = 1;
-                        shops = [];
-                        await getShops();
-                      },
-                      onLoading: () async {
-                        await getShops();
-                      },
-                      child: SingleChildScrollView(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 24,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              GridView.builder(
-                                controller: _scrollController,
-                                shrinkWrap: true,
-                                itemCount: shops.length,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  mainAxisExtent:
-                                      crossAxisCount == 1 ? 310 : 210,
-                                  childAspectRatio: 2 / 1,
-                                  crossAxisSpacing: 8,
-                                  crossAxisCount: crossAxisCount,
-                                  mainAxisSpacing: 8,
-                                ),
-                                itemBuilder: (context, index) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        Routes.shop,
-                                        arguments: shops[index],
-                                      );
-                                    },
-                                    child: shopCard(index),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    )
-                  : Container(),
-              products.isNotEmpty || brands.isNotEmpty || categories.isNotEmpty
-                  ? SingleChildScrollView(
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            shops.isNotEmpty
+                ? SmartRefresher(
+                    header: WaterDropMaterialHeader(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      color: Colors.white,
+                    ),
+                    footer: ClassicFooter(),
+                    controller: _refreshController,
+                    enablePullDown: true,
+                    enablePullUp: true,
+                    onRefresh: () async {
+                      page = 1;
+                      shops = [];
+                      await getShops();
+                    },
+                    onLoading: () async {
+                      await getShops();
+                    },
+                    child: SingleChildScrollView(
                       child: Container(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          bottom: 24,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 24,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            products.isNotEmpty
-                                ? Container(
-                                    padding: EdgeInsets.only(
-                                      top: 16,
-                                      bottom: 4,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.baseline,
-                                      textBaseline: TextBaseline.alphabetic,
-                                      children: [
-                                        Text(
-                                          language["Products"] ?? "Products",
-                                          style: FontConstants.body1,
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.pushNamed(
-                                              context,
-                                              Routes.products,
-                                              arguments: {
-                                                "is_top_model": true,
-                                              },
-                                            );
-                                          },
-                                          child: Text(
-                                            language["See More"] ?? "See More",
-                                            style: FontConstants.caption5,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : Container(),
-                            products.isNotEmpty
-                                ? Container(
-                                    height: 250,
-                                    child: ListView.builder(
-                                      controller: _scrollController,
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: products.length,
-                                      itemBuilder: (context, index) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            Navigator.pushNamed(
-                                              context,
-                                              Routes.product,
-                                              arguments: products[index],
-                                            );
-                                          },
-                                          child: Container(
-                                            margin: EdgeInsets.only(
-                                              right: 8,
-                                            ),
-                                            child: productsCard(index),
-                                          ),
-                                        );
-                                      },
-                                      itemExtent:
-                                          MediaQuery.of(context).size.width /
-                                                  2 -
-                                              25,
-                                    ),
-                                  )
-                                : Container(),
-                            brands.isNotEmpty
-                                ? Container(
-                                    padding: EdgeInsets.only(
-                                      top: 24,
-                                      bottom: 4,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.baseline,
-                                      textBaseline: TextBaseline.alphabetic,
-                                      children: [
-                                        Text(
-                                          language["Brands"] ?? "Brands",
-                                          style: FontConstants.body1,
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.pushNamed(
-                                              context,
-                                              Routes.brands,
-                                            );
-                                          },
-                                          child: Text(
-                                            language["See More"] ?? "See More",
-                                            style: FontConstants.caption5,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : Container(),
-                            brands.isNotEmpty
-                                ? Container(
-                                    height: 110,
-                                    child: ListView.builder(
-                                      controller: _scrollController,
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: (brands.length / 2).ceil(),
-                                      itemBuilder: (context, pageIndex) {
-                                        int startIndex = pageIndex * 2;
-                                        int endIndex = (pageIndex * 2 + 1)
-                                            .clamp(0, brands.length - 1);
-
-                                        return ListView.builder(
-                                          controller: _scrollController,
-                                          shrinkWrap: true,
-                                          itemCount: endIndex - startIndex + 1,
-                                          itemBuilder: (context, index) {
-                                            int itemIndex = startIndex + index;
-                                            if (itemIndex < brands.length) {
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  Navigator.pushNamed(
-                                                    context,
-                                                    Routes.products,
-                                                    arguments:
-                                                        brands[itemIndex],
-                                                  );
-                                                },
-                                                child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                    right: 8,
-                                                    bottom: 8,
-                                                  ),
-                                                  child: brandsCard(itemIndex),
-                                                ),
-                                              );
-                                            } else {
-                                              return Container();
-                                            }
-                                          },
-                                        );
-                                      },
-                                      itemExtent:
-                                          MediaQuery.of(context).size.width /
-                                                  2 -
-                                              50,
-                                    ),
-                                  )
-                                : Container(),
-                            categories.isNotEmpty
-                                ? Container(
-                                    padding: EdgeInsets.only(
-                                      top: 8,
-                                      bottom: 4,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.baseline,
-                                      textBaseline: TextBaseline.alphabetic,
-                                      children: [
-                                        Text(
-                                          language["Categories"] ??
-                                              "Categories",
-                                          style: FontConstants.body1,
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.pushNamed(
-                                              context,
-                                              Routes.categories,
-                                            );
-                                          },
-                                          child: Text(
-                                            language["See More"] ?? "See More",
-                                            style: FontConstants.caption5,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : Container(),
-                            categories.isNotEmpty
-                                ? Container(
-                                    height: 200,
-                                    child: ListView.builder(
-                                      controller: _scrollController,
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: categories.length,
-                                      itemBuilder: (context, index) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            Navigator.pushNamed(
-                                              context,
-                                              Routes.products,
-                                              arguments: categories[index],
-                                            );
-                                          },
-                                          child: Container(
-                                            margin: EdgeInsets.only(
-                                              right: 8,
-                                            ),
-                                            child: categoriesCard(index),
-                                          ),
-                                        );
-                                      },
-                                      itemExtent:
-                                          MediaQuery.of(context).size.width /
-                                                  2 -
-                                              25,
-                                    ),
-                                  )
-                                : Container(),
+                            GridView.builder(
+                              controller: _scrollController,
+                              shrinkWrap: true,
+                              itemCount: shops.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                mainAxisExtent: crossAxisCount == 1 ? 310 : 210,
+                                childAspectRatio: 2 / 1,
+                                crossAxisSpacing: 8,
+                                crossAxisCount: crossAxisCount,
+                                mainAxisSpacing: 8,
+                              ),
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      Routes.shop,
+                                      arguments: shops[index],
+                                    );
+                                  },
+                                  child: shopCard(index),
+                                );
+                              },
+                            ),
                           ],
                         ),
                       ),
-                    )
-                  : Container(),
-            ],
-          ),
+                    ),
+                  )
+                : Container(),
+            products.isNotEmpty || brands.isNotEmpty || categories.isNotEmpty
+                ? SingleChildScrollView(
+                    child: Container(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 24,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          products.isNotEmpty
+                              ? Container(
+                                  padding: EdgeInsets.only(
+                                    top: 16,
+                                    bottom: 4,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.baseline,
+                                    textBaseline: TextBaseline.alphabetic,
+                                    children: [
+                                      Text(
+                                        language["Products"] ?? "Products",
+                                        style: FontConstants.body1,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                            context,
+                                            Routes.products,
+                                            arguments: {
+                                              "is_top_model": true,
+                                            },
+                                          );
+                                        },
+                                        child: Text(
+                                          language["See More"] ?? "See More",
+                                          style: FontConstants.caption5,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Container(),
+                          products.isNotEmpty
+                              ? Container(
+                                  height: 250,
+                                  child: ListView.builder(
+                                    controller: _scrollController,
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: products.length,
+                                    itemBuilder: (context, index) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                            context,
+                                            Routes.product,
+                                            arguments: products[index],
+                                          );
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.only(
+                                            right: 8,
+                                          ),
+                                          child: productsCard(index),
+                                        ),
+                                      );
+                                    },
+                                    itemExtent:
+                                        MediaQuery.of(context).size.width / 2 -
+                                            25,
+                                  ),
+                                )
+                              : Container(),
+                          brands.isNotEmpty
+                              ? Container(
+                                  padding: EdgeInsets.only(
+                                    top: 24,
+                                    bottom: 4,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.baseline,
+                                    textBaseline: TextBaseline.alphabetic,
+                                    children: [
+                                      Text(
+                                        language["Brands"] ?? "Brands",
+                                        style: FontConstants.body1,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                            context,
+                                            Routes.brands,
+                                          );
+                                        },
+                                        child: Text(
+                                          language["See More"] ?? "See More",
+                                          style: FontConstants.caption5,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Container(),
+                          brands.isNotEmpty
+                              ? Container(
+                                  height: 110,
+                                  child: ListView.builder(
+                                    controller: _scrollController,
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: (brands.length / 2).ceil(),
+                                    itemBuilder: (context, pageIndex) {
+                                      int startIndex = pageIndex * 2;
+                                      int endIndex = (pageIndex * 2 + 1)
+                                          .clamp(0, brands.length - 1);
+
+                                      return ListView.builder(
+                                        controller: _scrollController,
+                                        shrinkWrap: true,
+                                        itemCount: endIndex - startIndex + 1,
+                                        itemBuilder: (context, index) {
+                                          int itemIndex = startIndex + index;
+                                          if (itemIndex < brands.length) {
+                                            return GestureDetector(
+                                              onTap: () {
+                                                Navigator.pushNamed(
+                                                  context,
+                                                  Routes.products,
+                                                  arguments: brands[itemIndex],
+                                                );
+                                              },
+                                              child: Padding(
+                                                padding: EdgeInsets.only(
+                                                  right: 8,
+                                                  bottom: 8,
+                                                ),
+                                                child: brandsCard(itemIndex),
+                                              ),
+                                            );
+                                          } else {
+                                            return Container();
+                                          }
+                                        },
+                                      );
+                                    },
+                                    itemExtent:
+                                        MediaQuery.of(context).size.width / 2 -
+                                            50,
+                                  ),
+                                )
+                              : Container(),
+                          categories.isNotEmpty
+                              ? Container(
+                                  padding: EdgeInsets.only(
+                                    top: 8,
+                                    bottom: 4,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.baseline,
+                                    textBaseline: TextBaseline.alphabetic,
+                                    children: [
+                                      Text(
+                                        language["Categories"] ?? "Categories",
+                                        style: FontConstants.body1,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                            context,
+                                            Routes.categories,
+                                          );
+                                        },
+                                        child: Text(
+                                          language["See More"] ?? "See More",
+                                          style: FontConstants.caption5,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Container(),
+                          categories.isNotEmpty
+                              ? Container(
+                                  height: 200,
+                                  child: ListView.builder(
+                                    controller: _scrollController,
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: categories.length,
+                                    itemBuilder: (context, index) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                            context,
+                                            Routes.products,
+                                            arguments: categories[index],
+                                          );
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.only(
+                                            right: 8,
+                                          ),
+                                          child: categoriesCard(index),
+                                        ),
+                                      );
+                                    },
+                                    itemExtent:
+                                        MediaQuery.of(context).size.width / 2 -
+                                            25,
+                                  ),
+                                )
+                              : Container(),
+                        ],
+                      ),
+                    ),
+                  )
+                : Container(),
+          ],
         ),
         bottomNavigationBar: const BottomBarScreen(),
       ),

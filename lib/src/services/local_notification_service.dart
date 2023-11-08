@@ -46,7 +46,7 @@ class LocalNotificationService {
                 bottomProvider.selectIndex(2);
               }
 
-              navigatorKey.currentState!.pushNamed(
+              navigatorKey.currentState!.pushNamedAndRemoveUntil(
                 Routes.chat,
                 arguments: {
                   'chat_id': response["data"]["chat_id"],
@@ -59,6 +59,7 @@ class LocalNotificationService {
                       .toList()[0],
                   'from': role == 'admin' ? 'bottom' : 'home',
                 },
+                (route) => true,
               );
             }
           } catch (e, s) {
@@ -66,7 +67,10 @@ class LocalNotificationService {
           }
         } else {
           bottomProvider.selectIndex(role == 'admin' ? 1 : 3);
-          navigatorKey.currentState!.pushNamed(Routes.noti);
+          navigatorKey.currentState!.pushNamedAndRemoveUntil(
+            Routes.noti,
+            (route) => false,
+          );
         }
       },
     );

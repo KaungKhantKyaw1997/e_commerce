@@ -72,14 +72,16 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
 
       var data = navItems[index];
       if (data["label"] == 'Home') {
-        Navigator.pushNamed(
+        Navigator.pushNamedAndRemoveUntil(
           context,
           Routes.home,
+          (route) => false,
         );
       } else if (data["label"] == 'Cart') {
-        Navigator.pushNamed(
+        Navigator.pushNamedAndRemoveUntil(
           context,
           Routes.cart,
+          (route) => false,
         );
       } else if (data["label"] == 'History' || data["label"] == 'Order') {
         Navigator.pushNamed(
@@ -87,18 +89,20 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
           Routes.history,
         );
       } else if (data["label"] == 'Notification') {
-        Navigator.pushNamed(
+        Navigator.pushNamedAndRemoveUntil(
           context,
           Routes.noti,
+          (route) => false,
         );
       } else if (data["label"] == 'Chat') {
         chatHistoriesProvider.setChatHistories([]);
-        Navigator.pushNamed(
+        Navigator.pushNamedAndRemoveUntil(
           context,
           Routes.chat_history,
           arguments: {
             'from': 'bottom',
           },
+          (route) => false,
         );
       } else if (data["label"] == 'Settings') {
         Navigator.pushNamed(

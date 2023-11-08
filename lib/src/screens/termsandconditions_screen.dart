@@ -139,9 +139,10 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                   final SharedPreferences prefs =
                       await SharedPreferences.getInstance();
                   prefs.setBool("termsandconditions", true);
-                  Navigator.pushNamed(
+                  Navigator.pushNamedAndRemoveUntil(
                     context,
                     Routes.home,
+                    (route) => false,
                   );
                 },
                 child: Text(

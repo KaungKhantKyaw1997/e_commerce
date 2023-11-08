@@ -81,9 +81,17 @@ class _SplashScreenState extends State<SplashScreen> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String role = prefs.getString('role') ?? "";
     if (role == 'admin') {
-      Navigator.pushNamed(context, Routes.history);
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        Routes.history,
+        (route) => false,
+      );
     } else {
-      Navigator.pushNamed(context, Routes.home);
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        Routes.home,
+        (route) => false,
+      );
     }
   }
 
