@@ -12,6 +12,7 @@ import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ReviewsScreen extends StatefulWidget {
   const ReviewsScreen({super.key});
@@ -30,10 +31,12 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
   double rating = 1.0;
   List reviews = [];
   Map<String, dynamic> shop = {};
+  String role = "";
 
   @override
   void initState() {
     super.initState();
+    getData();
     Future.delayed(Duration.zero, () async {
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
@@ -51,6 +54,13 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
     _scrollController.dispose();
     _commentFocusNode.dispose();
     super.dispose();
+  }
+
+  getData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      role = prefs.getString('role') ?? "";
+    });
   }
 
   addSellerReviews() async {
@@ -263,41 +273,24 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
             language["Reviews"] ?? "Reviews",
             style: FontConstants.title1,
           ),
-          leading: BackButton(
+          iconTheme: IconThemeData(
             color: Colors.black,
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.pushNamed(
-                context,
-                Routes.shop,
-                arguments: shop,
-              );
-            },
           ),
         ),
-        body: WillPopScope(
-          onWillPop: () async {
-            Navigator.of(context).pop();
-            Navigator.pushNamed(
-              context,
-              Routes.shop,
-              arguments: shop,
-            );
-            return true;
-          },
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: reviews.length,
-                  itemBuilder: (context, index) {
-                    return reviewCard(index);
-                  },
-                ),
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: reviews.length,
+                itemBuilder: (context, index) {
+                  return reviewCard(index);
+                },
               ),
+            ),
+            if (role == 'user' || role == 'agent')
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
@@ -347,7 +340,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                         style: FontConstants.body1,
                         cursorColor: Colors.black,
                         maxLines: null,
-                         minLines: 1, 
+                        minLines: 1,
                         decoration: InputDecoration(
                           hintText: language["Comment"] ?? "Comment",
                           filled: true,
@@ -403,8 +396,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                   ],
                 ),
               ),
-            ],
-          ),
+          ],
         ),
       ),
     );

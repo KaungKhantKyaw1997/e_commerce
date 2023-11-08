@@ -157,16 +157,20 @@ class _ShopScreenState extends State<ShopScreen> {
 
   averageRatingCard() {
     return GestureDetector(
-      onTap: () {
-        Navigator.of(context).pop();
-        Navigator.pushNamed(
+      onTap: () async {
+        await Navigator.pushNamedAndRemoveUntil(
           context,
           Routes.reviews,
           arguments: {
             "reviews": reviews,
             "shop": shop,
           },
+          (route) => true,
         );
+
+        reviews = [];
+        ratings = [];
+        getSellerReviews();
       },
       child: Container(
         margin: EdgeInsets.only(
@@ -335,140 +339,130 @@ class _ShopScreenState extends State<ShopScreen> {
           language["Shop"] ?? "Shop",
           style: FontConstants.title1,
         ),
-        leading: BackButton(
+        iconTheme: IconThemeData(
           color: Colors.black,
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
         ),
       ),
-      body: WillPopScope(
-        onWillPop: () async {
-          Navigator.of(context).pop();
-          return true;
-        },
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 24,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: 240,
-                  decoration: BoxDecoration(
-                    image: shop["cover_image"] != ""
-                        ? DecorationImage(
-                            image: NetworkImage(
-                                '${ApiConstants.baseUrl}${shop["cover_image"].toString()}'),
-                            fit: BoxFit.cover,
-                          )
-                        : DecorationImage(
-                            image: AssetImage('assets/images/logo.png'),
-                            fit: BoxFit.cover,
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 24,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: double.infinity,
+                height: 240,
+                decoration: BoxDecoration(
+                  image: shop["cover_image"] != ""
+                      ? DecorationImage(
+                          image: NetworkImage(
+                              '${ApiConstants.baseUrl}${shop["cover_image"].toString()}'),
+                          fit: BoxFit.cover,
+                        )
+                      : DecorationImage(
+                          image: AssetImage('assets/images/logo.png'),
+                          fit: BoxFit.cover,
+                        ),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: Colors.transparent,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  bottom: 4,
+                ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    shop["name"].toString(),
+                    style: FontConstants.body1,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  bottom: 4,
+                ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    shop["address"].toString(),
+                    style: FontConstants.caption1,
+                  ),
+                ),
+              ),
+              averageRatingCard(),
+              products.isNotEmpty
+                  ? Container(
+                      padding: EdgeInsets.only(
+                        top: 16,
+                        bottom: 4,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            language["Products"] ?? "Products",
+                            style: FontConstants.body1,
                           ),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: Colors.transparent,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 4,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      shop["name"].toString(),
-                      style: FontConstants.body1,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 4,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      shop["address"].toString(),
-                      style: FontConstants.caption1,
-                    ),
-                  ),
-                ),
-                averageRatingCard(),
-                products.isNotEmpty
-                    ? Container(
-                        padding: EdgeInsets.only(
-                          top: 16,
-                          bottom: 4,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
-                          textBaseline: TextBaseline.alphabetic,
-                          children: [
-                            Text(
-                              language["Products"] ?? "Products",
-                              style: FontConstants.body1,
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                Routes.products,
+                                arguments: shop,
+                              );
+                            },
+                            child: Text(
+                              language["See More"] ?? "See More",
+                              style: FontConstants.caption5,
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  Routes.products,
-                                  arguments: shop,
-                                );
-                              },
-                              child: Text(
-                                language["See More"] ?? "See More",
-                                style: FontConstants.caption5,
+                          ),
+                        ],
+                      ),
+                    )
+                  : Container(),
+              products.isNotEmpty
+                  ? Container(
+                      height: 250,
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                Routes.product,
+                                arguments: products[index],
+                              );
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                right: 8,
                               ),
+                              child: productsCard(index),
                             ),
-                          ],
-                        ),
-                      )
-                    : Container(),
-                products.isNotEmpty
-                    ? Container(
-                        height: 250,
-                        child: ListView.builder(
-                          controller: _scrollController,
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: products.length,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  Routes.product,
-                                  arguments: products[index],
-                                );
-                              },
-                              child: Container(
-                                margin: EdgeInsets.only(
-                                  right: 8,
-                                ),
-                                child: productsCard(index),
-                              ),
-                            );
-                          },
-                          itemExtent:
-                              MediaQuery.of(context).size.width / 2 - 25,
-                        ),
-                      )
-                    : Container(),
-              ],
-            ),
+                          );
+                        },
+                        itemExtent: MediaQuery.of(context).size.width / 2 - 25,
+                      ),
+                    )
+                  : Container(),
+            ],
           ),
         ),
       ),

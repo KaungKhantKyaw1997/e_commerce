@@ -227,7 +227,6 @@ class _SettingScreenState extends State<SettingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 0,
         title: Align(
@@ -238,1107 +237,1095 @@ class _SettingScreenState extends State<SettingScreen> {
           ),
         ),
       ),
-      body: WillPopScope(
-        onWillPop: () async {
-          return false;
-        },
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 24,
-            ),
-            width: double.infinity,
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.white,
-                  ),
-                  margin: EdgeInsets.only(
-                    bottom: 24,
-                  ),
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () async {
-                          if (role.isNotEmpty) {
-                            var result =
-                                await Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              Routes.profile,
-                              (route) => true,
-                            );
-                            if (result != null &&
-                                result is Map<String, dynamic>) {
-                              setState(() {
-                                profileImage = result["profileImage"];
-                                profileName = result["profileName"];
-                              });
-                            }
-                          }
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                          ),
-                          color: Colors.transparent,
-                          child: Row(
-                            children: [
-                              role.isNotEmpty
-                                  ? Container(
-                                      margin: const EdgeInsets.only(
-                                        right: 16,
-                                        top: 16,
-                                        bottom: 16,
-                                      ),
-                                      width: 40,
-                                      height: 40,
-                                      decoration: profileImage.isEmpty
-                                          ? BoxDecoration(
-                                              color: ColorConstants.fillcolor,
-                                              image: DecorationImage(
-                                                image: AssetImage(
-                                                    "assets/images/profile.png"),
-                                                fit: BoxFit.cover,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
-                                            )
-                                          : BoxDecoration(
-                                              image: DecorationImage(
-                                                image: NetworkImage(
-                                                    '${ApiConstants.baseUrl}${profileImage.toString()}'),
-                                                fit: BoxFit.cover,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
-                                            ),
-                                    )
-                                  : Container(
-                                      margin: const EdgeInsets.only(
-                                        right: 16,
-                                        top: 16,
-                                        bottom: 16,
-                                      ),
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: ColorConstants.fillcolor,
-                                        image: DecorationImage(
-                                          image: AssetImage(
-                                              "assets/images/profile.png"),
-                                          fit: BoxFit.cover,
-                                        ),
-                                        borderRadius: BorderRadius.circular(50),
-                                      ),
-                                    ),
-                              profileName.isNotEmpty
-                                  ? Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 16,
-                                          top: 16,
-                                          bottom: 16,
-                                        ),
-                                        child: Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: profileName,
-                                                style:
-                                                    FontConstants.subheadline1,
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  : Expanded(
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 14,
-                                            vertical: 12,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          backgroundColor: Colors.white,
-                                          side: BorderSide(
-                                            color:
-                                                Theme.of(context).primaryColor,
-                                            width: 0.5,
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            Routes.login,
-                                            (route) => true,
-                                          );
-                                        },
-                                        child: Text(
-                                          language["Register or Log In"] ??
-                                              "Register or Log In",
-                                          style: FontConstants.button2,
-                                        ),
-                                      ),
-                                    ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const Divider(
-                        height: 0,
-                        color: Colors.grey,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          top: 16,
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            language["General"] ?? "General",
-                            style: FontConstants.smallText1,
-                          ),
-                        ),
-                      ),
-                      role == 'admin'
-                          ? GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  Routes.users_setup,
-                                  (route) => true,
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 16,
-                                        top: 16,
-                                        bottom: 16,
-                                      ),
-                                      child: SvgPicture.asset(
-                                        "assets/icons/user.svg",
-                                        width: 24,
-                                        height: 24,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 16,
-                                          top: 16,
-                                          bottom: 16,
-                                        ),
-                                        child: Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text:
-                                                    language["User"] ?? "User",
-                                                style: FontConstants.caption2,
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Container(),
-                      role == 'admin' || role == 'agent'
-                          ? GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  Routes.shops_setup,
-                                  arguments: {
-                                    "status": "Active",
-                                  },
-                                  (route) => true,
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 16,
-                                        top: 16,
-                                        bottom: 16,
-                                      ),
-                                      child: SvgPicture.asset(
-                                        "assets/icons/shop.svg",
-                                        width: 24,
-                                        height: 24,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 16,
-                                          top: 16,
-                                          bottom: 16,
-                                        ),
-                                        child: Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text:
-                                                    language["Shop"] ?? "Shop",
-                                                style: FontConstants.caption2,
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Container(),
-                      role == 'admin'
-                          ? GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  Routes.shops_setup,
-                                  arguments: {
-                                    "status": "Pending Approval",
-                                  },
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 16,
-                                        top: 16,
-                                        bottom: 16,
-                                      ),
-                                      child: SvgPicture.asset(
-                                        "assets/icons/shop_approve.svg",
-                                        width: 24,
-                                        height: 24,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 16,
-                                          top: 16,
-                                          bottom: 16,
-                                        ),
-                                        child: Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text:
-                                                    language["Shop Approval"] ??
-                                                        "Shop Approval",
-                                                style: FontConstants.caption2,
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Container(),
-                      role == 'admin'
-                          ? GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  Routes.categories_setup,
-                                  (route) => true,
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 16,
-                                        top: 16,
-                                        bottom: 16,
-                                      ),
-                                      child: SvgPicture.asset(
-                                        "assets/icons/category.svg",
-                                        width: 24,
-                                        height: 24,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 16,
-                                          top: 16,
-                                          bottom: 16,
-                                        ),
-                                        child: Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: language["Category"] ??
-                                                    "Category",
-                                                style: FontConstants.caption2,
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Container(),
-                      role == 'admin'
-                          ? GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  Routes.brands_setup,
-                                  (route) => true,
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 16,
-                                        top: 16,
-                                        bottom: 16,
-                                      ),
-                                      child: SvgPicture.asset(
-                                        "assets/icons/brand.svg",
-                                        width: 24,
-                                        height: 24,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 16,
-                                          top: 16,
-                                          bottom: 16,
-                                        ),
-                                        child: Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: language["Brand"] ??
-                                                    "Brand",
-                                                style: FontConstants.caption2,
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Container(),
-                      role == 'admin'
-                          ? GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  Routes.bank_accounts_setup,
-                                  (route) => true,
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 16,
-                                        top: 16,
-                                        bottom: 16,
-                                      ),
-                                      child: SvgPicture.asset(
-                                        "assets/icons/bank.svg",
-                                        width: 24,
-                                        height: 24,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 16,
-                                          top: 16,
-                                          bottom: 16,
-                                        ),
-                                        child: Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text:
-                                                    language["Bank Account"] ??
-                                                        "Bank Account",
-                                                style: FontConstants.caption2,
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Container(),
-                      role == 'admin'
-                          ? GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  Routes.buyer_protections_setup,
-                                  (route) => true,
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 16,
-                                        top: 16,
-                                        bottom: 16,
-                                      ),
-                                      child: SvgPicture.asset(
-                                        "assets/icons/buyer_protection.svg",
-                                        width: 24,
-                                        height: 24,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 16,
-                                          top: 16,
-                                          bottom: 16,
-                                        ),
-                                        child: Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: language[
-                                                        "Buyer Protection"] ??
-                                                    "Buyer Protection",
-                                                style: FontConstants.caption2,
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Container(),
-                      role == 'admin'
-                          ? GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  Routes.termsandconditions_setup,
-                                  (route) => true,
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 16,
-                                        top: 16,
-                                        bottom: 16,
-                                      ),
-                                      child: SvgPicture.asset(
-                                        "assets/icons/shield.svg",
-                                        width: 24,
-                                        height: 24,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 16,
-                                          top: 16,
-                                          bottom: 16,
-                                        ),
-                                        child: Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: language[
-                                                        "Terms & Conditions"] ??
-                                                    "Terms & Conditions",
-                                                style: FontConstants.caption2,
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Container(),
-                      GestureDetector(
-                        onTap: () async {
-                          await Navigator.pushNamedAndRemoveUntil(
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 24,
+          ),
+          width: double.infinity,
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white,
+                ),
+                margin: EdgeInsets.only(
+                  bottom: 24,
+                ),
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        if (role.isNotEmpty) {
+                          var result = await Navigator.pushNamedAndRemoveUntil(
                             context,
-                            Routes.language,
+                            Routes.profile,
                             (route) => true,
                           );
-                          setState(() {});
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                          ),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  right: 16,
-                                  top: 16,
-                                  bottom: 16,
-                                ),
-                                child: SvgPicture.asset(
-                                  "assets/icons/global.svg",
-                                  width: 24,
-                                  height: 24,
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    right: 16,
-                                    top: 16,
-                                    bottom: 16,
-                                  ),
-                                  child: Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: language["Language"] ??
-                                              "Language",
-                                          style: FontConstants.caption2,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  right: 5,
-                                  top: 16,
-                                  bottom: 16,
-                                ),
-                                child: Text(
-                                  selectedLangIndex == 0 ? "English" : "မြန်မာ",
-                                  style: FontConstants.caption1,
-                                ),
-                              ),
-                              const Icon(
-                                Icons.arrow_forward_ios,
-                                size: 20,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
+                          if (result != null &&
+                              result is Map<String, dynamic>) {
+                            setState(() {
+                              profileImage = result["profileImage"];
+                              profileName = result["profileName"];
+                            });
+                          }
+                        }
+                      },
+                      child: Container(
                         padding: const EdgeInsets.only(
                           left: 16,
                           right: 16,
                         ),
-                        child: const Divider(
-                          height: 0,
-                          color: Colors.grey,
+                        color: Colors.transparent,
+                        child: Row(
+                          children: [
+                            role.isNotEmpty
+                                ? Container(
+                                    margin: const EdgeInsets.only(
+                                      right: 16,
+                                      top: 16,
+                                      bottom: 16,
+                                    ),
+                                    width: 40,
+                                    height: 40,
+                                    decoration: profileImage.isEmpty
+                                        ? BoxDecoration(
+                                            color: ColorConstants.fillcolor,
+                                            image: DecorationImage(
+                                              image: AssetImage(
+                                                  "assets/images/profile.png"),
+                                              fit: BoxFit.cover,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                          )
+                                        : BoxDecoration(
+                                            image: DecorationImage(
+                                              image: NetworkImage(
+                                                  '${ApiConstants.baseUrl}${profileImage.toString()}'),
+                                              fit: BoxFit.cover,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                          ),
+                                  )
+                                : Container(
+                                    margin: const EdgeInsets.only(
+                                      right: 16,
+                                      top: 16,
+                                      bottom: 16,
+                                    ),
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      color: ColorConstants.fillcolor,
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            "assets/images/profile.png"),
+                                        fit: BoxFit.cover,
+                                      ),
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                  ),
+                            profileName.isNotEmpty
+                                ? Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: profileName,
+                                              style: FontConstants.subheadline1,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Expanded(
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 14,
+                                          vertical: 12,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        backgroundColor: Colors.white,
+                                        side: BorderSide(
+                                          color: Theme.of(context).primaryColor,
+                                          width: 0.5,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pushNamedAndRemoveUntil(
+                                          context,
+                                          Routes.login,
+                                          (route) => true,
+                                        );
+                                      },
+                                      child: Text(
+                                        language["Register or Log In"] ??
+                                            "Register or Log In",
+                                        style: FontConstants.button2,
+                                      ),
+                                    ),
+                                  ),
+                          ],
                         ),
                       ),
-                      role.isNotEmpty
-                          ? Padding(
+                    ),
+                    const Divider(
+                      height: 0,
+                      color: Colors.grey,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 16,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["General"] ?? "General",
+                          style: FontConstants.smallText1,
+                        ),
+                      ),
+                    ),
+                    role == 'admin'
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                Routes.users_setup,
+                                (route) => true,
+                              );
+                            },
+                            child: Padding(
                               padding: const EdgeInsets.only(
                                 left: 16,
                                 right: 16,
-                                top: 16,
                               ),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  language["Security"] ?? "Security",
-                                  style: FontConstants.smallText1,
-                                ),
-                              ),
-                            )
-                          : Container(),
-                      role.isNotEmpty
-                          ? GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  Routes.change_password,
-                                  (route) => true,
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 16,
-                                        top: 16,
-                                        bottom: 16,
-                                      ),
-                                      child: SvgPicture.asset(
-                                        "assets/icons/lock.svg",
-                                        width: 24,
-                                        height: 24,
-                                      ),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 16,
+                                      top: 16,
+                                      bottom: 16,
                                     ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 16,
-                                          top: 16,
-                                          bottom: 16,
-                                        ),
-                                        child: Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: language[
-                                                        "Change Password"] ??
-                                                    "Change Password",
-                                                style: FontConstants.caption2,
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
+                                    child: SvgPicture.asset(
+                                      "assets/icons/user.svg",
+                                      width: 24,
+                                      height: 24,
                                     ),
-                                    const Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Container(),
-                      role.isNotEmpty
-                          ? GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  Routes.switch_user,
-                                  (route) => true,
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 16,
-                                        top: 16,
-                                        bottom: 16,
-                                      ),
-                                      child: SvgPicture.asset(
-                                        "assets/icons/profile.svg",
-                                        width: 24,
-                                        height: 24,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 16,
-                                          top: 16,
-                                          bottom: 16,
-                                        ),
-                                        child: Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: language["Switch User"] ??
-                                                    "Switch User",
-                                                style: FontConstants.caption2,
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Container(),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                        ),
-                        child: const Divider(
-                          height: 0,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          top: 16,
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            language["Help & Support"] ?? "Help & Support",
-                            style: FontConstants.smallText1,
-                          ),
-                        ),
-                      ),
-                      role == 'user'
-                          ? GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  Routes.termsandconditions,
-                                  (route) => true,
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 16,
-                                        top: 16,
-                                        bottom: 16,
-                                      ),
-                                      child: SvgPicture.asset(
-                                        "assets/icons/shield.svg",
-                                        width: 24,
-                                        height: 24,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 16,
-                                          top: 16,
-                                          bottom: 16,
-                                        ),
-                                        child: Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: language[
-                                                        "Terms & Conditions"] ??
-                                                    "Terms & Conditions",
-                                                style: FontConstants.caption2,
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Container(),
-                      // role == 'user'
-                      //     ? GestureDetector(
-                      //         onTap: () {
-                      //           Navigator.pushNamedAndRemoveUntil(
-                      //             context,
-                      //             Routes.contact_us,
-                      //             (route) => true,
-                      //           );
-                      //         },
-                      //         child: Padding(
-                      //           padding: const EdgeInsets.only(
-                      //             left: 16,
-                      //             right: 16,
-                      //           ),
-                      //           child: Row(
-                      //             children: [
-                      //               Padding(
-                      //                 padding: const EdgeInsets.only(
-                      //                   right: 16,
-                      //                   top: 16,
-                      //                   bottom: 16,
-                      //                 ),
-                      //                 child: SvgPicture.asset(
-                      //                   "assets/icons/contact_us.svg",
-                      //                   width: 24,
-                      //                   height: 24,
-                      //                 ),
-                      //               ),
-                      //               Expanded(
-                      //                 child: Padding(
-                      //                   padding: const EdgeInsets.only(
-                      //                     right: 16,
-                      //                     top: 16,
-                      //                     bottom: 16,
-                      //                   ),
-                      //                   child: Text.rich(
-                      //                     TextSpan(
-                      //                       children: [
-                      //                         TextSpan(
-                      //                           text: language["Contact Us"] ??
-                      //                               "Contact Us",
-                      //                           style: FontConstants.caption2,
-                      //                         )
-                      //                       ],
-                      //                     ),
-                      //                   ),
-                      //                 ),
-                      //               ),
-                      //               const Icon(
-                      //                 Icons.arrow_forward_ios,
-                      //                 size: 20,
-                      //               ),
-                      //             ],
-                      //           ),
-                      //         ),
-                      //       )
-                      //     : Container(),
-                      GestureDetector(
-                        onTap: () {
-                          StoreRedirect.redirect(
-                            androidAppId: packageName,
-                            iOSAppId: "6469529196",
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                          ),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  right: 16,
-                                  top: 16,
-                                  bottom: 16,
-                                ),
-                                child: SvgPicture.asset(
-                                  "assets/icons/version.svg",
-                                  width: 24,
-                                  height: 24,
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    right: 16,
-                                    top: 16,
-                                    bottom: 16,
                                   ),
-                                  child: Text.rich(
-                                    TextSpan(
-                                      children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: Text.rich(
                                         TextSpan(
-                                          text: language["App Version"] ??
-                                              "App Version",
-                                          style: FontConstants.caption2,
-                                        )
-                                      ],
+                                          children: [
+                                            TextSpan(
+                                              text: language["User"] ?? "User",
+                                              style: FontConstants.caption2,
+                                            )
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 20,
+                                  ),
+                                ],
                               ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  right: 5,
+                            ),
+                          )
+                        : Container(),
+                    role == 'admin' || role == 'agent'
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                Routes.shops_setup,
+                                arguments: {
+                                  "status": "Active",
+                                },
+                                (route) => true,
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                              ),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 16,
+                                      top: 16,
+                                      bottom: 16,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      "assets/icons/shop.svg",
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: language["Shop"] ?? "Shop",
+                                              style: FontConstants.caption2,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    role == 'admin'
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                Routes.shops_setup,
+                                arguments: {
+                                  "status": "Pending Approval",
+                                },
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                              ),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 16,
+                                      top: 16,
+                                      bottom: 16,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      "assets/icons/shop_approve.svg",
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: language["Shop Approval"] ??
+                                                  "Shop Approval",
+                                              style: FontConstants.caption2,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    role == 'admin'
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                Routes.categories_setup,
+                                (route) => true,
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                              ),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 16,
+                                      top: 16,
+                                      bottom: 16,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      "assets/icons/category.svg",
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: language["Category"] ??
+                                                  "Category",
+                                              style: FontConstants.caption2,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    role == 'admin'
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                Routes.brands_setup,
+                                (route) => true,
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                              ),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 16,
+                                      top: 16,
+                                      bottom: 16,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      "assets/icons/brand.svg",
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text:
+                                                  language["Brand"] ?? "Brand",
+                                              style: FontConstants.caption2,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    role == 'admin'
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                Routes.bank_accounts_setup,
+                                (route) => true,
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                              ),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 16,
+                                      top: 16,
+                                      bottom: 16,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      "assets/icons/bank.svg",
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: language["Bank Account"] ??
+                                                  "Bank Account",
+                                              style: FontConstants.caption2,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    role == 'admin'
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                Routes.buyer_protections_setup,
+                                (route) => true,
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                              ),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 16,
+                                      top: 16,
+                                      bottom: 16,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      "assets/icons/buyer_protection.svg",
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: language[
+                                                      "Buyer Protection"] ??
+                                                  "Buyer Protection",
+                                              style: FontConstants.caption2,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    role == 'admin'
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                Routes.termsandconditions_setup,
+                                (route) => true,
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                              ),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 16,
+                                      top: 16,
+                                      bottom: 16,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      "assets/icons/shield.svg",
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: language[
+                                                      "Terms & Conditions"] ??
+                                                  "Terms & Conditions",
+                                              style: FontConstants.caption2,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    GestureDetector(
+                      onTap: () async {
+                        await Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          Routes.language,
+                          (route) => true,
+                        );
+                        setState(() {});
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                        ),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                right: 16,
+                                top: 16,
+                                bottom: 16,
+                              ),
+                              child: SvgPicture.asset(
+                                "assets/icons/global.svg",
+                                width: 24,
+                                height: 24,
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  right: 16,
                                   top: 16,
                                   bottom: 16,
                                 ),
-                                child: Text(
-                                  'v$version',
-                                  style: FontConstants.caption1,
+                                child: Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text:
+                                            language["Language"] ?? "Language",
+                                        style: FontConstants.caption2,
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                right: 5,
+                                top: 16,
+                                bottom: 16,
+                              ),
+                              child: Text(
+                                selectedLangIndex == 0 ? "English" : "မြန်မာ",
+                                style: FontConstants.caption1,
+                              ),
+                            ),
+                            const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 20,
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                      ),
+                      child: const Divider(
+                        height: 0,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    role.isNotEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              top: 16,
+                            ),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                language["Security"] ?? "Security",
+                                style: FontConstants.smallText1,
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    role.isNotEmpty
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                Routes.change_password,
+                                (route) => true,
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                              ),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 16,
+                                      top: 16,
+                                      bottom: 16,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      "assets/icons/lock.svg",
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text:
+                                                  language["Change Password"] ??
+                                                      "Change Password",
+                                              style: FontConstants.caption2,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    role.isNotEmpty
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                Routes.switch_user,
+                                (route) => true,
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                              ),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 16,
+                                      top: 16,
+                                      bottom: 16,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      "assets/icons/profile.svg",
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: language["Switch User"] ??
+                                                  "Switch User",
+                                              style: FontConstants.caption2,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                      ),
+                      child: const Divider(
+                        height: 0,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 16,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["Help & Support"] ?? "Help & Support",
+                          style: FontConstants.smallText1,
+                        ),
+                      ),
+                    ),
+                    role == 'user'
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                Routes.termsandconditions,
+                                (route) => true,
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                              ),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 16,
+                                      top: 16,
+                                      bottom: 16,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      "assets/icons/shield.svg",
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: language[
+                                                      "Terms & Conditions"] ??
+                                                  "Terms & Conditions",
+                                              style: FontConstants.caption2,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    // role == 'user'
+                    //     ? GestureDetector(
+                    //         onTap: () {
+                    //           Navigator.pushNamedAndRemoveUntil(
+                    //             context,
+                    //             Routes.contact_us,
+                    //             (route) => true,
+                    //           );
+                    //         },
+                    //         child: Padding(
+                    //           padding: const EdgeInsets.only(
+                    //             left: 16,
+                    //             right: 16,
+                    //           ),
+                    //           child: Row(
+                    //             children: [
+                    //               Padding(
+                    //                 padding: const EdgeInsets.only(
+                    //                   right: 16,
+                    //                   top: 16,
+                    //                   bottom: 16,
+                    //                 ),
+                    //                 child: SvgPicture.asset(
+                    //                   "assets/icons/contact_us.svg",
+                    //                   width: 24,
+                    //                   height: 24,
+                    //                 ),
+                    //               ),
+                    //               Expanded(
+                    //                 child: Padding(
+                    //                   padding: const EdgeInsets.only(
+                    //                     right: 16,
+                    //                     top: 16,
+                    //                     bottom: 16,
+                    //                   ),
+                    //                   child: Text.rich(
+                    //                     TextSpan(
+                    //                       children: [
+                    //                         TextSpan(
+                    //                           text: language["Contact Us"] ??
+                    //                               "Contact Us",
+                    //                           style: FontConstants.caption2,
+                    //                         )
+                    //                       ],
+                    //                     ),
+                    //                   ),
+                    //                 ),
+                    //               ),
+                    //               const Icon(
+                    //                 Icons.arrow_forward_ios,
+                    //                 size: 20,
+                    //               ),
+                    //             ],
+                    //           ),
+                    //         ),
+                    //       )
+                    //     : Container(),
+                    GestureDetector(
+                      onTap: () {
+                        StoreRedirect.redirect(
+                          androidAppId: packageName,
+                          iOSAppId: "6469529196",
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                        ),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                right: 16,
+                                top: 16,
+                                bottom: 16,
+                              ),
+                              child: SvgPicture.asset(
+                                "assets/icons/version.svg",
+                                width: 24,
+                                height: 24,
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  right: 16,
+                                  top: 16,
+                                  bottom: 16,
+                                ),
+                                child: Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: language["App Version"] ??
+                                            "App Version",
+                                        style: FontConstants.caption2,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                right: 5,
+                                top: 16,
+                                bottom: 16,
+                              ),
+                              child: Text(
+                                'v$version',
+                                style: FontConstants.caption1,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                role == 'user'
-                    ? Container(
-                        margin: EdgeInsets.only(
-                          bottom: 8,
+              ),
+              role == 'user'
+                  ? Container(
+                      margin: EdgeInsets.only(
+                        bottom: 8,
+                      ),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          backgroundColor: ColorConstants.redcolor,
                         ),
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            backgroundColor: ColorConstants.redcolor,
-                          ),
-                          onPressed: () {
-                            showRemoveAccountDialog();
-                          },
-                          child: Text(
-                            language["Remove Account"] ?? "Remove Account",
-                            style: FontConstants.button1,
-                          ),
+                        onPressed: () {
+                          showRemoveAccountDialog();
+                        },
+                        child: Text(
+                          language["Remove Account"] ?? "Remove Account",
+                          style: FontConstants.button1,
                         ),
-                      )
-                    : Container(),
-                role.isNotEmpty
-                    ? Container(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                      ),
+                    )
+                  : Container(),
+              role.isNotEmpty
+                  ? Container(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
                           ),
-                          onPressed: () {
-                            showExitDialog();
-                          },
-                          child: Text(
-                            language["Log Out"] ?? "Log Out",
-                            style: FontConstants.button1,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                      )
-                    : Container(),
-              ],
-            ),
+                        onPressed: () {
+                          showExitDialog();
+                        },
+                        child: Text(
+                          language["Log Out"] ?? "Log Out",
+                          style: FontConstants.button1,
+                        ),
+                      ),
+                    )
+                  : Container(),
+            ],
           ),
         ),
       ),

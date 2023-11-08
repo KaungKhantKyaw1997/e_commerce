@@ -218,45 +218,50 @@ class _SuccessScreenState extends State<SuccessScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Center(
-            child: Container(
-              width: 300,
-              height: 300,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/order.png'),
+      body: WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 300,
+                height: 300,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/order.png'),
+                  ),
                 ),
               ),
-            ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  bottom: 4,
+                ),
+                child: Text(
+                  "Your order${id != 0 ? ' (ID: #${id}) ' : ' '}was successful!",
+                  textAlign: TextAlign.center,
+                  style: FontConstants.headline1,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                ),
+                child: Text(
+                  "Thank you for your purchase.",
+                  textAlign: TextAlign.center,
+                  style: FontConstants.subheadline2,
+                ),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 16,
-              right: 16,
-              bottom: 4,
-            ),
-            child: Text(
-              "Your order${id != 0 ? ' (ID: #${id}) ' : ' '}was successful!",
-              textAlign: TextAlign.center,
-              style: FontConstants.headline1,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 16,
-              right: 16,
-            ),
-            child: Text(
-              "Thank you for your purchase.",
-              textAlign: TextAlign.center,
-              style: FontConstants.subheadline2,
-            ),
-          ),
-        ],
+        ),
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.only(

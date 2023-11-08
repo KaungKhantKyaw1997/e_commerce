@@ -105,9 +105,10 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
           (route) => false,
         );
       } else if (data["label"] == 'Settings') {
-        Navigator.pushNamed(
+        Navigator.pushNamedAndRemoveUntil(
           context,
           Routes.setting,
+          (route) => false,
         );
       }
     }

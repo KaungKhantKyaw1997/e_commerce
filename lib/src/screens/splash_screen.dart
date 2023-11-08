@@ -100,32 +100,37 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Center(
-            child: Container(
-              width: 150,
-              height: 150,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/logo.png'),
+      body: WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/logo.png'),
+                  ),
+                  shape: BoxShape.circle,
                 ),
-                shape: BoxShape.circle,
               ),
-            ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 32,
+                ),
+                child: SpinKitThreeBounce(
+                  color: Theme.of(context).primaryColor,
+                  size: 20,
+                ),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 32,
-            ),
-            child: SpinKitThreeBounce(
-              color: Theme.of(context).primaryColor,
-              size: 20,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
