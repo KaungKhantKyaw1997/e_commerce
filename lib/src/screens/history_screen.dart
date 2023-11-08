@@ -106,9 +106,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
             context,
             Routes.unauthorized,
           );
-        } else {
-          ToastUtil.showToast(
-              e.response!.data['code'], e.response!.data['message']);
         }
       }
     }
@@ -144,9 +141,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
             context,
             Routes.unauthorized,
           );
-        } else {
-          ToastUtil.showToast(
-              e.response!.data['code'], e.response!.data['message']);
         }
       }
     }
@@ -308,6 +302,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         onRefresh: () async {
           if (role == 'admin') {
             unreadNotifications();
+            getTotalUnreadCounts();
           }
           page = 1;
           data = [];

@@ -122,9 +122,6 @@ class _HomeScreenState extends State<HomeScreen>
             context,
             Routes.unauthorized,
           );
-        } else {
-          ToastUtil.showToast(
-              e.response!.data['code'], e.response!.data['message']);
         }
       }
     }
@@ -160,9 +157,6 @@ class _HomeScreenState extends State<HomeScreen>
             context,
             Routes.unauthorized,
           );
-        } else {
-          ToastUtil.showToast(
-              e.response!.data['code'], e.response!.data['message']);
         }
       }
     }
@@ -791,6 +785,10 @@ class _HomeScreenState extends State<HomeScreen>
                     enablePullDown: true,
                     enablePullUp: true,
                     onRefresh: () async {
+                      if (role == 'user' || role == 'agent') {
+                        unreadNotifications();
+                        getTotalUnreadCounts();
+                      }
                       page = 1;
                       shops = [];
                       await getShops();
