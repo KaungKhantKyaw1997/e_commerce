@@ -105,9 +105,9 @@ class _MyAppState extends State<MyApp> {
       if (message.notification == null) {
         return;
       }
-      if (routeName == '/chat' || routeName == '/noti') {
-        return;
-      }
+      // if (routeName == '/chat' || routeName == '/noti') {
+      //   return;
+      // }
 
       String chatId = '';
       if (message.data.isNotEmpty) {
