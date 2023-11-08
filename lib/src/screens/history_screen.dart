@@ -267,7 +267,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
@@ -372,8 +371,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               itemCount: orders[index]["items"].length,
                               itemBuilder: (context, i) {
                                 return GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(
+                                  onTap: () async {
+                                    await Navigator.pushNamedAndRemoveUntil(
                                       context,
                                       Routes.history_details,
                                       arguments: {
@@ -421,7 +420,17 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                         "symbol": orders[index]["items"][i]
                                             ["symbol"],
                                       },
+                                      (route) => true,
                                     );
+
+                                    orders = [];
+                                    data = [];
+                                    page = 1;
+                                    startDate = null;
+                                    endDate = null;
+                                    role = "";
+                                    _dataLoaded = false;
+                                    getOrders();
                                   },
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.start,

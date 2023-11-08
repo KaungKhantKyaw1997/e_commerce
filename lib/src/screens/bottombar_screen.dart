@@ -84,9 +84,10 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
           (route) => false,
         );
       } else if (data["label"] == 'History' || data["label"] == 'Order') {
-        Navigator.pushNamed(
+        Navigator.pushNamedAndRemoveUntil(
           context,
           Routes.history,
+          (route) => false,
         );
       } else if (data["label"] == 'Notification') {
         Navigator.pushNamedAndRemoveUntil(
