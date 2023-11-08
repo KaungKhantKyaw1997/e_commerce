@@ -9,6 +9,7 @@ import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/role_provider.dart';
+import 'package:e_commerce/src/providers/socket_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
@@ -109,6 +110,9 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
           );
         }
 
+        SocketProvider socketProvider =
+            Provider.of<SocketProvider>(context, listen: false);
+        await socketProvider.socket!.disconnect();
         authService.initSocket(response["data"]["token"], context);
 
         _firebaseMessaging.getToken().then((token) {
