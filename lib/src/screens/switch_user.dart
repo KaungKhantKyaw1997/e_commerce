@@ -65,6 +65,7 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
 
       final response = await authService.loginData(body);
 
+      Navigator.pop(context);
       if (response!["code"] == 200) {
         String _email = prefs.getString("email") ?? "";
         prefs.setString("email", _email);
@@ -84,25 +85,27 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
 
         bool termsandconditions = prefs.getBool("termsandconditions") ?? false;
 
-        Navigator.pop(context);
         if (response["data"]["role"] == 'admin') {
-          Navigator.pushNamed(
+          Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.history,
+            (route) => false,
           );
         } else if ((termsandconditions && _email == users[index]["email"]) ||
             response["data"]["role"] == 'agent') {
-          Navigator.pushNamed(
+          Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.home,
+            (route) => false,
           );
         } else {
-          Navigator.pushNamed(
+          Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.termsandconditions,
             arguments: {
               "from": "login",
             },
+            (route) => false,
           );
         }
 
@@ -115,7 +118,6 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
-        Navigator.pop(context);
       }
     } catch (e, s) {
       Navigator.pop(context);
@@ -159,116 +161,102 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-         appBar: AppBar(
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          elevation: 0,
-          title: Text(
-            language["Switch User"] ?? "Switch User",
-            style: FontConstants.title1,
-          ),
-          leading: BackButton(
-            color: Colors.black,
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.pushNamed(
-                context,
-                Routes.setting,
-                arguments: {
-                },
-              );
-            },
-          ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        elevation: 0,
+        title: Text(
+          language["Switch User"] ?? "Switch User",
+          style: FontConstants.title1,
         ),
-      body: WillPopScope(
-        onWillPop: () async {
-          return false;
-        },
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 24,
-            ),
-            width: double.infinity,
-            child: Column(
-              children: [
-                ListView.builder(
-                  controller: _scrollController,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: users.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () async {
-                        showLoadingDialog(context);
-                        await storage.delete(key: "token");
-                        await FirebaseMessaging.instance.deleteToken();
-                        login(index);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.white,
-                        ),
-                        margin: EdgeInsets.only(
-                          bottom: 16,
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.all(
-                                16,
-                              ),
-                              width: 40,
-                              height: 40,
-                              decoration: users[index]["profile_image"].isEmpty
-                                  ? BoxDecoration(
-                                      color: ColorConstants.fillcolor,
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            "assets/images/profile.png"),
-                                        fit: BoxFit.cover,
-                                      ),
-                                      borderRadius: BorderRadius.circular(50),
-                                    )
-                                  : BoxDecoration(
-                                      image: DecorationImage(
-                                        image: NetworkImage(
-                                            '${ApiConstants.baseUrl}${users[index]["profile_image"].toString()}'),
-                                        fit: BoxFit.cover,
-                                      ),
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  right: 16,
-                                  top: 16,
-                                  bottom: 16,
-                                ),
-                                child: Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: users[index]["email"],
-                                        style: FontConstants.subheadline1,
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
+      ),
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 24,
+          ),
+          width: double.infinity,
+          child: Column(
+            children: [
+              ListView.builder(
+                controller: _scrollController,
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: users.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () async {
+                      showLoadingDialog(context);
+                      await storage.delete(key: "token");
+                      await FirebaseMessaging.instance.deleteToken();
+                      login(index);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
                       ),
-                    );
-                  },
-                ),
-              ],
-            ),
+                      margin: EdgeInsets.only(
+                        bottom: 16,
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.all(
+                              16,
+                            ),
+                            width: 40,
+                            height: 40,
+                            decoration: users[index]["profile_image"].isEmpty
+                                ? BoxDecoration(
+                                    color: ColorConstants.fillcolor,
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          "assets/images/profile.png"),
+                                      fit: BoxFit.cover,
+                                    ),
+                                    borderRadius: BorderRadius.circular(50),
+                                  )
+                                : BoxDecoration(
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                          '${ApiConstants.baseUrl}${users[index]["profile_image"].toString()}'),
+                                      fit: BoxFit.cover,
+                                    ),
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                right: 16,
+                                top: 16,
+                                bottom: 16,
+                              ),
+                              child: Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: users[index]["email"],
+                                      style: FontConstants.subheadline1,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ),

@@ -965,9 +965,10 @@ class _SettingScreenState extends State<SettingScreen> {
                       role.isNotEmpty
                           ? GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(
+                                Navigator.pushNamedAndRemoveUntil(
                                   context,
                                   Routes.change_password,
+                                  (route) => true,
                                 );
                               },
                               child: Padding(
@@ -1022,9 +1023,10 @@ class _SettingScreenState extends State<SettingScreen> {
                       role.isNotEmpty
                           ? GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(
+                                Navigator.pushNamedAndRemoveUntil(
                                   context,
                                   Routes.switch_user,
+                                  (route) => true,
                                 );
                               },
                               child: Padding(
