@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatService {
   final storage = FlutterSecureStorage();
@@ -103,21 +102,17 @@ class ChatService {
   }
 
   updateMessageStatusData(Map<String, dynamic> body, int id) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String role = prefs.getString('role') ?? "";
-    if (role == 'agent' || role == 'user') {
-      var token = await storage.read(key: "token") ?? '';
-      dio.put(
-        '${ApiConstants.messagesUrl}/$id/status',
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json; charset=UTF-8',
-            if (token.isNotEmpty) 'Authorization': 'Bearer $token',
-          },
-        ),
-        data: jsonEncode(body),
-      );
-    }
+    var token = await storage.read(key: "token") ?? '';
+    dio.put(
+      '${ApiConstants.messagesUrl}/$id/status',
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      data: jsonEncode(body),
+    );
   }
 
   Future<Map<String, dynamic>?> deleteMessageData(int messageId) async {

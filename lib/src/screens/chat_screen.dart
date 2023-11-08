@@ -209,8 +209,6 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   getChatMessages({String type = ''}) async {
     ChatsProvider chatProvider =
         Provider.of<ChatsProvider>(context, listen: false);
-    MessageProvider messageProvider =
-        Provider.of<MessageProvider>(context, listen: false);
 
     try {
       final response = await chatService.getChatMessagesData(
@@ -223,9 +221,6 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
             if ((message["status"] == "sent" ||
                     message["status"] == "delivered") &&
                 !message["is_my_message"]) {
-              int count = messageProvider.count - 1;
-              messageProvider.addCount(count);
-
               updateMessageStatus(message["message_id"]);
             }
           }
@@ -271,11 +266,20 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     }
   }
 
-  updateMessageStatus(id) {
-    final body = {
-      "status": "read",
-    };
-    chatService.updateMessageStatusData(body, id);
+  updateMessageStatus(id) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String role = prefs.getString('role') ?? "";
+    MessageProvider messageProvider =
+        Provider.of<MessageProvider>(context, listen: false);
+
+    if (role == 'agent' || role == 'user') {
+      int count = messageProvider.count - 1;
+      messageProvider.addCount(count);
+      final body = {
+        "status": "read",
+      };
+      chatService.updateMessageStatusData(body, id);
+    }
   }
 
   sendMessage() async {

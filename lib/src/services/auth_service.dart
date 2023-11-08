@@ -174,7 +174,7 @@ class AuthService {
 
       socketProvider.socket!.on("new-message", (data) {
         getChatMessage(data["message_id"], context);
-        updateMessageStatus(data["message_id"]);
+        updateMessageStatus(data["message_id"], context);
         getChatSession(data["chat_id"], context);
       });
 
@@ -263,11 +263,20 @@ class AuthService {
     }
   }
 
-  updateMessageStatus(id) {
-    final body = {
-      "status": "delivered",
-    };
-    chatService.updateMessageStatusData(body, id);
+  updateMessageStatus(id, context) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String role = prefs.getString('role') ?? "";
+    MessageProvider messageProvider =
+        Provider.of<MessageProvider>(context, listen: false);
+
+    if (role == 'agent' || role == 'user') {
+      int count = messageProvider.count - 1;
+      messageProvider.addCount(count);
+      final body = {
+        "status": "read",
+      };
+      chatService.updateMessageStatusData(body, id);
+    }
   }
 
   getSettings(context) async {
