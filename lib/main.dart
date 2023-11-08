@@ -17,6 +17,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:e_commerce/palette.dart';
 import 'package:e_commerce/routes.dart';
@@ -108,8 +109,17 @@ class _MyAppState extends State<MyApp> {
         return;
       }
 
-      String chatId =
-          message.data.isNotEmpty ? message.data["chat_id"].toString() : '0';
+      String chatId = '';
+      if (message.data.isNotEmpty) {
+        chatId = message.data["chat_id"] ?? '0';
+      } else {
+        NotiProvider notiProvider =
+            Provider.of<NotiProvider>(context, listen: false);
+        int count = notiProvider.count + 1;
+        notiProvider.addCount(count);
+
+        FlutterAppBadger.updateBadgeCount(count);
+      }
 
       if (message.notification!.title!.isNotEmpty &&
           message.notification!.body!.isNotEmpty) {
@@ -132,13 +142,13 @@ class _MyAppState extends State<MyApp> {
       BottomProvider bottomProvider =
           Provider.of<BottomProvider>(context, listen: false);
 
-      int chatId = message.data.isNotEmpty
-          ? int.parse(message.data["chat_id"].toString())
-          : 0;
+      if (message.data.isNotEmpty) {
+        String chatId = '';
+        chatId = message.data["chat_id"] ?? '0';
 
-      if (chatId != 0) {
         try {
-          final response = await chatService.getChatSessionData(chatId: chatId);
+          final response =
+              await chatService.getChatSessionData(chatId: int.parse(chatId));
           if (response!["code"] == 200) {
             if (role == 'admin') {
               bottomProvider.selectIndex(2);
