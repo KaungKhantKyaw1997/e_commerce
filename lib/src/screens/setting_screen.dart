@@ -521,12 +521,13 @@ class _SettingScreenState extends State<SettingScreen> {
                     role == 'admin'
                         ? GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(
+                              Navigator.pushNamedAndRemoveUntil(
                                 context,
                                 Routes.shops_setup,
                                 arguments: {
                                   "status": "Pending Approval",
                                 },
+                                (route) => true,
                               );
                             },
                             child: Padding(
