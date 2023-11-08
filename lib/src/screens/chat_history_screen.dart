@@ -14,6 +14,7 @@ import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -513,12 +514,14 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset(
-                          'assets/images/message.png',
-                          width: 150,
-                          height: 150,
-                          fit: BoxFit.cover,
-                          color: Theme.of(context).primaryColor,
+                        SvgPicture.asset(
+                          "assets/icons/message.svg",
+                          width: 120,
+                          height: 120,
+                          colorFilter: ColorFilter.mode(
+                            Theme.of(context).primaryColor,
+                            BlendMode.srcIn,
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(

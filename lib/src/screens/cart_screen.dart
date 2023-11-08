@@ -554,12 +554,14 @@ class _CartScreenState extends State<CartScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'assets/images/cart.png',
-                    width: 150,
-                    height: 150,
-                    fit: BoxFit.cover,
-                    color: Theme.of(context).primaryColor,
+                  SvgPicture.asset(
+                    "assets/icons/cart.svg",
+                    width: 120,
+                    height: 120,
+                    colorFilter: ColorFilter.mode(
+                      Theme.of(context).primaryColor,
+                      BlendMode.srcIn,
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(

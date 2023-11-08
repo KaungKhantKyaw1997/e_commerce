@@ -12,6 +12,7 @@ import 'package:e_commerce/src/services/notification_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
@@ -338,12 +339,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset(
-                          'assets/images/bell.png',
-                          width: 150,
-                          height: 150,
-                          fit: BoxFit.cover,
-                          color: Theme.of(context).primaryColor,
+                        SvgPicture.asset(
+                          "assets/icons/noti.svg",
+                          width: 120,
+                          height: 120,
+                          colorFilter: ColorFilter.mode(
+                            Theme.of(context).primaryColor,
+                            BlendMode.srcIn,
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(
