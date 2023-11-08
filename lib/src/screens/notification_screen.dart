@@ -340,8 +340,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       children: [
                         Image.asset(
                           'assets/images/bell.png',
-                          width: 147,
-                          height: 147,
+                          width: 150,
+                          height: 150,
                           fit: BoxFit.cover,
                           color: Theme.of(context).primaryColor,
                         ),
@@ -350,7 +350,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             left: 16,
                             right: 16,
                             top: 16,
-                            bottom: 4,
+                            bottom: 10,
                           ),
                           child: Text(
                             "No Notifications",

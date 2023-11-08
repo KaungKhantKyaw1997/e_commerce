@@ -525,7 +525,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                             left: 16,
                             right: 16,
                             top: 16,
-                            bottom: 4,
+                            bottom: 10,
                           ),
                           child: Text(
                             "No Messages",
