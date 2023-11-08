@@ -226,96 +226,86 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
             getProducts();
           },
         ),
-        leading: BackButton(
+        iconTheme: IconThemeData(
           color: Colors.black,
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
         ),
       ),
-      body: WillPopScope(
-        onWillPop: () async {
-          Navigator.of(context).pop();
-          return true;
+      body: SmartRefresher(
+        header: WaterDropMaterialHeader(
+          backgroundColor: Theme.of(context).primaryColor,
+          color: Colors.white,
+        ),
+        footer: ClassicFooter(),
+        controller: _refreshController,
+        enablePullDown: true,
+        enablePullUp: true,
+        onRefresh: () async {
+          page = 1;
+          products = [];
+          await getProducts();
         },
-        child: SmartRefresher(
-          header: WaterDropMaterialHeader(
-            backgroundColor: Theme.of(context).primaryColor,
-            color: Colors.white,
-          ),
-          footer: ClassicFooter(),
-          controller: _refreshController,
-          enablePullDown: true,
-          enablePullUp: true,
-          onRefresh: () async {
-            page = 1;
-            products = [];
-            await getProducts();
-          },
-          onLoading: () async {
-            await getProducts();
-          },
-          child: SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 24,
-              ),
-              width: double.infinity,
-              child: Column(
-                children: [
-                  ListView.builder(
-                    controller: _scrollController,
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: products.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                          Navigator.pushNamed(
-                            context,
-                            Routes.product_setup,
-                            arguments: {
-                              "id": products[index]["product_id"],
-                              "shopId": shopId,
-                              "shopName": shopName,
-                              "from": from,
-                            },
-                          );
-                        },
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            productCard(index),
-                            index < products.length - 1
-                                ? Container(
-                                    padding: const EdgeInsets.only(
-                                      left: 16,
-                                      right: 16,
-                                    ),
-                                    child: const Divider(
-                                      height: 0,
-                                      color: Colors.grey,
-                                    ),
-                                  )
-                                : Container(),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
+        onLoading: () async {
+          await getProducts();
+        },
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 24,
+            ),
+            width: double.infinity,
+            child: Column(
+              children: [
+                ListView.builder(
+                  controller: _scrollController,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: products.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          Routes.product_setup,
+                          arguments: {
+                            "id": products[index]["product_id"],
+                            "shopId": shopId,
+                            "shopName": shopName,
+                            "from": from,
+                          },
+                          (route) => true,
+                        );
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          productCard(index),
+                          index < products.length - 1
+                              ? Container(
+                                  padding: const EdgeInsets.only(
+                                    left: 16,
+                                    right: 16,
+                                  ),
+                                  child: const Divider(
+                                    height: 0,
+                                    color: Colors.grey,
+                                  ),
+                                )
+                              : Container(),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pop(context);
-          Navigator.pushNamed(
+          Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.product_setup,
             arguments: {
@@ -324,6 +314,7 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
               "shopName": shopName,
               "from": from,
             },
+            (route) => true,
           );
         },
         backgroundColor: Theme.of(context).primaryColor,

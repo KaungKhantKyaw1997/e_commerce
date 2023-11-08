@@ -30,7 +30,6 @@ class _SettingScreenState extends State<SettingScreen> {
   final authService = AuthService();
   final ScrollController _scrollController = ScrollController();
   final storage = FlutterSecureStorage();
-  String lang = '';
   String profileImage = '';
   String profileName = '';
   String version = '';
@@ -56,7 +55,6 @@ class _SettingScreenState extends State<SettingScreen> {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      lang = prefs.getString('language') ?? "eng";
       profileImage = prefs.getString('profile_image') ?? "";
       profileName = prefs.getString('name') ?? "";
       role = prefs.getString('role') ?? "";
@@ -373,7 +371,9 @@ class _SettingScreenState extends State<SettingScreen> {
                                         ),
                                         onPressed: () {
                                           Navigator.pushNamed(
-                                              context, Routes.login);
+                                            context,
+                                            Routes.login,
+                                          );
                                         },
                                         child: Text(
                                           language["Register or Log In"] ??
@@ -464,12 +464,13 @@ class _SettingScreenState extends State<SettingScreen> {
                       role == 'admin' || role == 'agent'
                           ? GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(
+                                Navigator.pushNamedAndRemoveUntil(
                                   context,
                                   Routes.shops_setup,
                                   arguments: {
                                     "status": "Active",
                                   },
+                                  (route) => true,
                                 );
                               },
                               child: Padding(
@@ -869,11 +870,13 @@ class _SettingScreenState extends State<SettingScreen> {
                             )
                           : Container(),
                       GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(
+                        onTap: () async {
+                          await Navigator.pushNamedAndRemoveUntil(
                             context,
                             Routes.language,
+                            (route) => true,
                           );
+                          setState(() {});
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(
@@ -921,7 +924,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                   bottom: 16,
                                 ),
                                 child: Text(
-                                  lang == "eng" ? "English" : "မြန်မာ",
+                                  selectedLangIndex == 0 ? "English" : "မြန်မာ",
                                   style: FontConstants.caption1,
                                 ),
                               ),

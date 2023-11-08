@@ -272,14 +272,14 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
-                        Navigator.pushNamed(
+                        Navigator.pushNamedAndRemoveUntil(
                           context,
                           Routes.shop_setup,
                           arguments: {
                             "id": shops[index]["shop_id"],
                             "status": status,
                           },
+                          (route) => true,
                         );
                       },
                       child: Column(
@@ -312,14 +312,14 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
       floatingActionButton: status == 'Active'
           ? FloatingActionButton(
               onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(
+                Navigator.pushNamedAndRemoveUntil(
                   context,
                   Routes.shop_setup,
                   arguments: {
                     "id": 0,
                     "status": status,
                   },
+                  (route) => true,
                 );
               },
               backgroundColor: Theme.of(context).primaryColor,
