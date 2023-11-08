@@ -267,664 +267,654 @@ class _OrderScreenState extends State<OrderScreen>
             language["Order"] ?? "Order",
             style: FontConstants.title1,
           ),
-          leading: BackButton(
+          iconTheme: IconThemeData(
             color: Colors.black,
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
           ),
         ),
         backgroundColor: Colors.white,
-        body: WillPopScope(
-          onWillPop: () async {
-            Navigator.of(context).pop();
-            return true;
-          },
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            child: Form(
-              key: _formKey,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 24,
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              right: 4,
-                              bottom: 8,
-                            ),
-                            child: TextFormField(
-                              controller: country,
-                              focusNode: _countryFocusNode,
-                              keyboardType: TextInputType.text,
-                              textInputAction: TextInputAction.next,
-                              style: FontConstants.body1,
-                              cursorColor: Colors.black,
-                              decoration: InputDecoration(
-                                hintText: language["Country"] ?? "Country",
-                                filled: true,
-                                fillColor: ColorConstants.fillcolor,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 14,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
+        body: SingleChildScrollView(
+          controller: _scrollController,
+          child: Form(
+            key: _formKey,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 24,
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            right: 4,
+                            bottom: 8,
+                          ),
+                          child: TextFormField(
+                            controller: country,
+                            focusNode: _countryFocusNode,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.next,
+                            style: FontConstants.body1,
+                            cursorColor: Colors.black,
+                            decoration: InputDecoration(
+                              hintText: language["Country"] ?? "Country",
+                              filled: true,
+                              fillColor: ColorConstants.fillcolor,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return language["Enter Country"] ??
-                                      "Enter Country";
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              left: 4,
-                              bottom: 8,
-                            ),
-                            child: TextFormField(
-                              controller: city,
-                              focusNode: _cityFocusNode,
-                              keyboardType: TextInputType.text,
-                              textInputAction: TextInputAction.next,
-                              style: FontConstants.body1,
-                              cursorColor: Colors.black,
-                              decoration: InputDecoration(
-                                hintText: language["City"] ?? "City",
-                                filled: true,
-                                fillColor: ColorConstants.fillcolor,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 14,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return language["Enter City"] ?? "Enter City";
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              right: 4,
-                              bottom: 8,
-                            ),
-                            child: TextFormField(
-                              controller: state,
-                              focusNode: _stateFocusNode,
-                              keyboardType: TextInputType.text,
-                              textInputAction: TextInputAction.next,
-                              style: FontConstants.body1,
-                              cursorColor: Colors.black,
-                              decoration: InputDecoration(
-                                hintText: language["State"] ?? "State",
-                                filled: true,
-                                fillColor: ColorConstants.fillcolor,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 14,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return language["Enter State"] ??
-                                      "Enter State";
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              left: 4,
-                              bottom: 8,
-                            ),
-                            child: TextFormField(
-                              controller: township,
-                              focusNode: _townshipFocusNode,
-                              keyboardType: TextInputType.text,
-                              textInputAction: TextInputAction.next,
-                              style: FontConstants.body1,
-                              cursorColor: Colors.black,
-                              decoration: InputDecoration(
-                                hintText: language["Township"] ?? "Township",
-                                filled: true,
-                                fillColor: ColorConstants.fillcolor,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 14,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return language["Enter Township"] ??
-                                      "Enter Township";
-                                }
-                                return null;
-                              },
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              right: 4,
-                              bottom: 8,
-                            ),
-                            child: TextFormField(
-                              controller: postalCode,
-                              focusNode: _postalCodeFocusNode,
-                              keyboardType: TextInputType.text,
-                              textInputAction: TextInputAction.next,
-                              style: FontConstants.body1,
-                              cursorColor: Colors.black,
-                              decoration: InputDecoration(
-                                hintText:
-                                    language["Postal Code"] ?? "Postal Code",
-                                filled: true,
-                                fillColor: ColorConstants.fillcolor,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 14,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return language["Enter Postal Code"] ??
-                                      "Enter Postal Code";
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              left: 4,
-                              bottom: 8,
-                            ),
-                            child: TextFormField(
-                              controller: homeAddress,
-                              focusNode: _houseNoFocusNode,
-                              keyboardType: TextInputType.text,
-                              textInputAction: TextInputAction.next,
-                              style: FontConstants.body1,
-                              cursorColor: Colors.black,
-                              decoration: InputDecoration(
-                                hintText: language["House No."] ?? "House No.",
-                                filled: true,
-                                fillColor: ColorConstants.fillcolor,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 14,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return language["Enter House No."] ??
-                                      "Enter House No.";
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              right: 4,
-                              bottom: 8,
-                            ),
-                            child: TextFormField(
-                              controller: streetAddress,
-                              focusNode: _streetFocusNode,
-                              keyboardType: TextInputType.text,
-                              textInputAction: TextInputAction.next,
-                              style: FontConstants.body1,
-                              cursorColor: Colors.black,
-                              decoration: InputDecoration(
-                                hintText: language["Street"] ?? "Street",
-                                filled: true,
-                                fillColor: ColorConstants.fillcolor,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 14,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return language["Enter Street"] ??
-                                      "Enter Street";
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              left: 4,
-                              bottom: 8,
-                            ),
-                            child: TextFormField(
-                              controller: ward,
-                              focusNode: _wardFocusNode,
-                              keyboardType: TextInputType.text,
-                              textInputAction: TextInputAction.next,
-                              style: FontConstants.body1,
-                              cursorColor: Colors.black,
-                              decoration: InputDecoration(
-                                hintText: language["Ward"] ?? "Ward",
-                                filled: true,
-                                fillColor: ColorConstants.fillcolor,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 14,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return language["Enter Ward"] ?? "Enter Ward";
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: 8,
-                      ),
-                      child: TextFormField(
-                        controller: note,
-                        focusNode: _noteFocusNode,
-                        keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.next,
-                        style: FontConstants.body1,
-                        cursorColor: Colors.black,
-                        maxLines: 2,
-                        decoration: InputDecoration(
-                          hintText: language["Note"] ?? "Note",
-                          filled: true,
-                          fillColor: ColorConstants.fillcolor,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return language["Enter Country"] ??
+                                    "Enter Country";
+                              }
+                              return null;
+                            },
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        bottom: 8,
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 4,
+                            bottom: 8,
+                          ),
+                          child: TextFormField(
+                            controller: city,
+                            focusNode: _cityFocusNode,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.next,
+                            style: FontConstants.body1,
+                            cursorColor: Colors.black,
+                            decoration: InputDecoration(
+                              hintText: language["City"] ?? "City",
+                              filled: true,
+                              fillColor: ColorConstants.fillcolor,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return language["Enter City"] ?? "Enter City";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
                       ),
-                      child: CustomDropDown(
-                        value: paymenttype,
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            right: 4,
+                            bottom: 8,
+                          ),
+                          child: TextFormField(
+                            controller: state,
+                            focusNode: _stateFocusNode,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.next,
+                            style: FontConstants.body1,
+                            cursorColor: Colors.black,
+                            decoration: InputDecoration(
+                              hintText: language["State"] ?? "State",
+                              filled: true,
+                              fillColor: ColorConstants.fillcolor,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return language["Enter State"] ?? "Enter State";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 4,
+                            bottom: 8,
+                          ),
+                          child: TextFormField(
+                            controller: township,
+                            focusNode: _townshipFocusNode,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.next,
+                            style: FontConstants.body1,
+                            cursorColor: Colors.black,
+                            decoration: InputDecoration(
+                              hintText: language["Township"] ?? "Township",
+                              filled: true,
+                              fillColor: ColorConstants.fillcolor,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return language["Enter Township"] ??
+                                    "Enter Township";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            right: 4,
+                            bottom: 8,
+                          ),
+                          child: TextFormField(
+                            controller: postalCode,
+                            focusNode: _postalCodeFocusNode,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.next,
+                            style: FontConstants.body1,
+                            cursorColor: Colors.black,
+                            decoration: InputDecoration(
+                              hintText:
+                                  language["Postal Code"] ?? "Postal Code",
+                              filled: true,
+                              fillColor: ColorConstants.fillcolor,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return language["Enter Postal Code"] ??
+                                    "Enter Postal Code";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 4,
+                            bottom: 8,
+                          ),
+                          child: TextFormField(
+                            controller: homeAddress,
+                            focusNode: _houseNoFocusNode,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.next,
+                            style: FontConstants.body1,
+                            cursorColor: Colors.black,
+                            decoration: InputDecoration(
+                              hintText: language["House No."] ?? "House No.",
+                              filled: true,
+                              fillColor: ColorConstants.fillcolor,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return language["Enter House No."] ??
+                                    "Enter House No.";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            right: 4,
+                            bottom: 8,
+                          ),
+                          child: TextFormField(
+                            controller: streetAddress,
+                            focusNode: _streetFocusNode,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.next,
+                            style: FontConstants.body1,
+                            cursorColor: Colors.black,
+                            decoration: InputDecoration(
+                              hintText: language["Street"] ?? "Street",
+                              filled: true,
+                              fillColor: ColorConstants.fillcolor,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return language["Enter Street"] ??
+                                    "Enter Street";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 4,
+                            bottom: 8,
+                          ),
+                          child: TextFormField(
+                            controller: ward,
+                            focusNode: _wardFocusNode,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.next,
+                            style: FontConstants.body1,
+                            cursorColor: Colors.black,
+                            decoration: InputDecoration(
+                              hintText: language["Ward"] ?? "Ward",
+                              filled: true,
+                              fillColor: ColorConstants.fillcolor,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return language["Enter Ward"] ?? "Enter Ward";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: 8,
+                    ),
+                    child: TextFormField(
+                      controller: note,
+                      focusNode: _noteFocusNode,
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.next,
+                      style: FontConstants.body1,
+                      cursorColor: Colors.black,
+                      maxLines: 2,
+                      decoration: InputDecoration(
+                        hintText: language["Note"] ?? "Note",
+                        filled: true,
                         fillColor: ColorConstants.fillcolor,
-                        onChanged: (newValue) {
-                          setState(() {
-                            pickedFile = null;
-                            paymenttype = newValue ?? "Cash on Delivery";
-                          });
-                          if (paymenttype == 'Preorder') {
-                            getBankAccounts('mbanking');
-                          }
-                        },
-                        items: paymenttypes,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
                     ),
-                    paymenttype == 'Preorder'
-                        ? TabBar(
-                            controller: _tabController,
-                            indicator: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: Theme.of(context).primaryColor,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 1,
-                                  blurRadius: 3,
-                                  offset: Offset(0, 1),
-                                ),
-                              ],
-                            ),
-                            labelColor: Colors.white,
-                            unselectedLabelColor: Colors.grey,
-                            tabs: [
-                              Tab(
-                                child: Text(
-                                  "mBanking",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ),
-                              Tab(
-                                child: Text(
-                                  "Wallet",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      bottom: 8,
+                    ),
+                    child: CustomDropDown(
+                      value: paymenttype,
+                      fillColor: ColorConstants.fillcolor,
+                      onChanged: (newValue) {
+                        setState(() {
+                          pickedFile = null;
+                          paymenttype = newValue ?? "Cash on Delivery";
+                        });
+                        if (paymenttype == 'Preorder') {
+                          getBankAccounts('mbanking');
+                        }
+                      },
+                      items: paymenttypes,
+                    ),
+                  ),
+                  paymenttype == 'Preorder'
+                      ? TabBar(
+                          controller: _tabController,
+                          indicator: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Theme.of(context).primaryColor,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 1,
+                                blurRadius: 3,
+                                offset: Offset(0, 1),
                               ),
                             ],
-                            onTap: (index) {
-                              if (index == 0) {
-                                getBankAccounts('mbanking');
-                              } else {
-                                getBankAccounts('wallet');
-                              }
-                            },
-                          )
-                        : Container(),
-                    bankaccounts.isNotEmpty
-                        ? Padding(
-                            padding: EdgeInsets.only(
-                              top: 16,
-                              bottom: 4,
-                            ),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
+                          ),
+                          labelColor: Colors.white,
+                          unselectedLabelColor: Colors.grey,
+                          tabs: [
+                            Tab(
                               child: Text(
-                                language[
-                                        "Transfer Half-Prepaid to the mentioned account numbers only"] ??
-                                    "Transfer Half-Prepaid to the mentioned account numbers only",
-                                style: FontConstants.caption2,
+                                "mBanking",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
                             ),
-                          )
-                        : Container(),
-                    if (paymenttype == 'Preorder')
-                      ...bankaccounts.map((item) {
-                        return Card(
-                          elevation: 0,
-                          margin: EdgeInsets.symmetric(
-                            vertical: 4,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              10,
+                            Tab(
+                              child: Text(
+                                "Wallet",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
                             ),
+                          ],
+                          onTap: (index) {
+                            if (index == 0) {
+                              getBankAccounts('mbanking');
+                            } else {
+                              getBankAccounts('wallet');
+                            }
+                          },
+                        )
+                      : Container(),
+                  bankaccounts.isNotEmpty
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                            top: 16,
+                            bottom: 4,
                           ),
-                          color: ColorConstants.fillcolor,
-                          child: ListTile(
-                            leading: item["bank_logo"].isNotEmpty
-                                ? ClipRRect(
-                                    child: Image.network(
-                                      '${ApiConstants.baseUrl}${item["bank_logo"]}',
-                                      fit: BoxFit.cover,
-                                      height: 60,
-                                      width: 60,
-                                    ),
-                                  )
-                                : ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset(
-                                      'assets/images/logo.png',
-                                      fit: BoxFit.cover,
-                                      height: 60,
-                                      width: 60,
-                                    ),
-                                  ),
-                            title: Text(
-                              "${item["account_number"]}",
-                              style: FontConstants.body1,
-                            ),
-                            subtitle: Text(
-                              "${item["account_holder_name"]}",
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              language[
+                                      "Transfer Half-Prepaid to the mentioned account numbers only"] ??
+                                  "Transfer Half-Prepaid to the mentioned account numbers only",
                               style: FontConstants.caption2,
                             ),
                           ),
-                        );
-                      }).toList(),
-                    paymenttype == 'Preorder'
-                        ? GestureDetector(
-                            onTap: () async {
-                              try {
-                                pickedFile = await _picker.pickImage(
-                                  source: ImageSource.gallery,
-                                );
-                                setState(() {});
-                              } catch (e) {
-                                print(e);
-                              }
-                            },
-                            child: Container(
-                              margin: EdgeInsets.only(
-                                top: 16,
-                                bottom: 8,
-                              ),
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: ColorConstants.fillcolor,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: pickedFile != null
-                                  ? ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Image.file(
-                                        File(pickedFile!.path),
-                                        height: 180,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )
-                                  : Container(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: 58,
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          SvgPicture.asset(
-                                            "assets/icons/upload.svg",
-                                            width: 24,
-                                            height: 24,
-                                            colorFilter: const ColorFilter.mode(
-                                              Colors.grey,
-                                              BlendMode.srcIn,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 16,
-                                          ),
-                                          Text(
-                                            language[
-                                                    "Upload transaction history screenshot"] ??
-                                                "Upload transaction history screenshot",
-                                            style: FontConstants.subheadline2,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                            ),
-                          )
-                        : Container(),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        bottom: insurancetype != 'No Insurance' ? 4 : 24,
-                      ),
-                      child: CustomDropDown(
-                        value: insurancetype,
-                        fillColor: ColorConstants.fillcolor,
-                        onChanged: (newValue) {
-                          setState(() {
-                            insurancetype = newValue ?? insurancenames[0];
-                          });
-                          for (var data in insurancerules) {
-                            if (data["description"] == insurancetype) {
-                              commissionPercentage =
-                                  data["commission_percentage"];
-                              ruleId = data["rule_id"];
-                            }
-                          }
-                        },
-                        items: insurancenames,
-                      ),
-                    ),
-                    insurancetype != 'No Insurance'
-                        ? Padding(
-                            padding: EdgeInsets.only(
-                              bottom: 24,
-                            ),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                'A commission of ${commissionPercentage.toString()}%.',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xffF97316),
+                        )
+                      : Container(),
+                  if (paymenttype == 'Preorder')
+                    ...bankaccounts.map((item) {
+                      return Card(
+                        elevation: 0,
+                        margin: EdgeInsets.symmetric(
+                          vertical: 4,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            10,
+                          ),
+                        ),
+                        color: ColorConstants.fillcolor,
+                        child: ListTile(
+                          leading: item["bank_logo"].isNotEmpty
+                              ? ClipRRect(
+                                  child: Image.network(
+                                    '${ApiConstants.baseUrl}${item["bank_logo"]}',
+                                    fit: BoxFit.cover,
+                                    height: 60,
+                                    width: 60,
+                                  ),
+                                )
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.asset(
+                                    'assets/images/logo.png',
+                                    fit: BoxFit.cover,
+                                    height: 60,
+                                    width: 60,
+                                  ),
                                 ),
+                          title: Text(
+                            "${item["account_number"]}",
+                            style: FontConstants.body1,
+                          ),
+                          subtitle: Text(
+                            "${item["account_holder_name"]}",
+                            style: FontConstants.caption2,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  paymenttype == 'Preorder'
+                      ? GestureDetector(
+                          onTap: () async {
+                            try {
+                              pickedFile = await _picker.pickImage(
+                                source: ImageSource.gallery,
+                              );
+                              setState(() {});
+                            } catch (e) {
+                              print(e);
+                            }
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(
+                              top: 16,
+                              bottom: 8,
+                            ),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: ColorConstants.fillcolor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: pickedFile != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.file(
+                                      File(pickedFile!.path),
+                                      height: 180,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : Container(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 58,
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        SvgPicture.asset(
+                                          "assets/icons/upload.svg",
+                                          width: 24,
+                                          height: 24,
+                                          colorFilter: const ColorFilter.mode(
+                                            Colors.grey,
+                                            BlendMode.srcIn,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 16,
+                                        ),
+                                        Text(
+                                          language[
+                                                  "Upload transaction history screenshot"] ??
+                                              "Upload transaction history screenshot",
+                                          style: FontConstants.subheadline2,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                          ),
+                        )
+                      : Container(),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      bottom: insurancetype != 'No Insurance' ? 4 : 24,
+                    ),
+                    child: CustomDropDown(
+                      value: insurancetype,
+                      fillColor: ColorConstants.fillcolor,
+                      onChanged: (newValue) {
+                        setState(() {
+                          insurancetype = newValue ?? insurancenames[0];
+                        });
+                        for (var data in insurancerules) {
+                          if (data["description"] == insurancetype) {
+                            commissionPercentage =
+                                data["commission_percentage"];
+                            ruleId = data["rule_id"];
+                          }
+                        }
+                      },
+                      items: insurancenames,
+                    ),
+                  ),
+                  insurancetype != 'No Insurance'
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                            bottom: 24,
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'A commission of ${commissionPercentage.toString()}%.',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xffF97316),
                               ),
                             ),
-                          )
-                        : Container(),
-                  ],
-                ),
+                          ),
+                        )
+                      : Container(),
+                ],
               ),
             ),
           ),
@@ -953,7 +943,7 @@ class _OrderScreenState extends State<OrderScreen>
                       0, language["Choose Image"] ?? "Choose Image");
                   return;
                 }
-                Navigator.pushNamed(
+                Navigator.pushNamedAndRemoveUntil(
                   context,
                   Routes.order_confirm,
                   arguments: {
@@ -977,6 +967,7 @@ class _OrderScreenState extends State<OrderScreen>
                     "total": total + (subtotal * (commissionPercentage / 100)),
                     "ruleId": ruleId,
                   },
+                  (route) => true,
                 );
               }
             },

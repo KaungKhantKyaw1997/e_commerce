@@ -155,7 +155,7 @@ class _CartScreenState extends State<CartScreen> {
                             Routes.login,
                             (route) => true,
                           )
-                        : Navigator.pushNamed(
+                        : Navigator.pushNamedAndRemoveUntil(
                             context,
                             Routes.order,
                             arguments: {
@@ -163,6 +163,7 @@ class _CartScreenState extends State<CartScreen> {
                               "subtotal": subtotal,
                               "total": total,
                             },
+                            (route) => true,
                           );
                   },
                 )
