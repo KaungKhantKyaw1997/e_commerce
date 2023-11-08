@@ -205,16 +205,16 @@ class AuthService {
       final response = await chatService.getChatSessionData(chatId: chatId);
       if (response!["code"] == 200) {
         List chatHistories = chatHistoriesProvider.chatHistories;
-        bool flag = false;
+        bool chatExist = false;
         int index = 0;
         for (var chatHistory in chatHistories) {
           if (chatHistory["chat_id"] == chatId) {
-            flag = true;
+            chatExist = true;
             break;
           }
           index++;
         }
-        if (!flag) {
+        if (!chatExist) {
           chatHistories.insert(0, (response["data"]));
         } else {
           chatHistories[index] = response["data"];
@@ -236,14 +236,16 @@ class AuthService {
           await chatService.getChatMessageData(messageId: messageId);
       if (response!["code"] == 200) {
         List chats = chatProvider.chats;
-        bool flag = false;
+        bool messageExist = false;
+        var chatId = 0;
         for (var chat in chats) {
+          chatId = chat["chat_id"];
           if (chat["message_id"] == messageId) {
-            flag = true;
+            messageExist = true;
             break;
           }
         }
-        if (!flag) {
+        if (!messageExist && chatId == response["data"]["chat_id"]) {
           chats.insert(0, (response["data"]));
           chatProvider.setChats(chats);
           if (routeName == '/chat') {
