@@ -19,4 +19,13 @@ class RouteObserverService extends NavigatorObserver {
       routeName = route.settings.name!;
     }
   }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPop(route, previousRoute);
+    // Handle pop events here
+    if (previousRoute is PageRoute && previousRoute.settings.name != null) {
+      previousRouteName = previousRoute.settings.name!;
+    }
+  }
 }
