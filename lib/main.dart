@@ -5,6 +5,7 @@ import 'package:e_commerce/socket_manager.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
 import 'package:e_commerce/src/providers/chat_scroll_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
+import 'package:e_commerce/src/providers/message_provider.dart';
 import 'package:e_commerce/src/providers/role_provider.dart';
 import 'package:e_commerce/src/providers/socket_provider.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
@@ -37,6 +38,7 @@ Future<void> main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   int cartCount = prefs.getInt('cartCount') ?? 0;
   int notiCount = prefs.getInt('notiCount') ?? 0;
+  int messageCount = prefs.getInt('messageCount') ?? 0;
   // final cameras = await availableCameras();
   // final firstCamera = cameras.first;
 
@@ -51,6 +53,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => BottomProvider()),
         ChangeNotifierProvider(create: (context) => CartProvider(cartCount)),
         ChangeNotifierProvider(create: (context) => NotiProvider(notiCount)),
+        ChangeNotifierProvider(
+            create: (context) => MessageProvider(messageCount)),
       ],
       child: MyApp(),
       // child: MyApp(

@@ -8,6 +8,7 @@ import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
 import 'package:e_commerce/src/providers/chat_scroll_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
+import 'package:e_commerce/src/providers/message_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/providers/role_provider.dart';
 import 'package:e_commerce/src/providers/socket_provider.dart';
@@ -305,6 +306,10 @@ class AuthService {
     NotiProvider notiProvider =
         Provider.of<NotiProvider>(context, listen: false);
     notiProvider.addCount(0);
+
+    MessageProvider messageProvider =
+        Provider.of<MessageProvider>(context, listen: false);
+    messageProvider.addCount(0);
 
     BottomProvider bottomProvider =
         Provider.of<BottomProvider>(context, listen: false);

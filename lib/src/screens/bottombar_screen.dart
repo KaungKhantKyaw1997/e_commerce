@@ -1,5 +1,6 @@
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
+import 'package:e_commerce/src/providers/message_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -116,6 +117,8 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
         Provider.of<CartProvider>(context, listen: true);
     NotiProvider notiProvider =
         Provider.of<NotiProvider>(context, listen: true);
+    MessageProvider messageProvider =
+        Provider.of<MessageProvider>(context, listen: true);
 
     return Consumer<BottomProvider>(builder: (context, bottomProvider, child) {
       return ClipRRect(
@@ -144,7 +147,8 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                 items: navItems.map((navItem) {
                   return BottomNavigationBarItem(
                     icon: navItem["label"] != 'Cart' &&
-                            navItem["label"] != 'Notification'
+                            navItem["label"] != 'Notification' &&
+                            navItem["label"] != 'Chat'
                         ? Padding(
                             padding: const EdgeInsets.only(
                               left: 8,
@@ -211,57 +215,78 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                                         height: 24,
                                       ),
                               ),
-                              navItem["label"] == 'Cart' &&
-                                      cartProvider.count > 0
-                                  ? Positioned(
-                                      right: 2,
-                                      child: Container(
-                                        padding: const EdgeInsets.all(2),
-                                        decoration: BoxDecoration(
-                                          color: ColorConstants.redcolor,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        constraints: const BoxConstraints(
-                                          minWidth: 16,
-                                          minHeight: 16,
-                                        ),
-                                        child: Text(
-                                          '${cartProvider.count}',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: FontConstants.bottom,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
+                              if (navItem["label"] == 'Cart' &&
+                                  cartProvider.count > 0)
+                                Positioned(
+                                  right: 2,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      color: ColorConstants.redcolor,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    constraints: const BoxConstraints(
+                                      minWidth: 16,
+                                      minHeight: 16,
+                                    ),
+                                    child: Text(
+                                      '${cartProvider.count}',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: FontConstants.bottom,
                                       ),
-                                    )
-                                  : navItem["label"] == 'Notification' &&
-                                          notiProvider.count > 0
-                                      ? Positioned(
-                                          right: 2,
-                                          child: Container(
-                                            padding: const EdgeInsets.all(2),
-                                            decoration: BoxDecoration(
-                                              color: ColorConstants.redcolor,
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            constraints: const BoxConstraints(
-                                              minWidth: 16,
-                                              minHeight: 16,
-                                            ),
-                                            child: Text(
-                                              '${notiProvider.count}',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: FontConstants.bottom,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        )
-                                      : Text(''),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              if (navItem["label"] == 'Notification' &&
+                                  notiProvider.count > 0)
+                                Positioned(
+                                  right: 2,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      color: ColorConstants.redcolor,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    constraints: const BoxConstraints(
+                                      minWidth: 16,
+                                      minHeight: 16,
+                                    ),
+                                    child: Text(
+                                      '${notiProvider.count}',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: FontConstants.bottom,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              if (navItem["label"] == 'Chat' &&
+                                  messageProvider.count > 0)
+                                Positioned(
+                                  right: 2,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      color: ColorConstants.redcolor,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    constraints: const BoxConstraints(
+                                      minWidth: 16,
+                                      minHeight: 16,
+                                    ),
+                                    child: Text(
+                                      '${messageProvider.count}',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: FontConstants.bottom,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
                             ],
                           ),
                     label: language[navItem["label"]] ?? navItem["label"],

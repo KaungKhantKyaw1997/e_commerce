@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
+import 'package:e_commerce/src/providers/message_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
+import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/notification_service.dart';
 import 'package:e_commerce/src/utils/format_amount.dart';
@@ -36,6 +38,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   final orderService = OrderService();
   final authService = AuthService();
   final notificationService = NotificationService();
+  final chatService = ChatService();
   final storage = FlutterSecureStorage();
   final ScrollController _scrollController = ScrollController();
   final RefreshController _refreshController =
@@ -67,6 +70,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       role = prefs.getString('role') ?? "";
       if (role == 'admin') {
         unreadNotifications();
+        getTotalUnreadCounts();
       }
     });
   }
@@ -79,6 +83,44 @@ class _HistoryScreenState extends State<HistoryScreen> {
             Provider.of<NotiProvider>(context, listen: false);
         notiProvider.addCount(response["data"]);
         FlutterAppBadger.updateBadgeCount(response["data"]);
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getTotalUnreadCounts() async {
+    try {
+      final response = await chatService.getTotalUnreadCountsData();
+      if (response!["code"] == 200) {
+        MessageProvider messageProvider =
+            Provider.of<MessageProvider>(context, listen: false);
+        messageProvider.addCount(response["data"]);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }

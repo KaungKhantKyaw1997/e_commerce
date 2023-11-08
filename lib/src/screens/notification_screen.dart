@@ -47,6 +47,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   getNotifications() async {
+    NotiProvider notiProvider =
+        Provider.of<NotiProvider>(context, listen: false);
+
     try {
       final body = {
         "page": page,
@@ -62,9 +65,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
           notifications = [];
           for (var i = 0; i < response["data"].length; i++) {
             if (response["data"][i]["status"] == "Unread") {
-              NotiProvider notiProvider =
-                  Provider.of<NotiProvider>(context, listen: false);
-
               int count = notiProvider.count - 1;
               notiProvider.addCount(count);
 

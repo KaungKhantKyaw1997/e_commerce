@@ -10,6 +10,7 @@ import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
 import 'package:e_commerce/src/providers/chat_scroll_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
+import 'package:e_commerce/src/providers/message_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
@@ -208,6 +209,8 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   getChatMessages({String type = ''}) async {
     ChatsProvider chatProvider =
         Provider.of<ChatsProvider>(context, listen: false);
+    MessageProvider messageProvider =
+        Provider.of<MessageProvider>(context, listen: false);
 
     try {
       final response = await chatService.getChatMessagesData(
@@ -220,6 +223,9 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
             if ((message["status"] == "sent" ||
                     message["status"] == "delivered") &&
                 !message["is_my_message"]) {
+              int count = messageProvider.count - 1;
+              messageProvider.addCount(count);
+
               updateMessageStatus(message["message_id"]);
             }
           }

@@ -7,11 +7,13 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
+import 'package:e_commerce/src/providers/message_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/screens/bottombar_screen.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/brands_service.dart';
 import 'package:e_commerce/src/services/categories_service.dart';
+import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/notification_service.dart';
 import 'package:e_commerce/src/services/products_service.dart';
@@ -41,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen>
   final categoriesService = CategoriesService();
   final productsService = ProductsService();
   final notificationService = NotificationService();
+  final chatService = ChatService();
   final storage = FlutterSecureStorage();
   final ScrollController _scrollController = ScrollController();
   final RefreshController _refreshController =
@@ -81,8 +84,9 @@ class _HomeScreenState extends State<HomeScreen>
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       role = prefs.getString('role') ?? "";
-      if (role == 'user' && role == 'agent') {
+      if (role == 'user' || role == 'agent') {
         unreadNotifications();
+        getTotalUnreadCounts();
       }
     });
   }
@@ -95,6 +99,44 @@ class _HomeScreenState extends State<HomeScreen>
             Provider.of<NotiProvider>(context, listen: false);
         notiProvider.addCount(response["data"]);
         FlutterAppBadger.updateBadgeCount(response["data"]);
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getTotalUnreadCounts() async {
+    try {
+      final response = await chatService.getTotalUnreadCountsData();
+      if (response!["code"] == 200) {
+        MessageProvider messageProvider =
+            Provider.of<MessageProvider>(context, listen: false);
+        messageProvider.addCount(response["data"]);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -541,6 +583,9 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    MessageProvider messageProvider =
+        Provider.of<MessageProvider>(context, listen: true);
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -648,32 +693,64 @@ class _HomeScreenState extends State<HomeScreen>
                 );
               },
             ),
-            role.isNotEmpty
-                ? IconButton(
-                    icon: SvgPicture.asset(
-                      "assets/icons/message.svg",
-                      width: 24,
-                      height: 24,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.black,
-                        BlendMode.srcIn,
+            if (role.isNotEmpty)
+              Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 3,
+                    ),
+                    child: IconButton(
+                      icon: SvgPicture.asset(
+                        "assets/icons/message.svg",
+                        width: 24,
+                        height: 24,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.black,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      onPressed: () {
+                        ChatHistoriesProvider chatHistoriesProvider =
+                            Provider.of<ChatHistoriesProvider>(context,
+                                listen: false);
+                        chatHistoriesProvider.setChatHistories([]);
+                        Navigator.pushNamed(
+                          context,
+                          Routes.chat_history,
+                          arguments: {
+                            'from': 'home',
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  if (messageProvider.count > 0)
+                    Positioned(
+                      top: 8,
+                      right: 6,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: ColorConstants.redcolor,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Text(
+                          '${messageProvider.count}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: FontConstants.bottom,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
-                    onPressed: () {
-                      ChatHistoriesProvider chatHistoriesProvider =
-                          Provider.of<ChatHistoriesProvider>(context,
-                              listen: false);
-                      chatHistoriesProvider.setChatHistories([]);
-                      Navigator.pushNamed(
-                        context,
-                        Routes.chat_history,
-                        arguments: {
-                          'from': 'home',
-                        },
-                      );
-                    },
-                  )
-                : Text(''),
+                ],
+              ),
           ],
           bottom: TabBar(
             controller: _tabController,
