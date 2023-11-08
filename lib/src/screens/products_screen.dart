@@ -361,26 +361,17 @@ class _ProductsScreenState extends State<ProductsScreen>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                          width: MediaQuery.of(context).orientation ==
-                                  Orientation.landscape
-                              ? 150
-                              : 300,
-                          height: MediaQuery.of(context).orientation ==
-                                  Orientation.landscape
-                              ? 150
-                              : 300,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/no_data.png'),
-                            ),
-                          ),
+                        SvgPicture.asset(
+                          "assets/icons/empty_product.svg",
+                          width: 120,
+                          height: 120,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(
                             left: 16,
                             right: 16,
-                            bottom: 4,
+                            top: 16,
+                            bottom: 10,
                           ),
                           child: Text(
                             "Empty Product",

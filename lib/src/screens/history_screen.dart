@@ -543,13 +543,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SvgPicture.asset(
-                          "assets/icons/history.svg",
+                          "assets/icons/empty_history.svg",
                           width: 120,
                           height: 120,
-                          colorFilter: ColorFilter.mode(
-                            Theme.of(context).primaryColor,
-                            BlendMode.srcIn,
-                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(
