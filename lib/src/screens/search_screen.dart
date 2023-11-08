@@ -49,8 +49,8 @@ class _SearchScreenState extends State<SearchScreen>
 
   getSearchHistories() async {
     final prefs = await SharedPreferences.getInstance();
-    final searchhistoriesJson = prefs.getString("searchhistories");
-    if (searchhistoriesJson != null) {
+    final searchhistoriesJson = prefs.getString("searchhistories") ?? "";
+    if (searchhistoriesJson.isNotEmpty) {
       setState(() {
         List jsonData = jsonDecode(searchhistoriesJson) ?? [];
         for (var item in jsonData) {
@@ -329,10 +329,11 @@ class _SearchScreenState extends State<SearchScreen>
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(
+                              Navigator.pushNamedAndRemoveUntil(
                                 context,
                                 Routes.product,
                                 arguments: products[index],
+                                (route) => true,
                               );
                             },
                             child: Column(

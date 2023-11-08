@@ -341,10 +341,11 @@ class _ProductsScreenState extends State<ProductsScreen>
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(
+                              Navigator.pushNamedAndRemoveUntil(
                                 context,
                                 Routes.product,
                                 arguments: products[index],
+                                (route) => true,
                               );
                             },
                             child: productCard(index),

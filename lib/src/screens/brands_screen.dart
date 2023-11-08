@@ -230,10 +230,11 @@ class _BrandsScreenState extends State<BrandsScreen> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(
+                        Navigator.pushNamedAndRemoveUntil(
                           context,
                           Routes.products,
                           arguments: brands[index],
+                          (route) => true,
                         );
                       },
                       child: Column(

@@ -230,10 +230,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(
+                        Navigator.pushNamedAndRemoveUntil(
                           context,
                           Routes.products,
                           arguments: categories[index],
+                          (route) => true,
                         );
                       },
                       child: Column(

@@ -168,7 +168,6 @@ class _ShopScreenState extends State<ShopScreen> {
           (route) => true,
         );
 
-        reviews = [];
         ratings = [];
         getSellerReviews();
       },
@@ -417,12 +416,15 @@ class _ShopScreenState extends State<ShopScreen> {
                             style: FontConstants.body1,
                           ),
                           GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(
+                            onTap: () async {
+                              await Navigator.pushNamedAndRemoveUntil(
                                 context,
                                 Routes.products,
                                 arguments: shop,
+                                (route) => true,
                               );
+
+                              getProducts();
                             },
                             child: Text(
                               language["See More"] ?? "See More",
@@ -443,12 +445,15 @@ class _ShopScreenState extends State<ShopScreen> {
                         itemCount: products.length,
                         itemBuilder: (context, index) {
                           return GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(
+                            onTap: () async {
+                              await Navigator.pushNamedAndRemoveUntil(
                                 context,
                                 Routes.product,
                                 arguments: products[index],
+                                (route) => true,
                               );
+
+                              getProducts();
                             },
                             child: Container(
                               margin: EdgeInsets.only(

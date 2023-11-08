@@ -822,10 +822,11 @@ class _HomeScreenState extends State<HomeScreen>
                               itemBuilder: (context, index) {
                                 return GestureDetector(
                                   onTap: () {
-                                    Navigator.pushNamed(
+                                    Navigator.pushNamedAndRemoveUntil(
                                       context,
                                       Routes.shop,
                                       arguments: shops[index],
+                                      (route) => true,
                                     );
                                   },
                                   child: shopCard(index),
@@ -867,14 +868,18 @@ class _HomeScreenState extends State<HomeScreen>
                                         style: FontConstants.body1,
                                       ),
                                       GestureDetector(
-                                        onTap: () {
-                                          Navigator.pushNamed(
+                                        onTap: () async {
+                                          await Navigator
+                                              .pushNamedAndRemoveUntil(
                                             context,
                                             Routes.products,
                                             arguments: {
                                               "is_top_model": true,
                                             },
+                                            (route) => true,
                                           );
+
+                                          getTopModels();
                                         },
                                         child: Text(
                                           language["See More"] ?? "See More",
@@ -895,12 +900,16 @@ class _HomeScreenState extends State<HomeScreen>
                                     itemCount: products.length,
                                     itemBuilder: (context, index) {
                                       return GestureDetector(
-                                        onTap: () {
-                                          Navigator.pushNamed(
+                                        onTap: () async {
+                                          await Navigator
+                                              .pushNamedAndRemoveUntil(
                                             context,
                                             Routes.product,
                                             arguments: products[index],
+                                            (route) => true,
                                           );
+
+                                          getTopModels();
                                         },
                                         child: Container(
                                           margin: EdgeInsets.only(
@@ -934,11 +943,15 @@ class _HomeScreenState extends State<HomeScreen>
                                         style: FontConstants.body1,
                                       ),
                                       GestureDetector(
-                                        onTap: () {
-                                          Navigator.pushNamed(
+                                        onTap: () async {
+                                          await Navigator
+                                              .pushNamedAndRemoveUntil(
                                             context,
                                             Routes.brands,
+                                            (route) => true,
                                           );
+
+                                          getBrands();
                                         },
                                         child: Text(
                                           language["See More"] ?? "See More",
@@ -970,12 +983,16 @@ class _HomeScreenState extends State<HomeScreen>
                                           int itemIndex = startIndex + index;
                                           if (itemIndex < brands.length) {
                                             return GestureDetector(
-                                              onTap: () {
-                                                Navigator.pushNamed(
+                                              onTap: () async {
+                                                await Navigator
+                                                    .pushNamedAndRemoveUntil(
                                                   context,
                                                   Routes.products,
                                                   arguments: brands[itemIndex],
+                                                  (route) => true,
                                                 );
+
+                                                getBrands();
                                               },
                                               child: Padding(
                                                 padding: EdgeInsets.only(
@@ -1015,11 +1032,15 @@ class _HomeScreenState extends State<HomeScreen>
                                         style: FontConstants.body1,
                                       ),
                                       GestureDetector(
-                                        onTap: () {
-                                          Navigator.pushNamed(
+                                        onTap: () async {
+                                          await Navigator
+                                              .pushNamedAndRemoveUntil(
                                             context,
                                             Routes.categories,
+                                            (route) => true,
                                           );
+
+                                          getCategories();
                                         },
                                         child: Text(
                                           language["See More"] ?? "See More",
@@ -1040,12 +1061,16 @@ class _HomeScreenState extends State<HomeScreen>
                                     itemCount: categories.length,
                                     itemBuilder: (context, index) {
                                       return GestureDetector(
-                                        onTap: () {
-                                          Navigator.pushNamed(
+                                        onTap: () async {
+                                          await Navigator
+                                              .pushNamedAndRemoveUntil(
                                             context,
                                             Routes.products,
                                             arguments: categories[index],
+                                            (route) => true,
                                           );
+
+                                          getCategories();
                                         },
                                         child: Container(
                                           margin: EdgeInsets.only(
