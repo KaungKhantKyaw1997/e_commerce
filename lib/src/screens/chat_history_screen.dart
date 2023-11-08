@@ -128,6 +128,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
     try {
       final response = await chatService.deleteSessionData(chatId);
       if (response!["code"] == 204) {
+        _dataLoaded = true;
         List chatHistories = (chatHistoriesProvider.chatHistories as List)
             .where((element) => element["chat_id"] != chatId)
             .toList();
