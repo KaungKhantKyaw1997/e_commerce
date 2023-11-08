@@ -200,6 +200,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
       if (response!["code"] == 201) {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
+        Navigator.pop(context);
         Navigator.pushNamed(
           context,
           Routes.users_setup,
@@ -260,6 +261,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
       if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
+        Navigator.pop(context);
         Navigator.pushNamed(
           context,
           Routes.users_setup,
@@ -302,6 +304,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
       Navigator.pop(context);
       if (response!["code"] == 204) {
         ToastUtil.showToast(response["code"], response["message"]);
+        Navigator.pop(context);
         Navigator.pop(context);
         Navigator.pushNamed(
           context,
@@ -362,787 +365,761 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
             language["User"] ?? "User",
             style: FontConstants.title1,
           ),
-          leading: BackButton(
+          iconTheme: IconThemeData(
             color: Colors.black,
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.pushNamed(
-                context,
-                Routes.users_setup,
-              );
-            },
           ),
         ),
         backgroundColor: Colors.white,
-        body: WillPopScope(
-          onWillPop: () async {
-            Navigator.of(context).pop();
-            Navigator.pushNamed(
-              context,
-              Routes.users_setup,
-            );
-            return true;
-          },
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(
-                          top: 24,
-                          bottom: 24,
-                        ),
-                        decoration: BoxDecoration(
-                          color: ColorConstants.fillcolor,
-                          shape: BoxShape.circle,
-                        ),
-                        child: GestureDetector(
-                          onTap: () {
-                            _pickImage(ImageSource.gallery);
-                          },
-                          child: profileImage.isNotEmpty
-                              ? ClipOval(
-                                  child: Image.network(
-                                    '${ApiConstants.baseUrl}${profileImage.toString()}',
-                                    width: 100,
-                                    height: 100,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )
-                              : pickedFile != null
-                                  ? ClipOval(
-                                      child: Image.file(
-                                        File(pickedFile!.path),
-                                        width: 100,
-                                        height: 100,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )
-                                  : ClipOval(
-                                      child: Image.asset(
-                                        'assets/images/profile.png',
-                                        width: 100,
-                                        height: 100,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                        ),
-                      ),
-                      Positioned(
+        body: SingleChildScrollView(
+          controller: _scrollController,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(
+                        top: 24,
                         bottom: 24,
-                        right: 0,
-                        child: GestureDetector(
-                          onTap: () {
-                            _pickImage(ImageSource.gallery);
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 3,
-                              ),
-                              color: Theme.of(context).primaryColorLight,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorConstants.fillcolor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: GestureDetector(
+                        onTap: () {
+                          _pickImage(ImageSource.gallery);
+                        },
+                        child: profileImage.isNotEmpty
+                            ? ClipOval(
+                                child: Image.network(
+                                  '${ApiConstants.baseUrl}${profileImage.toString()}',
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : pickedFile != null
+                                ? ClipOval(
+                                    child: Image.file(
+                                      File(pickedFile!.path),
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : ClipOval(
+                                    child: Image.asset(
+                                      'assets/images/profile.png',
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 24,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: () {
+                          _pickImage(ImageSource.gallery);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 3,
                             ),
-                            child: SvgPicture.asset(
-                              "assets/icons/gallery.svg",
-                              width: 16,
-                              height: 16,
-                              colorFilter: ColorFilter.mode(
-                                Theme.of(context).primaryColor,
-                                BlendMode.srcIn,
-                              ),
-                            ),
+                            color: Theme.of(context).primaryColorLight,
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 4,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        language["Email"] ?? "Email",
-                        style: FontConstants.caption1,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
-                    ),
-                    child: TextFormField(
-                      controller: email,
-                      focusNode: _emailFocusNode,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      style:
-                          id != 0 ? FontConstants.body2 : FontConstants.body1,
-                      cursorColor: Colors.black,
-                      readOnly: id != 0 ? true : false,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: ColorConstants.fillcolor,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return language["Enter Email"] ?? "Enter Email";
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 4,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        language["Password"] ?? "Password",
-                        style: FontConstants.caption1,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
-                    ),
-                    child: TextFormField(
-                      controller: password,
-                      focusNode: _passwordFocusNode,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.next,
-                      obscureText: obscurePassword,
-                      style: FontConstants.body1,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: ColorConstants.fillcolor,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: IconButton(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              obscurePassword = !obscurePassword;
-                            });
-                          },
-                          icon: SvgPicture.asset(
-                            obscurePassword
-                                ? "assets/icons/eye-close.svg"
-                                : "assets/icons/eye.svg",
-                            width: 24,
-                            height: 24,
+                          child: SvgPicture.asset(
+                            "assets/icons/gallery.svg",
+                            width: 16,
+                            height: 16,
                             colorFilter: ColorFilter.mode(
-                              Colors.black,
+                              Theme.of(context).primaryColor,
                               BlendMode.srcIn,
                             ),
                           ),
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return language["Enter Password"] ?? "Enter Password";
-                        }
-                        return null;
-                      },
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 4,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      language["Email"] ?? "Email",
+                      style: FontConstants.caption1,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 4,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        language["Confirm Password"] ?? "Confirm Password",
-                        style: FontConstants.caption1,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
+                  ),
+                  child: TextFormField(
+                    controller: email,
+                    focusNode: _emailFocusNode,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    style: id != 0 ? FontConstants.body2 : FontConstants.body1,
+                    cursorColor: Colors.black,
+                    readOnly: id != 0 ? true : false,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: ColorConstants.fillcolor,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
                       ),
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return language["Enter Email"] ?? "Enter Email";
+                      }
+                      return null;
+                    },
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 4,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      language["Password"] ?? "Password",
+                      style: FontConstants.caption1,
                     ),
-                    child: TextFormField(
-                      controller: confirmpassword,
-                      focusNode: _confirmPasswordFocusNode,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.next,
-                      obscureText: obscureConfirmPassword,
-                      style: FontConstants.body1,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: ColorConstants.fillcolor,
-                        contentPadding: const EdgeInsets.symmetric(
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
+                  ),
+                  child: TextFormField(
+                    controller: password,
+                    focusNode: _passwordFocusNode,
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.next,
+                    obscureText: obscurePassword,
+                    style: FontConstants.body1,
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: ColorConstants.fillcolor,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      suffixIcon: IconButton(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 16,
-                          vertical: 14,
                         ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: IconButton(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
+                        onPressed: () {
+                          setState(() {
+                            obscurePassword = !obscurePassword;
+                          });
+                        },
+                        icon: SvgPicture.asset(
+                          obscurePassword
+                              ? "assets/icons/eye-close.svg"
+                              : "assets/icons/eye.svg",
+                          width: 24,
+                          height: 24,
+                          colorFilter: ColorFilter.mode(
+                            Colors.black,
+                            BlendMode.srcIn,
                           ),
-                          onPressed: () {
-                            setState(() {
-                              obscureConfirmPassword = !obscureConfirmPassword;
-                            });
-                          },
-                          icon: SvgPicture.asset(
-                            obscureConfirmPassword
-                                ? "assets/icons/eye-close.svg"
-                                : "assets/icons/eye.svg",
-                            width: 24,
-                            height: 24,
-                            colorFilter: ColorFilter.mode(
-                              Colors.black,
-                              BlendMode.srcIn,
-                            ),
+                        ),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return language["Enter Password"] ?? "Enter Password";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 4,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      language["Confirm Password"] ?? "Confirm Password",
+                      style: FontConstants.caption1,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
+                  ),
+                  child: TextFormField(
+                    controller: confirmpassword,
+                    focusNode: _confirmPasswordFocusNode,
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.next,
+                    obscureText: obscureConfirmPassword,
+                    style: FontConstants.body1,
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: ColorConstants.fillcolor,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      suffixIcon: IconButton(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            obscureConfirmPassword = !obscureConfirmPassword;
+                          });
+                        },
+                        icon: SvgPicture.asset(
+                          obscureConfirmPassword
+                              ? "assets/icons/eye-close.svg"
+                              : "assets/icons/eye.svg",
+                          width: 24,
+                          height: 24,
+                          colorFilter: ColorFilter.mode(
+                            Colors.black,
+                            BlendMode.srcIn,
                           ),
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return language["Enter Confirm Password"] ??
-                              "Enter Confirm  Password";
-                        } else if (value != password.text) {
-                          return language["Passwords don't match"] ??
-                              "Passwords don't match";
-                        }
-                        return null;
-                      },
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return language["Enter Confirm Password"] ??
+                            "Enter Confirm  Password";
+                      } else if (value != password.text) {
+                        return language["Passwords don't match"] ??
+                            "Passwords don't match";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 4,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      language["Name"] ?? "Name",
+                      style: FontConstants.caption1,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 4,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        language["Name"] ?? "Name",
-                        style: FontConstants.caption1,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
+                  ),
+                  child: TextFormField(
+                    controller: name,
+                    focusNode: _nameFocusNode,
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.next,
+                    style: FontConstants.body1,
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: ColorConstants.fillcolor,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
                       ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return language["Enter Name"] ?? "Enter Name";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 4,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      language["Phone Number"] ?? "Phone Number",
+                      style: FontConstants.caption1,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
-                    ),
-                    child: TextFormField(
-                      controller: name,
-                      focusNode: _nameFocusNode,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.next,
-                      style: FontConstants.body1,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: ColorConstants.fillcolor,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return language["Enter Name"] ?? "Enter Name";
-                        }
-                        return null;
-                      },
-                    ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 4,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        language["Phone Number"] ?? "Phone Number",
-                        style: FontConstants.caption1,
+                  child: TextFormField(
+                    controller: phone,
+                    focusNode: _phoneFocusNode,
+                    keyboardType: TextInputType.phone,
+                    textInputAction: TextInputAction.done,
+                    style: FontConstants.body1,
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      prefixText: '+959',
+                      prefixStyle: FontConstants.body2,
+                      filled: true,
+                      fillColor: ColorConstants.fillcolor,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
-                    ),
-                    child: TextFormField(
-                      controller: phone,
-                      focusNode: _phoneFocusNode,
-                      keyboardType: TextInputType.phone,
-                      textInputAction: TextInputAction.done,
-                      style: FontConstants.body1,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        prefixText: '+959',
-                        prefixStyle: FontConstants.body2,
-                        filled: true,
-                        fillColor: ColorConstants.fillcolor,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return language["Enter Phone Number"] ??
-                              "Enter Phone Number";
-                        }
-                        final RegExp phoneRegExp =
-                            RegExp(r"^[+]{0,1}[0-9]{7,9}$");
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return language["Enter Phone Number"] ??
+                            "Enter Phone Number";
+                      }
+                      final RegExp phoneRegExp =
+                          RegExp(r"^[+]{0,1}[0-9]{7,9}$");
 
-                        if (!phoneRegExp.hasMatch(value)) {
-                          return language["Invalid Phone Number"] ??
-                              "Invalid Phone Number";
-                        }
-                        return null;
-                      },
+                      if (!phoneRegExp.hasMatch(value)) {
+                        return language["Invalid Phone Number"] ??
+                            "Invalid Phone Number";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 4,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      language["Role"] ?? "Role",
+                      style: FontConstants.caption1,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 4,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        language["Role"] ?? "Role",
-                        style: FontConstants.caption1,
-                      ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
+                  ),
+                  child: CustomDropDown(
+                    value: role,
+                    fillColor: ColorConstants.fillcolor,
+                    onChanged: (newValue) {
+                      setState(() {
+                        role = newValue ?? "user";
+                        companyName.text = '';
+                        professionalTitle.text = '';
+                        location.text = '';
+                        offlineTrader = false;
+                        modifyOrderStatus = false;
+                      });
+                    },
+                    items: roles,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 4,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      language["Account Status"] ?? "Account Status",
+                      style: FontConstants.caption1,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
-                    ),
-                    child: CustomDropDown(
-                      value: role,
-                      fillColor: ColorConstants.fillcolor,
-                      onChanged: (newValue) {
-                        setState(() {
-                          role = newValue ?? "user";
-                          companyName.text = '';
-                          professionalTitle.text = '';
-                          location.text = '';
-                          offlineTrader = false;
-                          modifyOrderStatus = false;
-                        });
-                      },
-                      items: roles,
-                    ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: role == 'agent' ? 16 : 24,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 4,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        language["Account Status"] ?? "Account Status",
-                        style: FontConstants.caption1,
-                      ),
-                    ),
+                  child: CustomDropDown(
+                    value: status,
+                    fillColor: ColorConstants.fillcolor,
+                    onChanged: (newValue) {
+                      setState(() {
+                        status = newValue ?? "pending";
+                      });
+                    },
+                    items: statuslist,
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: role == 'agent' ? 16 : 24,
-                    ),
-                    child: CustomDropDown(
-                      value: status,
-                      fillColor: ColorConstants.fillcolor,
-                      onChanged: (newValue) {
-                        setState(() {
-                          status = newValue ?? "pending";
-                        });
-                      },
-                      items: statuslist,
-                    ),
-                  ),
-                  role == 'agent'
-                      ? Padding(
-                          padding: const EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                            bottom: 4,
+                ),
+                role == 'agent'
+                    ? Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          bottom: 4,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            language["Company Name"] ?? "Company Name",
+                            style: FontConstants.caption1,
                           ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              language["Company Name"] ?? "Company Name",
-                              style: FontConstants.caption1,
+                        ),
+                      )
+                    : Container(),
+                role == 'agent'
+                    ? Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          bottom: 16,
+                        ),
+                        child: TextFormField(
+                          controller: companyName,
+                          focusNode: _companyNameFocusNode,
+                          keyboardType: TextInputType.text,
+                          textInputAction: TextInputAction.next,
+                          style: FontConstants.body1,
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: ColorConstants.fillcolor,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
                             ),
                           ),
-                        )
-                      : Container(),
-                  role == 'agent'
-                      ? Padding(
-                          padding: const EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                            bottom: 16,
-                          ),
-                          child: TextFormField(
-                            controller: companyName,
-                            focusNode: _companyNameFocusNode,
-                            keyboardType: TextInputType.text,
-                            textInputAction: TextInputAction.next,
-                            style: FontConstants.body1,
-                            cursorColor: Colors.black,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: ColorConstants.fillcolor,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 14,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide.none,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide.none,
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide.none,
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return language["Enter Company Name"] ??
-                                    "Enter Company Name";
-                              }
-                              return null;
-                            },
-                          ),
-                        )
-                      : Container(),
-                  role == 'agent'
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 16,
-                                      right: 4,
-                                      bottom: 4,
-                                    ),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        language["Professional Title"] ??
-                                            "Professional Title",
-                                        style: FontConstants.caption1,
-                                      ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return language["Enter Company Name"] ??
+                                  "Enter Company Name";
+                            }
+                            return null;
+                          },
+                        ),
+                      )
+                    : Container(),
+                role == 'agent'
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 16,
+                                    right: 4,
+                                    bottom: 4,
+                                  ),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      language["Professional Title"] ??
+                                          "Professional Title",
+                                      style: FontConstants.caption1,
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 16,
-                                      right: 4,
-                                    ),
-                                    child: TextFormField(
-                                      controller: professionalTitle,
-                                      focusNode: _professionalTitleFocusNode,
-                                      keyboardType: TextInputType.text,
-                                      textInputAction: TextInputAction.done,
-                                      style: FontConstants.body1,
-                                      cursorColor: Colors.black,
-                                      decoration: InputDecoration(
-                                        filled: true,
-                                        fillColor: ColorConstants.fillcolor,
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 14,
-                                        ),
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          borderSide: BorderSide.none,
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          borderSide: BorderSide.none,
-                                        ),
-                                        focusedErrorBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          borderSide: BorderSide.none,
-                                        ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 16,
+                                    right: 4,
+                                  ),
+                                  child: TextFormField(
+                                    controller: professionalTitle,
+                                    focusNode: _professionalTitleFocusNode,
+                                    keyboardType: TextInputType.text,
+                                    textInputAction: TextInputAction.done,
+                                    style: FontConstants.body1,
+                                    cursorColor: Colors.black,
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: ColorConstants.fillcolor,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 14,
                                       ),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return language[
-                                                  "Enter Professional Title"] ??
-                                              "Enter Professional Title";
-                                        }
-                                        return null;
-                                      },
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      focusedErrorBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return language[
+                                                "Enter Professional Title"] ??
+                                            "Enter Professional Title";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 4,
+                                    right: 16,
+                                    bottom: 4,
+                                  ),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      language["Location"] ?? "Location",
+                                      style: FontConstants.caption1,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 4,
+                                    right: 16,
+                                  ),
+                                  child: TextFormField(
+                                    controller: location,
+                                    focusNode: _locationFocusNode,
+                                    keyboardType: TextInputType.text,
+                                    textInputAction: TextInputAction.done,
+                                    style: FontConstants.body1,
+                                    cursorColor: Colors.black,
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: ColorConstants.fillcolor,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 14,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      focusedErrorBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return language["Enter Location"] ??
+                                            "Enter Location";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(),
+                role == 'agent'
+                    ? Row(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                right: 16,
+                                bottom: 24,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Checkbox(
+                                    value: offlineTrader,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    activeColor: Theme.of(context).primaryColor,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        offlineTrader = value ?? false;
+                                      });
+                                    },
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      language["Offline Trader"] ??
+                                          "Offline Trader",
+                                      style: FontConstants.caption1,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            Expanded(
-                              child: Column(
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                right: 16,
+                                bottom: 24,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 4,
-                                      right: 16,
-                                      bottom: 4,
+                                  Checkbox(
+                                    value: modifyOrderStatus,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        language["Location"] ?? "Location",
-                                        style: FontConstants.caption1,
-                                      ),
-                                    ),
+                                    activeColor: Theme.of(context).primaryColor,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        modifyOrderStatus = value ?? false;
+                                      });
+                                    },
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 4,
-                                      right: 16,
-                                    ),
-                                    child: TextFormField(
-                                      controller: location,
-                                      focusNode: _locationFocusNode,
-                                      keyboardType: TextInputType.text,
-                                      textInputAction: TextInputAction.done,
-                                      style: FontConstants.body1,
-                                      cursorColor: Colors.black,
-                                      decoration: InputDecoration(
-                                        filled: true,
-                                        fillColor: ColorConstants.fillcolor,
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 14,
-                                        ),
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          borderSide: BorderSide.none,
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          borderSide: BorderSide.none,
-                                        ),
-                                        focusedErrorBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          borderSide: BorderSide.none,
-                                        ),
-                                      ),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return language["Enter Location"] ??
-                                              "Enter Location";
-                                        }
-                                        return null;
-                                      },
+                                  Expanded(
+                                    child: Text(
+                                      language["Order Status"] ??
+                                          "Order Status",
+                                      style: FontConstants.caption1,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                          ],
-                        )
-                      : Container(),
-                  role == 'agent'
-                      ? Row(
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  right: 16,
-                                  bottom: 24,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Checkbox(
-                                      value: offlineTrader,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      activeColor:
-                                          Theme.of(context).primaryColor,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          offlineTrader = value ?? false;
-                                        });
-                                      },
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        language["Offline Trader"] ??
-                                            "Offline Trader",
-                                        style: FontConstants.caption1,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  right: 16,
-                                  bottom: 24,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Checkbox(
-                                      value: modifyOrderStatus,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      activeColor:
-                                          Theme.of(context).primaryColor,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          modifyOrderStatus = value ?? false;
-                                        });
-                                      },
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        language["Order Status"] ??
-                                            "Order Status",
-                                        style: FontConstants.caption1,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
-                      : Container(),
-                ],
-              ),
+                          ),
+                        ],
+                      )
+                    : Container(),
+              ],
             ),
           ),
         ),

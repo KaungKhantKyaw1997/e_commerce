@@ -248,13 +248,13 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
-                        Navigator.pushNamed(
+                        Navigator.pushNamedAndRemoveUntil(
                           context,
                           Routes.user_setup,
                           arguments: {
                             "id": users[index]["user_id"],
                           },
+                          (route) => true,
                         );
                       },
                       child: Column(
@@ -286,13 +286,13 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pop(context);
-          Navigator.pushNamed(
+          Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.user_setup,
             arguments: {
               "id": 0,
             },
+            (route) => true,
           );
         },
         backgroundColor: Theme.of(context).primaryColor,
