@@ -109,6 +109,8 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
           );
         }
 
+        authService.initSocket(response["data"]["token"], context);
+
         _firebaseMessaging.getToken().then((token) {
           _fcmToken = token ?? '';
           fcm();
