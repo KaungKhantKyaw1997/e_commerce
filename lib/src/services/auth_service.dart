@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
@@ -244,7 +245,7 @@ class AuthService {
         if (!flag) {
           chats.insert(0, (response["data"]));
           chatProvider.setChats(chats);
-          if (ModalRoute.of(context)!.settings.name == '/chat') {
+          if (routeName == '/chat') {
             WidgetsBinding.instance?.addPostFrameCallback((_) {
               chatScrollProvider.chatScrollController.animateTo(
                 chatScrollProvider

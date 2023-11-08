@@ -135,6 +135,21 @@ class ChatService {
     return response.data;
   }
 
+  Future<Map<String, dynamic>?> deleteSessionData(int chatId) async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.delete(
+      '${ApiConstants.chatSessionsUrl}/$chatId',
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+
+    return response.data;
+  }
+
   Future<Map<String, dynamic>?> getTotalUnreadCountsData() async {
     var token = await storage.read(key: "token") ?? '';
     final response = await dio.get(
