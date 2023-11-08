@@ -33,6 +33,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   List notifications = [];
   List data = [];
   int page = 1;
+  bool _dataLoaded = false;
 
   @override
   void initState() {
@@ -90,7 +91,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
             });
           });
         }
-        setState(() {});
+        setState(() {
+          if (notifications.isEmpty) {
+            _dataLoaded = true;
+          }
+        });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -169,157 +174,210 @@ class _NotificationScreenState extends State<NotificationScreen> {
         onLoading: () async {
           await getNotifications();
         },
-        child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 24,
-            ),
-            width: double.infinity,
-            child: ListView.builder(
-              controller: _scrollController,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: notifications.length,
-              itemBuilder: (context, index) {
-                String date = notifications[index]["date"];
+        child: notifications.isNotEmpty
+            ? SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 24,
+                  ),
+                  width: double.infinity,
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: notifications.length,
+                    itemBuilder: (context, index) {
+                      String date = notifications[index]["date"];
 
-                return Container(
-                  margin: const EdgeInsets.only(
-                    bottom: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.white,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          top: 8,
-                          bottom: 4,
+                      return Container(
+                        margin: const EdgeInsets.only(
+                          bottom: 8,
                         ),
-                        child: Text(
-                          currentDate == date
-                              ? "Today"
-                              : yesterdayDate == date
-                                  ? "Yesterday"
-                                  : date,
-                          style: FontConstants.caption2,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white,
                         ),
-                      ),
-                      const Divider(
-                        height: 0,
-                        color: Colors.grey,
-                      ),
-                      ListView.builder(
-                        controller: _scrollController,
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        itemCount: notifications[index]["items"].length,
-                        itemBuilder: (context, i) {
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                  bottom: 8,
-                                  top: 8,
-                                ),
-                                color: Colors.transparent,
-                                child: Column(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                                top: 8,
+                                bottom: 4,
+                              ),
+                              child: Text(
+                                currentDate == date
+                                    ? "Today"
+                                    : yesterdayDate == date
+                                        ? "Yesterday"
+                                        : date,
+                                style: FontConstants.caption2,
+                              ),
+                            ),
+                            const Divider(
+                              height: 0,
+                              color: Colors.grey,
+                            ),
+                            ListView.builder(
+                              controller: _scrollController,
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: notifications[index]["items"].length,
+                              itemBuilder: (context, i) {
+                                return Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.baseline,
-                                      textBaseline: TextBaseline.alphabetic,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            notifications[index]["items"][i]
-                                                ["title"],
-                                            overflow: TextOverflow.ellipsis,
-                                            style: FontConstants.body1,
-                                          ),
-                                        ),
-                                        Row(
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                right: 4,
-                                              ),
-                                              child: Text(
-                                                Jiffy.parseFromDateTime(DateTime
-                                                            .parse(notifications[
-                                                                            index]
-                                                                        [
-                                                                        "items"][i]
-                                                                    [
-                                                                    "created_at"] +
-                                                                "Z")
-                                                        .toLocal())
-                                                    .format(pattern: 'hh:mm a'),
-                                                style: FontConstants.caption1,
-                                              ),
-                                            ),
-                                            notifications[index]["items"][i]
-                                                        ["status"] ==
-                                                    "Unread"
-                                                ? Container(
-                                                    width: 8,
-                                                    height: 8,
-                                                    decoration: BoxDecoration(
-                                                      color:
-                                                          Colors.orangeAccent,
-                                                      shape: BoxShape.circle,
-                                                    ),
-                                                  )
-                                                : Container(),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    Text(
-                                      notifications[index]["items"][i]
-                                          ["message"],
-                                      style: FontConstants.caption1,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              i < notifications[index]["items"].length - 1
-                                  ? Container(
+                                    Container(
                                       padding: const EdgeInsets.only(
                                         left: 16,
                                         right: 16,
+                                        bottom: 8,
+                                        top: 8,
                                       ),
-                                      child: const Divider(
-                                        height: 0,
-                                        color: Colors.grey,
+                                      color: Colors.transparent,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.baseline,
+                                            textBaseline:
+                                                TextBaseline.alphabetic,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  notifications[index]["items"]
+                                                      [i]["title"],
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: FontConstants.body1,
+                                                ),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                      right: 4,
+                                                    ),
+                                                    child: Text(
+                                                      Jiffy.parseFromDateTime(
+                                                              DateTime.parse(
+                                                                      notifications[index]["items"][i]
+                                                                              [
+                                                                              "created_at"] +
+                                                                          "Z")
+                                                                  .toLocal())
+                                                          .format(
+                                                              pattern:
+                                                                  'hh:mm a'),
+                                                      style: FontConstants
+                                                          .caption1,
+                                                    ),
+                                                  ),
+                                                  notifications[index]["items"]
+                                                              [i]["status"] ==
+                                                          "Unread"
+                                                      ? Container(
+                                                          width: 8,
+                                                          height: 8,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors
+                                                                .orangeAccent,
+                                                            shape:
+                                                                BoxShape.circle,
+                                                          ),
+                                                        )
+                                                      : Container(),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          Text(
+                                            notifications[index]["items"][i]
+                                                ["message"],
+                                            style: FontConstants.caption1,
+                                          ),
+                                        ],
                                       ),
-                                    )
-                                  : Container(),
-                            ],
-                          );
-                        },
-                      ),
-                    ],
+                                    ),
+                                    i < notifications[index]["items"].length - 1
+                                        ? Container(
+                                            padding: const EdgeInsets.only(
+                                              left: 16,
+                                              right: 16,
+                                            ),
+                                            child: const Divider(
+                                              height: 0,
+                                              color: Colors.grey,
+                                            ),
+                                          )
+                                        : Container(),
+                                  ],
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-          ),
-        ),
+                ),
+              )
+            : _dataLoaded
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/bell.png',
+                          width: 147,
+                          height: 147,
+                          fit: BoxFit.cover,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            bottom: 4,
+                          ),
+                          child: Text(
+                            "No Notifications",
+                            textAlign: TextAlign.center,
+                            style: MediaQuery.of(context).orientation ==
+                                    Orientation.landscape
+                                ? FontConstants.title1
+                                : FontConstants.title2,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                          ),
+                          child: Text(
+                            "Your inbox is empty...",
+                            textAlign: TextAlign.center,
+                            style: MediaQuery.of(context).orientation ==
+                                    Orientation.landscape
+                                ? FontConstants.caption1
+                                : FontConstants.subheadline2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : Container(),
       ),
       bottomNavigationBar: const BottomBarScreen(),
     );
