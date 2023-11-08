@@ -304,8 +304,9 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                         ),
                       ),
                       chatHistoriesProvider.chatHistories[index]
-                                  ["unread_counts"] !=
-                              0
+                                      ["unread_counts"] !=
+                                  0 &&
+                              (role == 'user' || role == 'agent')
                           ? Container(
                               margin: EdgeInsets.only(
                                 left: 8,

@@ -153,8 +153,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                 items: navItems.map((navItem) {
                   return BottomNavigationBarItem(
                     icon: navItem["label"] != 'Cart' &&
-                            navItem["label"] != 'Notification' &&
-                            navItem["label"] != 'Chat'
+                            navItem["label"] != 'Notification'
                         ? Padding(
                             padding: const EdgeInsets.only(
                               left: 8,
@@ -261,30 +260,6 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                                     ),
                                     child: Text(
                                       '${notiProvider.count}',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: FontConstants.bottom,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                              if (navItem["label"] == 'Chat' &&
-                                  messageProvider.count > 0)
-                                Positioned(
-                                  right: 2,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(2),
-                                    decoration: BoxDecoration(
-                                      color: ColorConstants.redcolor,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    constraints: const BoxConstraints(
-                                      minWidth: 16,
-                                      minHeight: 16,
-                                    ),
-                                    child: Text(
-                                      '${messageProvider.count}',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: FontConstants.bottom,
