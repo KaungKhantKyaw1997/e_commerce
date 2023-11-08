@@ -123,8 +123,6 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
         Provider.of<CartProvider>(context, listen: true);
     NotiProvider notiProvider =
         Provider.of<NotiProvider>(context, listen: true);
-    MessageProvider messageProvider =
-        Provider.of<MessageProvider>(context, listen: true);
 
     return Consumer<BottomProvider>(builder: (context, bottomProvider, child) {
       return ClipRRect(

@@ -79,7 +79,6 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Save a reference to the ancestor widget using dependOnInheritedWidgetOfExactType
     _bottomProvider ??= Provider.of<BottomProvider>(context, listen: false);
   }
 
