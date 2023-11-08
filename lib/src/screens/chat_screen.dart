@@ -7,6 +7,7 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
 import 'package:e_commerce/src/providers/chat_scroll_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
@@ -77,6 +78,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance?.removeObserver(this);
+    setBottomIndex();
     _imageController.dispose();
     _messageFocusNode.dispose();
     super.dispose();
@@ -91,6 +93,21 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     _lastLifecycleState = state;
     if (state == AppLifecycleState.resumed) {
       resumeChatMessages();
+    }
+  }
+
+  setBottomIndex() {
+    BottomProvider bottomProvider =
+        Provider.of<BottomProvider>(context, listen: false);
+
+    if (role == 'admin') {
+      if (previousRouteName == '/history') {
+        bottomProvider.selectIndex(0);
+      } else if (previousRouteName == '/noti') {
+        bottomProvider.selectIndex(1);
+      } else if (previousRouteName == '/setting') {
+        bottomProvider.selectIndex(3);
+      }
     }
   }
 
