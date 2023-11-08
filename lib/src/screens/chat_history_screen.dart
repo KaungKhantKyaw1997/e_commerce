@@ -37,6 +37,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
   int page = 1;
   String from = '';
   String role = "";
+  bool _dataLoaded = false;
 
   @override
   void initState() {
@@ -82,7 +83,11 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
           chatHistoriesProvider.setChatHistories(chatHistories);
           page++;
         }
-        setState(() {});
+        setState(() {
+          if (chatHistoriesProvider.chatHistories.isEmpty) {
+            _dataLoaded = true;
+          }
+        });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -394,108 +399,160 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
         onLoading: () async {
           await getChatSessions();
         },
-        child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 24,
-            ),
-            width: double.infinity,
-            child: Column(
-              children: [
-                ListView.builder(
-                  controller: _scrollController,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: chatHistoriesProvider.chatHistories.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () async {
-                        ChatsProvider chatProvider =
-                            Provider.of<ChatsProvider>(context, listen: false);
-                        chatProvider.setChats([]);
+        child: chatHistoriesProvider.chatHistories.isNotEmpty
+            ? SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 24,
+                  ),
+                  width: double.infinity,
+                  child: Column(
+                    children: [
+                      ListView.builder(
+                        controller: _scrollController,
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemCount: chatHistoriesProvider.chatHistories.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () async {
+                              ChatsProvider chatProvider =
+                                  Provider.of<ChatsProvider>(context,
+                                      listen: false);
+                              chatProvider.setChats([]);
 
-                        await Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          Routes.chat,
-                          arguments: {
-                            'chat_id': chatHistoriesProvider
-                                .chatHistories[index]["chat_id"],
-                            'chat_name': chatHistoriesProvider
-                                .chatHistories[index]["chat_name"],
-                            'profile_image': chatHistoriesProvider
-                                .chatHistories[index]["profile_image"],
-                            'user_id':
-                                (chatHistoriesProvider.chatHistories[index]
-                                        ["chat_participants"] as List)
-                                    .where((element) => !element["is_me"])
-                                    .map<String>((participant) =>
-                                        participant["user_id"].toString())
-                                    .toList()[0],
-                            'from': from,
-                          },
-                          (route) => true,
-                        );
+                              await Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                Routes.chat,
+                                arguments: {
+                                  'chat_id': chatHistoriesProvider
+                                      .chatHistories[index]["chat_id"],
+                                  'chat_name': chatHistoriesProvider
+                                      .chatHistories[index]["chat_name"],
+                                  'profile_image': chatHistoriesProvider
+                                      .chatHistories[index]["profile_image"],
+                                  'user_id': (chatHistoriesProvider
+                                              .chatHistories[index]
+                                          ["chat_participants"] as List)
+                                      .where((element) => !element["is_me"])
+                                      .map<String>((participant) =>
+                                          participant["user_id"].toString())
+                                      .toList()[0],
+                                  'from': from,
+                                },
+                                (route) => true,
+                              );
 
-                        chatHistoriesProvider.setChatHistories([]);
-                        page = 1;
-                        search.text = '';
-                        getChatSessions();
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Slidable(
-                            key: const ValueKey(0),
-                            endActionPane: ActionPane(
-                              motion: const BehindMotion(),
+                              chatHistoriesProvider.setChatHistories([]);
+                              page = 1;
+                              search.text = '';
+                              getChatSessions();
+                            },
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SlidableAction(
-                                  onPressed: (BuildContext context) {
-                                    deleteSession(chatHistoriesProvider
-                                        .chatHistories[index]["chat_id"]);
-                                  },
-                                  backgroundColor: ColorConstants.redcolor,
-                                  foregroundColor: Colors.white,
-                                  borderRadius: BorderRadius.only(
-                                    topRight:
-                                        Radius.circular(index == 0 ? 10 : 0),
-                                    bottomRight: Radius.circular(index ==
-                                            chatHistoriesProvider
-                                                    .chatHistories.length -
-                                                1
-                                        ? 10
-                                        : 0),
+                                Slidable(
+                                  key: const ValueKey(0),
+                                  endActionPane: ActionPane(
+                                    motion: const BehindMotion(),
+                                    children: [
+                                      SlidableAction(
+                                        onPressed: (BuildContext context) {
+                                          deleteSession(chatHistoriesProvider
+                                              .chatHistories[index]["chat_id"]);
+                                        },
+                                        backgroundColor:
+                                            ColorConstants.redcolor,
+                                        foregroundColor: Colors.white,
+                                        borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(
+                                              index == 0 ? 10 : 0),
+                                          bottomRight: Radius.circular(index ==
+                                                  chatHistoriesProvider
+                                                          .chatHistories
+                                                          .length -
+                                                      1
+                                              ? 10
+                                              : 0),
+                                        ),
+                                        icon: Icons.delete,
+                                        label: language["Delete"] ?? "Delete",
+                                      ),
+                                    ],
                                   ),
-                                  icon: Icons.delete,
-                                  label: language["Delete"] ?? "Delete",
+                                  child: chatCard(index),
                                 ),
+                                index <
+                                        chatHistoriesProvider
+                                                .chatHistories.length -
+                                            1
+                                    ? Container(
+                                        padding: const EdgeInsets.only(
+                                          left: 16,
+                                          right: 16,
+                                        ),
+                                        child: const Divider(
+                                          height: 0,
+                                          color: Colors.grey,
+                                        ),
+                                      )
+                                    : Container(),
                               ],
                             ),
-                            child: chatCard(index),
-                          ),
-                          index < chatHistoriesProvider.chatHistories.length - 1
-                              ? Container(
-                                  padding: const EdgeInsets.only(
-                                    left: 16,
-                                    right: 16,
-                                  ),
-                                  child: const Divider(
-                                    height: 0,
-                                    color: Colors.grey,
-                                  ),
-                                )
-                              : Container(),
-                        ],
+                          );
+                        },
                       ),
-                    );
-                  },
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-        ),
+              )
+            : _dataLoaded
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/message.png',
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.cover,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            bottom: 4,
+                          ),
+                          child: Text(
+                            "No Messages",
+                            textAlign: TextAlign.center,
+                            style: MediaQuery.of(context).orientation ==
+                                    Orientation.landscape
+                                ? FontConstants.title1
+                                : FontConstants.title2,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                          ),
+                          child: Text(
+                            "Your inbox is empty...",
+                            textAlign: TextAlign.center,
+                            style: MediaQuery.of(context).orientation ==
+                                    Orientation.landscape
+                                ? FontConstants.caption1
+                                : FontConstants.subheadline2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : Container(),
       ),
       bottomNavigationBar: from == 'bottom' ? const BottomBarScreen() : null,
     );
