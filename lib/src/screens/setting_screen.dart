@@ -1104,9 +1104,10 @@ class _SettingScreenState extends State<SettingScreen> {
                       role == 'user'
                           ? GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(
+                                Navigator.pushNamedAndRemoveUntil(
                                   context,
                                   Routes.termsandconditions,
+                                  (route) => true,
                                 );
                               },
                               child: Padding(

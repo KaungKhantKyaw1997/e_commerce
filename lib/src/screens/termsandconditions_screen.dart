@@ -99,31 +99,22 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
           language["Terms & Conditions"] ?? "Terms & Conditions",
           style: FontConstants.title1,
         ),
-        leading: BackButton(
+        iconTheme: IconThemeData(
           color: Colors.black,
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
         ),
       ),
       backgroundColor: Colors.white,
-      body: WillPopScope(
-        onWillPop: () async {
-          Navigator.of(context).pop();
-          return true;
-        },
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 24,
-            ),
-            child: Text(
-              data.toString(),
-              textAlign: TextAlign.left,
-              style: FontConstants.body1,
-            ),
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 24,
+          ),
+          child: Text(
+            data.toString(),
+            textAlign: TextAlign.left,
+            style: FontConstants.body1,
           ),
         ),
       ),

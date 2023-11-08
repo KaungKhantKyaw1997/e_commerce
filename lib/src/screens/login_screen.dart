@@ -143,12 +143,13 @@ class _LogInScreenState extends State<LogInScreen> {
             Routes.home,
           );
         } else {
-          Navigator.pushNamed(
+          Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.termsandconditions,
             arguments: {
               "from": "login",
             },
+            (route) => false,
           );
         }
 
