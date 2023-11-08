@@ -7,6 +7,7 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
 import 'package:e_commerce/src/providers/chat_scroll_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
@@ -51,6 +52,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   String status = '';
   String role = "";
   AppLifecycleState? _lastLifecycleState;
+  BottomProvider? _bottomProvider;
 
   @override
   void initState() {
@@ -75,7 +77,24 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Save a reference to the ancestor widget using dependOnInheritedWidgetOfExactType
+    _bottomProvider ??= Provider.of<BottomProvider>(context, listen: false);
+  }
+
+  @override
   void dispose() {
+    if (role == 'admin' && _bottomProvider != null) {
+      if (previousRouteName == '/history') {
+        _bottomProvider!.selectIndex(0);
+      } else if (previousRouteName == '/noti') {
+        _bottomProvider!.selectIndex(1);
+      } else if (previousRouteName == '/setting') {
+        _bottomProvider!.selectIndex(3);
+      }
+    }
+
     WidgetsBinding.instance?.removeObserver(this);
     _imageController.dispose();
     _messageFocusNode.dispose();
