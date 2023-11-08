@@ -19,7 +19,6 @@ import 'package:e_commerce/src/screens/history_details_screen.dart';
 import 'package:e_commerce/src/screens/history_screen.dart';
 import 'package:e_commerce/src/screens/home_screen.dart';
 import 'package:e_commerce/src/screens/image_preview_screen.dart';
-import 'package:e_commerce/src/screens/insurance_rules_setup_screen.dart';
 import 'package:e_commerce/src/screens/language_screen.dart';
 import 'package:e_commerce/src/screens/login_screen.dart';
 import 'package:e_commerce/src/screens/notification_screen.dart';
@@ -47,7 +46,6 @@ import 'package:e_commerce/src/screens/unauthorized_screen.dart';
 import 'package:e_commerce/src/screens/user_setup_screen.dart';
 import 'package:e_commerce/src/screens/users_setup_screen.dart';
 import 'package:flutter/material.dart';
-
 
 class Routes {
   static const String splash = '/splash';
@@ -139,8 +137,6 @@ class Routes {
     search: (BuildContext context) => const SearchScreen(),
     shop: (BuildContext context) => const ShopScreen(),
     reviews: (BuildContext context) => const ReviewsScreen(),
-    insurrance_rules_setup: (BuildContext context) =>
-        const insurance_rules_setup_screen(),
     image_preview: (BuildContext context) => const ImagePreviewScreen(),
     connection_timeout: (BuildContext context) =>
         const ConnectionTimeoutScreen(),

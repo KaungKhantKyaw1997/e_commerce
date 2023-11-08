@@ -220,296 +220,284 @@ class _LogInScreenState extends State<LogInScreen> {
           backgroundColor: Colors.white,
           centerTitle: true,
           elevation: 0,
-          automaticallyImplyLeading: firstPage ? false : true,
           title: Text(
             language["Log In"] ?? "Log In",
             style: FontConstants.title1,
           ),
-          leading: !firstPage
-              ? BackButton(
-                  color: Colors.black,
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              : null,
+          iconTheme: IconThemeData(
+            color: Colors.black,
+          ),
         ),
         backgroundColor: Colors.white,
-        body: WillPopScope(
-          onWillPop: () async {
-            return false;
-          },
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      top: 24,
+        body: SingleChildScrollView(
+          controller: _scrollController,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: 24,
+                  ),
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/login.png'),
                     ),
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/login.png'),
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: 16,
+                    bottom: 16,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(
+                        "Watch Vault",
+                        textAlign: TextAlign.center,
+                        style: FontConstants.title2,
                       ),
-                      borderRadius: BorderRadius.circular(100),
+                      Text(
+                        " by Diggie",
+                        textAlign: TextAlign.center,
+                        style: FontConstants.subheadline2,
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 4,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      language["Email"] ?? "Email",
+                      style: FontConstants.caption1,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      top: 16,
-                      bottom: 16,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
-                      children: [
-                        Text(
-                          "Watch Vault",
-                          textAlign: TextAlign.center,
-                          style: FontConstants.title2,
-                        ),
-                        Text(
-                          " by Diggie",
-                          textAlign: TextAlign.center,
-                          style: FontConstants.subheadline2,
-                        ),
-                      ],
-                    ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 4,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        language["Email"] ?? "Email",
-                        style: FontConstants.caption1,
+                  child: TextFormField(
+                    controller: email,
+                    focusNode: _emailFocusNode,
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.next,
+                    style: FontConstants.body1,
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: ColorConstants.fillcolor,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
                       ),
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return language["Enter Email"] ?? "Enter Email";
+                      }
+                      return null;
+                    },
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 4,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      language["Password"] ?? "Password",
+                      style: FontConstants.caption1,
                     ),
-                    child: TextFormField(
-                      controller: email,
-                      focusNode: _emailFocusNode,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.next,
-                      style: FontConstants.body1,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: ColorConstants.fillcolor,
-                        contentPadding: const EdgeInsets.symmetric(
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 24,
+                  ),
+                  child: TextFormField(
+                    controller: password,
+                    focusNode: _passwordFocusNode,
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.done,
+                    obscureText: obscurePassword,
+                    style: FontConstants.body1,
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: ColorConstants.fillcolor,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      suffixIcon: IconButton(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 16,
-                          vertical: 14,
                         ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
+                        onPressed: () {
+                          setState(() {
+                            obscurePassword = !obscurePassword;
+                          });
+                        },
+                        icon: SvgPicture.asset(
+                          obscurePassword
+                              ? "assets/icons/eye-close.svg"
+                              : "assets/icons/eye.svg",
+                          width: 24,
+                          height: 24,
+                          colorFilter: ColorFilter.mode(
+                            Colors.black,
+                            BlendMode.srcIn,
+                          ),
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return language["Enter Email"] ?? "Enter Email";
-                        }
-                        return null;
-                      },
                     ),
+                    onFieldSubmitted: _handleSubmitted,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return language["Enter Password"] ?? "Enter Password";
+                      }
+                      return null;
+                    },
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 4,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        language["Password"] ?? "Password",
-                        style: FontConstants.caption1,
+                ),
+                Container(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 8,
+                  ),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 24,
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        showLoadingDialog(context);
+                        login();
+                      }
+                    },
+                    child: Text(
+                      language["Log In"] ?? "Log In",
+                      style: FontConstants.button1,
                     ),
-                    child: TextFormField(
-                      controller: password,
-                      focusNode: _passwordFocusNode,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.done,
-                      obscureText: obscurePassword,
-                      style: FontConstants.body1,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: ColorConstants.fillcolor,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
+                  ),
+                ),
+                !firstPage
+                    ? Container(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          bottom: 24,
                         ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: IconButton(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            backgroundColor: Colors.white,
+                            side: BorderSide(
+                              width: 0.5,
+                            ),
                           ),
                           onPressed: () {
-                            setState(() {
-                              obscurePassword = !obscurePassword;
-                            });
+                            Navigator.pop(context);
+                            Navigator.pushNamed(
+                              context,
+                              Routes.register,
+                            );
                           },
-                          icon: SvgPicture.asset(
-                            obscurePassword
-                                ? "assets/icons/eye-close.svg"
-                                : "assets/icons/eye.svg",
-                            width: 24,
-                            height: 24,
-                            colorFilter: ColorFilter.mode(
-                              Colors.black,
-                              BlendMode.srcIn,
-                            ),
+                          child: Text(
+                            language["Register"] ?? "Register",
+                            style: FontConstants.button2,
                           ),
                         ),
-                      ),
-                      onFieldSubmitted: _handleSubmitted,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return language["Enter Password"] ?? "Enter Password";
-                        }
-                        return null;
-                      },
-                    ),
+                      )
+                    : Container(),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 24,
                   ),
-                  Container(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 8,
-                    ),
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          showLoadingDialog(context);
-                          login();
-                        }
-                      },
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        Routes.forgot_password,
+                        (route) => true,
+                      );
+                    },
+                    child: Center(
                       child: Text(
-                        language["Log In"] ?? "Log In",
-                        style: FontConstants.button1,
+                        '${language["Forgot Password"]}?' ?? "Forgot Password?",
+                        style: FontConstants.caption5,
                       ),
                     ),
                   ),
-                  !firstPage
-                      ? Container(
-                          padding: const EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                            bottom: 24,
-                          ),
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 14,
-                                vertical: 12,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              backgroundColor: Colors.white,
-                              side: BorderSide(
-                                width: 0.5,
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                              Navigator.pushNamed(
-                                context,
-                                Routes.register,
-                              );
-                            },
-                            child: Text(
-                              language["Register"] ?? "Register",
-                              style: FontConstants.button2,
-                            ),
-                          ),
-                        )
-                      : Container(),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 24,
-                    ),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.pushNamed(
-                          context,
-                          Routes.forgot_password,
-                        );
-                      },
-                      child: Center(
-                        child: Text(
-                          '${language["Forgot Password"]}?' ??
-                              "Forgot Password?",
-                          style: FontConstants.caption5,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

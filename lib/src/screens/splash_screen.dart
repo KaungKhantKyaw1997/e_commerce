@@ -61,12 +61,13 @@ class _SplashScreenState extends State<SplashScreen> {
       final response = await settingsService.getSettingsData();
       if (response!["code"] == 200) {
         if (response["data"]["platform_required_signin"] == deviceType) {
-          Navigator.pushNamed(
+          Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.login,
             arguments: {
               'first_page': true,
             },
+            (route) => false,
           );
         } else {
           getData();

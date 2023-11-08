@@ -376,9 +376,10 @@ class _SettingScreenState extends State<SettingScreen> {
                                           ),
                                         ),
                                         onPressed: () {
-                                          Navigator.pushNamed(
+                                          Navigator.pushNamedAndRemoveUntil(
                                             context,
                                             Routes.login,
+                                            (route) => true,
                                           );
                                         },
                                         child: Text(
@@ -1168,9 +1169,10 @@ class _SettingScreenState extends State<SettingScreen> {
                       // role == 'user'
                       //     ? GestureDetector(
                       //         onTap: () {
-                      //           Navigator.pushNamed(
+                      //           Navigator.pushNamedAndRemoveUntil(
                       //             context,
                       //             Routes.contact_us,
+                      //             (route) => true,
                       //           );
                       //         },
                       //         child: Padding(

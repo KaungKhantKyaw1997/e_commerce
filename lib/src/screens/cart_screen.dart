@@ -150,9 +150,10 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                   onPressed: () {
                     role.isEmpty
-                        ? Navigator.pushNamed(
+                        ? Navigator.pushNamedAndRemoveUntil(
                             context,
                             Routes.login,
+                            (route) => true,
                           )
                         : Navigator.pushNamed(
                             context,
