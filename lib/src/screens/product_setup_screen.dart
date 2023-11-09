@@ -8,14 +8,10 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
-import 'package:e_commerce/src/services/conditions_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/currencies_service.dart';
-import 'package:e_commerce/src/services/dial_glass_service.dart';
 import 'package:e_commerce/src/services/gender_service.dart';
-import 'package:e_commerce/src/services/other_accessories_service.dart';
 import 'package:e_commerce/src/services/products_service.dart';
-import 'package:e_commerce/src/services/warranty_types_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:e_commerce/src/widgets/custom_dropdown.dart';
@@ -36,10 +32,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   final _formKey = GlobalKey<FormState>();
   final productsService = ProductsService();
   final currenciesService = CurrenciesService();
-  final warrantyTypesService = WarrantyTypesService();
-  final dialGlassService = DialGlassService();
-  final conditionsService = ConditionsService();
-  final otherAccessoriesService = OtherAccessoriesService();
   final genderService = GenderService();
   FocusNode _modelFocusNode = FocusNode();
   FocusNode _descriptionFocusNode = FocusNode();
@@ -201,7 +193,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getWarrantyTypes() async {
     try {
-      final response = await warrantyTypesService.getWarrantyTypesData();
+      final response = await productsService.getWarrantyTypesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           warrantytypes = response["data"];
@@ -248,7 +240,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getDialGlassTypes() async {
     try {
-      final response = await dialGlassService.getDialGlassTypesData();
+      final response = await productsService.getDialGlassTypesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           dialglasstypes = response["data"];
@@ -295,7 +287,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getConditions() async {
     try {
-      final response = await conditionsService.getConditionsData();
+      final response = await productsService.getConditionsData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           conditions = response["data"];
@@ -341,8 +333,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getOtherAccessoriesTypes() async {
     try {
-      final response =
-          await otherAccessoriesService.getOtherAccessoriesTypesData();
+      final response = await productsService.getOtherAccessoriesTypesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           otheraccessoriestypes = response["data"];

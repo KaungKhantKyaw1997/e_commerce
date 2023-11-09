@@ -1,5 +1,6 @@
 class ApiConstants {
   static const String baseUrl = 'http://150.95.82.125:8001';
+  static const String socketServerURL = 'http://150.95.82.125:8002';
   static const String loginUrl = '$baseUrl/api/auth/login';
   static const String registerUrl = '$baseUrl/api/auth/register';
   static const String forgotPasswordUrl = '$baseUrl/api/auth/forgot-password';
@@ -43,5 +44,13 @@ class ApiConstants {
   static const String chatMessagesUrl = '$baseUrl/api/chat-messages';
   static const String messagesUrl = '$baseUrl/api/messages';
   static const String totalUnreadCountsUrl = '$baseUrl/api/total-unread-counts';
-  static const String socketServerURL = 'http://150.95.82.125:8002';
+  static const String caseDiametersUrl = '$baseUrl/api/case-diameters';
+  static const String caseWidthsUrl = '$baseUrl/api/case-widths';
+  static const String movementTypesUrl = '$baseUrl/api/movement-types';
+  static const String strapMaterialsUrl = '$baseUrl/api/strap-materials';
+  static const String caseMaterialsUrl = '$baseUrl/api/case-materials';
+  static const String stockQuantitiesUrl = '$baseUrl/api/stock-quantities';
+  static const String caseDepthsUrl = '$baseUrl/api/case-depths';
+  static const String waterResistancesUrl = '$baseUrl/api/water-resistances';
+  static const String movementCountriesUrl = '$baseUrl/api/movement-countries';
 }

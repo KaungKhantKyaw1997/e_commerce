@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
-import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/screens/bottombar_screen.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
@@ -18,7 +17,6 @@ import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -36,54 +34,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
   List notifications = [];
   List data = [];
   int page = 1;
-  String role = "";
   bool _dataLoaded = false;
-  BottomProvider? _bottomProvider;
 
   @override
   void initState() {
     super.initState();
-    getData();
     getNotifications();
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _bottomProvider ??= Provider.of<BottomProvider>(context, listen: false);
-  }
-
-  @override
   void dispose() {
-    if (role == 'admin' && _bottomProvider != null) {
-      if (previousRouteName == '/history') {
-        _bottomProvider!.selectIndex(0);
-      } else if (previousRouteName == '/chat_history') {
-        _bottomProvider!.selectIndex(2);
-      } else if (previousRouteName == '/setting') {
-        _bottomProvider!.selectIndex(3);
-      }
-    } else if ((role == 'user' || role == 'agent') && _bottomProvider != null) {
-      if (previousRouteName == '/home') {
-        _bottomProvider!.selectIndex(0);
-      } else if (previousRouteName == '/cart') {
-        _bottomProvider!.selectIndex(1);
-      } else if (previousRouteName == '/history') {
-        _bottomProvider!.selectIndex(2);
-      } else if (previousRouteName == '/setting') {
-        _bottomProvider!.selectIndex(4);
-      }
-    }
-
     _scrollController.dispose();
     super.dispose();
-  }
-
-  getData() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      role = prefs.getString('role') ?? "";
-    });
   }
 
   getNotifications() async {

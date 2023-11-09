@@ -96,6 +96,214 @@ class ProductsService {
     return response.data;
   }
 
+  Future<Map<String, dynamic>?> getDialGlassTypesData() async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      ApiConstants.dialGlassTypesUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>?> getConditionsData() async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      ApiConstants.conditionsUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>?> getWarrantyTypesData() async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      ApiConstants.warrantyTypesUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>?> getOtherAccessoriesTypesData() async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      ApiConstants.otherAccessoriesTypesUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>?> getCaseDiametersData() async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      ApiConstants.caseDiametersUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>?> getCaseWidthsData() async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      ApiConstants.caseWidthsUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>?> getMovementTypesData() async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      ApiConstants.movementTypesUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>?> getStrapMaterialsData() async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      ApiConstants.strapMaterialsUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>?> getCaseMaterialsData() async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      ApiConstants.caseMaterialsUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>?> getStockQuantitiesData() async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      ApiConstants.stockQuantitiesUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>?> getCaseDepthsData() async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      ApiConstants.caseDepthsUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>?> getWaterResistancesData() async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      ApiConstants.waterResistancesUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>?> getMovementCountriesData() async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      ApiConstants.movementCountriesUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
   void cancelRequest() {
     _cancelToken.cancel('Request canceled');
   }
