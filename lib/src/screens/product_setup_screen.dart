@@ -66,6 +66,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   TextEditingController movementType = TextEditingController(text: '');
   TextEditingController movementCountry = TextEditingController(text: '');
   TextEditingController movementCaliber = TextEditingController(text: '');
+  TextEditingController currencyCode = TextEditingController(text: '');
+  int currencyId = 0;
   TextEditingController stockQuantity = TextEditingController(text: '0');
   TextEditingController price = TextEditingController(text: '');
   TextEditingController waterResistance = TextEditingController(text: '');
@@ -78,8 +80,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   List currencies = [];
   List<String> currencycodes = [];
-  int currencyId = 0;
-  String currencyCode = '';
 
   List warrantytypes = [];
   List<String> warrantytypesdesc = [];
@@ -120,7 +120,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   void initState() {
     super.initState();
 
-    Future.delayed(Duration.zero, () {
+    Future.delayed(Duration.zero, () async {
       getGenders();
       getStrapMaterials();
       getCaseMaterials();
@@ -148,6 +148,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           shopName.text = arguments["shopName"] ?? '';
         }
         if (id != 0) {
+          await Future.delayed(Duration(milliseconds: 100));
           getProduct();
         }
       }
@@ -601,7 +602,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
             }
           }
           currencyId = currencies[0]["currency_id"];
-          currencyCode = currencies[0]["currency_code"];
+          currencyCode.text = currencies[0]["currency_code"];
           setState(() {});
         }
       } else {
@@ -846,7 +847,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           movementType.text = response["data"]["movement_type"] ?? "";
           movementCountry.text = response["data"]["movement_country"] ?? "";
           movementCaliber.text = response["data"]["movement_caliber"] ?? "";
-          currencyCode = response["data"]["currency_code"] ?? "";
+          currencyCode.text = response["data"]["currency_code"] ?? "";
           currencyId = response["data"]["currency_id"] ?? 0;
           stockQuantity.text =
               response["data"]["stock_quantity"].toString() ?? "0";
@@ -2229,20 +2230,19 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 right: 4,
                                 bottom: 16,
                               ),
-                              child: CustomDropDown(
-                                value: currencyCode,
-                                fillColor: ColorConstants.fillcolor,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    currencyCode = newValue ?? currencycodes[0];
-                                  });
+                              child: CustomAutocomplete(
+                                datalist: currencycodes,
+                                textController: currencyCode,
+                                onSelected: (String selection) {
+                                  currencyCode.text = selection;
                                   for (var data in currencies) {
-                                    if (data["currency_code"] == currencyCode) {
+                                    if (data["currency_code"] ==
+                                        currencyCode.text) {
                                       currencyId = data["currency_id"];
                                     }
                                   }
                                 },
-                                items: currencycodes,
+                                maxWidth: 176,
                               ),
                             ),
                           ],
