@@ -14,6 +14,7 @@ import 'package:e_commerce/src/services/gender_service.dart';
 import 'package:e_commerce/src/services/products_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
+import 'package:e_commerce/src/widgets/custom_autocomplete.dart';
 import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -33,22 +34,16 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   final productsService = ProductsService();
   final currenciesService = CurrenciesService();
   final genderService = GenderService();
+
   FocusNode _modelFocusNode = FocusNode();
   FocusNode _descriptionFocusNode = FocusNode();
   FocusNode _colorFocusNode = FocusNode();
-  FocusNode _strapMaterialFocusNode = FocusNode();
   FocusNode _strapColorFocusNode = FocusNode();
-  FocusNode _caseMaterialFocusNode = FocusNode();
   FocusNode _dialColorFocusNode = FocusNode();
-  FocusNode _movementTypeFocusNode = FocusNode();
-  FocusNode _waterResistanceFocusNode = FocusNode();
-  FocusNode _warrantyPeriodFocusNode = FocusNode();
+  FocusNode _movementCaliberFocusNode = FocusNode();
   FocusNode _priceFocusNode = FocusNode();
-  FocusNode _stockQuantityFocusNode = FocusNode();
+  FocusNode _warrantyPeriodFocusNode = FocusNode();
   FocusNode _waitingTimeFocusNode = FocusNode();
-  FocusNode _caseDiameterFocusNode = FocusNode();
-  FocusNode _caseDepthFocusNode = FocusNode();
-  FocusNode _caseWidthFocusNode = FocusNode();
 
   TextEditingController shopName = TextEditingController(text: '');
   int shopId = 0;
@@ -62,16 +57,20 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   TextEditingController strapMaterial = TextEditingController(text: '');
   TextEditingController strapColor = TextEditingController(text: '');
   TextEditingController caseMaterial = TextEditingController(text: '');
-  TextEditingController dialColor = TextEditingController(text: '');
-  TextEditingController movementType = TextEditingController(text: '');
-  TextEditingController waterResistance = TextEditingController(text: '');
-  TextEditingController warrantyPeriod = TextEditingController(text: '');
-  TextEditingController price = TextEditingController(text: '');
-  TextEditingController stockQuantity = TextEditingController(text: '');
-  TextEditingController waitingTime = TextEditingController(text: '');
   TextEditingController caseDiameter = TextEditingController(text: '');
   TextEditingController caseDepth = TextEditingController(text: '');
   TextEditingController caseWidth = TextEditingController(text: '');
+  TextEditingController dialGlassTypeDesc = TextEditingController(text: '');
+  int dialGlassTypeId = 0;
+  TextEditingController dialColor = TextEditingController(text: '');
+  TextEditingController movementType = TextEditingController(text: '');
+  TextEditingController movementCountry = TextEditingController(text: '');
+  TextEditingController movementCaliber = TextEditingController(text: '');
+  TextEditingController stockQuantity = TextEditingController(text: '0');
+  TextEditingController price = TextEditingController(text: '');
+  TextEditingController waterResistance = TextEditingController(text: '');
+  TextEditingController warrantyPeriod = TextEditingController(text: '');
+  TextEditingController waitingTime = TextEditingController(text: '');
   bool isTopModel = false;
   bool isPreorder = false;
   List productImages = [];
@@ -89,8 +88,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   List dialglasstypes = [];
   List<String> dialglasstypesdesc = [];
-  int dialGlassTypeId = 0;
-  String dialGlassTypeDesc = '';
 
   List conditions = [];
   List<String> conditionsdesc = [];
@@ -106,6 +103,16 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   int genderId = 0;
   String genderDesc = '';
 
+  List<String> strapMaterials = [];
+  List<String> caseMaterials = [];
+  List<String> caseDiameters = [];
+  List<String> caseDepths = [];
+  List<String> caseWidths = [];
+  List<String> movementTypes = [];
+  List<String> movementCountries = [];
+  List<String> stockQuantities = [];
+  List<String> waterResistances = [];
+
   int id = 0;
   String from = '';
 
@@ -115,9 +122,18 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
     Future.delayed(Duration.zero, () {
       getGenders();
+      getStrapMaterials();
+      getCaseMaterials();
+      getCaseDiameters();
+      getCaseDepths();
+      getCaseWidths();
       getDialGlassTypes();
       getConditions();
+      getMovementTypes();
+      getMmovementCountries();
       getCurrencies();
+      getStockQuantities();
+      getWaterResistances();
       getWarrantyTypes();
       getOtherAccessoriesTypes();
 
@@ -142,6 +158,434 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  getGenders() async {
+    try {
+      final response = await genderService.getGendersData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          genders = response["data"];
+
+          for (var data in response["data"]) {
+            if (data["description"] != null) {
+              gendersdesc.add(data["description"]);
+            }
+          }
+          genderId = genders[0]["gender_id"];
+          genderDesc = genders[0]["description"];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getStrapMaterials() async {
+    try {
+      final response = await productsService.getStrapMaterialsData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          List<dynamic> dynamicList = response["data"];
+          strapMaterials = dynamicList.map((item) => item.toString()).toList();
+          strapMaterial.text = strapMaterials[0];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getCaseMaterials() async {
+    try {
+      final response = await productsService.getCaseMaterialsData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          List<dynamic> dynamicList = response["data"];
+          caseMaterials = dynamicList.map((item) => item.toString()).toList();
+          caseMaterial.text = caseMaterials[0];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getCaseDiameters() async {
+    try {
+      final response = await productsService.getCaseDiametersData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          List<dynamic> dynamicList = response["data"];
+          caseDiameters = dynamicList.map((item) => item.toString()).toList();
+          caseDiameter.text = caseDiameters[0];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getCaseDepths() async {
+    try {
+      final response = await productsService.getCaseDepthsData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          List<dynamic> dynamicList = response["data"];
+          caseDepths = dynamicList.map((item) => item.toString()).toList();
+          caseDepth.text = caseDepths[0];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getCaseWidths() async {
+    try {
+      final response = await productsService.getCaseWidthsData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          List<dynamic> dynamicList = response["data"];
+          caseWidths = dynamicList.map((item) => item.toString()).toList();
+          caseWidth.text = caseWidths[0];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getDialGlassTypes() async {
+    try {
+      final response = await productsService.getDialGlassTypesData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          dialglasstypes = response["data"];
+
+          for (var data in response["data"]) {
+            if (data["description"] != null) {
+              dialglasstypesdesc.add(data["description"]);
+            }
+          }
+          dialGlassTypeId = dialglasstypes[0]["dial_glass_type_id"];
+          dialGlassTypeDesc.text = dialglasstypes[0]["description"];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getConditions() async {
+    try {
+      final response = await productsService.getConditionsData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          conditions = response["data"];
+
+          for (var data in response["data"]) {
+            if (data["description"] != null) {
+              conditionsdesc.add(data["description"]);
+            }
+          }
+          conditionDesc = conditions[0]["description"];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getMovementTypes() async {
+    try {
+      final response = await productsService.getMovementTypesData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          List<dynamic> dynamicList = response["data"];
+          movementTypes = dynamicList.map((item) => item.toString()).toList();
+          movementType.text = movementTypes[0];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getMmovementCountries() async {
+    try {
+      final response = await productsService.getMovementCountriesData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          List<dynamic> dynamicList = response["data"];
+          movementCountries =
+              dynamicList.map((item) => item.toString()).toList();
+          movementCountry.text = movementCountries[0];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
   }
 
   getCurrencies() async {
@@ -191,6 +635,89 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     }
   }
 
+  getStockQuantities() async {
+    try {
+      final response = await productsService.getStockQuantitiesData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          List<dynamic> dynamicList = response["data"];
+          stockQuantities = dynamicList.map((item) => item.toString()).toList();
+          stockQuantity.text = stockQuantities[0];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getWaterResistances() async {
+    try {
+      final response = await productsService.getWaterResistancesData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          List<dynamic> dynamicList = response["data"];
+          waterResistances =
+              dynamicList.map((item) => item.toString()).toList();
+          waterResistance.text = waterResistances[0];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
   getWarrantyTypes() async {
     try {
       final response = await productsService.getWarrantyTypesData();
@@ -205,99 +732,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           }
           warrantyTypeId = warrantytypes[0]["warranty_type_id"];
           warrantyTypeDesc = warrantytypes[0]["description"];
-          setState(() {});
-        }
-      } else {
-        ToastUtil.showToast(response["code"], response["message"]);
-      }
-    } catch (e, s) {
-      if (e is DioException &&
-          e.error is SocketException &&
-          !isConnectionTimeout) {
-        isConnectionTimeout = true;
-        Navigator.pushNamed(
-          context,
-          Routes.connection_timeout,
-        );
-        return;
-      }
-      crashlytic.myGlobalErrorHandler(e, s);
-      if (e is DioException && e.response != null && e.response!.data != null) {
-        if (e.response!.data["message"] == "invalid token" ||
-            e.response!.data["message"] ==
-                "invalid authorization header format") {
-          Navigator.pushNamed(
-            context,
-            Routes.unauthorized,
-          );
-        } else {
-          ToastUtil.showToast(
-              e.response!.data['code'], e.response!.data['message']);
-        }
-      }
-    }
-  }
-
-  getDialGlassTypes() async {
-    try {
-      final response = await productsService.getDialGlassTypesData();
-      if (response!["code"] == 200) {
-        if (response["data"].isNotEmpty) {
-          dialglasstypes = response["data"];
-
-          for (var data in response["data"]) {
-            if (data["description"] != null) {
-              dialglasstypesdesc.add(data["description"]);
-            }
-          }
-          dialGlassTypeId = dialglasstypes[0]["dial_glass_type_id"];
-          dialGlassTypeDesc = dialglasstypes[0]["description"];
-          setState(() {});
-        }
-      } else {
-        ToastUtil.showToast(response["code"], response["message"]);
-      }
-    } catch (e, s) {
-      if (e is DioException &&
-          e.error is SocketException &&
-          !isConnectionTimeout) {
-        isConnectionTimeout = true;
-        Navigator.pushNamed(
-          context,
-          Routes.connection_timeout,
-        );
-        return;
-      }
-      crashlytic.myGlobalErrorHandler(e, s);
-      if (e is DioException && e.response != null && e.response!.data != null) {
-        if (e.response!.data["message"] == "invalid token" ||
-            e.response!.data["message"] ==
-                "invalid authorization header format") {
-          Navigator.pushNamed(
-            context,
-            Routes.unauthorized,
-          );
-        } else {
-          ToastUtil.showToast(
-              e.response!.data['code'], e.response!.data['message']);
-        }
-      }
-    }
-  }
-
-  getConditions() async {
-    try {
-      final response = await productsService.getConditionsData();
-      if (response!["code"] == 200) {
-        if (response["data"].isNotEmpty) {
-          conditions = response["data"];
-
-          for (var data in response["data"]) {
-            if (data["description"] != null) {
-              conditionsdesc.add(data["description"]);
-            }
-          }
-          conditionDesc = conditions[0]["description"];
           setState(() {});
         }
       } else {
@@ -379,53 +813,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     }
   }
 
-  getGenders() async {
-    try {
-      final response = await genderService.getGendersData();
-      if (response!["code"] == 200) {
-        if (response["data"].isNotEmpty) {
-          genders = response["data"];
-
-          for (var data in response["data"]) {
-            if (data["description"] != null) {
-              gendersdesc.add(data["description"]);
-            }
-          }
-          genderId = genders[0]["gender_id"];
-          genderDesc = genders[0]["description"];
-          setState(() {});
-        }
-      } else {
-        ToastUtil.showToast(response["code"], response["message"]);
-      }
-    } catch (e, s) {
-      if (e is DioException &&
-          e.error is SocketException &&
-          !isConnectionTimeout) {
-        isConnectionTimeout = true;
-        Navigator.pushNamed(
-          context,
-          Routes.connection_timeout,
-        );
-        return;
-      }
-      crashlytic.myGlobalErrorHandler(e, s);
-      if (e is DioException && e.response != null && e.response!.data != null) {
-        if (e.response!.data["message"] == "invalid token" ||
-            e.response!.data["message"] ==
-                "invalid authorization header format") {
-          Navigator.pushNamed(
-            context,
-            Routes.unauthorized,
-          );
-        } else {
-          ToastUtil.showToast(
-              e.response!.data['code'], e.response!.data['message']);
-        }
-      }
-    }
-  }
-
   getProduct() async {
     try {
       final response = await productsService.getProductData(id);
@@ -442,38 +829,40 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           brandId = response["data"]["brand_id"] ?? 0;
           model.text = response["data"]["model"] ?? "";
           description.text = response["data"]["description"] ?? "";
+          genderDesc = response["data"]["gender_description"] ?? "";
+          genderId = response["data"]["gender_id"] ?? 0;
           color.text = response["data"]["color"] ?? "";
           strapMaterial.text = response["data"]["strap_material"] ?? "";
           strapColor.text = response["data"]["strap_color"] ?? "";
           caseMaterial.text = response["data"]["case_material"] ?? "";
+          caseDiameter.text = response["data"]["case_diameter"] ?? "";
+          caseDepth.text = response["data"]["case_depth"] ?? "";
+          caseWidth.text = response["data"]["case_width"] ?? "";
+          dialGlassTypeDesc.text =
+              response["data"]["dial_glass_type_description"] ?? "";
+          dialGlassTypeId = response["data"]["dial_glass_type_id"] ?? 0;
           dialColor.text = response["data"]["dial_color"] ?? "";
+          conditionDesc = response["data"]["condition"] ?? "";
           movementType.text = response["data"]["movement_type"] ?? "";
-          waterResistance.text = response["data"]["water_resistance"] ?? "";
-          warrantyPeriod.text = response["data"]["warranty_period"] ?? "";
-          price.text = response["data"]["price"].toString() ?? "";
+          movementCountry.text = response["data"]["movement_country"] ?? "";
+          movementCaliber.text = response["data"]["movement_caliber"] ?? "";
           currencyCode = response["data"]["currency_code"] ?? "";
           currencyId = response["data"]["currency_id"] ?? 0;
+          stockQuantity.text =
+              response["data"]["stock_quantity"].toString() ?? "0";
+          price.text = response["data"]["price"].toString() ?? "";
+          waterResistance.text = response["data"]["water_resistance"] ?? "";
+          warrantyPeriod.text = response["data"]["warranty_period"] ?? "";
           warrantyTypeDesc =
               response["data"]["warranty_type_description"] ?? "";
           warrantyTypeId = response["data"]["warranty_type_id"] ?? 0;
-          stockQuantity.text =
-              response["data"]["stock_quantity"].toString() ?? "";
-          isTopModel = response["data"]["is_top_model"] ?? false;
-          dialGlassTypeDesc =
-              response["data"]["dial_glass_type_description"] ?? "";
-          dialGlassTypeId = response["data"]["dial_glass_type_id"] ?? 0;
-          conditionDesc = response["data"]["condition"] ?? "";
           otherAccessoriesTypeDesc =
               response["data"]["other_accessories_type_description"] ?? "";
           otherAccessoriesTypeId =
               response["data"]["other_accessories_type_id"] ?? 0;
-          genderDesc = response["data"]["gender_description"] ?? "";
-          genderId = response["data"]["gender_id"] ?? 0;
+          isTopModel = response["data"]["is_top_model"] ?? false;
           isPreorder = response["data"]["is_preorder"] ?? false;
           waitingTime.text = response["data"]["waiting_time"] ?? "";
-          caseDepth.text = response["data"]["case_depth"] ?? "";
-          caseDiameter.text = response["data"]["case_diameter"] ?? "";
-          caseWidth.text = response["data"]["case_width"] ?? "";
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -549,6 +938,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "case_material": caseMaterial.text,
         "dial_color": dialColor.text,
         "movement_type": movementType.text,
+        "movement_country": movementCountry.text,
+        "movement_caliber": movementCaliber.text,
         "water_resistance": waterResistance.text,
         "warranty_period": warrantyPeriod.text,
         "dimensions": "",
@@ -634,6 +1025,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "case_material": caseMaterial.text,
         "dial_color": dialColor.text,
         "movement_type": movementType.text,
+        "movement_country": movementCountry.text,
+        "movement_caliber": movementCaliber.text,
         "water_resistance": waterResistance.text,
         "warranty_period": warrantyPeriod.text,
         "dimensions": "",
@@ -794,19 +1187,12 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         _modelFocusNode.unfocus();
         _descriptionFocusNode.unfocus();
         _colorFocusNode.unfocus();
-        _strapMaterialFocusNode.unfocus();
         _strapColorFocusNode.unfocus();
-        _caseMaterialFocusNode.unfocus();
         _dialColorFocusNode.unfocus();
-        _movementTypeFocusNode.unfocus();
-        _waterResistanceFocusNode.unfocus();
         _warrantyPeriodFocusNode.unfocus();
+        _movementCaliberFocusNode.unfocus();
         _priceFocusNode.unfocus();
-        _stockQuantityFocusNode.unfocus();
         _waitingTimeFocusNode.unfocus();
-        _caseDiameterFocusNode.unfocus();
-        _caseDepthFocusNode.unfocus();
-        _caseWidthFocusNode.unfocus();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -1317,40 +1703,13 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 right: 4,
                                 bottom: 16,
                               ),
-                              child: TextFormField(
-                                controller: strapMaterial,
-                                focusNode: _strapMaterialFocusNode,
-                                keyboardType: TextInputType.text,
-                                textInputAction: TextInputAction.next,
-                                style: FontConstants.body1,
-                                cursorColor: Colors.black,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: ColorConstants.fillcolor,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 14,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return language["Enter Strap Material"] ??
-                                        "Enter Strap Material";
-                                  }
-                                  return null;
+                              child: CustomAutocomplete(
+                                datalist: strapMaterials,
+                                textController: strapMaterial,
+                                onSelected: (String selection) {
+                                  strapMaterial.text = selection;
                                 },
+                                maxWidth: 176,
                               ),
                             ),
                           ],
@@ -1446,40 +1805,13 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 right: 4,
                                 bottom: 16,
                               ),
-                              child: TextFormField(
-                                controller: caseMaterial,
-                                focusNode: _caseMaterialFocusNode,
-                                keyboardType: TextInputType.text,
-                                textInputAction: TextInputAction.next,
-                                style: FontConstants.body1,
-                                cursorColor: Colors.black,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: ColorConstants.fillcolor,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 14,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return language["Enter Case Material"] ??
-                                        "Enter Case Material";
-                                  }
-                                  return null;
+                              child: CustomAutocomplete(
+                                datalist: caseMaterials,
+                                textController: caseMaterial,
+                                onSelected: (String selection) {
+                                  caseMaterial.text = selection;
                                 },
+                                maxWidth: 176,
                               ),
                             ),
                           ],
@@ -1508,40 +1840,13 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 right: 16,
                                 bottom: 16,
                               ),
-                              child: TextFormField(
-                                controller: caseDiameter,
-                                focusNode: _caseDiameterFocusNode,
-                                keyboardType: TextInputType.text,
-                                textInputAction: TextInputAction.next,
-                                style: FontConstants.body1,
-                                cursorColor: Colors.black,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: ColorConstants.fillcolor,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 14,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return language["Enter Case Diameter"] ??
-                                        "Enter Case Diameter";
-                                  }
-                                  return null;
+                              child: CustomAutocomplete(
+                                datalist: caseDiameters,
+                                textController: caseDiameter,
+                                onSelected: (String selection) {
+                                  caseDiameter.text = selection;
                                 },
+                                maxWidth: 176,
                               ),
                             ),
                           ],
@@ -1575,40 +1880,13 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 right: 4,
                                 bottom: 16,
                               ),
-                              child: TextFormField(
-                                controller: caseDepth,
-                                focusNode: _caseDepthFocusNode,
-                                keyboardType: TextInputType.text,
-                                textInputAction: TextInputAction.next,
-                                style: FontConstants.body1,
-                                cursorColor: Colors.black,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: ColorConstants.fillcolor,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 14,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return language["Enter Case Depth"] ??
-                                        "Enter Case Depth";
-                                  }
-                                  return null;
+                              child: CustomAutocomplete(
+                                datalist: caseDepths,
+                                textController: caseDepth,
+                                onSelected: (String selection) {
+                                  caseDepth.text = selection;
                                 },
+                                maxWidth: 176,
                               ),
                             ),
                           ],
@@ -1637,40 +1915,13 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 right: 16,
                                 bottom: 16,
                               ),
-                              child: TextFormField(
-                                controller: caseWidth,
-                                focusNode: _caseWidthFocusNode,
-                                keyboardType: TextInputType.text,
-                                textInputAction: TextInputAction.done,
-                                style: FontConstants.body1,
-                                cursorColor: Colors.black,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: ColorConstants.fillcolor,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 14,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return language["Enter Case Width"] ??
-                                        "Enter Case Width";
-                                  }
-                                  return null;
+                              child: CustomAutocomplete(
+                                datalist: caseWidths,
+                                textController: caseWidth,
+                                onSelected: (String selection) {
+                                  caseWidth.text = selection;
                                 },
+                                maxWidth: 176,
                               ),
                             ),
                           ],
@@ -1705,23 +1956,21 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 right: 4,
                                 bottom: 16,
                               ),
-                              child: CustomDropDown(
-                                value: dialGlassTypeDesc,
-                                fillColor: ColorConstants.fillcolor,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    dialGlassTypeDesc =
-                                        newValue ?? dialglasstypesdesc[0];
-                                  });
+                              child: CustomAutocomplete(
+                                datalist: dialglasstypesdesc,
+                                textController: dialGlassTypeDesc,
+                                onSelected: (String selection) {
+                                  dialGlassTypeDesc.text = selection;
+
                                   for (var data in dialglasstypes) {
                                     if (data["description"] ==
-                                        dialGlassTypeDesc) {
+                                        dialGlassTypeDesc.text) {
                                       dialGlassTypeId =
                                           data["dial_glass_type_id"];
                                     }
                                   }
                                 },
-                                items: dialglasstypesdesc,
+                                maxWidth: 176,
                               ),
                             ),
                           ],
@@ -1837,7 +2086,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  language["Movement Type"] ?? "Movement Type",
+                                  language["Movement Country"] ??
+                                      "Movement Country",
                                   style: FontConstants.caption1,
                                 ),
                               ),
@@ -1848,40 +2098,13 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 right: 4,
                                 bottom: 16,
                               ),
-                              child: TextFormField(
-                                controller: movementType,
-                                focusNode: _movementTypeFocusNode,
-                                keyboardType: TextInputType.text,
-                                textInputAction: TextInputAction.next,
-                                style: FontConstants.body1,
-                                cursorColor: Colors.black,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: ColorConstants.fillcolor,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 14,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return language["Enter Movement Type"] ??
-                                        "Enter Movement Type";
-                                  }
-                                  return null;
+                              child: CustomAutocomplete(
+                                datalist: movementCountries,
+                                textController: movementCountry,
+                                onSelected: (String selection) {
+                                  movementCountry.text = selection;
                                 },
+                                maxWidth: 176,
                               ),
                             ),
                           ],
@@ -1899,8 +2122,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  language["Stock Quantity"] ??
-                                      "Stock Quantity",
+                                  language["Movement Type"] ?? "Movement Type",
                                   style: FontConstants.caption1,
                                 ),
                               ),
@@ -1911,46 +2133,75 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 right: 16,
                                 bottom: 16,
                               ),
-                              child: TextFormField(
-                                controller: stockQuantity,
-                                focusNode: _stockQuantityFocusNode,
-                                keyboardType: TextInputType.number,
-                                textInputAction: TextInputAction.next,
-                                style: FontConstants.body1,
-                                cursorColor: Colors.black,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: ColorConstants.fillcolor,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 14,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return language["Enter Stock Quantity"] ??
-                                        "Enter Stock Quantity";
-                                  }
-                                  return null;
+                              child: CustomAutocomplete(
+                                datalist: movementTypes,
+                                textController: movementType,
+                                onSelected: (String selection) {
+                                  movementType.text = selection;
                                 },
+                                maxWidth: 176,
                               ),
                             ),
                           ],
                         ),
-                      ),
+                      )
                     ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 4,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        language["Movement Caliber"] ?? "Movement Caliber",
+                        style: FontConstants.caption1,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 16,
+                    ),
+                    child: TextFormField(
+                      controller: movementCaliber,
+                      focusNode: _movementCaliberFocusNode,
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.next,
+                      style: FontConstants.body1,
+                      cursorColor: Colors.black,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: ColorConstants.fillcolor,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return language["Enter Movement Caliber"] ??
+                              "Enter Movement Caliber";
+                        }
+                        return null;
+                      },
+                    ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1992,6 +2243,38 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                   }
                                 },
                                 items: currencycodes,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                bottom: 4,
+                              ),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  language["Stock Quantity"] ??
+                                      "Stock Quantity",
+                                  style: FontConstants.caption1,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                bottom: 16,
+                              ),
+                              child: CustomAutocomplete(
+                                datalist: stockQuantities,
+                                textController: stockQuantity,
+                                onSelected: (String selection) {
+                                  stockQuantity.text = selection;
+                                },
+                                maxWidth: 130,
                               ),
                             ),
                           ],
@@ -2088,40 +2371,13 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 right: 4,
                                 bottom: 16,
                               ),
-                              child: TextFormField(
-                                controller: waterResistance,
-                                focusNode: _waterResistanceFocusNode,
-                                keyboardType: TextInputType.text,
-                                textInputAction: TextInputAction.next,
-                                style: FontConstants.body1,
-                                cursorColor: Colors.black,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: ColorConstants.fillcolor,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 14,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return language["Enter Water Resistance"] ??
-                                        "Enter Water Resistance";
-                                  }
-                                  return null;
+                              child: CustomAutocomplete(
+                                datalist: waterResistances,
+                                textController: waterResistance,
+                                onSelected: (String selection) {
+                                  waterResistance.text = selection;
                                 },
+                                maxWidth: 130,
                               ),
                             ),
                           ],

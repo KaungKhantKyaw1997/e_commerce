@@ -41,10 +41,12 @@ class _ProductScreenState extends State<ProductScreen> {
   double _currentPage = 0;
   bool updateCart = false;
   List buyerProtections = [];
+  String role = '';
 
   @override
   void initState() {
     super.initState();
+    getData();
     getCart();
     getBuyerProtections();
     _imageController.addListener(() {
@@ -81,6 +83,13 @@ class _ProductScreenState extends State<ProductScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  getData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      role = prefs.getString('role') ?? "";
+    });
   }
 
   getCart() async {
@@ -703,12 +712,62 @@ class _ProductScreenState extends State<ProductScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
+                                  language["Movement Country"] ??
+                                      "Movement Country",
+                                  style: FontConstants.caption1,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    product["movement_country"] ?? "",
+                                    textAlign: TextAlign.end,
+                                    style: FontConstants.caption2,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
                                   language["Movement Type"] ?? "Movement Type",
                                   style: FontConstants.caption1,
                                 ),
                                 Expanded(
                                   child: Text(
                                     product["movement_type"] ?? "",
+                                    textAlign: TextAlign.end,
+                                    style: FontConstants.caption2,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  language["Movement Caliber"] ??
+                                      "Movement Caliber",
+                                  style: FontConstants.caption1,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    product["movement_caliber"] ?? "",
                                     textAlign: TextAlign.end,
                                     style: FontConstants.caption2,
                                   ),
@@ -1029,7 +1088,15 @@ class _ProductScreenState extends State<ProductScreen> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    getChatSession();
+                                    if (role.isNotEmpty) {
+                                      getChatSession();
+                                    } else {
+                                      Navigator.pushNamedAndRemoveUntil(
+                                        context,
+                                        Routes.login,
+                                        (route) => true,
+                                      );
+                                    }
                                   },
                                 ),
                               ),
