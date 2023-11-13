@@ -1414,7 +1414,7 @@ class _ProductScreenState extends State<ProductScreen> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  "Seller",
+                                  language["Seller"] ?? "Seller",
                                   overflow: TextOverflow.ellipsis,
                                   style: FontConstants.headline1,
                                 ),
@@ -1463,8 +1463,7 @@ class _ProductScreenState extends State<ProductScreen> {
                             style: FontConstants.body2,
                           ),
                           Text(
-                            "Active on Watch Vault by Diggie: ${sellerinfo["active_since_year"]}" ??
-                                "",
+                            "${language["Active on Watch Vault by Diggie"] ?? "Active on Watch Vault by Diggie"}: ${sellerinfo["active_since_year"]}",
                             style: FontConstants.body2,
                           ),
                           SizedBox(
@@ -1491,11 +1490,11 @@ class _ProductScreenState extends State<ProductScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Sales",
+                                      language["Sales"] ?? "Sales",
                                       style: FontConstants.subheadline1,
                                     ),
                                     Text(
-                                      "Watches sold on Watch Vault by Diggie: ${sellerinfo["sold_product_counts"]}",
+                                      "${language["Watches sold on Watch Vault by Diggie"] ?? "Watches sold on Watch Vault by Diggie"}: ${sellerinfo["sold_product_counts"]}",
                                       style: FontConstants.body2,
                                     ),
                                   ],
@@ -1531,7 +1530,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                       style: FontConstants.subheadline1,
                                     ),
                                     Text(
-                                      "Trusted Seller since ${sellerinfo["active_since_year"]}",
+                                      "${language["Trusted Seller since"] ?? "Trusted Seller since"} ${sellerinfo["active_since_year"]}",
                                       style: FontConstants.body2,
                                     ),
                                   ],
@@ -1563,7 +1562,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Location",
+                                      language["Location"] ?? "Location",
                                       style: FontConstants.subheadline1,
                                     ),
                                     Text(
@@ -1599,11 +1598,11 @@ class _ProductScreenState extends State<ProductScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Listings",
+                                      language["Listings"] ?? "Listings",
                                       style: FontConstants.subheadline1,
                                     ),
                                     Text(
-                                      "Watches listed on Watch Vault by Diggie: ${sellerinfo["product_counts"]}",
+                                      "${language["Watches listed on Watch Vault by Diggie"] ?? "Watches listed on Watch Vault by Diggie"}: ${sellerinfo["product_counts"]}",
                                       style: FontConstants.body2,
                                     ),
                                   ],
@@ -1639,11 +1638,14 @@ class _ProductScreenState extends State<ProductScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "Offline trader",
+                                            language["Offline trader"] ??
+                                                "Offline trader",
                                             style: FontConstants.subheadline1,
                                           ),
                                           Text(
-                                            "This seller has a retail location",
+                                            language[
+                                                    "This seller has a retail location"] ??
+                                                "This seller has a retail location",
                                             style: FontConstants.body2,
                                           ),
                                         ],
