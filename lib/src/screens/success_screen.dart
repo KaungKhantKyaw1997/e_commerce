@@ -103,6 +103,11 @@ class _SuccessScreenState extends State<SuccessScreen>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -130,7 +135,6 @@ class _SuccessScreenState extends State<SuccessScreen>
               Padding(
                 padding: const EdgeInsets.only(
                   top: 24,
-                  bottom: 16,
                 ),
                 child: TextFormField(
                   controller: comment,
@@ -161,7 +165,15 @@ class _SuccessScreenState extends State<SuccessScreen>
                   ),
                 ),
               ),
-              Row(
+            ],
+          ),
+          actions: [
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 8,
+              ),
+              width: double.infinity,
+              child: Row(
                 children: [
                   Expanded(
                     child: TextButton(
@@ -208,8 +220,8 @@ class _SuccessScreenState extends State<SuccessScreen>
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );

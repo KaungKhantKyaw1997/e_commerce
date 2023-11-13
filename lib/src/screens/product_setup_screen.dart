@@ -79,27 +79,27 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   List<XFile> pickedMultiFile = <XFile>[];
 
   List currencies = [];
-  List<String> currencycodes = [];
+  List<String> currencyCodes = [];
 
-  List warrantytypes = [];
-  List<String> warrantytypesdesc = [];
+  List warrantyTypes = [];
+  List<String> warrantyTypesDesc = [];
   int warrantyTypeId = 0;
   String warrantyTypeDesc = '';
 
-  List dialglasstypes = [];
-  List<String> dialglasstypesdesc = [];
+  List dialglassTypes = [];
+  List<String> dialglassTypesDesc = [];
 
   List conditions = [];
-  List<String> conditionsdesc = [];
+  List<String> conditionsDesc = [];
   String conditionDesc = '';
 
-  List otheraccessoriestypes = [];
-  List<String> otheraccessoriestypesdesc = [];
+  List otherAccessoriesTypes = [];
+  List<String> otherAccessoriesTypesDesc = [];
   int otherAccessoriesTypeId = 0;
   String otherAccessoriesTypeDesc = '';
 
   List genders = [];
-  List<String> gendersdesc = [];
+  List<String> gendersDesc = [];
   int genderId = 0;
   String genderDesc = '';
 
@@ -170,7 +170,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
           for (var data in response["data"]) {
             if (data["description"] != null) {
-              gendersdesc.add(data["description"]);
+              gendersDesc.add(data["description"]);
             }
           }
           genderId = genders[0]["gender_id"];
@@ -418,15 +418,15 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
       final response = await productsService.getDialGlassTypesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
-          dialglasstypes = response["data"];
+          dialglassTypes = response["data"];
 
           for (var data in response["data"]) {
             if (data["description"] != null) {
-              dialglasstypesdesc.add(data["description"]);
+              dialglassTypesDesc.add(data["description"]);
             }
           }
-          dialGlassTypeId = dialglasstypes[0]["dial_glass_type_id"];
-          dialGlassTypeDesc.text = dialglasstypes[0]["description"];
+          dialGlassTypeId = dialglassTypes[0]["dial_glass_type_id"];
+          dialGlassTypeDesc.text = dialglassTypes[0]["description"];
           setState(() {});
         }
       } else {
@@ -469,7 +469,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
           for (var data in response["data"]) {
             if (data["description"] != null) {
-              conditionsdesc.add(data["description"]);
+              conditionsDesc.add(data["description"]);
             }
           }
           conditionDesc = conditions[0]["description"];
@@ -598,7 +598,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
           for (var data in response["data"]) {
             if (data["currency_code"] != null) {
-              currencycodes.add(data["currency_code"]);
+              currencyCodes.add(data["currency_code"]);
             }
           }
           currencyId = currencies[0]["currency_id"];
@@ -724,15 +724,15 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
       final response = await productsService.getWarrantyTypesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
-          warrantytypes = response["data"];
+          warrantyTypes = response["data"];
 
           for (var data in response["data"]) {
             if (data["description"] != null) {
-              warrantytypesdesc.add(data["description"]);
+              warrantyTypesDesc.add(data["description"]);
             }
           }
-          warrantyTypeId = warrantytypes[0]["warranty_type_id"];
-          warrantyTypeDesc = warrantytypes[0]["description"];
+          warrantyTypeId = warrantyTypes[0]["warranty_type_id"];
+          warrantyTypeDesc = warrantyTypes[0]["description"];
           setState(() {});
         }
       } else {
@@ -771,16 +771,16 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
       final response = await productsService.getOtherAccessoriesTypesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
-          otheraccessoriestypes = response["data"];
+          otherAccessoriesTypes = response["data"];
 
           for (var data in response["data"]) {
             if (data["description"] != null) {
-              otheraccessoriestypesdesc.add(data["description"]);
+              otherAccessoriesTypesDesc.add(data["description"]);
             }
           }
           otherAccessoriesTypeId =
-              otheraccessoriestypes[0]["other_accessories_type_id"];
-          otherAccessoriesTypeDesc = otheraccessoriestypes[0]["description"];
+              otherAccessoriesTypes[0]["other_accessories_type_id"];
+          otherAccessoriesTypeDesc = otherAccessoriesTypes[0]["description"];
           setState(() {});
         }
       } else {
@@ -1599,7 +1599,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 fillColor: ColorConstants.fillcolor,
                                 onChanged: (newValue) {
                                   setState(() {
-                                    genderDesc = newValue ?? gendersdesc[0];
+                                    genderDesc = newValue ?? gendersDesc[0];
                                   });
                                   for (var data in genders) {
                                     if (data["description"] == genderDesc) {
@@ -1607,7 +1607,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                     }
                                   }
                                 },
-                                items: gendersdesc,
+                                items: gendersDesc,
                               ),
                             ),
                           ],
@@ -1958,12 +1958,12 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 bottom: 16,
                               ),
                               child: CustomAutocomplete(
-                                datalist: dialglasstypesdesc,
+                                datalist: dialglassTypesDesc,
                                 textController: dialGlassTypeDesc,
                                 onSelected: (String selection) {
                                   dialGlassTypeDesc.text = selection;
 
-                                  for (var data in dialglasstypes) {
+                                  for (var data in dialglassTypes) {
                                     if (data["description"] ==
                                         dialGlassTypeDesc.text) {
                                       dialGlassTypeId =
@@ -2066,10 +2066,10 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       fillColor: ColorConstants.fillcolor,
                       onChanged: (newValue) {
                         setState(() {
-                          conditionDesc = newValue ?? conditionsdesc[0];
+                          conditionDesc = newValue ?? conditionsDesc[0];
                         });
                       },
-                      items: conditionsdesc,
+                      items: conditionsDesc,
                     ),
                   ),
                   Row(
@@ -2231,7 +2231,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 bottom: 16,
                               ),
                               child: CustomAutocomplete(
-                                datalist: currencycodes,
+                                datalist: currencyCodes,
                                 textController: currencyCode,
                                 onSelected: (String selection) {
                                   currencyCode.text = selection;
@@ -2473,15 +2473,15 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       fillColor: ColorConstants.fillcolor,
                       onChanged: (newValue) {
                         setState(() {
-                          warrantyTypeDesc = newValue ?? warrantytypesdesc[0];
+                          warrantyTypeDesc = newValue ?? warrantyTypesDesc[0];
                         });
-                        for (var data in warrantytypes) {
+                        for (var data in warrantyTypes) {
                           if (data["description"] == warrantyTypeDesc) {
                             warrantyTypeId = data["warranty_type_id"];
                           }
                         }
                       },
-                      items: warrantytypesdesc,
+                      items: warrantyTypesDesc,
                     ),
                   ),
                   Padding(
@@ -2510,16 +2510,16 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       onChanged: (newValue) {
                         setState(() {
                           otherAccessoriesTypeDesc =
-                              newValue ?? otheraccessoriestypesdesc[0];
+                              newValue ?? otherAccessoriesTypesDesc[0];
                         });
-                        for (var data in otheraccessoriestypes) {
+                        for (var data in otherAccessoriesTypes) {
                           if (data["description"] == otherAccessoriesTypeDesc) {
                             otherAccessoriesTypeId =
                                 data["other_accessories_type_id"];
                           }
                         }
                       },
-                      items: otheraccessoriestypesdesc,
+                      items: otherAccessoriesTypesDesc,
                     ),
                   ),
                   Row(

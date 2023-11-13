@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:dio/dio.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
+import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
@@ -13,8 +15,11 @@ import 'package:e_commerce/src/providers/chats_provider.dart';
 import 'package:e_commerce/src/services/buyer_protections_service.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
+import 'package:e_commerce/src/services/seller_report_service.dart';
 import 'package:e_commerce/src/services/user_service.dart';
 import 'package:e_commerce/src/utils/format_amount.dart';
+import 'package:e_commerce/src/utils/loading.dart';
+import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -34,13 +39,23 @@ class _ProductScreenState extends State<ProductScreen> {
   final buyerProtectionsService = BuyerProtectionsService();
   final chatService = ChatService();
   final userService = UserService();
+  final sellerReportService = SellerReportService();
   final PageController _imageController = PageController();
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController phone = TextEditingController(text: '');
+  TextEditingController message = TextEditingController(text: '');
+  FocusNode _phoneFocusNode = FocusNode();
+  FocusNode _messageFocusNode = FocusNode();
   List<Map<String, dynamic>> carts = [];
   Map<String, dynamic> product = {};
   Map<String, dynamic> sellerinfo = {};
   double _currentPage = 0;
   bool updateCart = false;
   List buyerProtections = [];
+  List reportSubjects = [];
+  List<String> reportSubjectsDesc = [];
+  int reportSubjectId = 0;
+  String reportSubjectDesc = '';
   String role = '';
 
   @override
@@ -49,6 +64,7 @@ class _ProductScreenState extends State<ProductScreen> {
     getData();
     getCart();
     getBuyerProtections();
+    getReportSubjects();
     _imageController.addListener(() {
       setState(() {
         _currentPage = _imageController.page ?? 0;
@@ -117,6 +133,97 @@ class _ProductScreenState extends State<ProductScreen> {
         ToastUtil.showToast(response["code"], response["message"]);
       }
     } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getReportSubjects() async {
+    try {
+      final response = await sellerReportService.getReportSubjectsData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          reportSubjects = response["data"];
+
+          for (var data in response["data"]) {
+            if (data["description"] != null) {
+              reportSubjectsDesc.add(data["description"]);
+            }
+          }
+          reportSubjectId = reportSubjects[0]["subject_id"];
+          reportSubjectDesc = reportSubjects[0]["description"];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  addSellerReport() async {
+    try {
+      final body = {
+        "seller_id": product["creator_id"],
+        "subject_id": reportSubjectId,
+        "phone": '959${phone.text}',
+        "message": message.text,
+      };
+      final response = await sellerReportService.addSellerReportData(body);
+      Navigator.pop(context);
+      if (response!["code"] == 201) {
+        Navigator.pop(context);
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      Navigator.pop(context);
       if (e is DioException &&
           e.error is SocketException &&
           !isConnectionTimeout) {
@@ -245,6 +352,248 @@ class _ProductScreenState extends State<ProductScreen> {
     final jsonData = jsonEncode(datalist);
 
     await prefs.setString(key, jsonData);
+  }
+
+  clearReportDialog() {
+    phone.text = '';
+    message.text = '';
+    reportSubjectId = reportSubjects[0]["subject_id"];
+    reportSubjectDesc = reportSubjects[0]["description"];
+  }
+
+  showReportDialog() async {
+    clearReportDialog();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (c) => BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: 5,
+          sigmaY: 5,
+        ),
+        child: StatefulBuilder(
+          builder: (context, setState) {
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                _phoneFocusNode.unfocus();
+                _messageFocusNode.unfocus();
+              },
+              child: Form(
+                key: _formKey,
+                child: AlertDialog(
+                  backgroundColor: Colors.white,
+                  titlePadding: EdgeInsets.symmetric(
+                    vertical: 14,
+                  ),
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                        ),
+                        child: Text(
+                          language["Report Listing"] ?? "Report Listing",
+                          style: FontConstants.subheadline1,
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.close,
+                          size: 24,
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                  ),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 4,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            language["Phone Number"] ?? "Phone Number",
+                            style: FontConstants.caption1,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 16,
+                        ),
+                        child: TextFormField(
+                          controller: phone,
+                          focusNode: _phoneFocusNode,
+                          keyboardType: TextInputType.phone,
+                          textInputAction: TextInputAction.next,
+                          style: FontConstants.body1,
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            prefixText: '+959',
+                            prefixStyle: FontConstants.body2,
+                            filled: true,
+                            fillColor: ColorConstants.fillcolor,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return language["Enter Phone Number"] ??
+                                  "Enter Phone Number";
+                            }
+                            final RegExp phoneRegExp =
+                                RegExp(r"^[+]{0,1}[0-9]{7,9}$");
+
+                            if (!phoneRegExp.hasMatch(value)) {
+                              return language["Invalid Phone Number"] ??
+                                  "Invalid Phone Number";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 4,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            language["Subject"] ?? "Subject",
+                            style: FontConstants.caption1,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 16,
+                        ),
+                        child: CustomDropDown(
+                          value: reportSubjectDesc,
+                          fillColor: ColorConstants.fillcolor,
+                          onChanged: (newValue) {
+                            setState(() {
+                              reportSubjectDesc =
+                                  newValue ?? reportSubjectsDesc[0];
+                            });
+                            for (var data in reportSubjects) {
+                              if (data["description"] == reportSubjectDesc) {
+                                reportSubjectId = data["subject_id"];
+                              }
+                            }
+                          },
+                          items: reportSubjectsDesc,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 4,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            language["Message"] ?? "Message",
+                            style: FontConstants.caption1,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 16,
+                        ),
+                        child: TextFormField(
+                          controller: message,
+                          focusNode: _messageFocusNode,
+                          keyboardType: TextInputType.text,
+                          textInputAction: TextInputAction.done,
+                          style: FontConstants.body1,
+                          cursorColor: Colors.black,
+                          maxLines: 2,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: ColorConstants.fillcolor,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8,
+                      ),
+                      width: double.infinity,
+                      child: TextButton(
+                        style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Theme.of(context).primaryColor),
+                        ),
+                        child: Text(
+                          language["Submit message"] ?? "Submit message",
+                          style: FontConstants.button1,
+                        ),
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            showLoadingDialog(context);
+                            addSellerReport();
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 
   @override
@@ -1303,6 +1652,37 @@ class _ProductScreenState extends State<ProductScreen> {
                                   ],
                                 )
                               : Container(),
+                          SizedBox(
+                            height: 16,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SvgPicture.asset(
+                                "assets/icons/report.svg",
+                                width: 24,
+                                height: 24,
+                              ),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  showReportDialog();
+                                },
+                                child: Text(
+                                  language["Report Listing"] ??
+                                      "Report Listing",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     )

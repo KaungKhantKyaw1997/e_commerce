@@ -340,52 +340,71 @@ class AuthService {
           ),
           child: AlertDialog(
             backgroundColor: Colors.white,
+            titlePadding: EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
             title: Text(
-              "Version Update",
-              style: FontConstants.body1,
+              language["Version Update"] ?? "Version Update",
+              style: FontConstants.subheadline1,
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 16,
             ),
             content: Text(
               message,
               style: FontConstants.caption2,
             ),
             actions: [
-              TextButton(
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+              Padding(
+                padding: EdgeInsets.only(
+                  left: 8,
+                  right: 4,
+                ),
+                child: TextButton(
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
                     ),
                   ),
+                  child: Text(
+                    language["Cancel"] ?? "Cancel",
+                    style: FontConstants.button2,
+                  ),
+                  onPressed: () {
+                    Navigator.of(c).pop();
+                  },
                 ),
-                child: Text(
-                  language["Cancel"] ?? "Cancel",
-                  style: FontConstants.button2,
-                ),
-                onPressed: () {
-                  Navigator.of(c).pop();
-                },
               ),
-              TextButton(
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+              Padding(
+                padding: EdgeInsets.only(
+                  left: 4,
+                  right: 8,
+                ),
+                child: TextButton(
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
                     ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        Theme.of(context).primaryColor),
                   ),
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      Theme.of(context).primaryColor),
+                  child: Text(
+                    language["Ok"] ?? "Ok",
+                    style: FontConstants.button1,
+                  ),
+                  onPressed: () async {
+                    StoreRedirect.redirect(
+                      androidAppId: _packageName,
+                      iOSAppId: "6469529196",
+                    );
+                    Navigator.of(c).pop();
+                  },
                 ),
-                child: Text(
-                  language["Ok"] ?? "Ok",
-                  style: FontConstants.button1,
-                ),
-                onPressed: () async {
-                  StoreRedirect.redirect(
-                    androidAppId: _packageName,
-                    iOSAppId: "6469529196",
-                  );
-                  Navigator.of(c).pop();
-                },
               ),
             ],
           ),

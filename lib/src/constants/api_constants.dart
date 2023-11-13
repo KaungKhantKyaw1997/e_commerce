@@ -53,4 +53,6 @@ class ApiConstants {
   static const String caseDepthsUrl = '$baseUrl/api/case-depths';
   static const String waterResistancesUrl = '$baseUrl/api/water-resistances';
   static const String movementCountriesUrl = '$baseUrl/api/movement-countries';
+  static const String reportSubjectsUrl = '$baseUrl/api/report-subjects';
+  static const String sellerReportsUrl = '$baseUrl/api/seller-reports';
 }
