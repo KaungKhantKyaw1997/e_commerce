@@ -64,7 +64,6 @@ class _ProductScreenState extends State<ProductScreen> {
     getData();
     getCart();
     getBuyerProtections();
-    getReportSubjects();
     _imageController.addListener(() {
       setState(() {
         _currentPage = _imageController.page ?? 0;
@@ -106,6 +105,9 @@ class _ProductScreenState extends State<ProductScreen> {
     setState(() {
       role = prefs.getString('role') ?? "";
     });
+    if (role == 'user') {
+      getReportSubjects();
+    }
   }
 
   getCart() async {
@@ -1654,37 +1656,41 @@ class _ProductScreenState extends State<ProductScreen> {
                                   ],
                                 )
                               : Container(),
-                          SizedBox(
-                            height: 16,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SvgPicture.asset(
-                                "assets/icons/report.svg",
-                                width: 24,
-                                height: 24,
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  showReportDialog();
-                                },
-                                child: Text(
-                                  language["Report Listing"] ??
-                                      "Report Listing",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                          reportSubjects.isNotEmpty
+                              ? SizedBox(
+                                  height: 16,
+                                )
+                              : Container(),
+                          reportSubjects.isNotEmpty
+                              ? Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/icons/report.svg",
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        showReportDialog();
+                                      },
+                                      child: Text(
+                                        language["Report Listing"] ??
+                                            "Report Listing",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black,
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Container(),
                         ],
                       ),
                     )
