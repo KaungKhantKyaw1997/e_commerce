@@ -136,9 +136,8 @@ class _SellerReportScreenState extends State<SellerReportScreen> {
                 ),
                 child: TextFormField(
                   controller: sellerName,
-                  style: FontConstants.body1,
-                  cursorColor: Colors.black,
                   readOnly: true,
+                  style: FontConstants.body2,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: ColorConstants.fillcolor,
@@ -175,9 +174,8 @@ class _SellerReportScreenState extends State<SellerReportScreen> {
                 ),
                 child: TextFormField(
                   controller: phone,
-                  style: FontConstants.body1,
-                  cursorColor: Colors.black,
                   readOnly: true,
+                  style: FontConstants.body2,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: ColorConstants.fillcolor,
@@ -214,9 +212,8 @@ class _SellerReportScreenState extends State<SellerReportScreen> {
                 ),
                 child: TextFormField(
                   controller: userName,
-                  style: FontConstants.body1,
-                  cursorColor: Colors.black,
                   readOnly: true,
+                  style: FontConstants.body2,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: ColorConstants.fillcolor,
@@ -253,9 +250,8 @@ class _SellerReportScreenState extends State<SellerReportScreen> {
                 ),
                 child: TextFormField(
                   controller: subject,
-                  style: FontConstants.body1,
-                  cursorColor: Colors.black,
                   readOnly: true,
+                  style: FontConstants.body2,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: ColorConstants.fillcolor,
@@ -292,9 +288,8 @@ class _SellerReportScreenState extends State<SellerReportScreen> {
                 ),
                 child: TextFormField(
                   controller: message,
-                  style: FontConstants.body1,
-                  cursorColor: Colors.black,
                   readOnly: true,
+                  style: FontConstants.body2,
                   maxLines: 2,
                   decoration: InputDecoration(
                     filled: true,

@@ -1302,10 +1302,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                     child: TextFormField(
                       controller: shopName,
                       readOnly: true,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.next,
                       style: FontConstants.body2,
-                      cursorColor: Colors.black,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: ColorConstants.fillcolor,
@@ -1318,10 +1315,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                           borderSide: BorderSide.none,
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide.none,
                         ),
@@ -1351,10 +1344,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                     child: TextFormField(
                       controller: categoryName,
                       readOnly: true,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.next,
                       style: FontConstants.body2,
-                      cursorColor: Colors.black,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: ColorConstants.fillcolor,
@@ -1367,10 +1357,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                           borderSide: BorderSide.none,
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide.none,
                         ),
@@ -1415,10 +1401,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                     child: TextFormField(
                       controller: brandName,
                       readOnly: true,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.next,
                       style: FontConstants.body2,
-                      cursorColor: Colors.black,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: ColorConstants.fillcolor,
@@ -1431,10 +1414,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                           borderSide: BorderSide.none,
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide.none,
                         ),
