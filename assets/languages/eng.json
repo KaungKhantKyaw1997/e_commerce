@@ -164,5 +164,11 @@
   "Preorder": "Preorder",
   "Waiting Time": "Waiting Time",
   "Enter Waiting Time": "Enter Waiting Time",
-  "Approve": "Approve"
+  "Approve": "Approve",
+  "Broadcast Notification": "Broadcast Notification",
+  "Title": "Title",
+  "Enter Title": "Enter Title",
+  "Message": "Message",
+  "Enter Message": "Enter Message",
+  "Send": "Send"
 }

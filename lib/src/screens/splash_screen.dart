@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:e_commerce/routes.dart';
+import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/settings_service.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final crashlytic = new CrashlyticsService();
+  final authService = AuthService();
   final settingsService = SettingsService();
 
   @override
@@ -60,6 +62,14 @@ class _SplashScreenState extends State<SplashScreen> {
       var deviceType = Platform.isIOS ? "ios" : "android";
       final response = await settingsService.getSettingsData();
       if (response!["code"] == 200) {
+        if (deviceType == 'ios') {
+          authService.showVersionDialog(response["data"]["ios_version"],
+              response["data"]["version_update_message"], context);
+        } else {
+          authService.showVersionDialog(response["data"]["android_version"],
+              response["data"]["version_update_message"], context);
+        }
+
         if (response["data"]["platform_required_signin"] == deviceType) {
           Navigator.pushNamedAndRemoveUntil(
             context,

@@ -164,5 +164,11 @@
   "Preorder": "ကြိုမှာခြင်း",
   "Waiting Time": "စောင့်ဆိုင်းချိန်",
   "Enter Waiting Time": "စောင့်ဆိုင်းချိန်ထည့်ပါ",
-  "Approve": "Approve"
+  "Approve": "Approve",
+  "Broadcast Notification": "အသံလွှင့်အသိပေးချက်",
+  "Title": "ခေါင်းစဉ်",
+  "Enter Title": "ခေါင်းစဉ်ထည့်ပါ",
+  "Message": "မက်ဆေ့",
+  "Enter Message": "မက်ဆေ့ထည့်ပါ",
+  "Send": "ပို့ပါ"
 }

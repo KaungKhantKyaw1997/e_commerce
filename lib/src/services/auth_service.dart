@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
+import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
@@ -21,9 +23,11 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:store_redirect/store_redirect.dart';
 
 class AuthService {
   final crashlytic = new CrashlyticsService();
@@ -50,7 +54,7 @@ class AuthService {
   addFCMData(Map<String, dynamic> body) async {
     var token = await storage.read(key: "token") ?? '';
     dio.post(
-      ApiConstants.fcmUrl,
+      '${ApiConstants.fcmUrl}/token',
       options: Options(
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
@@ -287,6 +291,14 @@ class AuthService {
       final settingsService = SettingsService();
       final response = await settingsService.getSettingsData();
       if (response!["code"] == 200) {
+        if (deviceType == 'ios') {
+          showVersionDialog(response["data"]["ios_version"],
+              response["data"]["version_update_message"], context);
+        } else {
+          showVersionDialog(response["data"]["android_version"],
+              response["data"]["version_update_message"], context);
+        }
+
         if (response["data"]["platform_required_signin"] == deviceType) {
           Navigator.pushNamedAndRemoveUntil(
             context,
@@ -306,6 +318,79 @@ class AuthService {
       }
     } catch (e, s) {
       crashlytic.myGlobalErrorHandler(e, s);
+    }
+  }
+
+  showVersionDialog(version, message, context) async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String _version = packageInfo.version;
+    String _packageName = packageInfo.packageName;
+
+    int _v = int.parse(_version.replaceAll('.', ''));
+    int v = int.parse(version.replaceAll('.', ''));
+
+    if (_v < v) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (c) => BackdropFilter(
+          filter: ImageFilter.blur(
+            sigmaX: 5,
+            sigmaY: 5,
+          ),
+          child: AlertDialog(
+            backgroundColor: Colors.white,
+            title: Text(
+              "Version Update",
+              style: FontConstants.body1,
+            ),
+            content: Text(
+              message,
+              style: FontConstants.caption2,
+            ),
+            actions: [
+              TextButton(
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                ),
+                child: Text(
+                  language["Cancel"] ?? "Cancel",
+                  style: FontConstants.button2,
+                ),
+                onPressed: () {
+                  Navigator.of(c).pop();
+                },
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      Theme.of(context).primaryColor),
+                ),
+                child: Text(
+                  language["Ok"] ?? "Ok",
+                  style: FontConstants.button1,
+                ),
+                onPressed: () async {
+                  StoreRedirect.redirect(
+                    androidAppId: _packageName,
+                    iOSAppId: "6469529196",
+                  );
+                  Navigator.of(c).pop();
+                },
+              ),
+            ],
+          ),
+        ),
+      );
     }
   }
 

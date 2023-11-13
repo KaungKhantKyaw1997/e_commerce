@@ -6,7 +6,7 @@ class ApiConstants {
   static const String forgotPasswordUrl = '$baseUrl/api/auth/forgot-password';
   static const String changepasswordUrl = '$baseUrl/api/auth/change-password';
   static const String verifyTokenUrl = '$baseUrl/api/auth/verify-token';
-  static const String fcmUrl = '$baseUrl/api/fcm/token';
+  static const String fcmUrl = '$baseUrl/api/fcm';
   static const String imageUploadUrl = '$baseUrl/api/image/upload';
   static const String shopsUrl = '$baseUrl/api/shops';
   static const String categoriesUrl = '$baseUrl/api/categories';

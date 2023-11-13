@@ -93,6 +93,9 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+
+    FirebaseMessaging.instance.subscribeToTopic('all');
+
     SocketManager socketManager = SocketManager(context);
     WidgetsBinding.instance?.addObserver(socketManager);
     LocalNotificationService.setup(context);

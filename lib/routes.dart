@@ -3,6 +3,7 @@ import 'package:e_commerce/src/screens/bank_accounts_setup_screen.dart';
 import 'package:e_commerce/src/screens/brand_setup_screen.dart';
 import 'package:e_commerce/src/screens/brands_screen.dart';
 import 'package:e_commerce/src/screens/brands_setup_screen.dart';
+import 'package:e_commerce/src/screens/broadcast_notification_setup_screen.dart';
 import 'package:e_commerce/src/screens/buyer_protection_setup_screen.dart';
 import 'package:e_commerce/src/screens/buyer_protections_setup_screen.dart';
 import 'package:e_commerce/src/screens/cart_screen.dart';
@@ -97,6 +98,8 @@ class Routes {
   static const String chat = "/chat";
   static const String chat_history = "/chat_history";
   static const String contact_us = "/contact_us";
+  static const String broadcast_notification_setup =
+      '/broadcast_notification_setup';
 
   static final Map<String, WidgetBuilder> routes = {
     splash: (BuildContext context) => const SplashScreen(),
@@ -153,5 +156,7 @@ class Routes {
     chat: (BuildContext context) => const ChatScreen(),
     chat_history: (BuildContext context) => const ChatHistoryScreen(),
     contact_us: (BuildContext context) => const ContactUsScreen(),
+    broadcast_notification_setup: (BuildContext context) =>
+        const BroadcastNotificationSetupScreen(),
   };
 }
