@@ -34,6 +34,8 @@ import 'package:e_commerce/src/screens/profile_screen.dart';
 import 'package:e_commerce/src/screens/register_screen.dart';
 import 'package:e_commerce/src/screens/reviews_screen.dart';
 import 'package:e_commerce/src/screens/search_screen.dart';
+import 'package:e_commerce/src/screens/seller_report.dart';
+import 'package:e_commerce/src/screens/sellers_report.dart';
 import 'package:e_commerce/src/screens/setting_screen.dart';
 import 'package:e_commerce/src/screens/shop_screen.dart';
 import 'package:e_commerce/src/screens/shop_setup_screen.dart';
@@ -100,6 +102,8 @@ class Routes {
   static const String contact_us = "/contact_us";
   static const String broadcast_notification_setup =
       '/broadcast_notification_setup';
+  static const String seller_reports = '/seller_reports';
+  static const String seller_report = '/seller_report';
 
   static final Map<String, WidgetBuilder> routes = {
     splash: (BuildContext context) => const SplashScreen(),
@@ -158,5 +162,7 @@ class Routes {
     contact_us: (BuildContext context) => const ContactUsScreen(),
     broadcast_notification_setup: (BuildContext context) =>
         const BroadcastNotificationSetupScreen(),
+    seller_reports: (BuildContext context) => const SellerReportsScreen(),
+    seller_report: (BuildContext context) => const SellerReportScreen(),
   };
 }

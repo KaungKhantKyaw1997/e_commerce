@@ -186,6 +186,7 @@ class _BroadcastNotificationSetupScreenState
                   textInputAction: TextInputAction.done,
                   style: FontConstants.body1,
                   cursorColor: Colors.black,
+                  maxLines: 2,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: ColorConstants.fillcolor,

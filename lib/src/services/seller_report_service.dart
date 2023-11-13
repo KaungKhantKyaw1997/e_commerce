@@ -43,6 +43,39 @@ class SellerReportService {
     return response.data;
   }
 
+  Future<Map<String, dynamic>?> getSellerReportsData(
+      {int page = 1, int perPage = 10, String search = ''}) async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      '${ApiConstants.sellerReportsUrl}?page=$page&per_page=$perPage&search=$search',
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>?> getSellerReportData(int id) async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      '${ApiConstants.sellerReportsUrl}/$id',
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
   void cancelRequest() {
     _cancelToken.cancel('Request canceled');
   }
