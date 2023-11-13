@@ -250,22 +250,6 @@ class _SellerReportsScreenState extends State<SellerReportsScreen> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            Routes.seller_report,
-            arguments: {
-              "id": 0,
-            },
-            (route) => true,
-          );
-        },
-        backgroundColor: Theme.of(context).primaryColor,
-        child: Icon(
-          Icons.add,
-        ),
-      ),
     );
   }
 }

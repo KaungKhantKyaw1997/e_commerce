@@ -35,7 +35,7 @@ import 'package:e_commerce/src/screens/register_screen.dart';
 import 'package:e_commerce/src/screens/reviews_screen.dart';
 import 'package:e_commerce/src/screens/search_screen.dart';
 import 'package:e_commerce/src/screens/seller_report.dart';
-import 'package:e_commerce/src/screens/sellers_report.dart';
+import 'package:e_commerce/src/screens/seller_reports.dart';
 import 'package:e_commerce/src/screens/setting_screen.dart';
 import 'package:e_commerce/src/screens/shop_screen.dart';
 import 'package:e_commerce/src/screens/shop_setup_screen.dart';
