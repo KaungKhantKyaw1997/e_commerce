@@ -1708,34 +1708,44 @@ class _ProductScreenState extends State<ProductScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.all(
-                16,
+              padding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 16,
+                bottom: 8,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    product["symbol"].toString(),
+                    style: FontConstants.subheadline1,
+                  ),
+                  SizedBox(
+                    width: 4,
+                  ),
+                  product["price"] != null
+                      ? FormattedAmount(
+                          amount: double.parse(product["price"].toString()),
+                          mainTextStyle: FontConstants.subheadline1,
+                          decimalTextStyle: FontConstants.caption3,
+                        )
+                      : Text(""),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: 16,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      Text(
-                        product["symbol"].toString(),
-                        style: FontConstants.subheadline1,
-                      ),
-                      SizedBox(
-                        width: 4,
-                      ),
-                      product["price"] != null
-                          ? FormattedAmount(
-                              amount: double.parse(product["price"].toString()),
-                              mainTextStyle: FontConstants.subheadline1,
-                              decimalTextStyle: FontConstants.caption3,
-                            )
-                          : Text(""),
-                    ],
-                  ),
                   Row(
                     children: [
                       Container(
@@ -1825,6 +1835,51 @@ class _ProductScreenState extends State<ProductScreen> {
                         ),
                       ),
                     ],
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(
+                      left: 16,
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: product.isNotEmpty &&
+                              int.parse(product["stock_quantity"].toString()) <
+                                  1
+                          ? ColorConstants.redcolor
+                          : ColorConstants.greencolor,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Center(
+                          child: Text(
+                            product.isNotEmpty &&
+                                    int.parse(product["stock_quantity"]
+                                            .toString()) <
+                                        1
+                                ? language["Out of Stock"] ?? "Out of Stock"
+                                : language["In Stock"] ?? "In Stock",
+                            textAlign: TextAlign.center,
+                            style: FontConstants.body3,
+                          ),
+                        ),
+                        if (product.isNotEmpty &&
+                            int.parse(product["stock_quantity"].toString()) > 0)
+                          Center(
+                            child: Text(
+                              ": ${product["stock_quantity"]} left",
+                              textAlign: TextAlign.center,
+                              style: FontConstants.caption4,
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ],
               ),
