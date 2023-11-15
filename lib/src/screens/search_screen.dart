@@ -25,7 +25,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen>
     with SingleTickerProviderStateMixin {
   final crashlytic = new CrashlyticsService();
-  final productsService = ProductsService();
+  final productService = ProductService();
   final ScrollController _scrollController = ScrollController();
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -78,7 +78,7 @@ class _SearchScreenState extends State<SearchScreen>
         "view": "user"
       };
 
-      final response = await productsService.getProductsData(body);
+      final response = await productService.getProductsData(body);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
 

@@ -16,7 +16,7 @@ import 'package:e_commerce/src/providers/role_provider.dart';
 import 'package:e_commerce/src/providers/socket_provider.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
-import 'package:e_commerce/src/services/settings_service.dart';
+import 'package:e_commerce/src/services/setting_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:e_commerce/src/constants/api_constants.dart';
@@ -288,8 +288,8 @@ class AuthService {
   getSettings(context) async {
     try {
       var deviceType = Platform.isIOS ? "ios" : "android";
-      final settingsService = SettingsService();
-      final response = await settingsService.getSettingsData();
+      final settingService = SettingService();
+      final response = await settingService.getSettingsData();
       if (response!["code"] == 200) {
         if (deviceType == 'ios') {
           showVersionDialog(response["data"]["ios_version"],

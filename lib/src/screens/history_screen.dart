@@ -18,7 +18,7 @@ import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/screens/bottombar_screen.dart';
-import 'package:e_commerce/src/services/orders_service.dart';
+import 'package:e_commerce/src/services/order_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';

@@ -22,7 +22,7 @@ class ShopScreen extends StatefulWidget {
 class _ShopScreenState extends State<ShopScreen> {
   final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
-  final productsService = ProductsService();
+  final productService = ProductService();
   final ratingService = RatingService();
   List products = [];
   List reviews = [];
@@ -117,7 +117,7 @@ class _ShopScreenState extends State<ShopScreen> {
         "shop_id": shop["shop_id"],
         "view": "user"
       };
-      final response = await productsService.getProductsData(body);
+      final response = await productService.getProductsData(body);
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           setState(() {

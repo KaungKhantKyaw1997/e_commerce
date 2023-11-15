@@ -38,10 +38,10 @@ class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   final crashlytic = new CrashlyticsService();
   final authService = AuthService();
-  final shopsService = ShopsService();
+  final shopService = ShopService();
   final brandService = BrandService();
   final categoryService = CategoryService();
-  final productsService = ProductsService();
+  final productService = ProductService();
   final notificationService = NotificationService();
   final chatService = ChatService();
   final storage = FlutterSecureStorage();
@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen>
   void dispose() {
     _tabController.dispose();
     _scrollController.dispose();
-    // shopsService.cancelRequest();
+    // shopService.cancelRequest();
     // brandService.cancelRequest();
     // categoryService.cancelRequest();
     // notificationService.cancelRequest();
@@ -170,8 +170,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   getShops() async {
     try {
-      final response =
-          await shopsService.getShopsData(page: page, view: "user");
+      final response = await shopService.getShopsData(page: page, view: "user");
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
 
@@ -228,7 +227,7 @@ class _HomeScreenState extends State<HomeScreen>
         "per_page": 10,
         "view": "user"
       };
-      final response = await productsService.getProductsData(body);
+      final response = await productService.getProductsData(body);
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           setState(() {

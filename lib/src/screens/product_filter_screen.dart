@@ -7,7 +7,7 @@ import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/brand_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
-import 'package:e_commerce/src/services/models_service.dart';
+import 'package:e_commerce/src/services/model_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:e_commerce/src/widgets/multi_select_chip.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +21,7 @@ class ProductsFilterScreen extends StatefulWidget {
 
 class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
   final crashlytic = new CrashlyticsService();
-  final modelsService = ModelsService();
+  final modelService = ModelService();
   final brandService = BrandService();
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
@@ -120,7 +120,7 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
 
   getModels() async {
     try {
-      final response = await modelsService.getModelsData();
+      final response = await modelService.getModelsData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           setState(() {

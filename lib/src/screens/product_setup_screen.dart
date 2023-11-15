@@ -31,7 +31,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
-  final productsService = ProductsService();
+  final productService = ProductService();
   final currencyService = CurrencyService();
   final genderService = GenderService();
 
@@ -210,7 +210,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getStrapMaterials() async {
     try {
-      final response = await productsService.getStrapMaterialsData();
+      final response = await productService.getStrapMaterialsData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           List<dynamic> dynamicList = response["data"];
@@ -251,7 +251,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getCaseMaterials() async {
     try {
-      final response = await productsService.getCaseMaterialsData();
+      final response = await productService.getCaseMaterialsData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           List<dynamic> dynamicList = response["data"];
@@ -292,7 +292,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getCaseDiameters() async {
     try {
-      final response = await productsService.getCaseDiametersData();
+      final response = await productService.getCaseDiametersData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           List<dynamic> dynamicList = response["data"];
@@ -333,7 +333,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getCaseDepths() async {
     try {
-      final response = await productsService.getCaseDepthsData();
+      final response = await productService.getCaseDepthsData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           List<dynamic> dynamicList = response["data"];
@@ -374,7 +374,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getCaseWidths() async {
     try {
-      final response = await productsService.getCaseWidthsData();
+      final response = await productService.getCaseWidthsData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           List<dynamic> dynamicList = response["data"];
@@ -415,7 +415,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getDialGlassTypes() async {
     try {
-      final response = await productsService.getDialGlassTypesData();
+      final response = await productService.getDialGlassTypesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           dialglassTypes = response["data"];
@@ -462,7 +462,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getConditions() async {
     try {
-      final response = await productsService.getConditionsData();
+      final response = await productService.getConditionsData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           conditions = response["data"];
@@ -508,7 +508,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getMovementTypes() async {
     try {
-      final response = await productsService.getMovementTypesData();
+      final response = await productService.getMovementTypesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           List<dynamic> dynamicList = response["data"];
@@ -549,7 +549,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getMmovementCountries() async {
     try {
-      final response = await productsService.getMovementCountriesData();
+      final response = await productService.getMovementCountriesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           List<dynamic> dynamicList = response["data"];
@@ -638,7 +638,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getStockQuantities() async {
     try {
-      final response = await productsService.getStockQuantitiesData();
+      final response = await productService.getStockQuantitiesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           List<dynamic> dynamicList = response["data"];
@@ -679,7 +679,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getWaterResistances() async {
     try {
-      final response = await productsService.getWaterResistancesData();
+      final response = await productService.getWaterResistancesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           List<dynamic> dynamicList = response["data"];
@@ -721,7 +721,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getWarrantyTypes() async {
     try {
-      final response = await productsService.getWarrantyTypesData();
+      final response = await productService.getWarrantyTypesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           warrantyTypes = response["data"];
@@ -768,7 +768,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getOtherAccessoriesTypes() async {
     try {
-      final response = await productsService.getOtherAccessoriesTypesData();
+      final response = await productService.getOtherAccessoriesTypesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           otherAccessoriesTypes = response["data"];
@@ -816,7 +816,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getProduct() async {
     try {
-      final response = await productsService.getProductData(id);
+      final response = await productService.getProductData(id);
       if (response!["code"] == 200) {
         setState(() {
           productImages = response["data"]["product_images"] ?? [];
@@ -961,7 +961,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "case_width": caseWidth.text,
       };
 
-      final response = await productsService.addProductData(body);
+      final response = await productService.addProductData(body);
       Navigator.pop(context);
       if (response!["code"] == 201) {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -1048,7 +1048,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "case_width": caseWidth.text,
       };
 
-      final response = await productsService.updateProductData(body, id);
+      final response = await productService.updateProductData(body, id);
       Navigator.pop(context);
       if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -1097,7 +1097,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   deleteProduct() async {
     try {
-      final response = await productsService.deleteProductData(id);
+      final response = await productService.deleteProductData(id);
       Navigator.pop(context);
       if (response!["code"] == 204) {
         ToastUtil.showToast(response["code"], response["message"]);

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
-import 'package:e_commerce/src/services/settings_service.dart';
+import 'package:e_commerce/src/services/setting_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,7 +20,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   final crashlytic = new CrashlyticsService();
   final authService = AuthService();
-  final settingsService = SettingsService();
+  final settingService = SettingService();
 
   @override
   void initState() {
@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
   getSettings() async {
     try {
       var deviceType = Platform.isIOS ? "ios" : "android";
-      final response = await settingsService.getSettingsData();
+      final response = await settingService.getSettingsData();
       if (response!["code"] == 200) {
         if (deviceType == 'ios') {
           authService.showVersionDialog(response["data"]["ios_version"],

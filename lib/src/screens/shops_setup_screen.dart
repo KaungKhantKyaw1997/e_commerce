@@ -22,7 +22,7 @@ class ShopsSetupScreen extends StatefulWidget {
 
 class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
   final crashlytic = new CrashlyticsService();
-  final shopsService = ShopsService();
+  final shopService = ShopService();
   TextEditingController search = TextEditingController(text: '');
   final ScrollController _scrollController = ScrollController();
   final RefreshController _refreshController =
@@ -53,7 +53,7 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
 
   getShops(status) async {
     try {
-      final response = await shopsService.getShopsData(
+      final response = await shopService.getShopsData(
           page: page, search: search.text, status: status);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();

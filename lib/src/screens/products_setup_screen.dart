@@ -22,7 +22,7 @@ class ProductsSetupScreen extends StatefulWidget {
 
 class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
   final crashlytic = new CrashlyticsService();
-  final productsService = ProductsService();
+  final productService = ProductService();
   TextEditingController search = TextEditingController(text: '');
   final ScrollController _scrollController = ScrollController();
   final RefreshController _refreshController =
@@ -64,7 +64,7 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
         if (shopId != 0) "shop_id": shopId,
       };
 
-      final response = await productsService.getProductsData(body);
+      final response = await productService.getProductsData(body);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
 

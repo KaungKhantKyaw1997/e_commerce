@@ -24,7 +24,7 @@ class ProductsScreen extends StatefulWidget {
 class _ProductsScreenState extends State<ProductsScreen>
     with SingleTickerProviderStateMixin {
   final crashlytic = new CrashlyticsService();
-  final productsService = ProductsService();
+  final productService = ProductService();
   final ScrollController _scrollController = ScrollController();
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -104,7 +104,7 @@ class _ProductsScreenState extends State<ProductsScreen>
       if (toPrice == 0.0) body.remove("from_price");
       if (toPrice == 0.0) body.remove("to_price");
 
-      final response = await productsService.getProductsData(body);
+      final response = await productService.getProductsData(body);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
 

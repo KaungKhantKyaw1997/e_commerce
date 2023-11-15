@@ -9,7 +9,7 @@ import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/address_service.dart';
 import 'package:e_commerce/src/services/bank_account_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
-import 'package:e_commerce/src/services/insurance_rules_service.dart';
+import 'package:e_commerce/src/services/insurance_rule_service.dart';
 import 'package:e_commerce/src/services/payment_type_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:e_commerce/src/widgets/custom_dropdown.dart';
@@ -31,7 +31,7 @@ class _OrderScreenState extends State<OrderScreen>
   late TabController _tabController;
   final addressService = AddressService();
   final paymentTypeService = PaymentTypeService();
-  final insuranceRulesService = InsuranceRulesService();
+  final insuranceRuleService = InsuranceRuleService();
   final bankAccountService = BankAccountService();
   FocusNode _countryFocusNode = FocusNode();
   FocusNode _cityFocusNode = FocusNode();
@@ -194,7 +194,7 @@ class _OrderScreenState extends State<OrderScreen>
       ];
 
       final response =
-          await insuranceRulesService.getInsuranceRulesData(amount: total);
+          await insuranceRuleService.getInsuranceRulesData(amount: total);
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           insurancerules = [
