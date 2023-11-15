@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class CategoriesService {
+class CategoryService {
   final storage = FlutterSecureStorage();
 
   final Dio dio = Dio();

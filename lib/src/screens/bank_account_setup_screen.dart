@@ -8,7 +8,7 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
-import 'package:e_commerce/src/services/bank_accounts_service.dart';
+import 'package:e_commerce/src/services/bank_account_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
@@ -28,7 +28,7 @@ class _BankAccountSetupScreenState extends State<BankAccountSetupScreen> {
   final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
-  final bankAccountsService = BankAccountsService();
+  final bankAccountService = BankAccountService();
   FocusNode _accountHolderNameFocusNode = FocusNode();
   FocusNode _accountNumberFocusNode = FocusNode();
 
@@ -96,7 +96,7 @@ class _BankAccountSetupScreenState extends State<BankAccountSetupScreen> {
 
   getBankAccount() async {
     try {
-      final response = await bankAccountsService.getBankAccountData(id);
+      final response = await bankAccountService.getBankAccountData(id);
       if (response!["code"] == 200) {
         setState(() {
           accountType = response["data"]["account_type"] ?? "";
@@ -145,7 +145,7 @@ class _BankAccountSetupScreenState extends State<BankAccountSetupScreen> {
         "bank_logo": logoUrl,
       };
 
-      final response = await bankAccountsService.addBankAccountData(body);
+      final response = await bankAccountService.addBankAccountData(body);
       Navigator.pop(context);
       if (response!["code"] == 201) {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -196,8 +196,7 @@ class _BankAccountSetupScreenState extends State<BankAccountSetupScreen> {
         "bank_logo": logoUrl,
       };
 
-      final response =
-          await bankAccountsService.updateBankAccountData(body, id);
+      final response = await bankAccountService.updateBankAccountData(body, id);
       Navigator.pop(context);
       if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -241,7 +240,7 @@ class _BankAccountSetupScreenState extends State<BankAccountSetupScreen> {
 
   deleteBankAccount() async {
     try {
-      final response = await bankAccountsService.deleteBankAccountData(id);
+      final response = await bankAccountService.deleteBankAccountData(id);
       Navigator.pop(context);
       if (response!["code"] == 204) {
         ToastUtil.showToast(response["code"], response["message"]);

@@ -9,7 +9,7 @@ import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
-import 'package:e_commerce/src/services/currencies_service.dart';
+import 'package:e_commerce/src/services/currency_service.dart';
 import 'package:e_commerce/src/services/gender_service.dart';
 import 'package:e_commerce/src/services/products_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
@@ -32,7 +32,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
   final productsService = ProductsService();
-  final currenciesService = CurrenciesService();
+  final currencyService = CurrencyService();
   final genderService = GenderService();
 
   FocusNode _modelFocusNode = FocusNode();
@@ -591,7 +591,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   getCurrencies() async {
     try {
-      final response = await currenciesService.getCurrenciesData();
+      final response = await currencyService.getCurrenciesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           currencies = response["data"];

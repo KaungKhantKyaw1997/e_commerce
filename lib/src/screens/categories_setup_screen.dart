@@ -6,7 +6,7 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
-import 'package:e_commerce/src/services/categories_service.dart';
+import 'package:e_commerce/src/services/category_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +22,7 @@ class CategoriesSetupScreen extends StatefulWidget {
 
 class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
   final crashlytic = new CrashlyticsService();
-  final categoriesService = CategoriesService();
+  final categoryService = CategoryService();
   TextEditingController search = TextEditingController(text: '');
   final ScrollController _scrollController = ScrollController();
   final RefreshController _refreshController =
@@ -53,7 +53,7 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
 
   getCategories() async {
     try {
-      final response = await categoriesService.getCategoriesData(
+      final response = await categoryService.getCategoriesData(
           page: page, search: search.text);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();

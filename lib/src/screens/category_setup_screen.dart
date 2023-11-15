@@ -8,7 +8,7 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
-import 'package:e_commerce/src/services/categories_service.dart';
+import 'package:e_commerce/src/services/category_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
@@ -27,7 +27,7 @@ class _CategorySetupScreenState extends State<CategorySetupScreen> {
   final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
-  final categoriesService = CategoriesService();
+  final categoryService = CategoryService();
   FocusNode _nameFocusNode = FocusNode();
   FocusNode _descriptionFocusNode = FocusNode();
 
@@ -64,7 +64,7 @@ class _CategorySetupScreenState extends State<CategorySetupScreen> {
 
   getCategory() async {
     try {
-      final response = await categoriesService.getCategoryData(id);
+      final response = await categoryService.getCategoryData(id);
       if (response!["code"] == 200) {
         setState(() {
           name.text = response["data"]["name"] ?? "";
@@ -135,7 +135,7 @@ class _CategorySetupScreenState extends State<CategorySetupScreen> {
         "cover_image": coverImage,
       };
 
-      final response = await categoriesService.addCategoryData(body);
+      final response = await categoryService.addCategoryData(body);
       Navigator.pop(context);
       if (response!["code"] == 201) {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -185,7 +185,7 @@ class _CategorySetupScreenState extends State<CategorySetupScreen> {
         "cover_image": coverImage,
       };
 
-      final response = await categoriesService.updateCategoryData(body, id);
+      final response = await categoryService.updateCategoryData(body, id);
       Navigator.pop(context);
       if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -229,7 +229,7 @@ class _CategorySetupScreenState extends State<CategorySetupScreen> {
 
   deleteCategory() async {
     try {
-      final response = await categoriesService.deleteCategoryData(id);
+      final response = await categoryService.deleteCategoryData(id);
       Navigator.pop(context);
       if (response!["code"] == 204) {
         ToastUtil.showToast(response["code"], response["message"]);

@@ -1,20 +1,19 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class BankAccountsService {
+class BuyerProtectionService {
   final storage = FlutterSecureStorage();
 
   final Dio dio = Dio();
   CancelToken _cancelToken = CancelToken();
 
-  Future<Map<String, dynamic>?> addBankAccountData(
+  Future<Map<String, dynamic>?> addBuyerProtectionData(
       Map<String, dynamic> body) async {
     var token = await storage.read(key: "token") ?? '';
     final response = await dio.post(
-      ApiConstants.bankAccountsUrl,
+      ApiConstants.buyerProtectionsUrl,
       options: Options(
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
@@ -27,11 +26,11 @@ class BankAccountsService {
     return response.data;
   }
 
-  Future<Map<String, dynamic>?> updateBankAccountData(
+  Future<Map<String, dynamic>?> updateBuyerProtectionData(
       Map<String, dynamic> body, int id) async {
     var token = await storage.read(key: "token") ?? '';
     final response = await dio.put(
-      '${ApiConstants.bankAccountsUrl}/$id',
+      '${ApiConstants.buyerProtectionsUrl}/$id',
       options: Options(
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
@@ -44,10 +43,10 @@ class BankAccountsService {
     return response.data;
   }
 
-  Future<Map<String, dynamic>?> deleteBankAccountData(int id) async {
+  Future<Map<String, dynamic>?> deleteBuyerProtectionData(int id) async {
     var token = await storage.read(key: "token") ?? '';
     final response = await dio.delete(
-      '${ApiConstants.bankAccountsUrl}/$id',
+      '${ApiConstants.buyerProtectionsUrl}/$id',
       options: Options(
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
@@ -59,10 +58,11 @@ class BankAccountsService {
     return response.data;
   }
 
-  Future<Map<String, dynamic>?> getBankAccountData(int id) async {
+  Future<Map<String, dynamic>?> getBuyerProtectionsData(
+      {int page = 1, int perPage = 10, String search = ''}) async {
     var token = await storage.read(key: "token") ?? '';
     final response = await dio.get(
-      '${ApiConstants.bankAccountsUrl}/$id',
+      '${ApiConstants.buyerProtectionsUrl}?page=$page&per_page=$perPage&search=$search',
       options: Options(
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
@@ -75,17 +75,10 @@ class BankAccountsService {
     return response.data;
   }
 
-  Future<Map<String, dynamic>?> getBankAccountsData(
-      {int page = 1,
-      int perPage = 10,
-      String search = '',
-      String accountType = ''}) async {
+  Future<Map<String, dynamic>?> getBuyerProtectionData(int id) async {
     var token = await storage.read(key: "token") ?? '';
-    var url =
-        '${ApiConstants.bankAccountsUrl}?page=$page&per_page=$perPage&search=$search';
-    url = accountType.isNotEmpty ? '${url}&account_type=$accountType' : url;
     final response = await dio.get(
-      url,
+      '${ApiConstants.buyerProtectionsUrl}/$id',
       options: Options(
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',

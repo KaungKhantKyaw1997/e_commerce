@@ -4,7 +4,7 @@ import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
-import 'package:e_commerce/src/services/buyer_protections_service.dart';
+import 'package:e_commerce/src/services/buyer_protection_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +23,7 @@ class BuyerProtectionsSetupScreenState
     extends State<BuyerProtectionsSetupScreen> {
   final crashlytic = new CrashlyticsService();
   TextEditingController search = TextEditingController(text: '');
-  final buyerProtectionsService = BuyerProtectionsService();
+  final buyerProtectionService = BuyerProtectionService();
   final ScrollController _scrollController = ScrollController();
   String from = "";
   int page = 1;
@@ -53,7 +53,7 @@ class BuyerProtectionsSetupScreenState
 
   getBuyerProtectionsData() async {
     try {
-      final response = await buyerProtectionsService.getBuyerProtectionsData(
+      final response = await buyerProtectionService.getBuyerProtectionsData(
           page: page, search: search.text);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();

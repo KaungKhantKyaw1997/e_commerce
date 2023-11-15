@@ -5,7 +5,7 @@ import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
-import 'package:e_commerce/src/services/buyer_protections_service.dart';
+import 'package:e_commerce/src/services/buyer_protection_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
@@ -24,7 +24,7 @@ class BuyerProtectionSetupScreenState
   final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
-  final buyerProtectionsService = BuyerProtectionsService();
+  final buyerProtectionService = BuyerProtectionService();
   FocusNode _descriptionFocusNode = FocusNode();
   TextEditingController description = TextEditingController(text: '');
 
@@ -54,7 +54,7 @@ class BuyerProtectionSetupScreenState
 
   getBuyerProtectionData() async {
     try {
-      final response = await buyerProtectionsService.getBuyerProtectionData(id);
+      final response = await buyerProtectionService.getBuyerProtectionData(id);
       if (response!["code"] == 200) {
         setState(() {
           description.text = response["data"]["description"] ?? "";
@@ -96,7 +96,7 @@ class BuyerProtectionSetupScreenState
         "description": description.text,
       };
       final response =
-          await buyerProtectionsService.addBuyerProtectionData(body);
+          await buyerProtectionService.addBuyerProtectionData(body);
       Navigator.pop(context);
       if (response!["code"] == 201) {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -144,7 +144,7 @@ class BuyerProtectionSetupScreenState
         "description": description.text,
       };
       final response =
-          await buyerProtectionsService.updateBuyerProtectionData(body, id);
+          await buyerProtectionService.updateBuyerProtectionData(body, id);
       Navigator.pop(context);
       if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -189,7 +189,7 @@ class BuyerProtectionSetupScreenState
   deleteBuyerProtection() async {
     try {
       final response =
-          await buyerProtectionsService.deleteBuyerProtectionData(id);
+          await buyerProtectionService.deleteBuyerProtectionData(id);
       Navigator.pop(context);
       if (response!["code"] == 204) {
         ToastUtil.showToast(response["code"], response["message"]);

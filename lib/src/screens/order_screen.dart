@@ -7,7 +7,7 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/address_service.dart';
-import 'package:e_commerce/src/services/bank_accounts_service.dart';
+import 'package:e_commerce/src/services/bank_account_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/insurance_rules_service.dart';
 import 'package:e_commerce/src/services/payment_type_service.dart';
@@ -32,7 +32,7 @@ class _OrderScreenState extends State<OrderScreen>
   final addressService = AddressService();
   final paymentTypeService = PaymentTypeService();
   final insuranceRulesService = InsuranceRulesService();
-  final bankAccountsService = BankAccountsService();
+  final bankAccountService = BankAccountService();
   FocusNode _countryFocusNode = FocusNode();
   FocusNode _cityFocusNode = FocusNode();
   FocusNode _stateFocusNode = FocusNode();
@@ -61,13 +61,10 @@ class _OrderScreenState extends State<OrderScreen>
   List<String> insurancenames = ["No Insurance"];
   String insurancetype = "No Insurance";
   double commissionPercentage = 0.0;
-  List<String> paymenttypes = [
-    'Cash on Delivery',
-    'Preorder',
-  ];
+  List<String> paymenttypes = [];
   final ImagePicker _picker = ImagePicker();
   XFile? pickedFile;
-  String paymenttype = 'Cash on Delivery';
+  String paymenttype = '';
   int ruleId = 0;
   List<Map<String, dynamic>> carts = [];
   double subtotal = 0.0;
@@ -147,6 +144,8 @@ class _OrderScreenState extends State<OrderScreen>
       final response = await paymentTypeService.getPaymentTypesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
+          paymenttypes = (response["data"] as List).cast<String>();
+          paymenttype = paymenttypes[0];
           setState(() {});
         }
       } else {
@@ -246,7 +245,7 @@ class _OrderScreenState extends State<OrderScreen>
       setState(() {
         bankaccounts = [];
       });
-      final response = await bankAccountsService.getBankAccountsData(
+      final response = await bankAccountService.getBankAccountsData(
           accountType: accountType);
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
@@ -735,16 +734,16 @@ class _OrderScreenState extends State<OrderScreen>
                       onChanged: (newValue) {
                         setState(() {
                           pickedFile = null;
-                          paymenttype = newValue ?? "Cash on Delivery";
+                          paymenttype = newValue ?? paymenttypes[0];
                         });
-                        if (paymenttype == 'Preorder') {
+                        if (paymenttype != 'Cash on Delivery') {
                           getBankAccounts('mbanking');
                         }
                       },
                       items: paymenttypes,
                     ),
                   ),
-                  paymenttype == 'Preorder'
+                  paymenttype != 'Cash on Delivery'
                       ? TabBar(
                           controller: _tabController,
                           indicator: BoxDecoration(
@@ -807,7 +806,7 @@ class _OrderScreenState extends State<OrderScreen>
                           ),
                         )
                       : Container(),
-                  if (paymenttype == 'Preorder')
+                  if (paymenttype != 'Cash on Delivery')
                     ...bankaccounts.map((item) {
                       return Card(
                         elevation: 0,
@@ -850,7 +849,7 @@ class _OrderScreenState extends State<OrderScreen>
                         ),
                       );
                     }).toList(),
-                  paymenttype == 'Preorder'
+                  paymenttype != 'Cash on Delivery'
                       ? GestureDetector(
                           onTap: () async {
                             try {
@@ -979,7 +978,7 @@ class _OrderScreenState extends State<OrderScreen>
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                if (paymenttype == 'Preorder' && pickedFile == null) {
+                if (paymenttype != 'Cash on Delivery' && pickedFile == null) {
                   ToastUtil.showToast(
                       0, language["Choose Image"] ?? "Choose Image");
                   return;

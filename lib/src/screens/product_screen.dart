@@ -12,7 +12,7 @@ import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
-import 'package:e_commerce/src/services/buyer_protections_service.dart';
+import 'package:e_commerce/src/services/buyer_protection_service.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/seller_report_service.dart';
@@ -36,7 +36,7 @@ class ProductScreen extends StatefulWidget {
 class _ProductScreenState extends State<ProductScreen> {
   final crashlytic = new CrashlyticsService();
   ScrollController _scrollController = ScrollController();
-  final buyerProtectionsService = BuyerProtectionsService();
+  final buyerProtectionService = BuyerProtectionService();
   final chatService = ChatService();
   final userService = UserService();
   final sellerReportService = SellerReportService();
@@ -125,7 +125,7 @@ class _ProductScreenState extends State<ProductScreen> {
 
   getBuyerProtections() async {
     try {
-      final response = await buyerProtectionsService.getBuyerProtectionsData();
+      final response = await buyerProtectionService.getBuyerProtectionsData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           buyerProtections = response["data"];
@@ -1687,32 +1687,115 @@ class _ProductScreenState extends State<ProductScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (product.isNotEmpty && product["discount_percent"] > 0.0)
+              Padding(
+                padding: EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  top: 16,
+                  bottom: 4,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Text(
+                          product["symbol"].toString(),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                        product["price"] != null
+                            ? FormattedAmount(
+                                amount:
+                                    double.parse(product["price"].toString()),
+                                mainTextStyle: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                                decimalTextStyle: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                              )
+                            : Text(""),
+                      ],
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(
+                        left: 16,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: ColorConstants.orangecolor,
+                      ),
+                      child: Center(
+                        child: Text(
+                          language["Price dropped!"] ?? "Price dropped!",
+                          textAlign: TextAlign.center,
+                          style: FontConstants.body3,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             Padding(
               padding: EdgeInsets.only(
                 left: 16,
                 right: 16,
-                top: 16,
                 bottom: 8,
+                top: product.isNotEmpty && product["discount_percent"] > 0.0
+                    ? 0
+                    : 16,
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    product["symbol"].toString(),
-                    style: FontConstants.subheadline1,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(
+                        product["symbol"].toString(),
+                        style: FontConstants.subheadline1,
+                      ),
+                      product["discounted_price"] != null
+                          ? FormattedAmount(
+                              amount: double.parse(
+                                  product["discounted_price"].toString()),
+                              mainTextStyle: FontConstants.subheadline1,
+                              decimalTextStyle: FontConstants.subheadline1,
+                            )
+                          : Text(""),
+                    ],
                   ),
-                  SizedBox(
-                    width: 4,
-                  ),
-                  product["price"] != null
-                      ? FormattedAmount(
-                          amount: double.parse(product["price"].toString()),
-                          mainTextStyle: FontConstants.subheadline1,
-                          decimalTextStyle: FontConstants.caption3,
-                        )
-                      : Text(""),
+                  if (product.isNotEmpty && product["discount_percent"] > 0.0)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                      ),
+                      child: Text(
+                        "You save ${product["discount_percent"]} %",
+                        style: FontConstants.subheadline2,
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -1890,7 +1973,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     ? FormattedAmount(
                         amount: product['totalamount'],
                         mainTextStyle: FontConstants.headline1,
-                        decimalTextStyle: FontConstants.body1,
+                        decimalTextStyle: FontConstants.headline1,
                       )
                     : Text(""),
               ),

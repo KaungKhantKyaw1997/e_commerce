@@ -6,7 +6,7 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
-import 'package:e_commerce/src/services/bank_accounts_service.dart';
+import 'package:e_commerce/src/services/bank_account_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +23,7 @@ class BankAccountsSetupScreen extends StatefulWidget {
 
 class _BankAccountsSetupScreenState extends State<BankAccountsSetupScreen> {
   final crashlytic = new CrashlyticsService();
-  final bankAccountsService = BankAccountsService();
+  final bankAccountService = BankAccountService();
   final ScrollController _scrollController = ScrollController();
   TextEditingController search = TextEditingController(text: '');
   final RefreshController _refreshController =
@@ -55,7 +55,7 @@ class _BankAccountsSetupScreenState extends State<BankAccountsSetupScreen> {
 
   getBankAccounts() async {
     try {
-      final response = await bankAccountsService.getBankAccountsData(
+      final response = await bankAccountService.getBankAccountsData(
           page: page, search: search.text);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();

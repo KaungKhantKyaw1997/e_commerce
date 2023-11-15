@@ -11,8 +11,8 @@ import 'package:e_commerce/src/providers/message_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/screens/bottombar_screen.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
-import 'package:e_commerce/src/services/brands_service.dart';
-import 'package:e_commerce/src/services/categories_service.dart';
+import 'package:e_commerce/src/services/brand_service.dart';
+import 'package:e_commerce/src/services/category_service.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/notification_service.dart';
@@ -39,8 +39,8 @@ class _HomeScreenState extends State<HomeScreen>
   final crashlytic = new CrashlyticsService();
   final authService = AuthService();
   final shopsService = ShopsService();
-  final brandsService = BrandsService();
-  final categoriesService = CategoriesService();
+  final brandService = BrandService();
+  final categoryService = CategoryService();
   final productsService = ProductsService();
   final notificationService = NotificationService();
   final chatService = ChatService();
@@ -74,8 +74,8 @@ class _HomeScreenState extends State<HomeScreen>
     _tabController.dispose();
     _scrollController.dispose();
     // shopsService.cancelRequest();
-    // brandsService.cancelRequest();
-    // categoriesService.cancelRequest();
+    // brandService.cancelRequest();
+    // categoryService.cancelRequest();
     // notificationService.cancelRequest();
     super.dispose();
   }
@@ -268,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   getBrands() async {
     try {
-      final response = await brandsService.getBrandsData();
+      final response = await brandService.getBrandsData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           setState(() {
@@ -308,7 +308,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   getCategories() async {
     try {
-      final response = await categoriesService.getCategoriesData();
+      final response = await categoryService.getCategoriesData();
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           setState(() {

@@ -181,13 +181,10 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
                             style: FontConstants.subheadline1,
                           )
                         : Text(''),
-                    SizedBox(
-                      width: 4,
-                    ),
                     FormattedAmount(
                       amount: double.parse(amount),
                       mainTextStyle: FontConstants.subheadline1,
-                      decimalTextStyle: FontConstants.caption2,
+                      decimalTextStyle: FontConstants.subheadline1,
                     ),
                   ],
                 ),
@@ -304,9 +301,6 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
                                               carts[index]["symbol"] ?? "",
                                               style: FontConstants.subheadline1,
                                             ),
-                                            SizedBox(
-                                              width: 4,
-                                            ),
                                             FormattedAmount(
                                               amount: double.parse(carts[index]
                                                       ["totalamount"]
@@ -314,7 +308,7 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
                                               mainTextStyle:
                                                   FontConstants.subheadline1,
                                               decimalTextStyle:
-                                                  FontConstants.caption3,
+                                                  FontConstants.subheadline1,
                                             ),
                                           ],
                                         ),

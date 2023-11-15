@@ -6,7 +6,7 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
-import 'package:e_commerce/src/services/brands_service.dart';
+import 'package:e_commerce/src/services/brand_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +21,7 @@ class BrandsScreen extends StatefulWidget {
 
 class _BrandsScreenState extends State<BrandsScreen> {
   final crashlytic = new CrashlyticsService();
-  final brandsService = BrandsService();
+  final brandService = BrandService();
   TextEditingController search = TextEditingController(text: '');
   final ScrollController _scrollController = ScrollController();
   final RefreshController _refreshController =
@@ -44,7 +44,7 @@ class _BrandsScreenState extends State<BrandsScreen> {
   getBrands() async {
     try {
       final response =
-          await brandsService.getBrandsData(page: page, search: search.text);
+          await brandService.getBrandsData(page: page, search: search.text);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
 

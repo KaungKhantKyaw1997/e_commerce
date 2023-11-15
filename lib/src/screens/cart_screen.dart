@@ -108,13 +108,10 @@ class _CartScreenState extends State<CartScreen> {
                           style: FontConstants.subheadline1,
                         )
                       : Text(''),
-                  SizedBox(
-                    width: 4,
-                  ),
                   FormattedAmount(
                     amount: double.parse(amount),
                     mainTextStyle: FontConstants.subheadline1,
-                    decimalTextStyle: FontConstants.caption2,
+                    decimalTextStyle: FontConstants.subheadline1,
                   ),
                 ],
               ),
@@ -307,9 +304,6 @@ class _CartScreenState extends State<CartScreen> {
                                                         style: FontConstants
                                                             .subheadline1,
                                                       ),
-                                                      SizedBox(
-                                                        width: 4,
-                                                      ),
                                                       carts[index][
                                                                   "totalamount"] !=
                                                               null
@@ -324,7 +318,7 @@ class _CartScreenState extends State<CartScreen> {
                                                                       .subheadline1,
                                                               decimalTextStyle:
                                                                   FontConstants
-                                                                      .caption3,
+                                                                      .subheadline1,
                                                             )
                                                           : Text(""),
                                                     ],
@@ -377,7 +371,7 @@ class _CartScreenState extends State<CartScreen> {
                                                                   .parse(carts[
                                                                               index]
                                                                           [
-                                                                          "price"]
+                                                                          "discounted_price"]
                                                                       .toString()) *
                                                               carts[index]
                                                                   ['quantity'];
@@ -467,7 +461,7 @@ class _CartScreenState extends State<CartScreen> {
                                                                   .parse(carts[
                                                                               index]
                                                                           [
-                                                                          "price"]
+                                                                          "discounted_price"]
                                                                       .toString()) *
                                                               carts[index]
                                                                   ['quantity'];

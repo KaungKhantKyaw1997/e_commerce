@@ -8,7 +8,7 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
-import 'package:e_commerce/src/services/brands_service.dart';
+import 'package:e_commerce/src/services/brand_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
@@ -27,7 +27,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
   final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
-  final brandsService = BrandsService();
+  final brandService = BrandService();
   FocusNode _nameFocusNode = FocusNode();
   FocusNode _descriptionFocusNode = FocusNode();
 
@@ -64,7 +64,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
 
   getBrand() async {
     try {
-      final response = await brandsService.getBrandData(id);
+      final response = await brandService.getBrandData(id);
       if (response!["code"] == 200) {
         setState(() {
           name.text = response["data"]["name"] ?? "";
@@ -135,7 +135,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
         "logo_url": logoUrl,
       };
 
-      final response = await brandsService.addBrandData(body);
+      final response = await brandService.addBrandData(body);
       Navigator.pop(context);
       if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -185,7 +185,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
         "logo_url": logoUrl,
       };
 
-      final response = await brandsService.updateBrandData(body, id);
+      final response = await brandService.updateBrandData(body, id);
       Navigator.pop(context);
       if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -229,7 +229,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
 
   deleteBrand() async {
     try {
-      final response = await brandsService.deleteBrandData(id);
+      final response = await brandService.deleteBrandData(id);
       Navigator.pop(context);
       if (response!["code"] == 204) {
         ToastUtil.showToast(response["code"], response["message"]);
