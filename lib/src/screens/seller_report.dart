@@ -125,7 +125,7 @@ class _SellerReportScreenState extends State<SellerReportScreen> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    language["Seller Name"] ?? "Seller Name",
+                    language["Seller"] ?? "Seller",
                     style: FontConstants.caption1,
                   ),
                 ),

@@ -68,6 +68,7 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
 
       Navigator.pop(context);
       if (response!["code"] == 200) {
+        authService.clearData(context);
         String _email = prefs.getString("email") ?? "";
         prefs.setString("email", _email);
         prefs.setString("name", response["data"]["name"]);
