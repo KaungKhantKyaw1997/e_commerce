@@ -6,6 +6,7 @@ class CustomAutocomplete extends StatefulWidget {
   final List<String> datalist;
   final TextEditingController textController;
   final Function(String) onSelected;
+  final Function(String) onChanged;
   final Color fillColor;
   final double maxWidth;
 
@@ -13,6 +14,7 @@ class CustomAutocomplete extends StatefulWidget {
     required this.datalist,
     required this.textController,
     required this.onSelected,
+    required this.onChanged,
     this.fillColor = ColorConstants.fillcolor,
     this.maxWidth = 300,
   });
@@ -41,10 +43,12 @@ class _CustomAutocompleteState extends State<CustomAutocomplete> {
       onSelected: (String selection) {
         widget.onSelected(selection);
       },
-      fieldViewBuilder: (BuildContext context,
-          TextEditingController textEditingController,
-          FocusNode focusNode,
-          VoidCallback onFieldSubmitted) {
+      fieldViewBuilder: (
+        BuildContext context,
+        TextEditingController textEditingController,
+        FocusNode focusNode,
+        VoidCallback onFieldSubmitted,
+      ) {
         textEditingController.text = widget.textController.text;
         return TextField(
           controller: textEditingController,
@@ -62,6 +66,9 @@ class _CustomAutocompleteState extends State<CustomAutocomplete> {
               borderSide: BorderSide.none,
             ),
           ),
+          onChanged: (value) {
+            widget.onChanged(value);
+          },
         );
       },
       optionsViewBuilder: (

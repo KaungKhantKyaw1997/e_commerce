@@ -1689,6 +1689,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 onSelected: (String selection) {
                                   strapMaterial.text = selection;
                                 },
+                                onChanged: (String value) {
+                                  strapMaterial.text = value;
+                                },
                                 maxWidth: 176,
                               ),
                             ),
@@ -1791,6 +1794,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 onSelected: (String selection) {
                                   caseMaterial.text = selection;
                                 },
+                                onChanged: (String value) {
+                                  caseMaterial.text = value;
+                                },
                                 maxWidth: 176,
                               ),
                             ),
@@ -1825,6 +1831,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 textController: caseDiameter,
                                 onSelected: (String selection) {
                                   caseDiameter.text = selection;
+                                },
+                                onChanged: (String value) {
+                                  caseDiameter.text = value;
                                 },
                                 maxWidth: 176,
                               ),
@@ -1866,6 +1875,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 onSelected: (String selection) {
                                   caseDepth.text = selection;
                                 },
+                                onChanged: (String value) {
+                                  caseDepth.text = value;
+                                },
                                 maxWidth: 176,
                               ),
                             ),
@@ -1900,6 +1912,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 textController: caseWidth,
                                 onSelected: (String selection) {
                                   caseWidth.text = selection;
+                                },
+                                onChanged: (String value) {
+                                  caseWidth.text = value;
                                 },
                                 maxWidth: 176,
                               ),
@@ -1941,6 +1956,17 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 textController: dialGlassTypeDesc,
                                 onSelected: (String selection) {
                                   dialGlassTypeDesc.text = selection;
+
+                                  for (var data in dialglassTypes) {
+                                    if (data["description"] ==
+                                        dialGlassTypeDesc.text) {
+                                      dialGlassTypeId =
+                                          data["dial_glass_type_id"];
+                                    }
+                                  }
+                                },
+                                onChanged: (String value) {
+                                  dialGlassTypeDesc.text = value;
 
                                   for (var data in dialglassTypes) {
                                     if (data["description"] ==
@@ -2084,6 +2110,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 onSelected: (String selection) {
                                   movementCountry.text = selection;
                                 },
+                                onChanged: (String value) {
+                                  movementCountry.text = value;
+                                },
                                 maxWidth: 176,
                               ),
                             ),
@@ -2118,6 +2147,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 textController: movementType,
                                 onSelected: (String selection) {
                                   movementType.text = selection;
+                                },
+                                onChanged: (String value) {
+                                  movementType.text = value;
                                 },
                                 maxWidth: 176,
                               ),
@@ -2214,6 +2246,17 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 textController: currencyCode,
                                 onSelected: (String selection) {
                                   currencyCode.text = selection;
+
+                                  for (var data in currencies) {
+                                    if (data["currency_code"] ==
+                                        currencyCode.text) {
+                                      currencyId = data["currency_id"];
+                                    }
+                                  }
+                                },
+                                onChanged: (String value) {
+                                  currencyCode.text = value;
+
                                   for (var data in currencies) {
                                     if (data["currency_code"] ==
                                         currencyCode.text) {
@@ -2252,6 +2295,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 textController: stockQuantity,
                                 onSelected: (String selection) {
                                   stockQuantity.text = selection;
+                                },
+                                onChanged: (String value) {
+                                  stockQuantity.text = value;
                                 },
                                 maxWidth: 130,
                               ),
@@ -2355,6 +2401,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 textController: waterResistance,
                                 onSelected: (String selection) {
                                   waterResistance.text = selection;
+                                },
+                                onChanged: (String value) {
+                                  waterResistance.text = value;
                                 },
                                 maxWidth: 130,
                               ),
