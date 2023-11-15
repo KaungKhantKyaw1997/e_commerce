@@ -27,7 +27,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
   final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
-  final shopService = ShopService();
+  final shopsService = ShopService();
   FocusNode _nameFocusNode = FocusNode();
   FocusNode _descriptionFocusNode = FocusNode();
   FocusNode _addressFocusNode = FocusNode();
@@ -68,7 +68,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
 
   getShop() async {
     try {
-      final response = await shopService.getShopData(id);
+      final response = await shopsService.getShopData(id);
       if (response!["code"] == 200) {
         setState(() {
           name.text = response["data"]["name"] ?? "";
@@ -150,7 +150,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
         "status": "Active"
       };
 
-      final response = await shopService.addShopData(body);
+      final response = await shopsService.addShopData(body);
       Navigator.pop(context);
       if (response!["code"] == 201) {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -213,7 +213,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
         "status": "Active"
       };
 
-      final response = await shopService.updateShopData(body, id);
+      final response = await shopsService.updateShopData(body, id);
       Navigator.pop(context);
       if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -260,7 +260,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
 
   deleteShop() async {
     try {
-      final response = await shopService.deleteShopData(id);
+      final response = await shopsService.deleteShopData(id);
       Navigator.pop(context);
       if (response!["code"] == 204) {
         ToastUtil.showToast(response["code"], response["message"]);
