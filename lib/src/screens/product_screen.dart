@@ -1137,30 +1137,6 @@ class _ProductScreenState extends State<ProductScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  language["In Stock"] ?? "In Stock",
-                                  style: FontConstants.caption1,
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    product["stock_quantity"].toString() ?? "",
-                                    textAlign: TextAlign.end,
-                                    style: FontConstants.caption2,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 16,
-                              right: 16,
-                              bottom: 8,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
                                   language["Water Resistance"] ??
                                       "Water Resistance",
                                   style: FontConstants.caption1,
