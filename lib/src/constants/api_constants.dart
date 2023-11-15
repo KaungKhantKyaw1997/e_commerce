@@ -55,4 +55,5 @@ class ApiConstants {
   static const String movementCountriesUrl = '$baseUrl/api/movement-countries';
   static const String reportSubjectsUrl = '$baseUrl/api/report-subjects';
   static const String sellerReportsUrl = '$baseUrl/api/seller-reports';
+  static const String paymentTypesUrl = '$baseUrl/api/payment-types';
 }

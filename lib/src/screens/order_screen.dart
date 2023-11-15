@@ -10,6 +10,7 @@ import 'package:e_commerce/src/services/address_service.dart';
 import 'package:e_commerce/src/services/bank_accounts_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/insurance_rules_service.dart';
+import 'package:e_commerce/src/services/payment_type_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,7 @@ class _OrderScreenState extends State<OrderScreen>
   final ScrollController _scrollController = ScrollController();
   late TabController _tabController;
   final addressService = AddressService();
+  final paymentTypeService = PaymentTypeService();
   final insuranceRulesService = InsuranceRulesService();
   final bankAccountsService = BankAccountsService();
   FocusNode _countryFocusNode = FocusNode();
@@ -87,6 +89,7 @@ class _OrderScreenState extends State<OrderScreen>
       }
     });
     getAddress();
+    getPaymentTypes();
     getInsuranceRules();
   }
 
@@ -134,6 +137,44 @@ class _OrderScreenState extends State<OrderScreen>
             context,
             Routes.unauthorized,
           );
+        }
+      }
+    }
+  }
+
+  getPaymentTypes() async {
+    try {
+      final response = await paymentTypeService.getPaymentTypesData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
         }
       }
     }
