@@ -419,7 +419,7 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
           ),
           onPressed: () async {
             showLoadingDialog(context);
-            if (paymenttype == 'Preorder') {
+            if (paymenttype != 'Cash on Delivery') {
               await uploadFile();
             }
             createOrder();
