@@ -1313,7 +1313,9 @@ class _ProductScreenState extends State<ProductScreen> {
                       children: [
                         Expanded(
                           child: Text(
-                            "Watch Vault by Diggie Buyer Protection",
+                            language[
+                                    "Watch Vault by Diggie Buyer Protection"] ??
+                                "Watch Vault by Diggie Buyer Protection",
                             style: FontConstants.headline1,
                           ),
                         ),
@@ -1504,7 +1506,9 @@ class _ProductScreenState extends State<ProductScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Watch Vault by Diggie Trusted Seller",
+                                      language[
+                                              "Watch Vault by Diggie Trusted Seller"] ??
+                                          "Watch Vault by Diggie Trusted Seller",
                                       style: FontConstants.subheadline1,
                                     ),
                                     Text(

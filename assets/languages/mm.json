@@ -109,7 +109,7 @@
   "Enter Price": "စျေးနှုန်းကိုထည့်ပါ",
   "Remove Account": "အကောင့်ဖယ်ရှားရန်",
   "Order ID": "အမှာစာ ID",
-  "Order by": "Order by",
+  "Order by": "အမှာစာ မှ",
   "Commission": "ကော်မရှင်",
   "Payment Type": "ငွေပေးချေမှုအမျိုးအစား",
   "Order Status": "အမှာစာအခြေအနေ",
@@ -173,5 +173,18 @@
   "Enter Message": "မက်ဆေ့ထည့်ပါ",
   "Send": "ပို့ပါ",
   "Version Update": "ဗားရှင်းအပြောင်းအလဲ",
-  "Report Listing": "အစီရင်ခံစာစာရင်း"
+  "Report Listing": "အစီရင်ခံစာစာရင်း",
+  "Seller": "ရောင်းသူ",
+  "Sales": "အရောင်း",
+  "Active on Watch Vault by Diggie": "Watch Vault by Diggie မှ ရရှိထားသည်",
+  "Watches sold on Watch Vault by Diggie": "Watch Vault by Diggie မှ ရောင်းခဲ့သော ကိရိယာများ",
+  "Watch Vault by Diggie Trusted Seller": "Watch Vault by Diggie မှ ယုံကြည်ရတဲ့ ရောင်းချသူ",
+  "Trusted Seller since": "ယုံကြည်ရတဲ့ ရောင်းချသူ",
+  "Location": "တည်နေရာ",
+  "Listings": "စာရင်းများ",
+  "Watches listed on Watch Vault by Diggie": "Watch Vault by Diggie မှ စာရင်းထဲတွင် ရောင်းခဲ့သော ကိရိယာများ",
+  "Offline trader": "အော့ဖ်လိုင်း ကုန်သည်",
+  "This seller has a retail location": "ဤရောင်းသူသည် ရောင်းဝယ်ယူသည့် တည်နေရာ ရှိသည်",
+  "Watch Vault by Diggie Buyer Protection": "Watch Vault by Diggie မှ ဝယ်သူကာကွယ်ရေး",
+  "Order Cancel": "အမှာစာ ပယ်ဖျက်ပါ"
 }

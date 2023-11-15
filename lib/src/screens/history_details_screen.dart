@@ -700,7 +700,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                   updateOrder();
                 },
                 child: Text(
-                  'Order Cancel',
+                  language["Order Cancel"] ?? "Order Cancel",
                   style: FontConstants.button1,
                 ),
               ),
