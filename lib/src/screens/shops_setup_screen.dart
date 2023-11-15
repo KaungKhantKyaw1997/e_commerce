@@ -7,7 +7,7 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
-import 'package:e_commerce/src/services/shop_service.dart';
+import 'package:e_commerce/src/services/shops_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
@@ -185,7 +185,7 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
                           fontWeight: FontWeight.w400,
                           color: shops[index]["status"] == "Active"
                               ? const Color.fromARGB(255, 5, 141, 9)
-                              : Color.fromARGB(255, 170, 104, 4),
+                              : const Color.fromARGB(255, 170, 104, 4),
                         ),
                       ),
                     ],
