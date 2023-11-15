@@ -7,7 +7,7 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
-import 'package:e_commerce/src/services/shops_service.dart';
+import 'package:e_commerce/src/services/shop_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';

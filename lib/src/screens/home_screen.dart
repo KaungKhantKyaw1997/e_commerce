@@ -17,7 +17,7 @@ import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/notification_service.dart';
 import 'package:e_commerce/src/services/products_service.dart';
-import 'package:e_commerce/src/services/shops_service.dart';
+import 'package:e_commerce/src/services/shop_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
