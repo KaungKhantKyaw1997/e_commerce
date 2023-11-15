@@ -11,7 +11,7 @@ import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/currency_service.dart';
 import 'package:e_commerce/src/services/gender_service.dart';
-import 'package:e_commerce/src/services/products_service.dart';
+import 'package:e_commerce/src/services/product_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:e_commerce/src/widgets/custom_autocomplete.dart';
