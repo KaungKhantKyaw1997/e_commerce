@@ -2382,7 +2382,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        "${language["Discount Price"] ?? "Discount Price"}: $discountPercent",
+                        "${language["Discount Price"] ?? "Discount Price"}: ${discountPercent}%",
                         style: FontConstants.caption1,
                       ),
                     ),

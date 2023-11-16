@@ -307,7 +307,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     Text(
-                      '${language["Commission"] ?? "Commission"}: ',
+                      '${language["Commission"] ?? "Commission"}',
                       style: FontConstants.body1,
                     ),
                     FormattedAmount(
@@ -326,7 +326,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     Text(
-                      '${language["Payment Type"] ?? "Payment Type"}: ',
+                      '${language["Payment Type"] ?? "Payment Type"}',
                       style: FontConstants.body1,
                     ),
                     Text(
@@ -343,7 +343,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        '${language["Order Status"] ?? "Order Status"}: ',
+                        '${language["Order Status"] ?? "Order Status"}',
                         style: FontConstants.body1,
                       ),
                     ),
@@ -641,7 +641,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                       ),
                     );
                   }).toList(),
-                  if (orderData["payment_type"] == "Preorder") ...[
+                  if (orderData["payment_type"] != "Cash on Delivery") ...[
                     SizedBox(
                       height: 16,
                     ),

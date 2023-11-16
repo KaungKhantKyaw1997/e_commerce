@@ -1792,7 +1792,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         left: 16,
                       ),
                       child: Text(
-                        "You save ${product["discount_percent"]} %",
+                        "${language["Discount Price"] ?? "Discount Price"} ${product["discount_percent"]}%",
                         style: FontConstants.subheadline2,
                       ),
                     ),
@@ -1936,7 +1936,7 @@ class _ProductScreenState extends State<ProductScreen> {
                             int.parse(product["stock_quantity"].toString()) > 0)
                           Center(
                             child: Text(
-                              ": ${product["stock_quantity"]} left",
+                              ": ${product["stock_quantity"]} ${language["left"] ?? "left"}",
                               textAlign: TextAlign.center,
                               style: FontConstants.caption4,
                             ),
