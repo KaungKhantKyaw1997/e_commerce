@@ -112,6 +112,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   List<String> movementCountries = [];
   List<String> stockQuantities = [];
   List<String> waterResistances = [];
+  double discountPercent = 0.0;
 
   int id = 0;
   String from = '';
@@ -852,6 +853,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           stockQuantity.text =
               response["data"]["stock_quantity"].toString() ?? "0";
           price.text = response["data"]["price"].toString() ?? "";
+          discountPercent = response["data"]["discount_percent"] ?? 0.0;
           waterResistance.text = response["data"]["water_resistance"] ?? "";
           warrantyPeriod.text = response["data"]["warranty_period"] ?? "";
           warrantyTypeDesc =
@@ -959,6 +961,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "case_diameter": caseDiameter.text,
         "case_depth": caseDepth.text,
         "case_width": caseWidth.text,
+        "discount_percent": discountPercent,
       };
 
       final response = await productService.addProductData(body);
@@ -1046,6 +1049,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "case_diameter": caseDiameter.text,
         "case_depth": caseDepth.text,
         "case_width": caseWidth.text,
+        "discount_percent": discountPercent,
       };
 
       final response = await productService.updateProductData(body, id);
@@ -2368,6 +2372,31 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                         ),
                       ),
                     ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 4,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "${language["Discount Price"] ?? "Discount Price"}: $discountPercent",
+                        style: FontConstants.caption1,
+                      ),
+                    ),
+                  ),
+                  Slider(
+                    value: discountPercent * 10,
+                    max: 1000,
+                    divisions: 1000,
+                    label: (discountPercent * 10 / 10).toString(),
+                    onChanged: (double value) {
+                      setState(() {
+                        discountPercent = value / 10;
+                      });
+                    },
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
