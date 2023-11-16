@@ -1834,9 +1834,10 @@ class _ProductScreenState extends State<ProductScreen> {
                             if (product['quantity'] > 0) {
                               setState(() {
                                 product['quantity']--;
-                                product['totalamount'] =
-                                    double.parse(product["price"].toString()) *
-                                        product['quantity'];
+                                product['totalamount'] = double.parse(
+                                        product["discounted_price"]
+                                            .toString()) *
+                                    product['quantity'];
                               });
                             }
                           },
@@ -1889,9 +1890,10 @@ class _ProductScreenState extends State<ProductScreen> {
                                     product["stock_quantity"].toString())) {
                               setState(() {
                                 product['quantity']++;
-                                product['totalamount'] =
-                                    double.parse(product["price"].toString()) *
-                                        product['quantity'];
+                                product['totalamount'] = double.parse(
+                                        product["discounted_price"]
+                                            .toString()) *
+                                    product['quantity'];
                               });
                             }
                           },
