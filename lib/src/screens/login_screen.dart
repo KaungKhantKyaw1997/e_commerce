@@ -81,7 +81,6 @@ class _LogInScreenState extends State<LogInScreen> {
       final response = await authService.loginData(body);
 
       if (response!["code"] == 200) {
-        await authService.clearData(context);
         String _email = prefs.getString("email") ?? "";
         prefs.setString("email", _email);
         prefs.setString("name", response["data"]["name"]);

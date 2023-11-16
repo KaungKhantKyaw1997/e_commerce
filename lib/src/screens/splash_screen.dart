@@ -5,6 +5,7 @@ import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/setting_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:e_commerce/global.dart';
@@ -19,6 +20,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final crashlytic = new CrashlyticsService();
+  final storage = FlutterSecureStorage();
   final authService = AuthService();
   final settingService = SettingService();
 
@@ -36,6 +38,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> loadLanguageData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstLaunch = prefs.getBool('firstLaunch') ?? true;
+    if (isFirstLaunch) {
+      await storage.deleteAll();
+      prefs.setBool('firstLaunch', false);
+    }
+
     var lang = prefs.getString("language") ?? "eng";
     if (lang == 'eng') {
       selectedLangIndex = 0;
