@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
@@ -52,6 +53,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   DateTime? endDate = null;
   String role = "";
   bool _dataLoaded = false;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -63,6 +65,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -288,10 +291,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
           ),
           onChanged: (value) {
-            orders = [];
-            data = [];
-            page = 1;
-            getOrders();
+            _debounce?.cancel();
+            _debounce = Timer(Duration(milliseconds: 300), () {
+              orders = [];
+              data = [];
+              page = 1;
+              getOrders();
+            });
           },
         ),
         actions: [

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -29,6 +30,7 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
       RefreshController(initialRefresh: false);
   List users = [];
   int page = 1;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -39,6 +41,7 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -205,9 +208,12 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
             ),
           ),
           onChanged: (value) {
-            page = 1;
-            users = [];
-            getUsers();
+            _debounce?.cancel();
+            _debounce = Timer(Duration(milliseconds: 300), () {
+              page = 1;
+              users = [];
+              getUsers();
+            });
           },
         ),
         iconTheme: IconThemeData(

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -28,6 +29,7 @@ class _SellerReportsScreenState extends State<SellerReportsScreen> {
       RefreshController(initialRefresh: false);
   List sellerReports = [];
   int page = 1;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -38,6 +40,7 @@ class _SellerReportsScreenState extends State<SellerReportsScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -171,9 +174,12 @@ class _SellerReportsScreenState extends State<SellerReportsScreen> {
             ),
           ),
           onChanged: (value) {
-            page = 1;
-            sellerReports = [];
-            getSellerReports();
+            _debounce?.cancel();
+            _debounce = Timer(Duration(milliseconds: 300), () {
+              page = 1;
+              sellerReports = [];
+              getSellerReports();
+            });
           },
         ),
         iconTheme: IconThemeData(

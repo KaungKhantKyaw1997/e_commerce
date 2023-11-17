@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -47,6 +48,7 @@ class _ProductsScreenState extends State<ProductsScreen>
 
   bool isTopModel = false;
   bool _dataLoaded = false;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -72,6 +74,7 @@ class _ProductsScreenState extends State<ProductsScreen>
   @override
   void dispose() {
     _scrollController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -251,9 +254,12 @@ class _ProductsScreenState extends State<ProductsScreen>
             ),
           ),
           onChanged: (value) {
-            page = 1;
-            products = [];
-            getProducts();
+            _debounce?.cancel();
+            _debounce = Timer(Duration(milliseconds: 300), () {
+              page = 1;
+              products = [];
+              getProducts();
+            });
           },
         ),
         actions: [

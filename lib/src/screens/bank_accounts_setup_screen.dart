@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -30,7 +31,7 @@ class _BankAccountsSetupScreenState extends State<BankAccountsSetupScreen> {
       RefreshController(initialRefresh: false);
   List bankAccounts = [];
   int page = 1;
-
+  Timer? _debounce;
   String from = "";
 
   @override
@@ -50,6 +51,7 @@ class _BankAccountsSetupScreenState extends State<BankAccountsSetupScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -216,9 +218,12 @@ class _BankAccountsSetupScreenState extends State<BankAccountsSetupScreen> {
             ),
           ),
           onChanged: (value) {
-            page = 1;
-            bankAccounts = [];
-            getBankAccounts();
+            _debounce?.cancel();
+            _debounce = Timer(Duration(milliseconds: 300), () {
+              page = 1;
+              bankAccounts = [];
+              getBankAccounts();
+            });
           },
         ),
         iconTheme: IconThemeData(

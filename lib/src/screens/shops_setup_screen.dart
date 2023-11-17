@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -30,6 +31,7 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
   List shops = [];
   int page = 1;
   String status = 'Active';
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -48,6 +50,7 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -229,9 +232,12 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
             ),
           ),
           onChanged: (value) {
-            page = 1;
-            shops = [];
-            getShops(status);
+            _debounce?.cancel();
+            _debounce = Timer(Duration(milliseconds: 300), () {
+              page = 1;
+              shops = [];
+              getShops(status);
+            });
           },
         ),
         iconTheme: IconThemeData(

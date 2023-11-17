@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -39,6 +40,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
   String from = '';
   String role = "";
   bool _dataLoaded = false;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -58,6 +60,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -376,9 +379,12 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
             ),
           ),
           onChanged: (value) {
-            page = 1;
-            chatHistoriesProvider.setChatHistories([]);
-            getChatSessions();
+            _debounce?.cancel();
+            _debounce = Timer(Duration(milliseconds: 300), () {
+              page = 1;
+              chatHistoriesProvider.setChatHistories([]);
+              getChatSessions();
+            });
           },
         ),
         iconTheme: IconThemeData(

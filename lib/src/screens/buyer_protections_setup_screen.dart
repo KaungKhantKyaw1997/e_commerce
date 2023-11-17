@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
@@ -27,6 +28,7 @@ class BuyerProtectionsSetupScreenState
   final ScrollController _scrollController = ScrollController();
   String from = "";
   int page = 1;
+  Timer? _debounce;
   List buyerProtections = [];
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -48,6 +50,7 @@ class BuyerProtectionsSetupScreenState
   @override
   void dispose() {
     _scrollController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -186,9 +189,12 @@ class BuyerProtectionsSetupScreenState
             ),
           ),
           onChanged: (value) {
-            page = 1;
-            buyerProtections = [];
-            getBuyerProtectionsData();
+            _debounce?.cancel();
+            _debounce = Timer(Duration(milliseconds: 300), () {
+              page = 1;
+              buyerProtections = [];
+              getBuyerProtectionsData();
+            });
           },
         ),
         iconTheme: IconThemeData(
