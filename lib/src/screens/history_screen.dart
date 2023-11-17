@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
+import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/providers/message_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
@@ -41,6 +42,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   final chatService = ChatService();
   final storage = FlutterSecureStorage();
   final ScrollController _scrollController = ScrollController();
+  TextEditingController search = TextEditingController(text: '');
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   List orders = [];
@@ -159,14 +161,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
       }
 
       final response = await orderService.getOrdersData(
-          page: page, fromDate: fromDate, toDate: toDate);
+          page: page, fromDate: fromDate, toDate: toDate, search: search.text);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
 
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           orders = [];
-
           data += response["data"];
           page++;
 
@@ -233,19 +234,19 @@ class _HistoryScreenState extends State<HistoryScreen> {
       backgroundColor: Colors.white,
       primaryColor: Theme.of(context).primaryColor,
       onApplyClick: (start, end) {
-        page = 1;
         orders = [];
         data = [];
-        endDate = end;
+        page = 1;
         startDate = start;
+        endDate = end;
         getOrders();
       },
       onCancelClick: () {
-        page = 1;
         orders = [];
         data = [];
-        endDate = null;
+        page = 1;
         startDate = null;
+        endDate = null;
         getOrders();
       },
     );
@@ -264,14 +265,34 @@ class _HistoryScreenState extends State<HistoryScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
-        title: Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            role == "admin" || role == 'agent'
-                ? language["Order"] ?? "Order"
-                : language["History"] ?? "History",
-            style: FontConstants.title2,
+        title: TextField(
+          controller: search,
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.done,
+          style: FontConstants.body1,
+          cursorColor: Colors.black,
+          decoration: InputDecoration(
+            hintText: language["Search"] ?? "Search",
+            filled: true,
+            fillColor: ColorConstants.fillcolor,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide.none,
+            ),
           ),
+          onChanged: (value) {
+            orders = [];
+            data = [];
+            page = 1;
+            getOrders();
+          },
         ),
         actions: [
           IconButton(
@@ -304,8 +325,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
             unreadNotifications();
             getTotalUnreadCounts();
           }
-          page = 1;
+          orders = [];
           data = [];
+          page = 1;
           await getOrders();
         },
         onLoading: () async {
@@ -421,6 +443,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                     orders = [];
                                     data = [];
                                     page = 1;
+                                    search.text = '';
                                     startDate = null;
                                     endDate = null;
                                     role = "";

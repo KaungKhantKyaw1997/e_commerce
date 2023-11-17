@@ -42,15 +42,18 @@ class OrderService {
     return response.data;
   }
 
-  Future<Map<String, dynamic>?> getOrdersData(
-      {int page = 1,
-      int perPage = 10,
-      String fromDate = '',
-      String toDate = '',
-      double fromAmount = 0.0,
-      double toAmount = 0.0}) async {
+  Future<Map<String, dynamic>?> getOrdersData({
+    int page = 1,
+    int perPage = 10,
+    String fromDate = '',
+    String toDate = '',
+    double fromAmount = 0.0,
+    double toAmount = 0.0,
+    String search = '',
+  }) async {
     var token = await storage.read(key: "token") ?? '';
-    var url = '${ApiConstants.ordersUrl}?page=$page&per_page=$perPage';
+    var url =
+        '${ApiConstants.ordersUrl}?page=$page&per_page=$perPage&search=$search';
     if (fromDate.isNotEmpty) url += '&from_date=$fromDate';
     if (toDate.isNotEmpty) url += '&to_date=$toDate';
     if (toAmount != 0.0) url += '&from_amount=$fromAmount';
