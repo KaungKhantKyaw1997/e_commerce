@@ -451,6 +451,7 @@ class AuthService {
     prefs.setString("email", _email);
     prefs.setBool("termsandconditions", termsandconditions);
     prefs.setString("searchhistories", searchhistoriesJson);
+    prefs.setBool('firstLaunch', false);
 
     await socketProvider.socket!.disconnect();
 
