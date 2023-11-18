@@ -1,6 +1,5 @@
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
-import 'package:e_commerce/src/providers/message_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
