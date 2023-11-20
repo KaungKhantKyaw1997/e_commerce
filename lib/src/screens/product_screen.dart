@@ -577,7 +577,7 @@ class _ProductScreenState extends State<ProductScreen> {
                               Theme.of(context).primaryColor),
                         ),
                         child: Text(
-                          language["Submit message"] ?? "Submit message",
+                          language["Submit"] ?? "Submit",
                           style: FontConstants.button1,
                         ),
                         onPressed: () async {

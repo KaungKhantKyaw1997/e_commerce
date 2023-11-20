@@ -1,10 +1,13 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:dio/dio.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
+import 'package:e_commerce/src/services/reason_type_service.dart';
+import 'package:e_commerce/src/services/remind_seller_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
@@ -28,9 +31,8 @@ class HistoryDetailsScreen extends StatefulWidget {
 class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
   final crashlytic = new CrashlyticsService();
   final orderService = OrderService();
-  TextEditingController comment = TextEditingController(text: '');
-  FocusNode _commentFocusNode = FocusNode();
-  int reasonTypeId = 0;
+  final reasonTypeService = ReasonTypeService();
+  final remindSellerService = RemindSellerService();
   Map<String, dynamic> details = {};
   List<String> statuslist = [
     "Pending",
@@ -71,12 +73,19 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
     "symbol": "",
   };
   List<Map<String, dynamic>> orderItems = [];
+  TextEditingController comment = TextEditingController(text: '');
+  FocusNode _commentFocusNode = FocusNode();
+  List reasonTypes = [];
+  List<String> reasonTypesDesc = [];
+  int reasonTypeId = 0;
+  String reasonTypeDesc = '';
 
   @override
   void initState() {
     super.initState();
+    getData();
+    getReasonTypes();
     Future.delayed(Duration.zero, () {
-      getData();
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
       if (arguments != null) {
@@ -91,7 +100,6 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
 
   @override
   void dispose() {
-    // orderService.cancelRequest();
     super.dispose();
   }
 
@@ -100,6 +108,53 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
     setState(() {
       role = prefs.getString('role') ?? "";
     });
+  }
+
+  getReasonTypes() async {
+    try {
+      final response = await reasonTypeService.getReasonTypesData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          reasonTypes = response["data"];
+
+          for (var data in response["data"]) {
+            if (data["description"] != null) {
+              reasonTypesDesc.add(data["description"]);
+            }
+          }
+          reasonTypeId = reasonTypes[0]["reason_type_id"];
+          reasonTypeDesc = reasonTypes[0]["description"];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
   }
 
   getOrderDetails(int order_id) async {
@@ -189,58 +244,10 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
           await orderService.updateOrderData(orderData["order_id"], body);
       Navigator.pop(context);
       if (response!["code"] == 200) {
-         setState(() {
+        setState(() {
           orderData["status"] = status;
         });
-        ToastUtil.showToast(response["code"], response["message"]);
-      } else {
-        ToastUtil.showToast(response["code"], response["message"]);
-      }
-    } catch (e, s) {
-      Navigator.pop(context);
-      if (e is DioException &&
-          e.error is SocketException &&
-          !isConnectionTimeout) {
-        isConnectionTimeout = true;
-        Navigator.pushNamed(
-          context,
-          Routes.connection_timeout,
-        );
-        return;
-      }
-      crashlytic.myGlobalErrorHandler(e, s);
-      if (e is DioException && e.response != null && e.response!.data != null) {
-        if (e.response!.data["message"] == "invalid token" ||
-            e.response!.data["message"] ==
-                "invalid authorization header format") {
-          Navigator.pushNamed(
-            context,
-            Routes.unauthorized,
-          );
-        } else {
-          ToastUtil.showToast(
-              e.response!.data['code'], e.response!.data['message']);
-        }
-      }
-    }
-  }
-
-  refundReasons() async {
-    showLoadingDialog(context);
-    try {
-      final body = {
-        "order_id": orderData["order_id"],
-        "reason_type_id": reasonTypeId,
-        "comment": comment.text,
-      };
-
-      final response =
-          await orderService.refundReasonsData(body);
-      Navigator.pop(context);
-      if (response!["code"] == 200) {
-        setState(() {
-          orderData["status"] = "Returned";
-        });
+        Navigator.pop(context);
         ToastUtil.showToast(response["code"], response["message"]);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -352,6 +359,266 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
         ),
       ),
     );
+  }
+
+  clearRefundReasonsDialog() {
+    reasonTypeId = reasonTypes[0]["reason_type_id"];
+    reasonTypeDesc = reasonTypes[0]["description"];
+    comment.text = '';
+  }
+
+  showRefundReasonsDialog() async {
+    clearRefundReasonsDialog();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (c) => BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: 5,
+          sigmaY: 5,
+        ),
+        child: StatefulBuilder(
+          builder: (context, setState) {
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                _commentFocusNode.unfocus();
+              },
+              child: AlertDialog(
+                backgroundColor: Colors.white,
+                titlePadding: EdgeInsets.symmetric(
+                  vertical: 14,
+                ),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                      ),
+                      child: Text(
+                        language["Refund"] ?? "Refund",
+                        style: FontConstants.subheadline1,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.close,
+                        size: 24,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 4,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["Reason"] ?? "Reason",
+                          style: FontConstants.caption1,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 16,
+                      ),
+                      child: CustomDropDown(
+                        value: reasonTypeDesc,
+                        fillColor: ColorConstants.fillcolor,
+                        onChanged: (newValue) {
+                          setState(() {
+                            reasonTypeDesc = newValue ?? reasonTypesDesc[0];
+                          });
+                          for (var data in reasonTypes) {
+                            if (data["description"] == reasonTypeDesc) {
+                              reasonTypeId = data["reason_type_id"];
+                            }
+                          }
+                        },
+                        items: reasonTypesDesc,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 4,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["Comment"] ?? "Comment",
+                          style: FontConstants.caption1,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 16,
+                      ),
+                      child: TextFormField(
+                        controller: comment,
+                        focusNode: _commentFocusNode,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.done,
+                        style: FontConstants.body1,
+                        cursorColor: Colors.black,
+                        maxLines: 2,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: ColorConstants.fillcolor,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                actions: [
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8,
+                    ),
+                    width: double.infinity,
+                    child: TextButton(
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Theme.of(context).primaryColor),
+                      ),
+                      child: Text(
+                        language["Submit"] ?? "Submit",
+                        style: FontConstants.button1,
+                      ),
+                      onPressed: () async {
+                        refundReasons();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  refundReasons() async {
+    showLoadingDialog(context);
+    try {
+      final body = {
+        "order_id": orderData["order_id"],
+        "reason_type_id": reasonTypeId,
+        "comment": comment.text,
+      };
+
+      final response = await orderService.refundReasonsData(body);
+      Navigator.pop(context);
+      if (response!["code"] == 201) {
+        setState(() {
+          orderData["status"] = "Returned";
+        });
+        Navigator.pop(context);
+        ToastUtil.showToast(response["code"], response["message"]);
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      Navigator.pop(context);
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  remindSeller() async {
+    showLoadingDialog(context);
+    try {
+      final response = await remindSellerService.remindSellerData();
+      Navigator.pop(context);
+      if (response!["code"] == 200) {
+        ToastUtil.showToast(response["code"], response["message"]);
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      Navigator.pop(context);
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
   }
 
   @override
@@ -788,124 +1055,124 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
           ),
         ],
       ),
-      bottomNavigationBar:role == 'user'? Container(
-         padding: const EdgeInsets.only(
-          left: 16,
-                              right: 16,
-                              bottom: 24,
-                            ),
-                            width: double.infinity,
-        child: Column(
-                  children: [
-                    orderData['status'] == 'Pending'
-                        ? Container(
-                            padding: const EdgeInsets.only(
-                              
-                            ),
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                  vertical: 12,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                backgroundColor: ColorConstants.redcolor,
-                              ),
-                              onPressed: () async {
-                                updateOrder("Cancelled");
-                              },
-                              child: Text(
-                                language["Order Cancel"] ?? "Order Cancel",
-                                style: FontConstants.button1,
-                              ),
-                            ),
-                          )
-                        : Text(""),
-                    orderData['status'] == 'Pending' || orderData['status'] == 'Delivered'
-                        ? Container(
-                            padding: const EdgeInsets.only(
-                              left: 16,
-                              right: 16,
-                              top: 8,
-                            ),
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                  vertical: 12,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              onPressed: () async {
-                                showProductReceiveDialog();
-                              },
-                              child: Text(
-                                language["Product Receive"] ?? "Product Receive",
-                                style: FontConstants.button1,
-                              ),
-                            ),
-                          )
-                        : Text(""),
-                    orderData['status'] == 'Delivered' || orderData['status'] == 'Completed'
-                        ? Container(
-                            padding: const EdgeInsets.only(
-                              left: 16,
-                              right: 16,
-                              top: 8,
-                            ),
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                  vertical: 12,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              onPressed: () async {
-                                refundReasons();
-                              },
-                              child: Text(
-                                language["Get Refund"] ?? "Get Refund",
-                                style: FontConstants.button1,
-                              ),
-                            ),
-                          )
-                        : Text(""),
+      bottomNavigationBar: role == 'user'
+          ? Container(
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: 24,
+              ),
+              width: double.infinity,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (orderData['status'] == 'Pending')
                     Container(
-                            padding: const EdgeInsets.only(
-                              
-                            ),
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                  vertical: 12,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                backgroundColor: ColorConstants.redcolor,
-                              ),
-                              onPressed: () async {},
-                              child: Text(
-                                language["Remind Seller"] ?? "Remind Seller",
-                                style: FontConstants.button1,
-                              ),
-                            ),
-                          )
-                  ]
-                )
-      ) : null,
+                      padding: const EdgeInsets.only(),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          backgroundColor: ColorConstants.redcolor,
+                        ),
+                        onPressed: () async {
+                          updateOrder("Cancelled");
+                        },
+                        child: Text(
+                          language["Order Cancel"] ?? "Order Cancel",
+                          style: FontConstants.button1,
+                        ),
+                      ),
+                    ),
+                  if (orderData['status'] == 'Delivered')
+                    Container(
+                      padding: const EdgeInsets.only(
+                        top: 8,
+                      ),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        onPressed: () async {
+                          showProductReceiveDialog();
+                        },
+                        child: Text(
+                          language["Product Receive"] ?? "Product Receive",
+                          style: FontConstants.button1,
+                        ),
+                      ),
+                    ),
+                  if (orderData['status'] == 'Completed')
+                    Container(
+                      padding: const EdgeInsets.only(
+                        top: 8,
+                      ),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        onPressed: () async {
+                          showRefundReasonsDialog();
+                        },
+                        child: Text(
+                          language["Get Refund"] ?? "Get Refund",
+                          style: FontConstants.button1,
+                        ),
+                      ),
+                    ),
+                  Container(
+                    padding: const EdgeInsets.only(
+                      top: 8,
+                    ),
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        backgroundColor: Colors.white,
+                        side: BorderSide(
+                          color: ColorConstants.redcolor,
+                          width: 0.5,
+                        ),
+                      ),
+                      onPressed: () async {
+                        remindSeller();
+                      },
+                      child: Text(
+                        language["Remind Seller"] ?? "Remind Seller",
+                        style: FontConstants.button2,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            )
+          : null,
     );
   }
 }
