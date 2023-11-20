@@ -2066,7 +2066,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         },
                         child: Text(
                           language["Add to cart"] ?? "Add to cart",
-                          style: FontConstants.button2,
+                          style: FontConstants.button4,
                         ),
                       ),
                     ),

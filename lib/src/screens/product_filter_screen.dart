@@ -399,7 +399,7 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
                     },
                     child: Text(
                       language["Reset"] ?? "Reset",
-                      style: FontConstants.button2,
+                      style: FontConstants.button4,
                     ),
                   ),
                 ),

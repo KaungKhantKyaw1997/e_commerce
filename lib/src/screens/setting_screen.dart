@@ -415,7 +415,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                       child: Text(
                                         language["Register or Log In"] ??
                                             "Register or Log In",
-                                        style: FontConstants.button2,
+                                        style: FontConstants.button4,
                                       ),
                                     ),
                                   ),

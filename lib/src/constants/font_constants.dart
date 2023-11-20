@@ -1,3 +1,4 @@
+import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:flutter/material.dart';
 
 class FontConstants {
@@ -102,6 +103,18 @@ class FontConstants {
     fontSize: 12,
     fontWeight: FontWeight.w400,
     color: Colors.black,
+  );
+
+  static TextStyle button3 = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    color: ColorConstants.redcolor,
+  );
+
+  static TextStyle button4 = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    color: ColorConstants.primarycolor,
   );
 
   static TextStyle title1 = TextStyle(

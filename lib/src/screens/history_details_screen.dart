@@ -1320,7 +1320,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                       },
                       child: Text(
                         language["Remind Seller"] ?? "Remind Seller",
-                        style: FontConstants.button2,
+                        style: FontConstants.button3,
                       ),
                     ),
                   )
