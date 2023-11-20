@@ -68,6 +68,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
     "created_at": "",
     "commission_amount": 0.0,
     "symbol": "",
+    "can_view_address": false,
   };
   List<Map<String, dynamic>> orderItems = [];
   TextEditingController comment = TextEditingController(text: '');
@@ -936,7 +937,8 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                         ],
                       ),
                     ),
-                  if (role == "admin" || role == "user")
+                  if ((orderData["can_view_address"] && role == "agent") ||
+                      (role == "admin" || role == "user"))
                     Container(
                       padding: const EdgeInsets.all(
                         10,

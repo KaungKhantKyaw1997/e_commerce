@@ -48,6 +48,8 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
   TextEditingController location = TextEditingController(text: '');
   bool offlineTrader = false;
   bool modifyOrderStatus = false;
+  bool canViewAddress = false;
+  bool canViewPhone = false;
 
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
@@ -119,6 +121,8 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
           status = response["data"]["account_status"] ?? "pending";
           modifyOrderStatus =
               response["data"]["can_modify_order_status"] ?? false;
+          canViewAddress = response["data"]["can_view_address"] ?? false;
+          canViewPhone = response["data"]["can_view_phone"] ?? false;
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -187,6 +191,8 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
         "profile_image": profileImage,
         "account_status": status,
         "can_modify_order_status": modifyOrderStatus,
+        "can_view_address": canViewAddress,
+        "can_view_phone": canViewPhone,
         "seller_information": {
           "company_name": companyName.text,
           "professional_title": professionalTitle.text,
@@ -248,6 +254,8 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
         "profile_image": profileImage,
         "account_status": status,
         "can_modify_order_status": modifyOrderStatus,
+        "can_view_address": canViewAddress,
+        "can_view_phone": canViewPhone,
         "seller_information": {
           "company_name": companyName.text,
           "professional_title": professionalTitle.text,
@@ -818,6 +826,8 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                         location.text = '';
                         offlineTrader = false;
                         modifyOrderStatus = false;
+                        canViewAddress = false;
+                        canViewPhone = false;
                       });
                     },
                     items: roles,
@@ -1054,7 +1064,6 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                             child: Padding(
                               padding: EdgeInsets.only(
                                 right: 16,
-                                bottom: 24,
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -1087,7 +1096,6 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                             child: Padding(
                               padding: const EdgeInsets.only(
                                 right: 16,
-                                bottom: 24,
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -1109,6 +1117,77 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                     child: Text(
                                       language["Order Status"] ??
                                           "Order Status",
+                                      style: FontConstants.caption1,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(),
+                role == 'agent'
+                    ? Row(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                right: 16,
+                                bottom: 24,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Checkbox(
+                                    value: canViewAddress,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    activeColor: Theme.of(context).primaryColor,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        canViewAddress = value ?? false;
+                                      });
+                                    },
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      language["Vew Address"] ?? "Vew Address",
+                                      style: FontConstants.caption1,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                right: 16,
+                                bottom: 24,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Checkbox(
+                                    value: canViewPhone,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    activeColor: Theme.of(context).primaryColor,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        canViewPhone = value ?? false;
+                                      });
+                                    },
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      language["View Phone Number"] ??
+                                          "View Phone Number",
                                       style: FontConstants.caption1,
                                     ),
                                   ),

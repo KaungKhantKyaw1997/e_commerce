@@ -51,6 +51,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
   int page = 1;
   DateTime? startDate = null;
   DateTime? endDate = null;
+  List<String> statuslist = [
+    "Pending",
+    "Processing",
+    "Shipped",
+    "Delivered",
+    "Completed",
+    "Cancelled",
+    "Refunded",
+    "Failed",
+    "On Hold",
+    "Backordered",
+    "Returned"
+  ];
+  String status = "";
   String role = "";
   bool _dataLoaded = false;
   Timer? _debounce;
@@ -315,6 +329,38 @@ class _HistoryScreenState extends State<HistoryScreen> {
               _selectDateRange(context);
             },
           ),
+          PopupMenuButton<String>(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+            ),
+            icon: SvgPicture.asset(
+              "assets/icons/menu.svg",
+              width: 24,
+              height: 24,
+              colorFilter: const ColorFilter.mode(
+                Colors.black,
+                BlendMode.srcIn,
+              ),
+            ),
+            onSelected: (String value) {
+              setState(() {
+                status = value;
+              });
+            },
+            itemBuilder: (BuildContext context) {
+              return statuslist.map((String status) {
+                return PopupMenuItem<String>(
+                  value: status,
+                  child: Text(
+                    status,
+                    style: FontConstants.body1,
+                  ),
+                );
+              }).toList();
+            },
+          ),
         ],
       ),
       body: SmartRefresher(
@@ -442,6 +488,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                             ["items"][i]["commission_amount"],
                                         "symbol": orders[index]["items"][i]
                                             ["symbol"],
+                                        "can_view_address": orders[index]
+                                            ["items"][i]["can_view_address"],
                                       },
                                       (route) => true,
                                     );
