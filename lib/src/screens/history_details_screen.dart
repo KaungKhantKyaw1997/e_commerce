@@ -708,61 +708,95 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: role == 'user' && orderData['status'] == 'Pending'
-          ? Container(
-              padding: const EdgeInsets.only(
-                left: 16,
-                right: 16,
-                bottom: 24,
-              ),
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 12,
+      bottomNavigationBar:role == 'user'? Column(
+        children: [
+          orderData['status'] == 'Pending'
+              ? Container(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 24,
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      backgroundColor: ColorConstants.redcolor,
+                    ),
+                    onPressed: () async {
+                      updateOrder("Cancelled");
+                    },
+                    child: Text(
+                      language["Order Cancel"] ?? "Order Cancel",
+                      style: FontConstants.button1,
+                    ),
                   ),
-                  backgroundColor: ColorConstants.redcolor,
-                ),
-                onPressed: () async {
-                  updateOrder("Cancelled");
-                },
-                child: Text(
-                  language["Order Cancel"] ?? "Order Cancel",
-                  style: FontConstants.button1,
-                ),
-              ),
-            )
-          : role == 'user' && (orderData['status'] == 'Pending'|| orderData['status'] == 'Delivered'|| orderData['status'] == 'Completed')
-          ? Container(
-              padding: const EdgeInsets.only(
-                left: 16,
-                right: 16,
-                bottom: 24,
-              ),
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 12,
+                )
+              : Text(""),
+          orderData['status'] == 'Pending'
+              ? Container(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 24,
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () async {
+                      updateOrder("Cancelled");
+                    },
+                    child: Text(
+                      language["Order Cancel"] ?? "Order Cancel",
+                      style: FontConstants.button1,
+                    ),
                   ),
-                ),
-                onPressed: () async {
-                  refundReasons();
-                },
-                child: Text(
-                  language["Get Refund"] ?? "Get Refund",
-                  style: FontConstants.button1,
-                ),
-              ),
-            ):null,
+                )
+              : Text(""),
+          orderData['status'] == 'Pending'|| orderData['status'] == 'Delivered'|| orderData['status'] == 'Completed'
+              ? Container(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 24,
+                  ),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () async {
+                      refundReasons();
+                    },
+                    child: Text(
+                      language["Get Refund"] ?? "Get Refund",
+                      style: FontConstants.button1,
+                    ),
+                  ),
+                )
+              : Text(""),
+        ]
+      ) : null,
     );
   }
 }
