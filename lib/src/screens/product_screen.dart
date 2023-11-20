@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
-
 import 'package:dio/dio.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:e_commerce/global.dart';
@@ -361,7 +359,7 @@ class _ProductScreenState extends State<ProductScreen> {
     await prefs.setString(key, jsonData);
   }
 
-  void _showReportDialogBottomSheet(BuildContext context) {
+  void _showReportBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isDismissible: false,
@@ -1667,7 +1665,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        _showReportDialogBottomSheet(context);
+                                        _showReportBottomSheet(context);
                                       },
                                       child: Text(
                                         language["Report Listing"] ??

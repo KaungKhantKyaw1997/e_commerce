@@ -64,6 +64,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
   }
 
   addSellerReviews() async {
+    showLoadingDialog(context);
     try {
       final body = {
         "shop_id": shop["shop_id"],
@@ -293,7 +294,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
             if (role == 'user' || role == 'agent')
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(30),
                   color: Colors.white,
                 ),
                 child: Column(
@@ -330,7 +331,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                         left: 16,
                         right: 16,
                         top: 24,
-                        bottom: 16,
+                        bottom: 24,
                       ),
                       child: TextFormField(
                         controller: comment,
@@ -339,8 +340,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                         textInputAction: TextInputAction.done,
                         style: FontConstants.body1,
                         cursorColor: Colors.black,
-                        maxLines: null,
-                        minLines: 1,
+                        maxLines: 2,
                         decoration: InputDecoration(
                           hintText: language["Comment"] ?? "Comment",
                           filled: true,
@@ -368,7 +368,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                       padding: const EdgeInsets.only(
                         left: 16,
                         right: 16,
-                        bottom: 24,
+                        bottom: 32,
                       ),
                       width: double.infinity,
                       child: ElevatedButton(
@@ -384,7 +384,6 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                         ),
                         onPressed: () async {
                           _commentFocusNode.unfocus();
-                          showLoadingDialog(context);
                           addSellerReviews();
                         },
                         child: Text(
