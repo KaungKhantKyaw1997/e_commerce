@@ -7,7 +7,6 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/reason_type_service.dart';
-import 'package:e_commerce/src/services/remind_seller_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +31,6 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
   final crashlytic = new CrashlyticsService();
   final orderService = OrderService();
   final reasonTypeService = ReasonTypeService();
-  final remindSellerService = RemindSellerService();
   Map<String, dynamic> details = {};
   List<String> statuslist = [
     "Pending",
@@ -585,7 +583,8 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
   remindSeller() async {
     showLoadingDialog(context);
     try {
-      final response = await remindSellerService.remindSellerData();
+      final response =
+          await orderService.remindSellerData(orderData["order_id"]);
       Navigator.pop(context);
       if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);

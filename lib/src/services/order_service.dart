@@ -122,6 +122,37 @@ class OrderService {
     return response.data;
   }
 
+  Future<Map<String, dynamic>?> refundReasonData(int id) async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      '${ApiConstants.ordersUrl}/$id/refund-reason',
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>?> remindSellerData(int id) async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      '${ApiConstants.ordersUrl}/$id/remind-seller',
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
   void cancelRequest() {
     _cancelToken.cancel('Request canceled');
   }

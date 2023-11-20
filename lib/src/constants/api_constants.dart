@@ -58,5 +58,4 @@ class ApiConstants {
   static const String paymentTypesUrl = '$baseUrl/api/payment-types';
   static const String reasonTypesUrl = '$baseUrl/api/reason-types';
   static const String refundReasonsUrl = '$baseUrl/api/refund-reasons';
-  static const String remindSellerUrl = '$baseUrl/api/remind-seller';
 }
