@@ -329,9 +329,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           onPressed: () {
                             Navigator.of(context).pop();
                             if (!isApply) {
-                              orders = [];
-                              data = [];
-                              page = 1;
                               startDate = null;
                               endDate = null;
                               dateRange.text = "";
