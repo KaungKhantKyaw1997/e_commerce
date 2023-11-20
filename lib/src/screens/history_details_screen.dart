@@ -274,6 +274,86 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
     }
   }
 
+  showProductReceiveDialog() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (c) => BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: 5,
+          sigmaY: 5,
+        ),
+        child: AlertDialog(
+          backgroundColor: Colors.white,
+          titlePadding: EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
+          title: Text(
+            language["Product Receive"] ?? "Product Receive",
+            style: FontConstants.subheadline1,
+          ),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 16,
+          ),
+          content: Text(
+            language["Are you ready to receive the product?"] ??
+                "Are you ready to receive the product?",
+            style: FontConstants.caption2,
+          ),
+          actions: [
+            Padding(
+              padding: EdgeInsets.only(
+                left: 8,
+                right: 4,
+              ),
+              child: TextButton(
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                ),
+                child: Text(
+                  language["Cancel"] ?? "Cancel",
+                  style: FontConstants.button2,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                left: 4,
+                right: 8,
+              ),
+              child: TextButton(
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      Theme.of(context).primaryColor),
+                ),
+                child: Text(
+                  language["Ok"] ?? "Ok",
+                  style: FontConstants.button1,
+                ),
+                onPressed: () async {
+                  updateOrder("Completed");
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -739,7 +819,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                   ),
                 )
               : Text(""),
-          orderData['status'] == 'Pending'
+          orderData['status'] == 'Pending' || orderData['status'] == 'Delivered'
               ? Container(
                   padding: const EdgeInsets.only(
                     left: 16,
@@ -758,16 +838,16 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                       ),
                     ),
                     onPressed: () async {
-                      updateOrder("Cancelled");
+                      showProductReceiveDialog();
                     },
                     child: Text(
-                      language["Order Cancel"] ?? "Order Cancel",
+                      language["Product Receive"] ?? "Product Receive",
                       style: FontConstants.button1,
                     ),
                   ),
                 )
               : Text(""),
-          orderData['status'] == 'Pending'|| orderData['status'] == 'Delivered'|| orderData['status'] == 'Completed'
+          orderData['status'] == 'Pending' || orderData['status'] == 'Delivered' || orderData['status'] == 'Completed'
               ? Container(
                   padding: const EdgeInsets.only(
                     left: 16,
