@@ -397,65 +397,61 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
     );
   }
 
-  clearRefundReasonsDialog() {
-    reasonTypeId = reasonTypes[0]["reason_type_id"];
-    reasonTypeDesc = reasonTypes[0]["description"];
-    comment.text = '';
-  }
-
-  showRefundReasonsDialog() async {
-    clearRefundReasonsDialog();
-    showDialog(
+  void _showRefundReasonsBottomSheet(BuildContext context) {
+    showModalBottomSheet(
       context: context,
-      barrierDismissible: false,
-      builder: (c) => BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: 5,
-          sigmaY: 5,
-        ),
-        child: StatefulBuilder(
+      isDismissible: false,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return StatefulBuilder(
           builder: (context, setState) {
             return GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
                 _commentFocusNode.unfocus();
               },
-              child: AlertDialog(
-                backgroundColor: Colors.white,
-                titlePadding: EdgeInsets.symmetric(
-                  vertical: 14,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
                 ),
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                      ),
-                      child: Text(
-                        language["Refund"] ?? "Refund",
-                        style: FontConstants.subheadline1,
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        size: 24,
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                ),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 16,
-                ),
-                content: Column(
+                child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(
+                      padding: const EdgeInsets.all(
+                        16,
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            language["Refund"] ?? "Refund",
+                            style: FontConstants.subheadline1,
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.close,
+                              size: 22,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              reasonTypeId = reasonTypes[0]["reason_type_id"];
+                              reasonTypeDesc = reasonTypes[0]["description"];
+                              comment.text = '';
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
                       padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
                         bottom: 4,
                       ),
                       child: Align(
@@ -468,6 +464,8 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
                         bottom: 16,
                       ),
                       child: CustomDropDown(
@@ -488,6 +486,8 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
                         bottom: 4,
                       ),
                       child: Align(
@@ -500,7 +500,9 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
-                        bottom: 16,
+                        left: 16,
+                        right: 16,
+                        bottom: 24,
                       ),
                       child: TextFormField(
                         controller: comment,
@@ -532,40 +534,41 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                         ),
                       ),
                     ),
+                    Container(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 32,
+                      ),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          backgroundColor: Theme.of(context).primaryColor,
+                        ),
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                          refundReasons();
+                        },
+                        child: Text(
+                          language["Submit"] ?? "Submit",
+                          style: FontConstants.button1,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-                actions: [
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 8,
-                    ),
-                    width: double.infinity,
-                    child: TextButton(
-                      style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            Theme.of(context).primaryColor),
-                      ),
-                      child: Text(
-                        language["Submit"] ?? "Submit",
-                        style: FontConstants.button1,
-                      ),
-                      onPressed: () async {
-                        refundReasons();
-                      },
-                    ),
-                  ),
-                ],
               ),
             );
           },
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -584,7 +587,6 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
         setState(() {
           orderData["status"] = "Returned";
         });
-        Navigator.pop(context);
         ToastUtil.showToast(response["code"], response["message"]);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -1287,7 +1289,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                           backgroundColor: ColorConstants.redlightcolor,
                         ),
                         onPressed: () async {
-                          showRefundReasonsDialog();
+                          _showRefundReasonsBottomSheet(context);
                         },
                         child: Text(
                           language["Get Refund"] ?? "Get Refund",

@@ -210,6 +210,7 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   addSellerReport() async {
+    showLoadingDialog(context);
     try {
       final body = {
         "seller_id": product["creator_id"],
@@ -221,6 +222,10 @@ class _ProductScreenState extends State<ProductScreen> {
       Navigator.pop(context);
       if (response!["code"] == 201) {
         Navigator.pop(context);
+        phone.text = '';
+        message.text = '';
+        reportSubjectId = reportSubjects[0]["subject_id"];
+        reportSubjectDesc = reportSubjects[0]["description"];
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -356,24 +361,13 @@ class _ProductScreenState extends State<ProductScreen> {
     await prefs.setString(key, jsonData);
   }
 
-  clearReportDialog() {
-    phone.text = '';
-    message.text = '';
-    reportSubjectId = reportSubjects[0]["subject_id"];
-    reportSubjectDesc = reportSubjects[0]["description"];
-  }
-
-  showReportDialog() async {
-    clearReportDialog();
-    showDialog(
+  void _showReportDialogBottomSheet(BuildContext context) {
+    showModalBottomSheet(
       context: context,
-      barrierDismissible: false,
-      builder: (c) => BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: 5,
-          sigmaY: 5,
-        ),
-        child: StatefulBuilder(
+      isDismissible: false,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return StatefulBuilder(
           builder: (context, setState) {
             return GestureDetector(
               behavior: HitTestBehavior.opaque,
@@ -383,42 +377,51 @@ class _ProductScreenState extends State<ProductScreen> {
               },
               child: Form(
                 key: _formKey,
-                child: AlertDialog(
-                  backgroundColor: Colors.white,
-                  titlePadding: EdgeInsets.symmetric(
-                    vertical: 14,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
                   ),
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                        ),
-                        child: Text(
-                          language["Report Listing"] ?? "Report Listing",
-                          style: FontConstants.subheadline1,
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.close,
-                          size: 24,
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 16,
-                  ),
-                  content: Column(
+                  child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Padding(
+                        padding: const EdgeInsets.all(
+                          16,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              language["Report Listing"] ?? "Report Listing",
+                              style: FontConstants.subheadline1,
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.close,
+                                size: 22,
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                phone.text = '';
+                                message.text = '';
+                                reportSubjectId =
+                                    reportSubjects[0]["subject_id"];
+                                reportSubjectDesc =
+                                    reportSubjects[0]["description"];
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
                         padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
                           bottom: 4,
                         ),
                         child: Align(
@@ -431,6 +434,8 @@ class _ProductScreenState extends State<ProductScreen> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
                           bottom: 16,
                         ),
                         child: TextFormField(
@@ -480,6 +485,8 @@ class _ProductScreenState extends State<ProductScreen> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
                           bottom: 4,
                         ),
                         child: Align(
@@ -492,6 +499,8 @@ class _ProductScreenState extends State<ProductScreen> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
                           bottom: 16,
                         ),
                         child: CustomDropDown(
@@ -513,6 +522,8 @@ class _ProductScreenState extends State<ProductScreen> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
                           bottom: 4,
                         ),
                         child: Align(
@@ -525,7 +536,9 @@ class _ProductScreenState extends State<ProductScreen> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
-                          bottom: 16,
+                          left: 16,
+                          right: 16,
+                          bottom: 24,
                         ),
                         child: TextFormField(
                           controller: message,
@@ -557,44 +570,43 @@ class _ProductScreenState extends State<ProductScreen> {
                           ),
                         ),
                       ),
+                      Container(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          bottom: 32,
+                        ),
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            backgroundColor: Theme.of(context).primaryColor,
+                          ),
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              addSellerReport();
+                            }
+                          },
+                          child: Text(
+                            language["Submit"] ?? "Submit",
+                            style: FontConstants.button1,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                  actions: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8,
-                      ),
-                      width: double.infinity,
-                      child: TextButton(
-                        style: ButtonStyle(
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              Theme.of(context).primaryColor),
-                        ),
-                        child: Text(
-                          language["Submit"] ?? "Submit",
-                          style: FontConstants.button1,
-                        ),
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            showLoadingDialog(context);
-                            addSellerReport();
-                          }
-                        },
-                      ),
-                    ),
-                  ],
                 ),
               ),
             );
           },
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -1655,7 +1667,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        showReportDialog();
+                                        _showReportDialogBottomSheet(context);
                                       },
                                       child: Text(
                                         language["Report Listing"] ??
