@@ -45,9 +45,9 @@ class _SuccessScreenState extends State<SuccessScreen>
         id = arguments["id"] ?? 0;
         shopId = arguments["shopId"] ?? 0;
         isAlreadyReviewed = arguments["isAlreadyReviewed"] ?? true;
-        // if (!isAlreadyReviewed) {
-        _showRatingBottomSheet(context);
-        // }
+        if (!isAlreadyReviewed) {
+          _showRatingBottomSheet(context);
+        }
         setState(() {});
       }
     });
@@ -119,8 +119,8 @@ class _SuccessScreenState extends State<SuccessScreen>
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
                   ),
                 ),
                 child: Column(

@@ -294,7 +294,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
             if (role == 'user' || role == 'agent')
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(20),
                   color: Colors.white,
                 ),
                 child: Column(
