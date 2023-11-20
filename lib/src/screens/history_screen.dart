@@ -12,6 +12,7 @@ import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/notification_service.dart';
 import 'package:e_commerce/src/utils/format_amount.dart';
 import 'package:e_commerce/src/widgets/custom_date_range.dart';
+import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -51,7 +52,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
   int page = 1;
   DateTime? startDate = null;
   DateTime? endDate = null;
+  TextEditingController dateRange = TextEditingController(text: '');
   List<String> statuslist = [
+    "All",
     "Pending",
     "Processing",
     "Shipped",
@@ -64,7 +67,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     "Backordered",
     "Returned"
   ];
-  String status = "";
+  String status = "All";
   String role = "";
   bool _dataLoaded = false;
   Timer? _debounce;
@@ -251,20 +254,211 @@ class _HistoryScreenState extends State<HistoryScreen> {
       backgroundColor: Colors.white,
       primaryColor: Theme.of(context).primaryColor,
       onApplyClick: (start, end) {
-        orders = [];
-        data = [];
-        page = 1;
         startDate = start;
         endDate = end;
-        getOrders();
+        dateRange.text =
+            '${DateFormat('dd-MM-yyyy').format(startDate!)} - ${DateFormat('dd-MM-yyyy').format(endDate!)}';
       },
       onCancelClick: () {
-        orders = [];
-        data = [];
-        page = 1;
         startDate = null;
         endDate = null;
-        getOrders();
+        dateRange.text = '';
+      },
+    );
+  }
+
+  void _showFilterBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isDismissible: false,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(
+                      16,
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            orders = [];
+                            data = [];
+                            page = 1;
+                            startDate = null;
+                            endDate = null;
+                            dateRange.text = "";
+                            status = "All";
+                            getOrders();
+                          },
+                          child: Text(
+                            language["Reset"] ?? "Reset",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          language["Filters"] ?? "Filters",
+                          style: FontConstants.subheadline1,
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.close,
+                            size: 22,
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 4,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        language["Date Range"] ?? "Date Range",
+                        style: FontConstants.caption1,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 16,
+                    ),
+                    child: TextFormField(
+                      controller: dateRange,
+                      readOnly: true,
+                      style: FontConstants.body2,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: ColorConstants.fillcolor,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        suffixIcon: IconButton(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                          ),
+                          onPressed: () {
+                            _selectDateRange(context);
+                          },
+                          icon: SvgPicture.asset(
+                            "assets/icons/calendar.svg",
+                            width: 24,
+                            height: 24,
+                            colorFilter: ColorFilter.mode(
+                              Colors.black,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 4,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        language["Status"] ?? "Status",
+                        style: FontConstants.caption1,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 24,
+                    ),
+                    child: CustomDropDown(
+                      value: status,
+                      fillColor: ColorConstants.fillcolor,
+                      onChanged: (newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            status = newValue;
+                          });
+                        }
+                      },
+                      items: statuslist,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 32,
+                    ),
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        backgroundColor: Theme.of(context).primaryColor,
+                      ),
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        orders = [];
+                        data = [];
+                        page = 1;
+                        getOrders();
+                      },
+                      child: Text(
+                        language["Apply"] ?? "Apply",
+                        style: FontConstants.button1,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
       },
     );
   }
@@ -317,7 +511,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         actions: [
           IconButton(
             icon: SvgPicture.asset(
-              "assets/icons/calendar.svg",
+              "assets/icons/filter.svg",
               width: 24,
               height: 24,
               colorFilter: const ColorFilter.mode(
@@ -326,39 +520,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               ),
             ),
             onPressed: () {
-              _selectDateRange(context);
-            },
-          ),
-          PopupMenuButton<String>(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8),
-              ),
-            ),
-            icon: SvgPicture.asset(
-              "assets/icons/menu.svg",
-              width: 24,
-              height: 24,
-              colorFilter: const ColorFilter.mode(
-                Colors.black,
-                BlendMode.srcIn,
-              ),
-            ),
-            onSelected: (String value) {
-              setState(() {
-                status = value;
-              });
-            },
-            itemBuilder: (BuildContext context) {
-              return statuslist.map((String status) {
-                return PopupMenuItem<String>(
-                  value: status,
-                  child: Text(
-                    status,
-                    style: FontConstants.body1,
-                  ),
-                );
-              }).toList();
+              _showFilterBottomSheet(context);
             },
           ),
         ],
@@ -500,6 +662,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                     search.text = '';
                                     startDate = null;
                                     endDate = null;
+                                    dateRange.text = '';
                                     role = "";
                                     _dataLoaded = false;
                                     getOrders();

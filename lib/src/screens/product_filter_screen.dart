@@ -173,7 +173,7 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
           centerTitle: true,
           elevation: 0,
           title: Text(
-            language["Products"] ?? "Products",
+            language["Filters"] ?? "Filters",
             style: FontConstants.title1,
           ),
           iconTheme: IconThemeData(
@@ -398,7 +398,7 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
                       });
                     },
                     child: Text(
-                      language["Clear"] ?? "Clear",
+                      language["Reset"] ?? "Reset",
                       style: FontConstants.button2,
                     ),
                   ),
@@ -447,7 +447,7 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
                       });
                     },
                     child: Text(
-                      language["Apply Filters"] ?? "Apply Filters",
+                      language["Apply"] ?? "Apply",
                       style: FontConstants.button1,
                     ),
                   ),
