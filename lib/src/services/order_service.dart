@@ -105,6 +105,23 @@ class OrderService {
     return response.data;
   }
 
+  Future<Map<String, dynamic>?> refundReasonsData(
+      Map<String, dynamic> body) async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.post(
+      ApiConstants.refundReasonsUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      data: jsonEncode(body),
+    );
+
+    return response.data;
+  }
+
   void cancelRequest() {
     _cancelToken.cancel('Request canceled');
   }

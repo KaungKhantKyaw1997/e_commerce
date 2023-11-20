@@ -28,6 +28,9 @@ class HistoryDetailsScreen extends StatefulWidget {
 class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
   final crashlytic = new CrashlyticsService();
   final orderService = OrderService();
+  TextEditingController comment = TextEditingController(text: '');
+  FocusNode _commentFocusNode = FocusNode();
+  int reasonTypeId = 0;
   Map<String, dynamic> details = {};
   List<String> statuslist = [
     "Pending",
@@ -42,7 +45,6 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
     "Backordered",
     "Returned"
   ];
-  String status = "Pending";
   String role = "";
   String shopName = "";
   Map<String, dynamic> orderData = {
@@ -82,7 +84,6 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
         getShopName(arguments["order_id"]);
         setState(() {
           orderData = arguments;
-          status = orderData['status'];
         });
       }
     });
@@ -177,7 +178,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
     }
   }
 
-  updateOrder() async {
+  updateOrder(status) async {
     showLoadingDialog(context);
     try {
       final body = {
@@ -188,8 +189,10 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
           await orderService.updateOrderData(orderData["order_id"], body);
       Navigator.pop(context);
       if (response!["code"] == 200) {
+         setState(() {
+          orderData["status"] = status;
+        });
         ToastUtil.showToast(response["code"], response["message"]);
-        setState(() {});
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -222,13 +225,52 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
     }
   }
 
-  void _onDropdownChanged(String newValue) {
-    if (newValue != null) {
-      setState(() {
-        status = newValue;
-        orderData["status"] = newValue;
-      });
-      updateOrder();
+  refundReasons() async {
+    showLoadingDialog(context);
+    try {
+      final body = {
+        "order_id": orderData["order_id"],
+        "reason_type_id": reasonTypeId,
+        "comment": comment.text,
+      };
+
+      final response =
+          await orderService.refundReasonsData(body);
+      Navigator.pop(context);
+      if (response!["code"] == 200) {
+        setState(() {
+          orderData["status"] = "Returned";
+        });
+        ToastUtil.showToast(response["code"], response["message"]);
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      Navigator.pop(context);
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
     }
   }
 
@@ -350,15 +392,11 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                     Expanded(
                       child: role == 'admin'
                           ? CustomDropDown(
-                              value: status,
+                              value: orderData['status'],
                               fillColor: Colors.white,
                               onChanged: (newValue) {
                                 if (newValue != null) {
-                                  setState(() {
-                                    status = newValue;
-                                    orderData["status"] = newValue;
-                                  });
-                                  updateOrder();
+                                  updateOrder(newValue);
                                 }
                               },
                               items: statuslist,
@@ -366,7 +404,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                           : Align(
                               alignment: Alignment.centerRight,
                               child: Text(
-                                status,
+                                orderData['status'],
                                 style: FontConstants.body1,
                               ),
                             ),
@@ -670,7 +708,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: role == 'user' && status == 'Pending'
+      bottomNavigationBar: role == 'user' && orderData['status'] == 'Pending'
           ? Container(
               padding: const EdgeInsets.only(
                 left: 16,
@@ -690,11 +728,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                   backgroundColor: ColorConstants.redcolor,
                 ),
                 onPressed: () async {
-                  setState(() {
-                    status = "Cancelled";
-                    orderData["status"] = "Cancelled";
-                  });
-                  updateOrder();
+                  updateOrder("Cancelled");
                 },
                 child: Text(
                   language["Order Cancel"] ?? "Order Cancel",
@@ -702,7 +736,33 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                 ),
               ),
             )
-          : null,
+          : role == 'user' && (orderData['status'] == 'Pending'|| orderData['status'] == 'Delivered'|| orderData['status'] == 'Completed')
+          ? Container(
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: 24,
+              ),
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () async {
+                  refundReasons();
+                },
+                child: Text(
+                  language["Get Refund"] ?? "Get Refund",
+                  style: FontConstants.button1,
+                ),
+              ),
+            ):null,
     );
   }
 }
