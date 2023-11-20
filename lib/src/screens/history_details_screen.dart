@@ -805,308 +805,305 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
               ),
               child: ListView(
                 children: [
-                  role == "admin" || role == "agent"
-                      ? Container(
-                          padding: const EdgeInsets.all(
-                            16,
-                          ),
-                          margin: const EdgeInsets.only(
-                            bottom: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorConstants.greenlightcolor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                  if (role == "admin" || role == "agent")
+                    Container(
+                      padding: const EdgeInsets.all(
+                        16,
+                      ),
+                      margin: const EdgeInsets.only(
+                        bottom: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorConstants.greenlightcolor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             children: [
-                              Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/icons/profile.svg",
-                                    width: 20,
-                                    height: 20,
-                                    colorFilter: ColorFilter.mode(
-                                      Colors.white,
-                                      BlendMode.srcIn,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Text(
-                                    '${language["Order by"] ?? "Order by"}: ${orderData["user_name"]}',
-                                    style: FontConstants.subheadline3,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 8,
-                              ),
-                              GestureDetector(
-                                onTap: () async {
-                                  String phoneNumber = orderData["phone"];
-                                  String uri = 'tel:+$phoneNumber';
-                                  await launchUrl(Uri.parse(uri));
-                                },
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      "assets/icons/phone.svg",
-                                      width: 20,
-                                      height: 20,
-                                      colorFilter: ColorFilter.mode(
-                                        Colors.white,
-                                        BlendMode.srcIn,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 8,
-                                    ),
-                                    Text(
-                                      "+" + orderData["phone"],
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                    ),
-                                  ],
+                              SvgPicture.asset(
+                                "assets/icons/profile.svg",
+                                width: 20,
+                                height: 20,
+                                colorFilter: ColorFilter.mode(
+                                  Colors.white,
+                                  BlendMode.srcIn,
                                 ),
                               ),
                               SizedBox(
-                                height: 8,
+                                width: 8,
                               ),
-                              GestureDetector(
-                                onTap: () async {
-                                  String emailAddress = orderData["email"];
-                                  String uri = 'mailto:+$emailAddress';
-                                  await launchUrl(Uri.parse(uri));
-                                },
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      "assets/icons/mailbox.svg",
-                                      width: 20,
-                                      height: 20,
-                                      colorFilter: ColorFilter.mode(
-                                        Colors.white,
-                                        BlendMode.srcIn,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 8,
-                                    ),
-                                    Text(
-                                      orderData["email"],
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              Text(
+                                '${language["Order by"] ?? "Order by"}: ${orderData["user_name"]}',
+                                style: FontConstants.subheadline3,
                               ),
-                              if (shopName.isNotEmpty)
-                                SizedBox(
-                                  height: 8,
-                                ),
-                              if (shopName.isNotEmpty)
-                                Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      "assets/icons/shop.svg",
-                                      width: 20,
-                                      height: 20,
-                                      colorFilter: ColorFilter.mode(
-                                        Colors.white,
-                                        BlendMode.srcIn,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 8,
-                                    ),
-                                    Text(
-                                      shopName,
-                                      style: FontConstants.body3,
-                                    ),
-                                  ],
-                                ),
                             ],
                           ),
-                        )
-                      : Text(""),
-                  role == "admin" || role == "user"
-                      ? Container(
-                          padding: const EdgeInsets.all(
-                            10,
+                          SizedBox(
+                            height: 8,
                           ),
-                          margin: const EdgeInsets.only(
-                            bottom: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorConstants.primarycolor,
-                            borderRadius: BorderRadius.circular(
-                              10,
+                          GestureDetector(
+                            onTap: () async {
+                              String phoneNumber = orderData["phone"];
+                              String uri = 'tel:+$phoneNumber';
+                              await launchUrl(Uri.parse(uri));
+                            },
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(
+                                  "assets/icons/phone.svg",
+                                  width: 20,
+                                  height: 20,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.white,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  "+" + orderData["phone"],
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    '${language["Address"] ?? "Address"}',
-                                    style: FontConstants.caption4,
+                          SizedBox(
+                            height: 8,
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              String emailAddress = orderData["email"];
+                              String uri = 'mailto:+$emailAddress';
+                              await launchUrl(Uri.parse(uri));
+                            },
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(
+                                  "assets/icons/mailbox.svg",
+                                  width: 20,
+                                  height: 20,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.white,
+                                    BlendMode.srcIn,
                                   ),
-                                ],
-                              ),
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  orderData["email"],
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (shopName.isNotEmpty)
+                            SizedBox(
+                              height: 8,
+                            ),
+                          if (shopName.isNotEmpty)
+                            Row(
+                              children: [
+                                SvgPicture.asset(
+                                  "assets/icons/shop.svg",
+                                  width: 20,
+                                  height: 20,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.white,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  shopName,
+                                  style: FontConstants.body3,
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
+                  if (role == "admin" || role == "user")
+                    Container(
+                      padding: const EdgeInsets.all(
+                        10,
+                      ),
+                      margin: const EdgeInsets.only(
+                        bottom: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorConstants.primarycolor,
+                        borderRadius: BorderRadius.circular(
+                          10,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
                               Text(
-                                '${language["Deliver to"] ?? "Deliver to"}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.white,
-                                  fontStyle: FontStyle.italic,
+                                '${language["Address"] ?? "Address"}',
+                                style: FontConstants.caption4,
+                              ),
+                            ],
+                          ),
+                          Text(
+                            '${language["Deliver to"] ?? "Deliver to"}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Text(
+                            '${orderData["home_address"]}, ${orderData["street_address"]}, Ward ${orderData["ward"]}, ${orderData["township"]}',
+                            style: FontConstants.body3,
+                          ),
+                          Text(
+                            '${orderData["city"]}, ${orderData["state"]} ${orderData["postal_code"]}',
+                            style: FontConstants.body3,
+                          ),
+                          Text(
+                            '${orderData["country"]}',
+                            style: FontConstants.body3,
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (refundData.isNotEmpty &&
+                      (role == "admin" || role == "agent"))
+                    Container(
+                      padding: const EdgeInsets.all(
+                        16,
+                      ),
+                      margin: const EdgeInsets.only(
+                        bottom: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorConstants.redlightcolor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              SvgPicture.asset(
+                                "assets/icons/profile.svg",
+                                width: 20,
+                                height: 20,
+                                colorFilter: ColorFilter.mode(
+                                  Colors.white,
+                                  BlendMode.srcIn,
                                 ),
                               ),
                               SizedBox(
-                                height: 8,
+                                width: 8,
                               ),
                               Text(
-                                '${orderData["home_address"]}, ${orderData["street_address"]}, Ward ${orderData["ward"]}, ${orderData["township"]}',
-                                style: FontConstants.body3,
-                              ),
-                              Text(
-                                '${orderData["city"]}, ${orderData["state"]} ${orderData["postal_code"]}',
-                                style: FontConstants.body3,
-                              ),
-                              Text(
-                                '${orderData["country"]}',
-                                style: FontConstants.body3,
+                                '${language["Refund by"] ?? "Refund by"}: ${refundData["customer_name"]}',
+                                style: FontConstants.subheadline3,
                               ),
                             ],
                           ),
-                        )
-                      : Text(""),
-                  refundData.isNotEmpty && (role == "admin" || role == "agent")
-                      ? Container(
-                          padding: const EdgeInsets.all(
-                            16,
+                          SizedBox(
+                            height: 8,
                           ),
-                          margin: const EdgeInsets.only(
-                            bottom: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorConstants.redlightcolor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          Row(
                             children: [
-                              Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/icons/profile.svg",
-                                    width: 20,
-                                    height: 20,
-                                    colorFilter: ColorFilter.mode(
-                                      Colors.white,
-                                      BlendMode.srcIn,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Text(
-                                    '${language["Refund by"] ?? "Refund by"}: ${refundData["customer_name"]}',
-                                    style: FontConstants.subheadline3,
-                                  ),
-                                ],
+                              SvgPicture.asset(
+                                "assets/icons/calendar.svg",
+                                width: 20,
+                                height: 20,
+                                colorFilter: ColorFilter.mode(
+                                  Colors.white,
+                                  BlendMode.srcIn,
+                                ),
                               ),
                               SizedBox(
-                                height: 8,
+                                width: 8,
                               ),
-                              Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/icons/description.svg",
-                                    width: 20,
-                                    height: 20,
-                                    colorFilter: ColorFilter.mode(
-                                      Colors.white,
-                                      BlendMode.srcIn,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Text(
-                                    refundData["reason_type_description"],
-                                    style: FontConstants.body3,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 8,
-                              ),
-                              Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/icons/message.svg",
-                                    width: 20,
-                                    height: 20,
-                                    colorFilter: ColorFilter.mode(
-                                      Colors.white,
-                                      BlendMode.srcIn,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Text(
-                                    refundData["comment"],
-                                    style: FontConstants.body3,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 8,
-                              ),
-                              Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/icons/calendar.svg",
-                                    width: 20,
-                                    height: 20,
-                                    colorFilter: ColorFilter.mode(
-                                      Colors.white,
-                                      BlendMode.srcIn,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Text(
-                                    refundData["created_at"].isEmpty
-                                        ? ""
-                                        : Jiffy.parseFromDateTime(
-                                                DateTime.parse(refundData[
-                                                            "created_at"] +
-                                                        "Z")
-                                                    .toLocal())
-                                            .format(
-                                                pattern:
-                                                    "dd MMM yyyy, hh:mm a"),
-                                    style: FontConstants.body3,
-                                  ),
-                                ],
+                              Text(
+                                refundData["created_at"].isEmpty
+                                    ? ""
+                                    : Jiffy.parseFromDateTime(DateTime.parse(
+                                                refundData["created_at"] + "Z")
+                                            .toLocal())
+                                        .format(
+                                            pattern: "dd MMM yyyy, hh:mm a"),
+                                style: FontConstants.body3,
                               ),
                             ],
                           ),
-                        )
-                      : Text(""),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Row(
+                            children: [
+                              SvgPicture.asset(
+                                "assets/icons/description.svg",
+                                width: 20,
+                                height: 20,
+                                colorFilter: ColorFilter.mode(
+                                  Colors.white,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Text(
+                                refundData["reason_type_description"],
+                                style: FontConstants.body3,
+                              ),
+                            ],
+                          ),
+                          if (refundData["comment"].isNotEmpty)
+                            SizedBox(
+                              height: 8,
+                            ),
+                          if (refundData["comment"].isNotEmpty)
+                            Row(
+                              children: [
+                                SvgPicture.asset(
+                                  "assets/icons/message.svg",
+                                  width: 20,
+                                  height: 20,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.white,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  refundData["comment"],
+                                  style: FontConstants.body3,
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
                   ...orderItems.map((item) {
                     return Card(
                       elevation: 0,
