@@ -68,6 +68,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     "Returned"
   ];
   String status = "All";
+  bool isApply = false;
   String role = "";
   bool _dataLoaded = false;
   Timer? _debounce;
@@ -304,6 +305,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             endDate = null;
                             dateRange.text = "";
                             status = "All";
+                            isApply = false;
                             getOrders();
                           },
                           child: Text(
@@ -326,6 +328,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           ),
                           onPressed: () {
                             Navigator.of(context).pop();
+                            if (!isApply) {
+                              orders = [];
+                              data = [];
+                              page = 1;
+                              startDate = null;
+                              endDate = null;
+                              dateRange.text = "";
+                              status = "All";
+                            }
                           },
                         ),
                       ],
@@ -446,6 +457,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         orders = [];
                         data = [];
                         page = 1;
+                        isApply = true;
                         getOrders();
                       },
                       child: Text(
