@@ -31,7 +31,6 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
   final crashlytic = new CrashlyticsService();
   final orderService = OrderService();
   final reasonTypeService = ReasonTypeService();
-  Map<String, dynamic> details = {};
   List<String> statuslist = [
     "Pending",
     "Processing",
@@ -77,6 +76,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
   List<String> reasonTypesDesc = [];
   int reasonTypeId = 0;
   String reasonTypeDesc = '';
+  Map<String, dynamic> refundData = {};
 
   @override
   void initState() {
@@ -89,6 +89,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
       if (arguments != null) {
         getOrderDetails(arguments["order_id"]);
         getShopName(arguments["order_id"]);
+        refundReason(arguments["order_id"]);
         setState(() {
           orderData = arguments;
         });
@@ -226,6 +227,42 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
         } else {
           ToastUtil.showToast(
               e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  refundReason(int order_id) async {
+    try {
+      final response = await orderService.refundReasonData(order_id);
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          refundData = response["data"];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
         }
       }
     }
@@ -777,7 +814,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                             bottom: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: Color(0xff36936C),
+                            color: ColorConstants.greenlightcolor,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Column(
@@ -871,29 +908,31 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                                   ],
                                 ),
                               ),
-                              SizedBox(
-                                height: 8,
-                              ),
-                              Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/icons/shop.svg",
-                                    width: 20,
-                                    height: 20,
-                                    colorFilter: ColorFilter.mode(
-                                      Colors.white,
-                                      BlendMode.srcIn,
+                              if (shopName.isNotEmpty)
+                                SizedBox(
+                                  height: 8,
+                                ),
+                              if (shopName.isNotEmpty)
+                                Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/icons/shop.svg",
+                                      width: 20,
+                                      height: 20,
+                                      colorFilter: ColorFilter.mode(
+                                        Colors.white,
+                                        BlendMode.srcIn,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 8,
-                                  ),
-                                  Text(
-                                    shopName,
-                                    style: FontConstants.body3,
-                                  ),
-                                ],
-                              ),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Text(
+                                      shopName,
+                                      style: FontConstants.body3,
+                                    ),
+                                  ],
+                                ),
                             ],
                           ),
                         )
@@ -903,8 +942,11 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                           padding: const EdgeInsets.all(
                             10,
                           ),
+                          margin: const EdgeInsets.only(
+                            bottom: 8,
+                          ),
                           decoration: BoxDecoration(
-                            color: Color(0xff1f335a),
+                            color: ColorConstants.primarycolor,
                             borderRadius: BorderRadius.circular(
                               10,
                             ),
@@ -948,9 +990,123 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                           ),
                         )
                       : Text(""),
-                  SizedBox(
-                    height: 8,
-                  ),
+                  refundData.isNotEmpty && (role == "admin" || role == "agent")
+                      ? Container(
+                          padding: const EdgeInsets.all(
+                            16,
+                          ),
+                          margin: const EdgeInsets.only(
+                            bottom: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ColorConstants.redlightcolor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    "assets/icons/profile.svg",
+                                    width: 20,
+                                    height: 20,
+                                    colorFilter: ColorFilter.mode(
+                                      Colors.white,
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Text(
+                                    '${language["Refund by"] ?? "Refund by"}: ${refundData["customer_name"]}',
+                                    style: FontConstants.subheadline3,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    "assets/icons/description.svg",
+                                    width: 20,
+                                    height: 20,
+                                    colorFilter: ColorFilter.mode(
+                                      Colors.white,
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Text(
+                                    refundData["reason_type_description"],
+                                    style: FontConstants.body3,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    "assets/icons/message.svg",
+                                    width: 20,
+                                    height: 20,
+                                    colorFilter: ColorFilter.mode(
+                                      Colors.white,
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Text(
+                                    refundData["comment"],
+                                    style: FontConstants.body3,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    "assets/icons/calendar.svg",
+                                    width: 20,
+                                    height: 20,
+                                    colorFilter: ColorFilter.mode(
+                                      Colors.white,
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Text(
+                                    refundData["created_at"].isEmpty
+                                        ? ""
+                                        : Jiffy.parseFromDateTime(
+                                                DateTime.parse(refundData[
+                                                            "created_at"] +
+                                                        "Z")
+                                                    .toLocal())
+                                            .format(
+                                                pattern:
+                                                    "dd MMM yyyy, hh:mm a"),
+                                    style: FontConstants.body3,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
+                      : Text(""),
                   ...orderItems.map((item) {
                     return Card(
                       elevation: 0,
@@ -1129,6 +1285,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
+                          backgroundColor: ColorConstants.redlightcolor,
                         ),
                         onPressed: () async {
                           showRefundReasonsDialog();
