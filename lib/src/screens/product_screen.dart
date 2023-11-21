@@ -363,6 +363,7 @@ class _ProductScreenState extends State<ProductScreen> {
     showModalBottomSheet(
       context: context,
       isDismissible: false,
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
         return StatefulBuilder(
@@ -383,7 +384,11 @@ class _ProductScreenState extends State<ProductScreen> {
                       topRight: Radius.circular(20),
                     ),
                   ),
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                  ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Padding(

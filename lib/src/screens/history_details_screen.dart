@@ -401,6 +401,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
     showModalBottomSheet(
       context: context,
       isDismissible: false,
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
         return StatefulBuilder(
@@ -418,7 +419,11 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                     topRight: Radius.circular(20),
                   ),
                 ),
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(

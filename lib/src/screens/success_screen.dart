@@ -106,6 +106,7 @@ class _SuccessScreenState extends State<SuccessScreen>
   void _showRatingBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
         return StatefulBuilder(
@@ -123,7 +124,11 @@ class _SuccessScreenState extends State<SuccessScreen>
                     topRight: Radius.circular(20),
                   ),
                 ),
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(
