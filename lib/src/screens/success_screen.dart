@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
+import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
@@ -13,6 +14,7 @@ import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SuccessScreen extends StatefulWidget {
   const SuccessScreen({super.key});
@@ -287,31 +289,70 @@ class _SuccessScreenState extends State<SuccessScreen>
           bottom: 24,
         ),
         width: double.infinity,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 12,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  backgroundColor: Colors.white,
+                ),
+                onPressed: () async {
+                  if (invoiceUrl.isEmpty) {
+                    ToastUtil.showToast(
+                        0,
+                        language["The invoice has not been prepared yet"] ??
+                            "The invoice has not been prepared yet");
+                    return;
+                  }
+                  await launchUrl(Uri.parse(
+                      '${ApiConstants.invoiceServerURL}${invoiceUrl}'));
+                },
+                child: Text(
+                  language["Save Invoice"] ?? "Save Invoice",
+                  style: FontConstants.button4,
+                ),
+              ),
             ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+            Container(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  backgroundColor: Theme.of(context).primaryColor,
+                ),
+                onPressed: () async {
+                  invoiceUrl = "";
+                  BottomProvider bottomProvider =
+                      Provider.of<BottomProvider>(context, listen: false);
+                  bottomProvider.selectIndex(0);
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    Routes.home,
+                    (route) => false,
+                  );
+                },
+                child: Text(
+                  language["Home"] ?? "Home",
+                  style: FontConstants.button1,
+                ),
+              ),
             ),
-            backgroundColor: Theme.of(context).primaryColor,
-          ),
-          onPressed: () async {
-            BottomProvider bottomProvider =
-                Provider.of<BottomProvider>(context, listen: false);
-            bottomProvider.selectIndex(0);
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              Routes.home,
-              (route) => false,
-            );
-          },
-          child: Text(
-            language["Home"] ?? "Home",
-            style: FontConstants.button1,
-          ),
+          ],
         ),
       ),
     );

@@ -1,6 +1,7 @@
 class ApiConstants {
   static const String baseUrl = 'http://150.95.82.125:8001';
   static const String socketServerURL = 'http://150.95.82.125:8002';
+  static const String invoiceServerURL = 'http://150.95.82.125:8004';
   static const String loginUrl = '$baseUrl/api/auth/login';
   static const String registerUrl = '$baseUrl/api/auth/register';
   static const String forgotPasswordUrl = '$baseUrl/api/auth/forgot-password';

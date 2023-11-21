@@ -69,6 +69,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
     "commission_amount": 0.0,
     "symbol": "",
     "can_view_address": false,
+    "invoice_url": "",
   };
   List<Map<String, dynamic>> orderItems = [];
   TextEditingController comment = TextEditingController(text: '');
@@ -679,6 +680,24 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
+        actions: [
+          if (orderData["invoice_url"].isNotEmpty)
+            IconButton(
+              icon: SvgPicture.asset(
+                "assets/icons/invoice.svg",
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  Colors.black,
+                  BlendMode.srcIn,
+                ),
+              ),
+              onPressed: () async {
+                await launchUrl(Uri.parse(
+                    '${ApiConstants.invoiceServerURL}${orderData["invoice_url"]}'));
+              },
+            ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1229,7 +1248,6 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                 children: [
                   if (orderData['status'] == 'Pending')
                     Container(
-                      padding: const EdgeInsets.only(),
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(

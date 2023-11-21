@@ -204,5 +204,7 @@
   "Are you ready to receive the product?": "ကုန်ပစ္စည်းကို လက်ခံဖို့ အဆင်သင့်ဖြစ်ပြီလား?",
   "Reason": "အကြောင်းပြချက်",
   "Submit": "တင်ပြပါ",
-  "Refund": "ပြန်အမ်းငွေ"
+  "Refund": "ပြန်အမ်းငွေ",
+  "The invoice has not been prepared yet": "ပြေစာကို မပြင်ဆင်ရသေးပါ",
+  "Save Invoice": "ပြေစာသိမ်းဆည်းပါ"
 }

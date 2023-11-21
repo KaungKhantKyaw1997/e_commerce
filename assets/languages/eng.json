@@ -204,5 +204,7 @@
   "Are you ready to receive the product?": "Are you ready to receive the product?",
   "Reason": "Reason",
   "Submit": "Submit",
-  "Refund": "Refund"
+  "Refund": "Refund",
+  "The invoice has not been prepared yet": "The invoice has not been prepared yet",
+  "Save Invoice": "Save Invoice"
 }

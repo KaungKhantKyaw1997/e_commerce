@@ -194,6 +194,10 @@ class AuthService {
         chatProvider.setChats(chats);
         getChatSession(data["chat_id"], context);
       });
+
+      socketProvider.socket!.on("new-invoice", (data) {
+        invoiceUrl = data["invoice_url"];
+      });
     });
 
     socketProvider.socket!

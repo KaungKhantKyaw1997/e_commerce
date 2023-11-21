@@ -665,6 +665,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                             ["symbol"],
                                         "can_view_address": orders[index]
                                             ["items"][i]["can_view_address"],
+                                        "invoice_url": orders[index]["items"][i]
+                                            ["invoice_url"],
                                       },
                                       (route) => true,
                                     );

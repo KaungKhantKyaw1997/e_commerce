@@ -49,5 +49,10 @@
 	<string>This app needs photo library access to use a picture for the profile.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs camera access to take a picture for the scan.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>sms</string>
+		<string>tel</string>
+	</array>
 </dict>
 </plist>
