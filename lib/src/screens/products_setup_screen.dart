@@ -110,6 +110,77 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
     }
   }
 
+  updateProduct(index) async {
+    try {
+      final body = {
+        "shop_id": products[index]['shop_id'],
+        "category_id": products[index]['category_id'],
+        "brand_id": products[index]['brand_id'],
+        "model": products[index]['model'],
+        "description": products[index]['description'],
+        "color": products[index]['color'],
+        "strap_material": products[index]['strap_material'],
+        "strap_color": products[index]['strap_color'],
+        "case_material": products[index]['case_material'],
+        "dial_color": products[index]['dial_color'],
+        "movement_type": products[index]['movement_type'],
+        "movement_country": products[index]['movement_country'],
+        "movement_caliber": products[index]['movement_caliber'],
+        "water_resistance": products[index]['water_resistance'],
+        "warranty_period": products[index]['warranty_period'],
+        "dimensions": "",
+        "price": products[index]['price'],
+        "currency_id": products[index]['currency_id'],
+        "stock_quantity": products[index]['stock_quantity'],
+        "is_top_model": products[index]['is_top_model'],
+        "product_images": products[index]['product_images'],
+        "condition": products[index]['condition'],
+        "warranty_type_id": products[index]['warranty_type_id'],
+        "dial_glass_type_id": products[index]['dial_glass_type_id'],
+        "other_accessories_type_id": products[index]
+            ['other_accessories_type_id'],
+        "gender_id": products[index]['gender_id'],
+        "is_preorder": products[index]['is_preorder'],
+        "waiting_time": products[index]['waiting_time'],
+        "case_diameter": products[index]['case_diameter'],
+        "case_depth": products[index]['case_depth'],
+        "case_width": products[index]['case_width'],
+        "discount_percent": products[index]['discount_percent'],
+      };
+
+      final response = await productService.updateProductData(
+          body, products[index]['product_id']);
+      if (response!["code"] != 200) {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
   productCard(index) {
     return Container(
       padding: const EdgeInsets.only(
@@ -184,6 +255,94 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
                     products[index]["model"].toString(),
                     overflow: TextOverflow.ellipsis,
                     style: FontConstants.caption1,
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(8),
+                            bottomLeft: Radius.circular(8),
+                          ),
+                          border: Border.all(
+                            color: Theme.of(context).primaryColorLight,
+                            width: 1,
+                          ),
+                        ),
+                        width: 32,
+                        height: 32,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.remove,
+                            size: 15,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {
+                            if (products[index]['stock_quantity'] > 1) {
+                              setState(() {
+                                products[index]['stock_quantity']--;
+                              });
+
+                              updateProduct(index);
+                            }
+                          },
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 4,
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).primaryColorLight,
+                            width: 1,
+                          ),
+                        ),
+                        height: 32,
+                        child: Center(
+                          child: Text(
+                            products[index]['stock_quantity'].toString(),
+                            textAlign: TextAlign.center,
+                            style: FontConstants.subheadline1,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(8),
+                            bottomRight: Radius.circular(8),
+                          ),
+                          border: Border.all(
+                            color: Theme.of(context).primaryColorLight,
+                            width: 1,
+                          ),
+                        ),
+                        width: 32,
+                        height: 32,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.add,
+                            size: 15,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              products[index]['stock_quantity']++;
+                            });
+
+                            updateProduct(index);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
