@@ -206,5 +206,7 @@
   "Submit": "Submit",
   "Refund": "Refund",
   "The invoice has not been prepared yet": "The invoice has not been prepared yet",
-  "Save Invoice": "Save Invoice"
+  "Save Invoice": "Save Invoice",
+  "The invoice has been saved to the file!": "The invoice has been saved to the file!",
+  "Saving the invoice failed!": "Saving the invoice failed!"
 }

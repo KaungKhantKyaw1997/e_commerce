@@ -206,5 +206,7 @@
   "Submit": "တင်ပြပါ",
   "Refund": "ပြန်အမ်းငွေ",
   "The invoice has not been prepared yet": "ပြေစာကို မပြင်ဆင်ရသေးပါ",
-  "Save Invoice": "ပြေစာသိမ်းဆည်းပါ"
+  "Save Invoice": "ပြေစာသိမ်းဆည်းပါ",
+  "The invoice has been saved to the file!": "ပြေစာကို ဖိုင်ထဲမှာ သိမ်းဆည်းပြီးပါပြီ။",
+  "Saving the invoice failed!": "ပြေစာကို သိမ်းဆည်းခြင်း မအောင်မြင်ပါ။"
 }

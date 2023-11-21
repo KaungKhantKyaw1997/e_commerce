@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
@@ -13,8 +12,9 @@ import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 class SuccessScreen extends StatefulWidget {
   const SuccessScreen({super.key});
@@ -234,6 +234,26 @@ class _SuccessScreenState extends State<SuccessScreen>
     );
   }
 
+  Future<void> _savePdf(url) async {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = '${directory.path}/Invoice-${DateTime.now()}.pdf';
+      File file = File(filePath);
+      await file.writeAsBytes(response.bodyBytes);
+      print(filePath);
+      ToastUtil.showToast(
+          0,
+          language["The invoice has been saved to the file!"] ??
+              "The invoice has been saved to the file!");
+    } else {
+      ToastUtil.showToast(
+          0,
+          language["Saving the invoice failed!"] ??
+              "Saving the invoice failed!");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -313,8 +333,7 @@ class _SuccessScreenState extends State<SuccessScreen>
                             "The invoice has not been prepared yet");
                     return;
                   }
-                  await launchUrl(Uri.parse(
-                      '${ApiConstants.invoiceServerURL}${invoiceUrl}'));
+                  _savePdf('${ApiConstants.invoiceServerURL}${invoiceUrl}');
                 },
                 child: Text(
                   language["Save Invoice"] ?? "Save Invoice",
