@@ -1144,11 +1144,14 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                         ),
                       ),
                       child: ListTile(
-                        leading: Image.network(
-                          '${ApiConstants.baseUrl}${item["product_images"][0]}',
-                          fit: BoxFit.cover,
-                          height: 60,
-                          width: 60,
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network(
+                            '${ApiConstants.baseUrl}${item["product_images"][0]}',
+                            fit: BoxFit.cover,
+                            height: 60,
+                            width: 60,
+                          ),
                         ),
                         title: Text(
                           "${item["brand"]} ${item["model"]}",

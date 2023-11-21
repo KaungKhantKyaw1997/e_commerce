@@ -257,90 +257,114 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
                     style: FontConstants.caption1,
                   ),
                   SizedBox(
-                    height: 12,
+                    height: 4,
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(8),
-                            bottomLeft: Radius.circular(8),
-                          ),
-                          border: Border.all(
-                            color: Theme.of(context).primaryColorLight,
-                            width: 1,
-                          ),
-                        ),
-                        width: 32,
-                        height: 32,
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.remove,
-                            size: 15,
-                            color: Colors.black,
-                          ),
-                          onPressed: () {
-                            if (products[index]['stock_quantity'] > 1) {
-                              setState(() {
-                                products[index]['stock_quantity']--;
-                              });
+                      products[index]['stock_quantity'] < 1
+                          ? Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: ColorConstants.redcolor,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  language["Out of Stock"] ?? "Out of Stock",
+                                  textAlign: TextAlign.center,
+                                  style: FontConstants.body3,
+                                ),
+                              ),
+                            )
+                          : Text(''),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(8),
+                                bottomLeft: Radius.circular(8),
+                              ),
+                              border: Border.all(
+                                color: Theme.of(context).primaryColorLight,
+                                width: 1,
+                              ),
+                            ),
+                            width: 32,
+                            height: 32,
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.remove,
+                                size: 15,
+                                color: Colors.black,
+                              ),
+                              onPressed: () {
+                                if (products[index]['stock_quantity'] > 0) {
+                                  setState(() {
+                                    products[index]['stock_quantity']--;
+                                  });
 
-                              updateProduct(index);
-                            }
-                          },
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: 4,
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Theme.of(context).primaryColorLight,
-                            width: 1,
+                                  updateProduct(index);
+                                }
+                              },
+                            ),
                           ),
-                        ),
-                        height: 32,
-                        child: Center(
-                          child: Text(
-                            products[index]['stock_quantity'].toString(),
-                            textAlign: TextAlign.center,
-                            style: FontConstants.subheadline1,
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                              horizontal: 4,
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Theme.of(context).primaryColorLight,
+                                width: 1,
+                              ),
+                            ),
+                            height: 32,
+                            child: Center(
+                              child: Text(
+                                products[index]['stock_quantity'].toString(),
+                                textAlign: TextAlign.center,
+                                style: FontConstants.subheadline1,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(8),
-                            bottomRight: Radius.circular(8),
-                          ),
-                          border: Border.all(
-                            color: Theme.of(context).primaryColorLight,
-                            width: 1,
-                          ),
-                        ),
-                        width: 32,
-                        height: 32,
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.add,
-                            size: 15,
-                            color: Colors.black,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              products[index]['stock_quantity']++;
-                            });
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(8),
+                                bottomRight: Radius.circular(8),
+                              ),
+                              border: Border.all(
+                                color: Theme.of(context).primaryColorLight,
+                                width: 1,
+                              ),
+                            ),
+                            width: 32,
+                            height: 32,
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.add,
+                                size: 15,
+                                color: Colors.black,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  products[index]['stock_quantity']++;
+                                });
 
-                            updateProduct(index);
-                          },
-                        ),
+                                updateProduct(index);
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
