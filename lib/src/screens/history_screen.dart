@@ -182,7 +182,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
       }
 
       final response = await orderService.getOrdersData(
-          page: page, fromDate: fromDate, toDate: toDate, search: search.text);
+          page: page,
+          fromDate: fromDate,
+          toDate: toDate,
+          search: search.text,
+          status: status);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
 

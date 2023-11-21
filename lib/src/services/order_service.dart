@@ -50,6 +50,7 @@ class OrderService {
     double fromAmount = 0.0,
     double toAmount = 0.0,
     String search = '',
+    String status = 'All',
   }) async {
     var token = await storage.read(key: "token") ?? '';
     var url =
@@ -58,6 +59,7 @@ class OrderService {
     if (toDate.isNotEmpty) url += '&to_date=$toDate';
     if (toAmount != 0.0) url += '&from_amount=$fromAmount';
     if (toAmount != 0.0) url += '&to_amount=$toAmount';
+    if (status != 'All') url += '&status=$status';
 
     final response = await dio.get(
       url,
