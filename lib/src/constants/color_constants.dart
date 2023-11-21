@@ -6,6 +6,7 @@ class ColorConstants {
   static const Color redlightcolor = Color(0xffE64234);
   static const Color greencolor = Color(0xFF24BB48);
   static const Color greenlightcolor = Color(0xff36936C);
-  static const Color orangecolor = Color(0xFFFFCF44);
+  static const Color orangecolor = Color(0xFFF9875D);
+  static const Color yellowcolor = Color(0xFFFFCF44);
   static const Color primarycolor = Color(0xff24375A);
 }

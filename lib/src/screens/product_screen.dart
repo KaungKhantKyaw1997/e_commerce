@@ -1752,7 +1752,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: ColorConstants.orangecolor,
+                        color: ColorConstants.yellowcolor,
                       ),
                       child: Center(
                         child: Text(
@@ -1925,7 +1925,9 @@ class _ProductScreenState extends State<ProductScreen> {
                               int.parse(product["stock_quantity"].toString()) <
                                   1
                           ? ColorConstants.redcolor
-                          : ColorConstants.greencolor,
+                          : product.isNotEmpty && product["is_preorder"]
+                              ? ColorConstants.orangecolor
+                              : ColorConstants.greencolor,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -1939,7 +1941,9 @@ class _ProductScreenState extends State<ProductScreen> {
                                             .toString()) <
                                         1
                                 ? language["Out of Stock"] ?? "Out of Stock"
-                                : language["In Stock"] ?? "In Stock",
+                                : product.isNotEmpty && product["is_preorder"]
+                                    ? language["Preorder"] ?? "Preorder"
+                                    : language["In Stock"] ?? "In Stock",
                             textAlign: TextAlign.center,
                             style: FontConstants.body3,
                           ),
