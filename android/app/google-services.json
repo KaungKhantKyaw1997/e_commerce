@@ -12,7 +12,12 @@
           "package_name": "com.watchvault.app001"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "274063087309-reot51qnbnnvh3hrmm0d8lipq3l8db1v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDQjIhrPokVu1kMcy2qVc_pGSoz62sML_I"
@@ -20,7 +25,20 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "274063087309-reot51qnbnnvh3hrmm0d8lipq3l8db1v.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "274063087309-6r8b9e3vre2l77mi7h6p08rhlniq5ct8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.watchvault.app001",
+                "app_store_id": "6469529196"
+              }
+            }
+          ]
         }
       }
     }

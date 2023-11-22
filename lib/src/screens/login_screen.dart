@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:e_commerce/palette.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/role_provider.dart';
@@ -11,6 +10,8 @@ import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
+import 'package:e_commerce/src/widgets/square_tile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -248,8 +249,8 @@ class _LogInScreenState extends State<LogInScreen> {
                     right: 16,
                     top: 24,
                   ),
-                  width: 200,
-                  height: 200,
+                  width: 180,
+                  height: 180,
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage('assets/images/login.png'),
@@ -355,7 +356,7 @@ class _LogInScreenState extends State<LogInScreen> {
                   padding: const EdgeInsets.only(
                     left: 16,
                     right: 16,
-                    bottom: 24,
+                    bottom: 8,
                   ),
                   child: TextFormField(
                     controller: password,
@@ -415,6 +416,29 @@ class _LogInScreenState extends State<LogInScreen> {
                     },
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        Routes.forgot_password,
+                        (route) => true,
+                      );
+                    },
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        '${language["Forgot Password"] ?? "Forgot Password"}?',
+                        style: FontConstants.caption1,
+                      ),
+                    ),
+                  ),
+                ),
                 Container(
                   padding: const EdgeInsets.only(
                     left: 16,
@@ -446,31 +470,85 @@ class _LogInScreenState extends State<LogInScreen> {
                     ),
                   ),
                 ),
-                !firstPage
-                    ? Container(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          bottom: 24,
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     Expanded(
+                //       child: Padding(
+                //         padding: const EdgeInsets.only(
+                //           left: 16,
+                //         ),
+                //         child: Divider(
+                //           height: 0,
+                //           thickness: 0.2,
+                //           color: Colors.grey,
+                //         ),
+                //       ),
+                //     ),
+                //     Padding(
+                //       padding: const EdgeInsets.symmetric(
+                //         horizontal: 8,
+                //       ),
+                //       child: Text(
+                //         language["Or continue with"] ?? "Or continue with",
+                //         style: FontConstants.caption1,
+                //       ),
+                //     ),
+                //     Expanded(
+                //       child: Padding(
+                //         padding: const EdgeInsets.only(
+                //           right: 16,
+                //         ),
+                //         child: Divider(
+                //           height: 0,
+                //           thickness: 0.2,
+                //           color: Colors.grey,
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(
+                //     vertical: 24,
+                //   ),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       SquareTile(
+                //         imagePath: 'assets/images/google.png',
+                //         onTap: () async {
+                //           User? user = await AuthService.signInWithGoogle(
+                //               context: context);
+                //           if (user != null) {
+                //             email.text = user.email!;
+                //             showLoadingDialog(context);
+                //             login();
+                //           }
+                //         },
+                //       )
+                //     ],
+                //   ),
+                // ),
+                if (!firstPage)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 16,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '${language["Not a member"] ?? "Not a member"}?',
+                          style: FontConstants.caption2,
                         ),
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            backgroundColor: Colors.white,
-                            side: BorderSide(
-                              color: Theme.of(context).primaryColor,
-                              width: 0.5,
-                            ),
-                          ),
-                          onPressed: () {
+                        SizedBox(
+                          width: 8,
+                        ),
+                        GestureDetector(
+                          onTap: () {
                             Navigator.pop(context);
                             Navigator.pushNamed(
                               context,
@@ -478,67 +556,13 @@ class _LogInScreenState extends State<LogInScreen> {
                             );
                           },
                           child: Text(
-                            language["Register"] ?? "Register",
+                            language["Register now"] ?? "Register now",
                             style: FontConstants.button4,
                           ),
                         ),
-                      )
-                    : Container(),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 24,
-                  ),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        Routes.forgot_password,
-                        (route) => true,
-                      );
-                    },
-                    child: Center(
-                      child: Text(
-                        '${language["Forgot Password"]}?' ?? "Forgot Password?",
-                        style: FontConstants.caption5,
-                      ),
+                      ],
                     ),
                   ),
-                ),
-                // OutlinedButton(
-                //   style: ButtonStyle(
-                //     backgroundColor: MaterialStateProperty.all(
-                //       Colors.white,
-                //     ),
-                //     shape: MaterialStateProperty.all(
-                //       RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(40),
-                //       ),
-                //     ),
-                //   ),
-                //   onPressed: () async {},
-                //   child: Padding(
-                //     padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                //     child: Row(
-                //       mainAxisSize: MainAxisSize.min,
-                //       mainAxisAlignment: MainAxisAlignment.center,
-                //       children: <Widget>[
-                //         Image(
-                //           image: AssetImage("assets/images/google.png"),
-                //           height: 24,
-                //         ),
-                //         Padding(
-                //           padding: const EdgeInsets.only(left: 10),
-                //           child: Text(
-                //             'Sign in with Google',
-                //             style: FontConstants.button2,
-                //           ),
-                //         )
-                //       ],
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           ),

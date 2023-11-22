@@ -209,5 +209,8 @@
   "Save Invoice": "Save Invoice",
   "The invoice has been saved to the file!": "The invoice has been saved to the file!",
   "Saving the invoice failed!": "Saving the invoice failed!",
-  "Invoice": "Invoice"
+  "Invoice": "Invoice",
+  "Not a member": "Not a member",
+  "Register now": "Register now",
+  "Or continue with": "Or continue with"
 }

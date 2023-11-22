@@ -17,7 +17,9 @@ import 'package:e_commerce/src/providers/socket_provider.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/setting_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +51,50 @@ class AuthService {
     );
 
     return response.data;
+  }
+
+  static Future<User?> signInWithGoogle({required BuildContext context}) async {
+    User? user;
+    final GoogleSignInAccount? googleSignInAccount =
+        await GoogleSignIn().signIn();
+    if (googleSignInAccount != null) {
+      final GoogleSignInAuthentication gAuth =
+          await googleSignInAccount.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: gAuth.accessToken,
+        idToken: gAuth.idToken,
+      );
+
+      try {
+        final UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithCredential(credential);
+
+        user = userCredential.user;
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'account-exists-with-different-credential') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  'The account already exists with a different credential'),
+            ),
+          );
+        } else if (e.code == 'invalid-credential') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  'Error occurred while accessing credentials. Try again.'),
+            ),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error occurred using Google Sign In. Try again.'),
+          ),
+        );
+      }
+    }
+    return user;
   }
 
   addFCMData(Map<String, dynamic> body) async {
