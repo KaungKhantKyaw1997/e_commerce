@@ -96,6 +96,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (response!["code"] == 200) {
         ToastUtil.showToast(response["code"], response["message"]);
         Navigator.pop(context);
+        Navigator.pop(context);
         Navigator.pushNamed(
           context,
           Routes.login,
