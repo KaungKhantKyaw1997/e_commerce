@@ -470,66 +470,66 @@ class _LogInScreenState extends State<LogInScreen> {
                     ),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                        ),
-                        child: Divider(
-                          height: 0,
-                          thickness: 0.2,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                      ),
-                      child: Text(
-                        language["Or continue with"] ?? "Or continue with",
-                        style: FontConstants.caption1,
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          right: 16,
-                        ),
-                        child: Divider(
-                          height: 0,
-                          thickness: 0.2,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 24,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SquareTile(
-                        imagePath: 'assets/images/google.png',
-                        onTap: () async {
-                          User? user = await AuthService.signInWithGoogle(
-                              context: context);
-                          if (user != null) {
-                            email.text = user.email!;
-                            showLoadingDialog(context);
-                            login();
-                          }
-                        },
-                      )
-                    ],
-                  ),
-                ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     Expanded(
+                //       child: Padding(
+                //         padding: const EdgeInsets.only(
+                //           left: 16,
+                //         ),
+                //         child: Divider(
+                //           height: 0,
+                //           thickness: 0.2,
+                //           color: Colors.grey,
+                //         ),
+                //       ),
+                //     ),
+                //     Padding(
+                //       padding: const EdgeInsets.symmetric(
+                //         horizontal: 8,
+                //       ),
+                //       child: Text(
+                //         language["Or continue with"] ?? "Or continue with",
+                //         style: FontConstants.caption1,
+                //       ),
+                //     ),
+                //     Expanded(
+                //       child: Padding(
+                //         padding: const EdgeInsets.only(
+                //           right: 16,
+                //         ),
+                //         child: Divider(
+                //           height: 0,
+                //           thickness: 0.2,
+                //           color: Colors.grey,
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(
+                //     vertical: 24,
+                //   ),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       SquareTile(
+                //         imagePath: 'assets/images/google.png',
+                //         onTap: () async {
+                //           User? user = await AuthService.signInWithGoogle(
+                //               context: context);
+                //           if (user != null) {
+                //             email.text = user.email!;
+                //             showLoadingDialog(context);
+                //             login();
+                //           }
+                //         },
+                //       )
+                //     ],
+                //   ),
+                // ),
                 if (!firstPage)
                   Padding(
                     padding: const EdgeInsets.only(
