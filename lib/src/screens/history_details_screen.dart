@@ -70,6 +70,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
     "symbol": "",
     "can_view_address": false,
     "invoice_url": "",
+    "is_my_order": false,
   };
   List<Map<String, dynamic>> orderItems = [];
   TextEditingController comment = TextEditingController(text: '');
@@ -801,7 +802,8 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                       ),
                     ),
                     Expanded(
-                      child: role == 'admin'
+                      child: role == 'admin' ||
+                              (!orderData["is_my_order"] && role == 'agent')
                           ? CustomDropDown(
                               value: orderData['status'],
                               fillColor: Colors.white,
@@ -833,7 +835,8 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
               ),
               child: ListView(
                 children: [
-                  if (role == "admin" || role == "agent")
+                  if (role == "admin" ||
+                      (!orderData["is_my_order"] && role == 'agent'))
                     Container(
                       padding: const EdgeInsets.all(
                         16,
@@ -967,8 +970,12 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                         ],
                       ),
                     ),
-                  if ((orderData["can_view_address"] && role == "agent") ||
-                      (role == "admin" || role == "user"))
+                  if (role == "admin" ||
+                      role == "user" ||
+                      (orderData["is_my_order"] && role == 'agent') ||
+                      (!orderData["is_my_order"] &&
+                          orderData["can_view_address"] &&
+                          role == 'agent'))
                     Container(
                       padding: const EdgeInsets.all(
                         10,
@@ -1021,7 +1028,8 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                       ),
                     ),
                   if (refundData.isNotEmpty &&
-                      (role == "admin" || role == "agent"))
+                      (role == "admin" ||
+                          (!orderData["is_my_order"] && role == 'agent')))
                     Container(
                       padding: const EdgeInsets.all(
                         16,
@@ -1242,129 +1250,130 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: role == 'user'
-          ? Container(
-              padding: const EdgeInsets.only(
-                left: 16,
-                right: 16,
-                bottom: 24,
-              ),
-              width: double.infinity,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (orderData['status'] == 'Pending')
-                    Container(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 12,
+      bottomNavigationBar:
+          role == 'user' || (orderData["is_my_order"] && role == 'agent')
+              ? Container(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 24,
+                  ),
+                  width: double.infinity,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (orderData['status'] == 'Pending')
+                        Container(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              backgroundColor: ColorConstants.redColor,
+                            ),
+                            onPressed: () async {
+                              updateOrder("Cancelled");
+                            },
+                            child: Text(
+                              language["Order Cancel"] ?? "Order Cancel",
+                              style: FontConstants.button1,
+                            ),
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                        ),
+                      if (orderData['status'] == 'Delivered')
+                        Container(
+                          padding: const EdgeInsets.only(
+                            top: 8,
                           ),
-                          backgroundColor: ColorConstants.redColor,
-                        ),
-                        onPressed: () async {
-                          updateOrder("Cancelled");
-                        },
-                        child: Text(
-                          language["Order Cancel"] ?? "Order Cancel",
-                          style: FontConstants.button1,
-                        ),
-                      ),
-                    ),
-                  if (orderData['status'] == 'Delivered')
-                    Container(
-                      padding: const EdgeInsets.only(
-                        top: 8,
-                      ),
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 12,
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              backgroundColor: Theme.of(context).primaryColor,
+                            ),
+                            onPressed: () async {
+                              showProductReceiveDialog();
+                            },
+                            child: Text(
+                              language["Product Receive"] ?? "Product Receive",
+                              style: FontConstants.button1,
+                            ),
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                        ),
+                      if (orderData['status'] == 'Completed')
+                        Container(
+                          padding: const EdgeInsets.only(
+                            top: 8,
                           ),
-                          backgroundColor: Theme.of(context).primaryColor,
-                        ),
-                        onPressed: () async {
-                          showProductReceiveDialog();
-                        },
-                        child: Text(
-                          language["Product Receive"] ?? "Product Receive",
-                          style: FontConstants.button1,
-                        ),
-                      ),
-                    ),
-                  if (orderData['status'] == 'Completed')
-                    Container(
-                      padding: const EdgeInsets.only(
-                        top: 8,
-                      ),
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 12,
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              backgroundColor: ColorConstants.redLightColor,
+                            ),
+                            onPressed: () async {
+                              _showRefundReasonsBottomSheet(context);
+                            },
+                            child: Text(
+                              language["Get Refund"] ?? "Get Refund",
+                              style: FontConstants.button1,
+                            ),
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                        ),
+                      Container(
+                        padding: const EdgeInsets.only(
+                          top: 8,
+                        ),
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            backgroundColor: Colors.white,
+                            side: BorderSide(
+                              color: ColorConstants.redColor,
+                              width: 0.5,
+                            ),
                           ),
-                          backgroundColor: ColorConstants.redLightColor,
+                          onPressed: () async {
+                            remindSeller();
+                          },
+                          child: Text(
+                            language["Remind Seller"] ?? "Remind Seller",
+                            style: FontConstants.button3,
+                          ),
                         ),
-                        onPressed: () async {
-                          _showRefundReasonsBottomSheet(context);
-                        },
-                        child: Text(
-                          language["Get Refund"] ?? "Get Refund",
-                          style: FontConstants.button1,
-                        ),
-                      ),
-                    ),
-                  Container(
-                    padding: const EdgeInsets.only(
-                      top: 8,
-                    ),
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        backgroundColor: Colors.white,
-                        side: BorderSide(
-                          color: ColorConstants.redColor,
-                          width: 0.5,
-                        ),
-                      ),
-                      onPressed: () async {
-                        remindSeller();
-                      },
-                      child: Text(
-                        language["Remind Seller"] ?? "Remind Seller",
-                        style: FontConstants.button3,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            )
-          : null,
+                      )
+                    ],
+                  ),
+                )
+              : null,
     );
   }
 }

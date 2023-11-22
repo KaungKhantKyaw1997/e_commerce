@@ -731,11 +731,11 @@ class _HomeScreenState extends State<HomeScreen>
                         padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
                           color: ColorConstants.redColor,
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         constraints: const BoxConstraints(
-                          minWidth: 16,
-                          minHeight: 16,
+                          minWidth: 20,
+                          minHeight: 20,
                         ),
                         child: Text(
                           '${messageProvider.count}',
