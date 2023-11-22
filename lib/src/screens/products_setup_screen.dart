@@ -270,7 +270,7 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
                               ),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
-                                color: ColorConstants.redcolor,
+                                color: ColorConstants.redColor,
                               ),
                               child: Center(
                                 child: Text(
@@ -291,7 +291,7 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
                                 bottomLeft: Radius.circular(8),
                               ),
                               border: Border.all(
-                                color: Theme.of(context).primaryColorLight,
+                                color: ColorConstants.borderColor,
                                 width: 1,
                               ),
                             ),
@@ -323,7 +323,7 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
                             ),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: Theme.of(context).primaryColorLight,
+                                color: ColorConstants.borderColor,
                                 width: 1,
                               ),
                             ),
@@ -343,7 +343,7 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
                                 bottomRight: Radius.circular(8),
                               ),
                               border: Border.all(
-                                color: Theme.of(context).primaryColorLight,
+                                color: ColorConstants.borderColor,
                                 width: 1,
                               ),
                             ),
@@ -384,6 +384,7 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: TextField(
           controller: search,
           keyboardType: TextInputType.text,
@@ -393,7 +394,7 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
           decoration: InputDecoration(
             hintText: language["Search"] ?? "Search",
             filled: true,
-            fillColor: ColorConstants.fillcolor,
+            fillColor: ColorConstants.fillColor,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
             ),
@@ -478,6 +479,7 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
                                   ),
                                   child: const Divider(
                                     height: 0,
+                                    thickness: 0.2,
                                     color: Colors.grey,
                                   ),
                                 )
@@ -509,6 +511,7 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
         backgroundColor: Theme.of(context).primaryColor,
         child: Icon(
           Icons.add,
+          color: Colors.white,
         ),
       ),
     );

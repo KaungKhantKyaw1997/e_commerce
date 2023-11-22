@@ -452,7 +452,7 @@ class _ProductScreenState extends State<ProductScreen> {
                             prefixText: '+959',
                             prefixStyle: FontConstants.body2,
                             filled: true,
-                            fillColor: ColorConstants.fillcolor,
+                            fillColor: ColorConstants.fillColor,
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 14,
@@ -508,7 +508,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         ),
                         child: CustomDropDown(
                           value: reportSubjectDesc,
-                          fillColor: ColorConstants.fillcolor,
+                          fillColor: ColorConstants.fillColor,
                           onChanged: (newValue) {
                             setState(() {
                               reportSubjectDesc =
@@ -553,7 +553,7 @@ class _ProductScreenState extends State<ProductScreen> {
                           maxLines: 2,
                           decoration: InputDecoration(
                             filled: true,
-                            fillColor: ColorConstants.fillcolor,
+                            fillColor: ColorConstants.fillColor,
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 14,
@@ -582,6 +582,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
+                            elevation: 0,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 14,
                               vertical: 12,
@@ -620,6 +621,7 @@ class _ProductScreenState extends State<ProductScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: Text(
           language["Details"] ?? "Details",
           style: FontConstants.title1,
@@ -1427,7 +1429,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                     width: 24,
                                     height: 24,
                                     colorFilter: const ColorFilter.mode(
-                                      Colors.black,
+                                      Colors.white,
                                       BlendMode.srcIn,
                                     ),
                                   ),
@@ -1725,6 +1727,7 @@ class _ProductScreenState extends State<ProductScreen> {
                             fontWeight: FontWeight.w500,
                             color: Colors.grey,
                             decoration: TextDecoration.lineThrough,
+                            decorationColor: Colors.grey,
                           ),
                         ),
                         product["price"] != null
@@ -1736,12 +1739,14 @@ class _ProductScreenState extends State<ProductScreen> {
                                   fontWeight: FontWeight.w500,
                                   color: Colors.grey,
                                   decoration: TextDecoration.lineThrough,
+                                  decorationColor: Colors.grey,
                                 ),
                                 decimalTextStyle: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.grey,
                                   decoration: TextDecoration.lineThrough,
+                                  decorationColor: Colors.grey,
                                 ),
                               )
                             : Text(""),
@@ -1757,7 +1762,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: ColorConstants.yellowcolor,
+                        color: ColorConstants.yellowColor,
                       ),
                       child: Center(
                         child: Text(
@@ -1833,7 +1838,7 @@ class _ProductScreenState extends State<ProductScreen> {
                             bottomLeft: Radius.circular(8),
                           ),
                           border: Border.all(
-                            color: Theme.of(context).primaryColorLight,
+                            color: ColorConstants.borderColor,
                             width: 1,
                           ),
                         ),
@@ -1867,7 +1872,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         ),
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: Theme.of(context).primaryColorLight,
+                            color: ColorConstants.borderColor,
                             width: 1,
                           ),
                         ),
@@ -1887,7 +1892,7 @@ class _ProductScreenState extends State<ProductScreen> {
                             bottomRight: Radius.circular(8),
                           ),
                           border: Border.all(
-                            color: Theme.of(context).primaryColorLight,
+                            color: ColorConstants.borderColor,
                             width: 1,
                           ),
                         ),
@@ -1929,10 +1934,10 @@ class _ProductScreenState extends State<ProductScreen> {
                       color: product.isNotEmpty &&
                               int.parse(product["stock_quantity"].toString()) <
                                   1
-                          ? ColorConstants.redcolor
+                          ? ColorConstants.redColor
                           : product.isNotEmpty && product["is_preorder"]
-                              ? ColorConstants.orangecolor
-                              : ColorConstants.greencolor,
+                              ? ColorConstants.orangeColor
+                              : ColorConstants.greenColor,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -2005,7 +2010,8 @@ class _ProductScreenState extends State<ProductScreen> {
               ),
               child: Divider(
                 height: 0,
-                thickness: 1,
+                thickness: 0.2,
+                color: Colors.grey,
               ),
             ),
             Row(
@@ -2022,6 +2028,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                          elevation: 0,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
                             vertical: 12,
@@ -2103,6 +2110,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                          elevation: 0,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
                             vertical: 12,

@@ -369,6 +369,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
           backgroundColor: Colors.white,
           centerTitle: true,
           elevation: 0,
+          scrolledUnderElevation: 0,
           title: Text(
             language["User"] ?? "User",
             style: FontConstants.title1,
@@ -395,7 +396,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                         bottom: 24,
                       ),
                       decoration: BoxDecoration(
-                        color: ColorConstants.fillcolor,
+                        color: ColorConstants.fillColor,
                         shape: BoxShape.circle,
                       ),
                       child: GestureDetector(
@@ -452,7 +453,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                             width: 16,
                             height: 16,
                             colorFilter: ColorFilter.mode(
-                              Theme.of(context).primaryColor,
+                              Colors.white,
                               BlendMode.srcIn,
                             ),
                           ),
@@ -491,7 +492,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                     readOnly: id != 0 ? true : false,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 14,
@@ -547,7 +548,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 14,
@@ -624,7 +625,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 14,
@@ -704,7 +705,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 14,
@@ -761,7 +762,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       prefixText: '+959',
                       prefixStyle: FontConstants.body2,
                       filled: true,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 14,
@@ -817,7 +818,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                   ),
                   child: CustomDropDown(
                     value: role,
-                    fillColor: ColorConstants.fillcolor,
+                    fillColor: ColorConstants.fillColor,
                     onChanged: (newValue) {
                       setState(() {
                         role = newValue ?? "user";
@@ -855,7 +856,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                   ),
                   child: CustomDropDown(
                     value: status,
-                    fillColor: ColorConstants.fillcolor,
+                    fillColor: ColorConstants.fillColor,
                     onChanged: (newValue) {
                       setState(() {
                         status = newValue ?? "pending";
@@ -896,7 +897,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                           cursorColor: Colors.black,
                           decoration: InputDecoration(
                             filled: true,
-                            fillColor: ColorConstants.fillcolor,
+                            fillColor: ColorConstants.fillColor,
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 14,
@@ -960,7 +961,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                     cursorColor: Colors.black,
                                     decoration: InputDecoration(
                                       filled: true,
-                                      fillColor: ColorConstants.fillcolor,
+                                      fillColor: ColorConstants.fillColor,
                                       contentPadding:
                                           const EdgeInsets.symmetric(
                                         horizontal: 16,
@@ -1023,7 +1024,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                     cursorColor: Colors.black,
                                     decoration: InputDecoration(
                                       filled: true,
-                                      fillColor: ColorConstants.fillcolor,
+                                      fillColor: ColorConstants.fillColor,
                                       contentPadding:
                                           const EdgeInsets.symmetric(
                                         horizontal: 16,
@@ -1211,6 +1212,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                 ),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
+                    elevation: 0,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,
                       vertical: 12,
@@ -1218,6 +1220,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
+                    backgroundColor: Theme.of(context).primaryColor,
                   ),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
@@ -1247,6 +1250,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                         ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
+                            elevation: 0,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 14,
                               vertical: 12,
@@ -1254,7 +1258,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            backgroundColor: ColorConstants.redcolor,
+                            backgroundColor: ColorConstants.redColor,
                           ),
                           onPressed: () async {
                             showLoadingDialog(context);
@@ -1279,6 +1283,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                         ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
+                            elevation: 0,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 14,
                               vertical: 12,
@@ -1286,6 +1291,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
+                            backgroundColor: Theme.of(context).primaryColor,
                           ),
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {

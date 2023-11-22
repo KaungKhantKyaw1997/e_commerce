@@ -204,6 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           backgroundColor: Colors.white,
           centerTitle: true,
           elevation: 0,
+          scrolledUnderElevation: 0,
           title: Text(
             language["Profile"] ?? "Profile",
             style: FontConstants.title1,
@@ -252,7 +253,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         bottom: 24,
                       ),
                       decoration: BoxDecoration(
-                        color: ColorConstants.fillcolor,
+                        color: ColorConstants.fillColor,
                         shape: BoxShape.circle,
                       ),
                       child: GestureDetector(
@@ -309,7 +310,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             width: 16,
                             height: 16,
                             colorFilter: ColorFilter.mode(
-                              Theme.of(context).primaryColor,
+                              Colors.white,
                               BlendMode.srcIn,
                             ),
                           ),
@@ -347,7 +348,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 14,
@@ -402,7 +403,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 14,
@@ -459,7 +460,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       prefixText: '+959',
                       prefixStyle: FontConstants.body2,
                       filled: true,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 14,

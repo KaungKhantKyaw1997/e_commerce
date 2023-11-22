@@ -171,6 +171,7 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: Text(
           language["Switch User"] ?? "Switch User",
           style: FontConstants.title1,
@@ -220,7 +221,7 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
                             height: 40,
                             decoration: users[index]["profile_image"].isEmpty
                                 ? BoxDecoration(
-                                    color: ColorConstants.fillcolor,
+                                    color: ColorConstants.fillColor,
                                     image: DecorationImage(
                                       image: AssetImage(
                                           "assets/images/profile.png"),

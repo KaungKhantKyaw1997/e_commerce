@@ -14,10 +14,8 @@ class _ConnectionTimeoutScreenState extends State<ConnectionTimeoutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WillPopScope(
-        onWillPop: () async {
-          return false;
-        },
+      body: PopScope(
+        canPop: false,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -66,6 +64,7 @@ class _ConnectionTimeoutScreenState extends State<ConnectionTimeoutScreen> {
         ),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
+            elevation: 0,
             padding: const EdgeInsets.symmetric(
               horizontal: 14,
               vertical: 12,
@@ -73,6 +72,7 @@ class _ConnectionTimeoutScreenState extends State<ConnectionTimeoutScreen> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
+            backgroundColor: Theme.of(context).primaryColor,
           ),
           onPressed: () async {
             isConnectionTimeout = false;

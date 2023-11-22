@@ -150,6 +150,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: Align(
           alignment: Alignment.centerLeft,
           child: Text(
@@ -221,6 +222,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             ),
                             const Divider(
                               height: 0,
+                              thickness: 0.2,
                               color: Colors.grey,
                             ),
                             ListView.builder(
@@ -319,6 +321,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                             ),
                                             child: const Divider(
                                               height: 0,
+                                              thickness: 0.2,
                                               color: Colors.grey,
                                             ),
                                           )

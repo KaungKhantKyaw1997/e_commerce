@@ -15,7 +15,7 @@ class CustomAutocomplete extends StatefulWidget {
     required this.textController,
     required this.onSelected,
     required this.onChanged,
-    this.fillColor = ColorConstants.fillcolor,
+    this.fillColor = ColorConstants.fillColor,
     this.maxWidth = 300,
   });
 

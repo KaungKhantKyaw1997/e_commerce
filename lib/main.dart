@@ -197,9 +197,9 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Watch Vault by Diggie',
       theme: ThemeData(
-        primarySwatch: roleProvider.role == 'agent'
-            ? AgentPalette.kToDark
-            : Palette.kToDark,
+        primaryColor: Color(0xff24375A),
+        primaryColorLight: Color(0xff485C7F),
+        primaryColorDark: Color(0xff121E35),
         scaffoldBackgroundColor: Color(0xFFF1F3F6),
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
         dialogTheme: DialogTheme(

@@ -8,7 +8,6 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
-import 'package:e_commerce/src/providers/chat_histories_provider.dart';
 import 'package:e_commerce/src/providers/chat_scroll_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
 import 'package:e_commerce/src/providers/message_provider.dart';
@@ -551,7 +550,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                         radius: 10,
                         backgroundImage:
                             AssetImage("assets/images/profile.png"),
-                        backgroundColor: ColorConstants.fillcolor,
+                        backgroundColor: ColorConstants.fillColor,
                       )
                     : CircleAvatar(
                         radius: 10,
@@ -620,7 +619,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                         radius: 10,
                         backgroundImage:
                             AssetImage("assets/images/profile.png"),
-                        backgroundColor: ColorConstants.fillcolor,
+                        backgroundColor: ColorConstants.fillColor,
                       )
                     : CircleAvatar(
                         radius: 10,
@@ -678,6 +677,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
+          scrolledUnderElevation: 0,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -693,7 +693,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                         child: Container(
                           width: 40,
                           height: 40,
-                          color: ColorConstants.fillcolor,
+                          color: ColorConstants.fillColor,
                           child: profiles.isNotEmpty
                               ? Stack(
                                   children: <Widget>[
@@ -841,7 +841,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                           },
                                           backgroundColor: Colors.transparent,
                                           foregroundColor:
-                                              ColorConstants.redcolor,
+                                              ColorConstants.redColor,
                                           icon: Icons.delete,
                                         ),
                                       ],
@@ -896,7 +896,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                       decoration: InputDecoration(
                         hintText: language["Message"] ?? "Message",
                         filled: true,
-                        fillColor: ColorConstants.fillcolor,
+                        fillColor: ColorConstants.fillColor,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,

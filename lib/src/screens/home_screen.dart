@@ -585,6 +585,7 @@ class _HomeScreenState extends State<HomeScreen>
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
+          scrolledUnderElevation: 0,
           title: Align(
             alignment: Alignment.centerLeft,
             child: StreamBuilder<DateTime>(
@@ -654,7 +655,7 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                     decoration: profileImage.isEmpty
                         ? BoxDecoration(
-                            color: ColorConstants.fillcolor,
+                            color: ColorConstants.fillColor,
                             image: DecorationImage(
                               image: AssetImage("assets/images/profile.png"),
                               fit: BoxFit.cover,
@@ -729,7 +730,7 @@ class _HomeScreenState extends State<HomeScreen>
                       child: Container(
                         padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
-                          color: ColorConstants.redcolor,
+                          color: ColorConstants.redColor,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         constraints: const BoxConstraints(
@@ -751,20 +752,23 @@ class _HomeScreenState extends State<HomeScreen>
           ],
           bottom: TabBar(
             controller: _tabController,
-            indicatorPadding: EdgeInsets.symmetric(
-              horizontal: 30,
-            ),
+            indicatorColor: Theme.of(context).primaryColor,
+            dividerColor: Colors.transparent,
             tabs: [
               Tab(
-                child: Text(
-                  language["Shops"] ?? "Shops",
-                  style: FontConstants.subtitle1,
+                child: Center(
+                  child: Text(
+                    language["Shops"] ?? "Shops",
+                    style: FontConstants.subtitle1,
+                  ),
                 ),
               ),
               Tab(
-                child: Text(
-                  language["Products"] ?? "Products",
-                  style: FontConstants.subtitle1,
+                child: Center(
+                  child: Text(
+                    language["Products"] ?? "Products",
+                    style: FontConstants.subtitle1,
+                  ),
                 ),
               ),
             ],

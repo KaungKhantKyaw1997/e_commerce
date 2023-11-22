@@ -184,7 +184,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                   ),
                   decoration: reviews[index]["profile_image"].isNotEmpty
                       ? BoxDecoration(
-                          color: ColorConstants.fillcolor,
+                          color: ColorConstants.fillColor,
                           image: DecorationImage(
                             image: NetworkImage(
                                 '${ApiConstants.baseUrl}${reviews[index]["profile_image"].toString()}'),
@@ -196,7 +196,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                           ),
                         )
                       : BoxDecoration(
-                          color: ColorConstants.fillcolor,
+                          color: ColorConstants.fillColor,
                           image: DecorationImage(
                             image: AssetImage('assets/images/profile.png'),
                             fit: BoxFit.cover,
@@ -270,6 +270,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
           backgroundColor: Colors.white,
           centerTitle: true,
           elevation: 0,
+          scrolledUnderElevation: 0,
           title: Text(
             language["Reviews"] ?? "Reviews",
             style: FontConstants.title1,
@@ -344,7 +345,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                         decoration: InputDecoration(
                           hintText: language["Comment"] ?? "Comment",
                           filled: true,
-                          fillColor: ColorConstants.fillcolor,
+                          fillColor: ColorConstants.fillColor,
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 14,
@@ -373,6 +374,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                          elevation: 0,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
                             vertical: 12,

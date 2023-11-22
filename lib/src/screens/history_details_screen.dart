@@ -329,16 +329,9 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
         ),
         child: AlertDialog(
           backgroundColor: Colors.white,
-          titlePadding: EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 14,
-          ),
           title: Text(
             language["Product Receive"] ?? "Product Receive",
             style: FontConstants.subheadline1,
-          ),
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 16,
           ),
           content: Text(
             language["Are you ready to receive the product?"] ??
@@ -348,7 +341,6 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
           actions: [
             Padding(
               padding: EdgeInsets.only(
-                left: 8,
                 right: 4,
               ),
               child: TextButton(
@@ -371,7 +363,6 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
             Padding(
               padding: EdgeInsets.only(
                 left: 4,
-                right: 8,
               ),
               child: TextButton(
                 style: ButtonStyle(
@@ -476,7 +467,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                       ),
                       child: CustomDropDown(
                         value: reasonTypeDesc,
-                        fillColor: ColorConstants.fillcolor,
+                        fillColor: ColorConstants.fillColor,
                         onChanged: (newValue) {
                           setState(() {
                             reasonTypeDesc = newValue ?? reasonTypesDesc[0];
@@ -520,7 +511,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                         maxLines: 2,
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: ColorConstants.fillcolor,
+                          fillColor: ColorConstants.fillColor,
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 14,
@@ -549,6 +540,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                          elevation: 0,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
                             vertical: 12,
@@ -673,6 +665,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: Text(
           language["Track Order"] ?? "Track Order",
           style: FontConstants.title1,
@@ -841,7 +834,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                         bottom: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: ColorConstants.greenlightcolor,
+                        color: ColorConstants.greenLightColor,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -895,7 +888,9 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 14,
+                                    fontWeight: FontWeight.w400,
                                     decoration: TextDecoration.underline,
+                                    decorationColor: Colors.white,
                                   ),
                                 ),
                               ],
@@ -930,6 +925,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                                     color: Colors.white,
                                     fontSize: 14,
                                     decoration: TextDecoration.underline,
+                                    decorationColor: Colors.white,
                                   ),
                                 ),
                               ],
@@ -973,7 +969,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                         bottom: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: ColorConstants.primarycolor,
+                        color: ColorConstants.primaryColor,
                         borderRadius: BorderRadius.circular(
                           10,
                         ),
@@ -1026,7 +1022,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                         bottom: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: ColorConstants.redlightcolor,
+                        color: ColorConstants.redLightColor,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -1254,6 +1250,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                          elevation: 0,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
                             vertical: 12,
@@ -1261,7 +1258,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          backgroundColor: ColorConstants.redcolor,
+                          backgroundColor: ColorConstants.redColor,
                         ),
                         onPressed: () async {
                           updateOrder("Cancelled");
@@ -1280,6 +1277,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                          elevation: 0,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
                             vertical: 12,
@@ -1287,6 +1285,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
+                          backgroundColor: Theme.of(context).primaryColor,
                         ),
                         onPressed: () async {
                           showProductReceiveDialog();
@@ -1305,6 +1304,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                          elevation: 0,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
                             vertical: 12,
@@ -1312,7 +1312,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          backgroundColor: ColorConstants.redlightcolor,
+                          backgroundColor: ColorConstants.redLightColor,
                         ),
                         onPressed: () async {
                           _showRefundReasonsBottomSheet(context);
@@ -1330,6 +1330,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
+                        elevation: 0,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 14,
                           vertical: 12,
@@ -1339,7 +1340,7 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                         ),
                         backgroundColor: Colors.white,
                         side: BorderSide(
-                          color: ColorConstants.redcolor,
+                          color: ColorConstants.redColor,
                           width: 0.5,
                         ),
                       ),

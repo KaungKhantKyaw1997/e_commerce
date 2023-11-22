@@ -136,6 +136,7 @@ class _TermsAndConditionsSetUpScreenState
           backgroundColor: Colors.white,
           centerTitle: true,
           elevation: 0,
+          scrolledUnderElevation: 0,
           title: Text(
             language["Terms & Conditions"] ?? "Terms & Conditions",
             style: FontConstants.title1,
@@ -161,7 +162,7 @@ class _TermsAndConditionsSetUpScreenState
               maxLines: null,
               decoration: InputDecoration(
                 filled: true,
-                fillColor: ColorConstants.fillcolor,
+                fillColor: ColorConstants.fillColor,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 14,
@@ -196,6 +197,7 @@ class _TermsAndConditionsSetUpScreenState
           ),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
+              elevation: 0,
               padding: const EdgeInsets.symmetric(
                 horizontal: 14,
                 vertical: 12,
@@ -203,6 +205,7 @@ class _TermsAndConditionsSetUpScreenState
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
+              backgroundColor: Theme.of(context).primaryColor,
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {

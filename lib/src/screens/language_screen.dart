@@ -51,6 +51,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: Text(
           language["Language"] ?? "Language",
           style: FontConstants.title1,
@@ -96,6 +97,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                 ),
                 child: Divider(
                   height: 0,
+                  thickness: 0.2,
                   color: Colors.grey,
                 ),
               ),

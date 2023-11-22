@@ -111,16 +111,9 @@ class _SettingScreenState extends State<SettingScreen> {
         ),
         child: AlertDialog(
           backgroundColor: Colors.white,
-          titlePadding: EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 14,
-          ),
           title: Text(
             language["Remove Account"] ?? "Remove Account",
             style: FontConstants.subheadline1,
-          ),
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 16,
           ),
           content: Text(
             language["Are you sure you want to remove account?"] ??
@@ -130,7 +123,6 @@ class _SettingScreenState extends State<SettingScreen> {
           actions: [
             Padding(
               padding: EdgeInsets.only(
-                left: 8,
                 right: 4,
               ),
               child: TextButton(
@@ -153,7 +145,6 @@ class _SettingScreenState extends State<SettingScreen> {
             Padding(
               padding: EdgeInsets.only(
                 left: 4,
-                right: 8,
               ),
               child: TextButton(
                 style: ButtonStyle(
@@ -192,16 +183,9 @@ class _SettingScreenState extends State<SettingScreen> {
         ),
         child: AlertDialog(
           backgroundColor: Colors.white,
-          titlePadding: EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 14,
-          ),
           title: Text(
             language["Log Out"] ?? "Log Out",
             style: FontConstants.subheadline1,
-          ),
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 16,
           ),
           content: Text(
             language["Are you sure you want to log out?"] ??
@@ -211,14 +195,13 @@ class _SettingScreenState extends State<SettingScreen> {
           actions: [
             Padding(
               padding: EdgeInsets.only(
-                left: 8,
                 right: 4,
               ),
               child: TextButton(
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                 ),
@@ -234,13 +217,12 @@ class _SettingScreenState extends State<SettingScreen> {
             Padding(
               padding: EdgeInsets.only(
                 left: 4,
-                right: 8,
               ),
               child: TextButton(
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   backgroundColor: MaterialStateProperty.all<Color>(
@@ -267,6 +249,7 @@ class _SettingScreenState extends State<SettingScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: Align(
           alignment: Alignment.centerLeft,
           child: Text(
@@ -331,7 +314,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                     height: 40,
                                     decoration: profileImage.isEmpty
                                         ? BoxDecoration(
-                                            color: ColorConstants.fillcolor,
+                                            color: ColorConstants.fillColor,
                                             image: DecorationImage(
                                               image: AssetImage(
                                                   "assets/images/profile.png"),
@@ -359,7 +342,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                     width: 40,
                                     height: 40,
                                     decoration: BoxDecoration(
-                                      color: ColorConstants.fillcolor,
+                                      color: ColorConstants.fillColor,
                                       image: DecorationImage(
                                         image: AssetImage(
                                             "assets/images/profile.png"),
@@ -391,6 +374,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                 : Expanded(
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
+                                        elevation: 0,
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 14,
                                           vertical: 12,
@@ -425,6 +409,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     const Divider(
                       height: 0,
+                      thickness: 0.2,
                       color: Colors.grey,
                     ),
                     Padding(
@@ -1092,6 +1077,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       child: const Divider(
                         height: 0,
+                        thickness: 0.2,
                         color: Colors.grey,
                       ),
                     ),
@@ -1233,6 +1219,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       child: const Divider(
                         height: 0,
+                        thickness: 0.2,
                         color: Colors.grey,
                       ),
                     ),
@@ -1437,6 +1424,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                          elevation: 0,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
                             vertical: 12,
@@ -1444,7 +1432,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          backgroundColor: ColorConstants.redcolor,
+                          backgroundColor: ColorConstants.redColor,
                         ),
                         onPressed: () {
                           showRemoveAccountDialog();
@@ -1461,6 +1449,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                          elevation: 0,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
                             vertical: 12,
@@ -1468,6 +1457,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
+                          backgroundColor: Theme.of(context).primaryColor,
                         ),
                         onPressed: () {
                           showExitDialog();

@@ -172,6 +172,7 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
           backgroundColor: Colors.white,
           centerTitle: true,
           elevation: 0,
+          scrolledUnderElevation: 0,
           title: Text(
             language["Filters"] ?? "Filters",
             style: FontConstants.title1,
@@ -202,6 +203,8 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
                   ),
                   RangeSlider(
                     values: RangeValues(_startValue, _endValue),
+                    activeColor: Theme.of(context).primaryColor,
+                    inactiveColor: ColorConstants.borderColor,
                     onChanged: (RangeValues values) {
                       setState(() {
                         _startValue = values.start;
@@ -247,7 +250,7 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
                             decoration: InputDecoration(
                               hintText: language["From"] ?? "From",
                               filled: true,
-                              fillColor: ColorConstants.fillcolor,
+                              fillColor: ColorConstants.fillColor,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                                 vertical: 14,
@@ -287,7 +290,7 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
                             decoration: InputDecoration(
                               hintText: language["To"] ?? "To",
                               filled: true,
-                              fillColor: ColorConstants.fillcolor,
+                              fillColor: ColorConstants.fillColor,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                                 vertical: 14,
@@ -367,6 +370,7 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
+                      elevation: 0,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 14,
                         vertical: 12,
@@ -417,6 +421,7 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
+                      elevation: 0,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 14,
                         vertical: 12,

@@ -1204,6 +1204,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           backgroundColor: Colors.white,
           centerTitle: true,
           elevation: 0,
+          scrolledUnderElevation: 0,
           title: Text(
             language["Product"] ?? "Product",
             style: FontConstants.title1,
@@ -1268,6 +1269,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
+                      elevation: 0,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 14,
                         vertical: 12,
@@ -1275,6 +1277,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
+                      backgroundColor: Theme.of(context).primaryColor,
                     ),
                     onPressed: _pickMultiImage,
                     child: Text(
@@ -1309,7 +1312,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       style: FontConstants.body2,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: ColorConstants.fillcolor,
+                        fillColor: ColorConstants.fillColor,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,
@@ -1351,7 +1354,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       style: FontConstants.body2,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: ColorConstants.fillcolor,
+                        fillColor: ColorConstants.fillColor,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,
@@ -1408,7 +1411,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       style: FontConstants.body2,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: ColorConstants.fillcolor,
+                        fillColor: ColorConstants.fillColor,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,
@@ -1468,7 +1471,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       cursorColor: Colors.black,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: ColorConstants.fillcolor,
+                        fillColor: ColorConstants.fillColor,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,
@@ -1524,7 +1527,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       maxLines: 2,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: ColorConstants.fillcolor,
+                        fillColor: ColorConstants.fillColor,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,
@@ -1579,7 +1582,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                               ),
                               child: CustomDropDown(
                                 value: genderDesc,
-                                fillColor: ColorConstants.fillcolor,
+                                fillColor: ColorConstants.fillColor,
                                 onChanged: (newValue) {
                                   setState(() {
                                     genderDesc = newValue ?? gendersDesc[0];
@@ -1628,7 +1631,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: ColorConstants.fillcolor,
+                                  fillColor: ColorConstants.fillColor,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 14,
@@ -1734,7 +1737,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: ColorConstants.fillcolor,
+                                  fillColor: ColorConstants.fillColor,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 14,
@@ -2018,7 +2021,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: ColorConstants.fillcolor,
+                                  fillColor: ColorConstants.fillColor,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 14,
@@ -2072,7 +2075,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                     ),
                     child: CustomDropDown(
                       value: conditionDesc,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       onChanged: (newValue) {
                         setState(() {
                           conditionDesc = newValue ?? conditionsDesc[0];
@@ -2192,7 +2195,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       cursorColor: Colors.black,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: ColorConstants.fillcolor,
+                        fillColor: ColorConstants.fillColor,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,
@@ -2341,7 +2344,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: ColorConstants.fillcolor,
+                                  fillColor: ColorConstants.fillColor,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 14,
@@ -2392,6 +2395,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                     max: 1000,
                     divisions: 1000,
                     label: (discountPercent * 10 / 10).toString(),
+                    thumbColor: Theme.of(context).primaryColorLight,
+                    activeColor: Theme.of(context).primaryColor,
+                    inactiveColor: ColorConstants.borderColor,
                     onChanged: (double value) {
                       setState(() {
                         discountPercent = value / 10;
@@ -2473,7 +2479,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: ColorConstants.fillcolor,
+                                  fillColor: ColorConstants.fillColor,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 14,
@@ -2527,7 +2533,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                     ),
                     child: CustomDropDown(
                       value: warrantyTypeDesc,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       onChanged: (newValue) {
                         setState(() {
                           warrantyTypeDesc = newValue ?? warrantyTypesDesc[0];
@@ -2563,7 +2569,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                     ),
                     child: CustomDropDown(
                       value: otherAccessoriesTypeDesc,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       onChanged: (newValue) {
                         setState(() {
                           otherAccessoriesTypeDesc =
@@ -2679,7 +2685,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                             cursorColor: Colors.black,
                             decoration: InputDecoration(
                               filled: true,
-                              fillColor: ColorConstants.fillcolor,
+                              fillColor: ColorConstants.fillColor,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                                 vertical: 14,
@@ -2721,6 +2727,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                 ),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
+                    elevation: 0,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,
                       vertical: 12,
@@ -2728,6 +2735,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
+                    backgroundColor: Theme.of(context).primaryColor,
                   ),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
@@ -2757,6 +2765,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                         ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
+                            elevation: 0,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 14,
                               vertical: 12,
@@ -2764,7 +2773,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            backgroundColor: ColorConstants.redcolor,
+                            backgroundColor: ColorConstants.redColor,
                           ),
                           onPressed: () async {
                             showLoadingDialog(context);
@@ -2789,6 +2798,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                         ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
+                            elevation: 0,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 14,
                               vertical: 12,
@@ -2796,6 +2806,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
+                            backgroundColor: Theme.of(context).primaryColor,
                           ),
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {

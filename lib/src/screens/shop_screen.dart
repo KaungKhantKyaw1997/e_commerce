@@ -334,6 +334,7 @@ class _ShopScreenState extends State<ShopScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: Text(
           language["Shop"] ?? "Shop",
           style: FontConstants.title1,

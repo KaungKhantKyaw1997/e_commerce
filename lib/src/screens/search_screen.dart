@@ -215,6 +215,7 @@ class _SearchScreenState extends State<SearchScreen>
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
+              showCheckmark: false,
               onSelected: (selected) async {
                 search.text = item;
                 page = 1;
@@ -236,6 +237,7 @@ class _SearchScreenState extends State<SearchScreen>
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: TextField(
           controller: search,
           keyboardType: TextInputType.text,
@@ -245,7 +247,7 @@ class _SearchScreenState extends State<SearchScreen>
           decoration: InputDecoration(
             hintText: language["Search"] ?? "Search",
             filled: true,
-            fillColor: ColorConstants.fillcolor,
+            fillColor: ColorConstants.fillColor,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
             ),
@@ -349,6 +351,7 @@ class _SearchScreenState extends State<SearchScreen>
                                         ),
                                         child: const Divider(
                                           height: 0,
+                                          thickness: 0.2,
                                           color: Colors.grey,
                                         ),
                                       )

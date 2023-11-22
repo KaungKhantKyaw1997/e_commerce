@@ -16,10 +16,8 @@ class _UnauthorizedScreenState extends State<UnauthorizedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WillPopScope(
-        onWillPop: () async {
-          return false;
-        },
+      body: PopScope(
+        canPop: false,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -68,6 +66,7 @@ class _UnauthorizedScreenState extends State<UnauthorizedScreen> {
         ),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
+            elevation: 0,
             padding: const EdgeInsets.symmetric(
               horizontal: 14,
               vertical: 12,
@@ -75,6 +74,7 @@ class _UnauthorizedScreenState extends State<UnauthorizedScreen> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
+            backgroundColor: Theme.of(context).primaryColor,
           ),
           onPressed: () async {
             authService.logout(context);

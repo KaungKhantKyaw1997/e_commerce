@@ -126,6 +126,7 @@ class _CartScreenState extends State<CartScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: Align(
           alignment: Alignment.centerLeft,
           child: Text(
@@ -209,7 +210,7 @@ class _CartScreenState extends State<CartScreen> {
                                         carts.removeAt(index);
                                         saveListToSharedPreferences(carts);
                                       },
-                                      backgroundColor: ColorConstants.redcolor,
+                                      backgroundColor: ColorConstants.redColor,
                                       foregroundColor: Colors.white,
                                       borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(
@@ -331,7 +332,7 @@ class _CartScreenState extends State<CartScreen> {
                                                 style: FontConstants.caption1,
                                               ),
                                               SizedBox(
-                                                height: 12,
+                                                height: 3,
                                               ),
                                               Row(
                                                 mainAxisAlignment:
@@ -347,8 +348,8 @@ class _CartScreenState extends State<CartScreen> {
                                                             Radius.circular(8),
                                                       ),
                                                       border: Border.all(
-                                                        color: Theme.of(context)
-                                                            .primaryColorLight,
+                                                        color: ColorConstants
+                                                            .borderColor,
                                                         width: 1,
                                                       ),
                                                     ),
@@ -407,8 +408,8 @@ class _CartScreenState extends State<CartScreen> {
                                                     ),
                                                     decoration: BoxDecoration(
                                                       border: Border.all(
-                                                        color: Theme.of(context)
-                                                            .primaryColorLight,
+                                                        color: ColorConstants
+                                                            .borderColor,
                                                         width: 1,
                                                       ),
                                                     ),
@@ -434,8 +435,8 @@ class _CartScreenState extends State<CartScreen> {
                                                             Radius.circular(8),
                                                       ),
                                                       border: Border.all(
-                                                        color: Theme.of(context)
-                                                            .primaryColorLight,
+                                                        color: ColorConstants
+                                                            .borderColor,
                                                         width: 1,
                                                       ),
                                                     ),
@@ -490,6 +491,7 @@ class _CartScreenState extends State<CartScreen> {
                                       ),
                                       child: const Divider(
                                         height: 0,
+                                        thickness: 0.2,
                                         color: Colors.grey,
                                       ),
                                     )
@@ -532,7 +534,8 @@ class _CartScreenState extends State<CartScreen> {
                         '--',
                       ),
                       Divider(
-                        thickness: 1.5,
+                        thickness: 0.2,
+                        color: Colors.grey,
                       ),
                       _buildSummaryItem(
                         language['Total'] ?? 'Total',

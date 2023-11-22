@@ -104,6 +104,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           backgroundColor: Colors.white,
           centerTitle: true,
           elevation: 0,
+          scrolledUnderElevation: 0,
           title: Text(
             language["Change Password"] ?? "Change Password",
             style: FontConstants.title1,
@@ -153,7 +154,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       cursorColor: Colors.black,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: ColorConstants.fillcolor,
+                        fillColor: ColorConstants.fillColor,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,
@@ -227,7 +228,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       cursorColor: Colors.black,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: ColorConstants.fillcolor,
+                        fillColor: ColorConstants.fillColor,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,
@@ -297,7 +298,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 14,
@@ -361,6 +362,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           width: double.infinity,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
+              elevation: 0,
               padding: const EdgeInsets.symmetric(
                 horizontal: 14,
                 vertical: 12,
@@ -368,6 +370,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
+              backgroundColor: Theme.of(context).primaryColor,
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {

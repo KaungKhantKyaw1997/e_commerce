@@ -243,6 +243,7 @@ class BuyerProtectionSetupScreenState
           backgroundColor: Colors.white,
           centerTitle: true,
           elevation: 0,
+          scrolledUnderElevation: 0,
           title: Text(
             language["Buyer Protection"] ?? "Buyer Protection",
             style: FontConstants.title1,
@@ -293,7 +294,7 @@ class BuyerProtectionSetupScreenState
                       maxLines: 2,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: ColorConstants.fillcolor,
+                        fillColor: ColorConstants.fillColor,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,
@@ -334,6 +335,7 @@ class BuyerProtectionSetupScreenState
                 ),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
+                    elevation: 0,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,
                       vertical: 12,
@@ -341,6 +343,7 @@ class BuyerProtectionSetupScreenState
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
+                    backgroundColor: Theme.of(context).primaryColor,
                   ),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
@@ -367,6 +370,7 @@ class BuyerProtectionSetupScreenState
                         ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
+                            elevation: 0,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 14,
                               vertical: 12,
@@ -374,7 +378,7 @@ class BuyerProtectionSetupScreenState
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            backgroundColor: ColorConstants.redcolor,
+                            backgroundColor: ColorConstants.redColor,
                           ),
                           onPressed: () async {
                             showLoadingDialog(context);
@@ -399,6 +403,7 @@ class BuyerProtectionSetupScreenState
                         ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
+                            elevation: 0,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 14,
                               vertical: 12,
@@ -406,6 +411,7 @@ class BuyerProtectionSetupScreenState
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
+                            backgroundColor: Theme.of(context).primaryColor,
                           ),
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {

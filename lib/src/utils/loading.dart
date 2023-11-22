@@ -6,8 +6,8 @@ showLoadingDialog(BuildContext context) {
     context: context,
     barrierDismissible: false,
     builder: (BuildContext context) {
-      return WillPopScope(
-        onWillPop: () async => false,
+      return PopScope(
+        canPop: false,
         child: Center(
           child: LoadingAnimationWidget.newtonCradle(
             color: Color(0xffd3d6d7),

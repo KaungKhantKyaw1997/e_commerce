@@ -166,6 +166,7 @@ class BuyerProtectionsSetupScreenState
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: TextField(
           controller: search,
           keyboardType: TextInputType.text,
@@ -175,7 +176,7 @@ class BuyerProtectionsSetupScreenState
           decoration: InputDecoration(
             hintText: language["Search"] ?? "Search",
             filled: true,
-            fillColor: ColorConstants.fillcolor,
+            fillColor: ColorConstants.fillColor,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
             ),
@@ -258,6 +259,7 @@ class BuyerProtectionsSetupScreenState
                                   ),
                                   child: const Divider(
                                     height: 0,
+                                    thickness: 0.2,
                                     color: Colors.grey,
                                   ),
                                 )
@@ -286,6 +288,7 @@ class BuyerProtectionsSetupScreenState
         backgroundColor: Theme.of(context).primaryColor,
         child: Icon(
           Icons.add,
+          color: Colors.white,
         ),
       ),
     );

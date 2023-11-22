@@ -28,7 +28,10 @@ class ImagePreviewScreen extends StatelessWidget {
         future: _checkImage(imageUrl),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+                child: CircularProgressIndicator(
+              color: Theme.of(context).primaryColor,
+            ));
           } else if (snapshot.error != null) {
             // If we run into an error, return the default image
             return Container(
@@ -49,9 +52,12 @@ class ImagePreviewScreen extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _saveImage(imageUrl, context), // Pass context here
-        child: Icon(Icons.save_alt),
-        tooltip: 'Save Image',
+        onPressed: () => _saveImage(imageUrl, context),
+        backgroundColor: Theme.of(context).primaryColor,
+        child: Icon(
+          Icons.save_alt,
+          color: Colors.white,
+        ),
       ),
     );
   }

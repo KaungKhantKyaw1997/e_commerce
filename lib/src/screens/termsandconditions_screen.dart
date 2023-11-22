@@ -95,6 +95,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: Text(
           language["Terms & Conditions"] ?? "Terms & Conditions",
           style: FontConstants.title1,
@@ -127,6 +128,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
               ),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
+                  elevation: 0,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 12,
@@ -134,6 +136,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
+                  backgroundColor: Theme.of(context).primaryColor,
                 ),
                 onPressed: () async {
                   final SharedPreferences prefs =

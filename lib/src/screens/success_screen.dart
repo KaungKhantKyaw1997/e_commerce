@@ -177,7 +177,7 @@ class _SuccessScreenState extends State<SuccessScreen>
                         decoration: InputDecoration(
                           hintText: language["Comment"] ?? "Comment",
                           filled: true,
-                          fillColor: ColorConstants.fillcolor,
+                          fillColor: ColorConstants.fillColor,
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 14,
@@ -206,6 +206,7 @@ class _SuccessScreenState extends State<SuccessScreen>
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                          elevation: 0,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
                             vertical: 12,
@@ -257,10 +258,8 @@ class _SuccessScreenState extends State<SuccessScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WillPopScope(
-        onWillPop: () async {
-          return false;
-        },
+      body: PopScope(
+        canPop: false,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -316,6 +315,7 @@ class _SuccessScreenState extends State<SuccessScreen>
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
+                  elevation: 0,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 12,
@@ -345,6 +345,7 @@ class _SuccessScreenState extends State<SuccessScreen>
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
+                  elevation: 0,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 12,

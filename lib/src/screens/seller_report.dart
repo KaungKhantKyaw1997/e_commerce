@@ -99,6 +99,7 @@ class _SellerReportScreenState extends State<SellerReportScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: Text(
           language["Seller Report"] ?? "Seller Report",
           style: FontConstants.title1,
@@ -140,7 +141,7 @@ class _SellerReportScreenState extends State<SellerReportScreen> {
                   style: FontConstants.body2,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: ColorConstants.fillcolor,
+                    fillColor: ColorConstants.fillColor,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 14,
@@ -178,7 +179,7 @@ class _SellerReportScreenState extends State<SellerReportScreen> {
                   style: FontConstants.body2,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: ColorConstants.fillcolor,
+                    fillColor: ColorConstants.fillColor,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 14,
@@ -216,7 +217,7 @@ class _SellerReportScreenState extends State<SellerReportScreen> {
                   style: FontConstants.body2,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: ColorConstants.fillcolor,
+                    fillColor: ColorConstants.fillColor,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 14,
@@ -254,7 +255,7 @@ class _SellerReportScreenState extends State<SellerReportScreen> {
                   style: FontConstants.body2,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: ColorConstants.fillcolor,
+                    fillColor: ColorConstants.fillColor,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 14,
@@ -293,7 +294,7 @@ class _SellerReportScreenState extends State<SellerReportScreen> {
                   maxLines: 2,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: ColorConstants.fillcolor,
+                    fillColor: ColorConstants.fillColor,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 14,

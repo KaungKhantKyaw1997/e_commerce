@@ -101,6 +101,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           backgroundColor: Colors.white,
           centerTitle: true,
           elevation: 0,
+          scrolledUnderElevation: 0,
           title: Text(
             language["Forgot Password"] ?? "Forgot Password",
             style: FontConstants.title1,
@@ -148,7 +149,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 14,
@@ -205,7 +206,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       prefixText: '+959',
                       prefixStyle: FontConstants.body2,
                       filled: true,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 14,

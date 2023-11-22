@@ -208,7 +208,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
               child: Container(
                 width: 50,
                 height: 50,
-                color: ColorConstants.fillcolor,
+                color: ColorConstants.fillColor,
                 child: profiles.isNotEmpty
                     ? Stack(
                         children: <Widget>[
@@ -356,6 +356,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: TextField(
           controller: search,
           keyboardType: TextInputType.text,
@@ -365,7 +366,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
           decoration: InputDecoration(
             hintText: language["Search"] ?? "Search",
             filled: true,
-            fillColor: ColorConstants.fillcolor,
+            fillColor: ColorConstants.fillColor,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
             ),
@@ -473,7 +474,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                                               .chatHistories[index]["chat_id"]);
                                         },
                                         backgroundColor:
-                                            ColorConstants.redcolor,
+                                            ColorConstants.redColor,
                                         foregroundColor: Colors.white,
                                         borderRadius: BorderRadius.only(
                                           topRight: Radius.circular(
@@ -504,6 +505,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                                         ),
                                         child: const Divider(
                                           height: 0,
+                                          thickness: 0.2,
                                           color: Colors.grey,
                                         ),
                                       )

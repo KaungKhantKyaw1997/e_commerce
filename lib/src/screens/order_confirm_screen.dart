@@ -200,6 +200,7 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: Text(
           language["Order"] ?? "Order",
           style: FontConstants.title1,
@@ -327,6 +328,7 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
                                   ),
                                   child: const Divider(
                                     height: 0,
+                                    thickness: 0.2,
                                     color: Colors.grey,
                                   ),
                                 )
@@ -386,7 +388,8 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
                     horizontal: 16,
                   ),
                   child: Divider(
-                    thickness: 1.5,
+                    thickness: 0.2,
+                    color: Colors.grey,
                   ),
                 ),
                 _buildSummaryItem(
@@ -408,6 +411,7 @@ class _OrderConfirmScreenState extends State<OrderConfirmScreen> {
         width: double.infinity,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
+            elevation: 0,
             padding: const EdgeInsets.symmetric(
               horizontal: 14,
               vertical: 12,

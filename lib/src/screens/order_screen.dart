@@ -303,6 +303,7 @@ class _OrderScreenState extends State<OrderScreen>
           backgroundColor: Colors.white,
           centerTitle: true,
           elevation: 0,
+          scrolledUnderElevation: 0,
           title: Text(
             language["Order"] ?? "Order",
             style: FontConstants.title1,
@@ -355,7 +356,7 @@ class _OrderScreenState extends State<OrderScreen>
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: ColorConstants.fillcolor,
+                                  fillColor: ColorConstants.fillColor,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 14,
@@ -415,7 +416,7 @@ class _OrderScreenState extends State<OrderScreen>
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: ColorConstants.fillcolor,
+                                  fillColor: ColorConstants.fillColor,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 14,
@@ -479,7 +480,7 @@ class _OrderScreenState extends State<OrderScreen>
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: ColorConstants.fillcolor,
+                                  fillColor: ColorConstants.fillColor,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 14,
@@ -539,7 +540,7 @@ class _OrderScreenState extends State<OrderScreen>
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: ColorConstants.fillcolor,
+                                  fillColor: ColorConstants.fillColor,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 14,
@@ -603,7 +604,7 @@ class _OrderScreenState extends State<OrderScreen>
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: ColorConstants.fillcolor,
+                                  fillColor: ColorConstants.fillColor,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 14,
@@ -663,7 +664,7 @@ class _OrderScreenState extends State<OrderScreen>
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: ColorConstants.fillcolor,
+                                  fillColor: ColorConstants.fillColor,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 14,
@@ -727,7 +728,7 @@ class _OrderScreenState extends State<OrderScreen>
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: ColorConstants.fillcolor,
+                                  fillColor: ColorConstants.fillColor,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 14,
@@ -787,7 +788,7 @@ class _OrderScreenState extends State<OrderScreen>
                                 cursorColor: Colors.black,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: ColorConstants.fillcolor,
+                                  fillColor: ColorConstants.fillColor,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 14,
@@ -845,7 +846,7 @@ class _OrderScreenState extends State<OrderScreen>
                       maxLines: 2,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: ColorConstants.fillcolor,
+                        fillColor: ColorConstants.fillColor,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,
@@ -883,7 +884,7 @@ class _OrderScreenState extends State<OrderScreen>
                     ),
                     child: CustomDropDown(
                       value: paymenttype,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       onChanged: (newValue) {
                         setState(() {
                           pickedFile = null;
@@ -900,36 +901,22 @@ class _OrderScreenState extends State<OrderScreen>
                   paymenttype != 'Cash on Delivery'
                       ? TabBar(
                           controller: _tabController,
-                          indicator: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Theme.of(context).primaryColor,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 1,
-                                blurRadius: 3,
-                                offset: Offset(0, 1),
-                              ),
-                            ],
-                          ),
-                          labelColor: Colors.white,
-                          unselectedLabelColor: Colors.grey,
+                          indicatorColor: Theme.of(context).primaryColor,
+                          dividerColor: Colors.transparent,
                           tabs: [
                             Tab(
-                              child: Text(
-                                "mBanking",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
+                              child: Center(
+                                child: Text(
+                                  "mBanking",
+                                  style: FontConstants.subtitle1,
                                 ),
                               ),
                             ),
                             Tab(
-                              child: Text(
-                                "Wallet",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
+                              child: Center(
+                                child: Text(
+                                  "Wallet",
+                                  style: FontConstants.subtitle1,
                                 ),
                               ),
                             ),
@@ -972,7 +959,7 @@ class _OrderScreenState extends State<OrderScreen>
                             10,
                           ),
                         ),
-                        color: ColorConstants.fillcolor,
+                        color: ColorConstants.fillColor,
                         child: ListTile(
                           leading: item["bank_logo"].isNotEmpty
                               ? ClipRRect(
@@ -1022,7 +1009,7 @@ class _OrderScreenState extends State<OrderScreen>
                             ),
                             width: double.infinity,
                             decoration: BoxDecoration(
-                              color: ColorConstants.fillcolor,
+                              color: ColorConstants.fillColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: pickedFile != null
@@ -1086,7 +1073,7 @@ class _OrderScreenState extends State<OrderScreen>
                     ),
                     child: CustomDropDown(
                       value: insurancetype,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       onChanged: (newValue) {
                         setState(() {
                           insurancetype = newValue ?? insurancenames[0];
@@ -1134,6 +1121,7 @@ class _OrderScreenState extends State<OrderScreen>
           width: double.infinity,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
+              elevation: 0,
               padding: const EdgeInsets.symmetric(
                 horizontal: 14,
                 vertical: 12,
@@ -1141,6 +1129,7 @@ class _OrderScreenState extends State<OrderScreen>
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
+              backgroundColor: Theme.of(context).primaryColor,
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {

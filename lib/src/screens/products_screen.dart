@@ -231,6 +231,7 @@ class _ProductsScreenState extends State<ProductsScreen>
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: TextField(
           controller: search,
           keyboardType: TextInputType.text,
@@ -240,7 +241,7 @@ class _ProductsScreenState extends State<ProductsScreen>
           decoration: InputDecoration(
             hintText: language["Search"] ?? "Search",
             filled: true,
-            fillColor: ColorConstants.fillcolor,
+            fillColor: ColorConstants.fillColor,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
             ),

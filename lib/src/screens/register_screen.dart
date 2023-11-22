@@ -148,6 +148,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           backgroundColor: Colors.white,
           centerTitle: true,
           elevation: 0,
+          scrolledUnderElevation: 0,
           title: Text(
             language["Register"] ?? "Register",
             style: FontConstants.title1,
@@ -174,7 +175,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         bottom: 24,
                       ),
                       decoration: BoxDecoration(
-                        color: ColorConstants.fillcolor,
+                        color: ColorConstants.fillColor,
                         shape: BoxShape.circle,
                       ),
                       child: GestureDetector(
@@ -222,7 +223,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             width: 16,
                             height: 16,
                             colorFilter: ColorFilter.mode(
-                              Theme.of(context).primaryColor,
+                              Colors.white,
                               BlendMode.srcIn,
                             ),
                           ),
@@ -260,7 +261,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 14,
@@ -316,7 +317,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 14,
@@ -393,7 +394,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 14,
@@ -473,7 +474,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 14,
@@ -530,7 +531,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       prefixText: '+959',
                       prefixStyle: FontConstants.body2,
                       filled: true,
-                      fillColor: ColorConstants.fillcolor,
+                      fillColor: ColorConstants.fillColor,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 14,
@@ -577,6 +578,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           width: double.infinity,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
+              elevation: 0,
               padding: const EdgeInsets.symmetric(
                 horizontal: 14,
                 vertical: 12,
@@ -584,6 +586,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
+              backgroundColor: Theme.of(context).primaryColor,
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {

@@ -69,10 +69,11 @@ class FontConstants {
   );
 
   static TextStyle caption5 = TextStyle(
+    color: Colors.grey,
     fontSize: 12,
     fontWeight: FontWeight.w400,
     decoration: TextDecoration.underline,
-    color: Colors.grey,
+    decorationColor: Colors.grey,
   );
 
   static TextStyle smallText1 = TextStyle(
@@ -108,13 +109,13 @@ class FontConstants {
   static TextStyle button3 = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w400,
-    color: ColorConstants.redcolor,
+    color: ColorConstants.redColor,
   );
 
   static TextStyle button4 = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w400,
-    color: ColorConstants.primarycolor,
+    color: ColorConstants.primaryColor,
   );
 
   static TextStyle title1 = TextStyle(

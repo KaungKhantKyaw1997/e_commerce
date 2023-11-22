@@ -134,7 +134,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                 currentIndex: bottomProvider.currentIndex,
                 type: BottomNavigationBarType.fixed,
                 backgroundColor: role == 'agent'
-                    ? ColorConstants.primarycolor
+                    ? ColorConstants.primaryColor
                     : Colors.white,
                 selectedItemColor: role == 'agent'
                     ? Colors.white
@@ -224,7 +224,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                                   child: Container(
                                     padding: const EdgeInsets.all(2),
                                     decoration: BoxDecoration(
-                                      color: ColorConstants.redcolor,
+                                      color: ColorConstants.redColor,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     constraints: const BoxConstraints(
@@ -248,7 +248,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                                   child: Container(
                                     padding: const EdgeInsets.all(2),
                                     decoration: BoxDecoration(
-                                      color: ColorConstants.redcolor,
+                                      color: ColorConstants.redColor,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     constraints: const BoxConstraints(

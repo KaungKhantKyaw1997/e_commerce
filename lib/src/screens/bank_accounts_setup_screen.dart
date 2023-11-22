@@ -195,6 +195,7 @@ class _BankAccountsSetupScreenState extends State<BankAccountsSetupScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: TextField(
           controller: search,
           keyboardType: TextInputType.text,
@@ -204,7 +205,7 @@ class _BankAccountsSetupScreenState extends State<BankAccountsSetupScreen> {
           decoration: InputDecoration(
             hintText: language["Search"] ?? "Search",
             filled: true,
-            fillColor: ColorConstants.fillcolor,
+            fillColor: ColorConstants.fillColor,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
             ),
@@ -286,6 +287,7 @@ class _BankAccountsSetupScreenState extends State<BankAccountsSetupScreen> {
                                   ),
                                   child: const Divider(
                                     height: 0,
+                                    thickness: 0.2,
                                     color: Colors.grey,
                                   ),
                                 )
@@ -314,6 +316,7 @@ class _BankAccountsSetupScreenState extends State<BankAccountsSetupScreen> {
         backgroundColor: Theme.of(context).primaryColor,
         child: Icon(
           Icons.add,
+          color: Colors.white,
         ),
       ),
     );

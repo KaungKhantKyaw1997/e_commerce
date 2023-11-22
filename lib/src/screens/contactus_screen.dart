@@ -34,6 +34,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: Text(
           language["Contact Us"] ?? "Contact Us",
           style: FontConstants.title1,

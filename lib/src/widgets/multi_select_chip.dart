@@ -1,3 +1,4 @@
+import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:flutter/material.dart';
 
@@ -28,10 +29,12 @@ class _MultiSelectChipState extends State<MultiSelectChip> {
               ),
               selected: widget.selectedChoices.contains(item),
               selectedColor: Theme.of(context).primaryColor,
-              backgroundColor: Theme.of(context).primaryColorLight,
+              backgroundColor: ColorConstants.fillColor,
+              checkmarkColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
+              side: BorderSide.none,
               onSelected: (selected) {
                 setState(() {
                   widget.selectedChoices.contains(item)
