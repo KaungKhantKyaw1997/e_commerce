@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
@@ -64,10 +65,25 @@ class ImagePreviewScreen extends StatelessWidget {
 
   Future<void> _saveImage(String url, BuildContext context) async {
     try {
-      var response = await Dio().get(
-        url,
-        options: Options(responseType: ResponseType.bytes),
-      );
+      dynamic response = null;
+      try {
+        response = await Dio().get(
+          url,
+          options: Options(responseType: ResponseType.bytes),
+        );
+      } catch (e) {
+        if (e is DioException &&
+            e.response != null &&
+            e.response!.data != null) {
+          if (e.response!.statusCode == 404) {
+            response = await Dio().get(
+              url.replaceAll("_original", ""),
+              options: Options(responseType: ResponseType.bytes),
+            );
+          }
+        }
+      }
+
       final result = await ImageGallerySaver.saveImage(
         Uint8List.fromList(response.data),
         quality: 60,
@@ -83,6 +99,7 @@ class ImagePreviewScreen extends StatelessWidget {
         );
       }
     } catch (e) {
+      print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to save image: $e')),
       );

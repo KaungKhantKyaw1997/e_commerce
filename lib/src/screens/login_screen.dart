@@ -506,6 +506,39 @@ class _LogInScreenState extends State<LogInScreen> {
                     ),
                   ),
                 ),
+                // OutlinedButton(
+                //   style: ButtonStyle(
+                //     backgroundColor: MaterialStateProperty.all(
+                //       Colors.white,
+                //     ),
+                //     shape: MaterialStateProperty.all(
+                //       RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(40),
+                //       ),
+                //     ),
+                //   ),
+                //   onPressed: () async {},
+                //   child: Padding(
+                //     padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                //     child: Row(
+                //       mainAxisSize: MainAxisSize.min,
+                //       mainAxisAlignment: MainAxisAlignment.center,
+                //       children: <Widget>[
+                //         Image(
+                //           image: AssetImage("assets/images/google.png"),
+                //           height: 24,
+                //         ),
+                //         Padding(
+                //           padding: const EdgeInsets.only(left: 10),
+                //           child: Text(
+                //             'Sign in with Google',
+                //             style: FontConstants.button2,
+                //           ),
+                //         )
+                //       ],
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),

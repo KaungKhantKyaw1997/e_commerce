@@ -686,8 +686,16 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                 ),
               ),
               onPressed: () async {
-                await launchUrl(Uri.parse(
-                    '${ApiConstants.invoiceServerURL}${orderData["invoice_url"]}'));
+                Navigator.pushNamed(
+                  context,
+                  Routes.image_preview,
+                  arguments: {
+                    "image_url":
+                        '${ApiConstants.baseUrl}${orderData["invoice_url"]}'
+                  },
+                );
+                // await launchUrl(Uri.parse(
+                //     '${ApiConstants.invoiceServerURL}${orderData["invoice_url"]}'));
               },
             ),
         ],

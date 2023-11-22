@@ -333,10 +333,17 @@ class _SuccessScreenState extends State<SuccessScreen>
                             "The invoice has not been prepared yet");
                     return;
                   }
-                  _savePdf('${ApiConstants.invoiceServerURL}${invoiceUrl}');
+                  Navigator.pushNamed(
+                    context,
+                    Routes.image_preview,
+                    arguments: {
+                      "image_url": '${ApiConstants.baseUrl}${invoiceUrl}'
+                    },
+                  );
+                  // _savePdf('${ApiConstants.invoiceServerURL}${invoiceUrl}');
                 },
                 child: Text(
-                  language["Save Invoice"] ?? "Save Invoice",
+                  language["Invoice"] ?? "Invoice",
                   style: FontConstants.button4,
                 ),
               ),
