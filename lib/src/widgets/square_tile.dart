@@ -1,12 +1,13 @@
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class SquareTile extends StatelessWidget {
-  final String imagePath;
+  final String icon;
   final Function()? onTap;
   const SquareTile({
     super.key,
-    required this.imagePath,
+    required this.icon,
     required this.onTap,
   });
 
@@ -15,17 +16,18 @@ class SquareTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
           border: Border.all(
             color: Colors.white,
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(25),
           color: ColorConstants.fillColor,
         ),
-        child: Image.asset(
-          imagePath,
-          height: 40,
+        child: SvgPicture.asset(
+          icon,
+          width: 24,
+          height: 24,
         ),
       ),
     );

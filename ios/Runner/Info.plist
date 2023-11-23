@@ -64,6 +64,25 @@
 				<string>com.googleusercontent.apps.274063087309-6r8b9e3vre2l77mi7h6p08rhlniq5ct8</string>
 			</array>
 		</dict>
+		<dict>
+		<key>CFBundleURLSchemes</key>
+		<array>
+			<string>fb1081472956320646</string>
+		</array>
+		</dict>
+	</array>
+	<key>FacebookAppID</key>
+	<string>1081472956320646</string>
+	<key>FacebookClientToken</key>
+	<string>3db7c8ba0c0618c6eddce10ae3ccaca9</string>
+	<key>FacebookDisplayName</key>
+	<string>Watch Vault by Diggie</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
 	</array>
 </dict>
 </plist>
