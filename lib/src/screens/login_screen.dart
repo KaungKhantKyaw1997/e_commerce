@@ -510,7 +510,8 @@ class _LogInScreenState extends State<LogInScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                    vertical: 24,
+                    horizontal: 16,
+                    vertical: 32,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -527,21 +528,36 @@ class _LogInScreenState extends State<LogInScreen> {
                           }
                         },
                       ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      SquareTile(
-                        icon: 'assets/icons/facebook.svg',
-                        onTap: () async {
-                          User? user = await AuthService.signInWithFacebook(
-                              context: context);
-                          if (user != null) {
-                            email.text = user.email!;
-                            showLoadingDialog(context);
-                            login();
-                          }
-                        },
-                      )
+                      // SizedBox(
+                      //   width: 16,
+                      // ),
+                      // SquareTile(
+                      //   icon: 'assets/icons/facebook.svg',
+                      //   onTap: () async {
+                      //     User? user = await AuthService.signInWithFacebook(
+                      //         context: context);
+                      //     if (user != null) {
+                      //       email.text = user.email!;
+                      //       showLoadingDialog(context);
+                      //       login();
+                      //     }
+                      //   },
+                      // ),
+                      // SizedBox(
+                      //   width: 16,
+                      // ),
+                      // SquareTile(
+                      //   icon: 'assets/icons/apple.svg',
+                      //   onTap: () async {
+                      //     User? user = await AuthService.signInWithFacebook(
+                      //         context: context);
+                      //     if (user != null) {
+                      //       email.text = user.email!;
+                      //       showLoadingDialog(context);
+                      //       login();
+                      //     }
+                      //   },
+                      // ),
                     ],
                   ),
                 ),
