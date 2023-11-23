@@ -12,7 +12,6 @@ import 'package:e_commerce/src/providers/chat_scroll_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
 import 'package:e_commerce/src/providers/message_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
-import 'package:e_commerce/src/providers/role_provider.dart';
 import 'package:e_commerce/src/providers/socket_provider.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
@@ -505,10 +504,6 @@ class AuthService {
 
   logout(context) async {
     clearData(context);
-    RoleProvider roleProvider =
-        Provider.of<RoleProvider>(context, listen: false);
-    roleProvider.setRole('');
-
     CartProvider cartProvider =
         Provider.of<CartProvider>(context, listen: false);
     cartProvider.addCount(0);

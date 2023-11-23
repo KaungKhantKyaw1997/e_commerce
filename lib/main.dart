@@ -6,7 +6,6 @@ import 'package:e_commerce/src/providers/chat_histories_provider.dart';
 import 'package:e_commerce/src/providers/chat_scroll_provider.dart';
 import 'package:e_commerce/src/providers/chats_provider.dart';
 import 'package:e_commerce/src/providers/message_provider.dart';
-import 'package:e_commerce/src/providers/role_provider.dart';
 import 'package:e_commerce/src/providers/socket_provider.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
@@ -50,7 +49,6 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => SocketProvider()),
         ChangeNotifierProvider(create: (context) => ChatHistoriesProvider()),
         ChangeNotifierProvider(create: (context) => ChatsProvider()),
-        ChangeNotifierProvider(create: (context) => RoleProvider()),
         ChangeNotifierProvider(create: (context) => BottomProvider()),
         ChangeNotifierProvider(create: (context) => CartProvider(cartCount)),
         ChangeNotifierProvider(create: (context) => NotiProvider(notiCount)),
@@ -188,9 +186,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    RoleProvider roleProvider =
-        Provider.of<RoleProvider>(context, listen: true);
-
     return MaterialApp(
       navigatorKey: navigatorKey,
       navigatorObservers: [RouteObserverService()],
