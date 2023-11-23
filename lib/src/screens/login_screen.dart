@@ -77,6 +77,7 @@ class _LogInScreenState extends State<LogInScreen> {
         "username": email.text,
         "password": password.text,
         "method": method,
+        "token": authToken,
       };
 
       final response = await authService.loginData(body);
@@ -100,6 +101,7 @@ class _LogInScreenState extends State<LogInScreen> {
                 "profile_image": response["data"]["profile_image"],
                 "email": email.text,
                 "password": password.text,
+                "method": method,
               }
             ]),
           );
@@ -117,6 +119,7 @@ class _LogInScreenState extends State<LogInScreen> {
               "profile_image": response["data"]["profile_image"],
               "email": email.text,
               "password": password.text,
+              "method": method,
             });
             storage.write(key: 'switchuser', value: jsonEncode(users));
           }

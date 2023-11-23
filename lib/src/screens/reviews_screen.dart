@@ -187,7 +187,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                           color: ColorConstants.fillColor,
                           image: DecorationImage(
                             image: NetworkImage(
-                                '${ApiConstants.baseUrl}${reviews[index]["profile_image"].toString()}'),
+                                '${reviews[index]["profile_image"].startsWith("/images") ? ApiConstants.baseUrl : ""}${reviews[index]["profile_image"]}'),
                             fit: BoxFit.cover,
                           ),
                           borderRadius: BorderRadius.circular(50),

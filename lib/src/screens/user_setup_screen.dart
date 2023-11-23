@@ -406,7 +406,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                         child: profileImage.isNotEmpty
                             ? ClipOval(
                                 child: Image.network(
-                                  '${ApiConstants.baseUrl}${profileImage.toString()}',
+                                  '${profileImage.startsWith("/images") ? ApiConstants.baseUrl : ""}$profileImage',
                                   width: 100,
                                   height: 100,
                                   fit: BoxFit.cover,

@@ -326,7 +326,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         : BoxDecoration(
                                             image: DecorationImage(
                                               image: NetworkImage(
-                                                  '${ApiConstants.baseUrl}${profileImage.toString()}'),
+                                                  '${profileImage.startsWith("/images") ? ApiConstants.baseUrl : ""}$profileImage'),
                                               fit: BoxFit.cover,
                                             ),
                                             borderRadius:

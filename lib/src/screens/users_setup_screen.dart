@@ -119,7 +119,7 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
               image: users[index]["profile_image"].isNotEmpty
                   ? DecorationImage(
                       image: NetworkImage(
-                          '${ApiConstants.baseUrl}${users[index]["profile_image"].toString()}'),
+                          '${users[index]["profile_image"].startsWith("/images") ? ApiConstants.baseUrl : ""}${users[index]["profile_image"]}'),
                       fit: BoxFit.cover,
                     )
                   : DecorationImage(

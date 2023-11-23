@@ -665,7 +665,7 @@ class _HomeScreenState extends State<HomeScreen>
                         : BoxDecoration(
                             image: DecorationImage(
                               image: NetworkImage(
-                                  '${ApiConstants.baseUrl}${profileImage.toString()}'),
+                                  '${profileImage.startsWith("/images") ? ApiConstants.baseUrl : ""}$profileImage'),
                               fit: BoxFit.cover,
                             ),
                             borderRadius: BorderRadius.circular(50),

@@ -31,7 +31,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final profileService = ProfileService();
   String from = '';
   FocusNode _nameFocusNode = FocusNode();
-  FocusNode _emailFocusNode = FocusNode();
   FocusNode _phoneFocusNode = FocusNode();
 
   TextEditingController name = TextEditingController(text: '');
@@ -196,7 +195,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       behavior: HitTestBehavior.opaque,
       onTap: () {
         _nameFocusNode.unfocus();
-        _emailFocusNode.unfocus();
         _phoneFocusNode.unfocus();
       },
       child: Scaffold(
@@ -263,7 +261,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: profileImage.isNotEmpty
                             ? ClipOval(
                                 child: Image.network(
-                                  '${ApiConstants.baseUrl}${profileImage.toString()}',
+                                  '${profileImage.startsWith("/images") ? ApiConstants.baseUrl : ""}$profileImage',
                                   width: 100,
                                   height: 100,
                                   fit: BoxFit.cover,
@@ -396,11 +394,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   child: TextFormField(
                     controller: email,
-                    focusNode: _emailFocusNode,
-                    keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
-                    style: FontConstants.body1,
-                    cursorColor: Colors.black,
+                    readOnly: true,
+                    style: FontConstants.body2,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: ColorConstants.fillColor,
@@ -416,17 +411,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide.none,
                       ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return language["Enter Email"] ?? "Enter Email";
-                      }
-                      return null;
-                    },
                   ),
                 ),
                 Padding(

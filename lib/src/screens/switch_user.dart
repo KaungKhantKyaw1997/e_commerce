@@ -61,6 +61,7 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
       final body = {
         "username": users[index]["email"],
         "password": users[index]["password"],
+        "method": users[index]["method"],
       };
 
       final response = await authService.loginData(body);
@@ -227,7 +228,7 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
                                 : BoxDecoration(
                                     image: DecorationImage(
                                       image: NetworkImage(
-                                          '${ApiConstants.baseUrl}${users[index]["profile_image"].toString()}'),
+                                          '${users[index]["profile_image"].startsWith("/images") ? ApiConstants.baseUrl : ""}${users[index]["profile_image"]}'),
                                       fit: BoxFit.cover,
                                     ),
                                     borderRadius: BorderRadius.circular(50),

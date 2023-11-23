@@ -216,7 +216,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                             left: 0,
                             child: profiles[0].isNotEmpty
                                 ? Image.network(
-                                    '${ApiConstants.baseUrl}${profiles[0]}',
+                                    '${profiles[0].startsWith("/images") ? ApiConstants.baseUrl : ""}${profiles[0]}',
                                     width: role == 'admin' ? 25 : 50,
                                     height: 50,
                                     fit: BoxFit.cover,
@@ -233,7 +233,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                               right: 0,
                               child: profiles[1].isNotEmpty
                                   ? Image.network(
-                                      '${ApiConstants.baseUrl}${profiles[1]}',
+                                      '${profiles[1].startsWith("/images") ? ApiConstants.baseUrl : ""}${profiles[1]}',
                                       width: 25,
                                       height: 50,
                                       fit: BoxFit.cover,

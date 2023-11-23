@@ -555,7 +555,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                     : CircleAvatar(
                         radius: 10,
                         backgroundImage: NetworkImage(
-                            '${ApiConstants.baseUrl}${message["profile_image"].toString()}'),
+                            '${message["profile_image"].startsWith("/images") ? ApiConstants.baseUrl : ""}${message["profile_image"]}'),
                       ),
               ),
               Expanded(
@@ -624,7 +624,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                     : CircleAvatar(
                         radius: 10,
                         backgroundImage: NetworkImage(
-                            '${ApiConstants.baseUrl}${message["profile_image"].toString()}'),
+                            '${message["profile_image"].startsWith("/images") ? ApiConstants.baseUrl : ""}${message["profile_image"]}'),
                       ),
               ),
               Flexible(
@@ -701,7 +701,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                       left: 0,
                                       child: profiles[0].isNotEmpty
                                           ? Image.network(
-                                              '${ApiConstants.baseUrl}${profiles[0]}',
+                                              '${profiles[0].startsWith("/images") ? ApiConstants.baseUrl : ""}${profiles[0]}',
                                               width: role == 'admin' ? 20 : 40,
                                               height: 40,
                                               fit: BoxFit.cover,
@@ -718,7 +718,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                         right: 0,
                                         child: profiles[1].isNotEmpty
                                             ? Image.network(
-                                                '${ApiConstants.baseUrl}${profiles[1]}',
+                                                '${profiles[1].startsWith("/images") ? ApiConstants.baseUrl : ""}${profiles[1]}',
                                                 width: 20,
                                                 height: 40,
                                                 fit: BoxFit.cover,
@@ -803,8 +803,11 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                           padding: EdgeInsets.only(
                             left: 8,
                             right: 8,
-                            bottom:
-                                chatProvider.chats.length - 1 == index ? 0 : 16,
+                            bottom: chatProvider.chats.length == 1
+                                ? 16
+                                : chatProvider.chats.length - 1 == index
+                                    ? 0
+                                    : 16,
                           ),
                           child: Align(
                             alignment: message["is_my_message"]
