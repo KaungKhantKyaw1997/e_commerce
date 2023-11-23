@@ -65,12 +65,12 @@ class _LogInScreenState extends State<LogInScreen> {
 
   void _handleSubmitted(String value) {
     if (value.isNotEmpty) {
-      showLoadingDialog(context);
       login();
     }
   }
 
   login({String method = 'password'}) async {
+    showLoadingDialog(context);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       final body = {
@@ -470,7 +470,6 @@ class _LogInScreenState extends State<LogInScreen> {
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        showLoadingDialog(context);
                         login();
                       }
                     },
@@ -533,11 +532,24 @@ class _LogInScreenState extends State<LogInScreen> {
                               context: context);
                           if (user != null) {
                             email.text = user.email!;
-                            showLoadingDialog(context);
                             login(method: "google");
                           }
                         },
                       ),
+                      // SizedBox(
+                      //   width: 16,
+                      // ),
+                      // SquareTile(
+                      //   icon: 'assets/icons/apple.svg',
+                      //   onTap: () async {
+                      //     User? user = await AuthService.signInWithGoogle(
+                      //         context: context);
+                      //     if (user != null) {
+                      //       email.text = user.email!;
+                      //       login(method: "apple");
+                      //     }
+                      //   },
+                      // ),
                       // SizedBox(
                       //   width: 16,
                       // ),
@@ -548,23 +560,7 @@ class _LogInScreenState extends State<LogInScreen> {
                       //         context: context);
                       //     if (user != null) {
                       //       email.text = user.email!;
-                      //       showLoadingDialog(context);
                       //       login(method: "facebook");
-                      //     }
-                      //   },
-                      // ),
-                      // SizedBox(
-                      //   width: 16,
-                      // ),
-                      // SquareTile(
-                      //   icon: 'assets/icons/apple.svg',
-                      //   onTap: () async {
-                      //     User? user = await AuthService.signInWithFacebook(
-                      //         context: context);
-                      //     if (user != null) {
-                      //       email.text = user.email!;
-                      //       showLoadingDialog(context);
-                      //       login(method: "apple");
                       //     }
                       //   },
                       // ),

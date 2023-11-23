@@ -13,6 +13,7 @@ import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -55,19 +56,24 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
     setState(() {});
   }
 
-  login(index) async {
+  login(index, {String method = 'password'}) async {
+    showLoadingDialog(context);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       final body = {
         "username": users[index]["email"],
         "password": users[index]["password"],
-        "method": users[index]["method"],
+        "method": method,
+        "token": authToken,
       };
 
       final response = await authService.loginData(body);
 
       Navigator.pop(context);
       if (response!["code"] == 200) {
+        await storage.delete(key: "token");
+        await FirebaseMessaging.instance.deleteToken();
+
         String _email = prefs.getString("email") ?? "";
         prefs.setString("email", _email);
         prefs.setString("name", response["data"]["name"]);
@@ -194,10 +200,27 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () async {
-                      showLoadingDialog(context);
-                      await storage.delete(key: "token");
-                      await FirebaseMessaging.instance.deleteToken();
-                      login(index);
+                      if (users[index]["method"] == "google") {
+                        User? user = await AuthService.signInWithGoogle(
+                            context: context);
+                        if (user != null) {
+                          login(index, method: users[index]["method"]);
+                        }
+                      } else if (users[index]["method"] == "apple") {
+                        User? user = await AuthService.signInWithGoogle(
+                            context: context);
+                        if (user != null) {
+                          login(index, method: users[index]["method"]);
+                        }
+                      } else if (users[index]["method"] == "facebook") {
+                        User? user = await AuthService.signInWithFacebook(
+                            context: context);
+                        if (user != null) {
+                          login(index, method: users[index]["method"]);
+                        }
+                      } else {
+                        login(index);
+                      }
                     },
                     child: Container(
                       decoration: BoxDecoration(
