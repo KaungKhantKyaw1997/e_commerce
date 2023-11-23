@@ -803,11 +803,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                           padding: EdgeInsets.only(
                             left: 8,
                             right: 8,
-                            bottom: chatProvider.chats.length == 1
-                                ? 16
-                                : chatProvider.chats.length - 1 == index
-                                    ? 0
-                                    : 16,
+                            bottom: 16,
                           ),
                           child: Align(
                             alignment: message["is_my_message"]
