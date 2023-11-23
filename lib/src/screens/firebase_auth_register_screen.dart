@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -12,42 +11,46 @@ import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:image_picker/image_picker.dart';
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+class FirebaseAuthRegisterScreen extends StatefulWidget {
+  const FirebaseAuthRegisterScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<FirebaseAuthRegisterScreen> createState() =>
+      _FirebaseAuthRegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _FirebaseAuthRegisterScreenState
+    extends State<FirebaseAuthRegisterScreen> {
   final crashlytic = new CrashlyticsService();
   final _formKey = GlobalKey<FormState>();
   final authService = AuthService();
   ScrollController _scrollController = ScrollController();
-  FocusNode _emailFocusNode = FocusNode();
   FocusNode _passwordFocusNode = FocusNode();
   FocusNode _confirmPasswordFocusNode = FocusNode();
-  FocusNode _nameFocusNode = FocusNode();
   FocusNode _phoneFocusNode = FocusNode();
 
-  TextEditingController email = TextEditingController(text: '');
   TextEditingController password = TextEditingController(text: '');
   TextEditingController confirmpassword = TextEditingController(text: '');
-  TextEditingController name = TextEditingController(text: '');
   TextEditingController phone = TextEditingController(text: '');
 
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
 
-  final ImagePicker _picker = ImagePicker();
-  XFile? pickedFile;
-  String profileImage = '';
+  String method = "";
 
   @override
   void initState() {
     super.initState();
+    Future.delayed(Duration.zero, () {
+      final arguments =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
+      if (arguments != null) {
+        method = arguments["method"] ?? "";
+      }
+      setState(() {});
+    });
   }
 
   @override
@@ -56,42 +59,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  Future<void> _pickImage(source) async {
-    try {
-      pickedFile = await _picker.pickImage(
-        source: source,
-      );
-      setState(() {});
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<void> uploadFile() async {
-    try {
-      var response = await AuthService.uploadFile(File(pickedFile!.path),
-          resolution: "100x100");
-      var res = jsonDecode(response.body);
-      if (res["code"] == 200) {
-        profileImage = res["url"];
-      }
-    } catch (error) {
-      print('Error uploading file: $error');
-    }
-  }
-
   register() async {
     try {
       final body = {
-        "username": email.text,
-        "email": email.text,
+        "username": "",
+        "email": "",
         "password": password.text,
-        "name": name.text,
-        "phone": '959${phone.text}',
-        "profile_image": profileImage,
+        "name": "",
+        "phone": "959${phone.text}",
+        "profile_image": "",
         "role": "user",
-        "method": "password",
-        "token": "",
+        "method": method,
+        "token": authToken,
       };
 
       final response = await authService.registerData(body);
@@ -143,8 +122,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       onTap: () {
         _passwordFocusNode.unfocus();
         _confirmPasswordFocusNode.unfocus();
-        _nameFocusNode.unfocus();
-        _emailFocusNode.unfocus();
         _phoneFocusNode.unfocus();
       },
       child: Scaffold(
@@ -170,127 +147,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.only(
-                        top: 24,
-                        bottom: 24,
-                      ),
-                      decoration: BoxDecoration(
-                        color: ColorConstants.fillColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: GestureDetector(
-                        onTap: () {
-                          _pickImage(ImageSource.gallery);
-                        },
-                        child: pickedFile == null
-                            ? ClipOval(
-                                child: Image.asset(
-                                  'assets/images/profile.png',
-                                  width: 100,
-                                  height: 100,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : ClipOval(
-                                child: Image.file(
-                                  File(pickedFile!.path),
-                                  width: 100,
-                                  height: 100,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 24,
-                      right: 0,
-                      child: GestureDetector(
-                        onTap: () {
-                          _pickImage(ImageSource.gallery);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 3,
-                            ),
-                            color: Theme.of(context).primaryColorLight,
-                          ),
-                          child: SvgPicture.asset(
-                            "assets/icons/gallery.svg",
-                            width: 16,
-                            height: 16,
-                            colorFilter: ColorFilter.mode(
-                              Colors.white,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 4,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      language["Email"] ?? "Email",
-                      style: FontConstants.caption1,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 16,
-                  ),
-                  child: TextFormField(
-                    controller: email,
-                    focusNode: _emailFocusNode,
-                    keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
-                    style: FontConstants.body1,
-                    cursorColor: Colors.black,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: ColorConstants.fillColor,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return language["Enter Email"] ?? "Enter Email";
-                      }
-                      return null;
-                    },
-                  ),
-                ),
                 Padding(
                   padding: const EdgeInsets.only(
                     left: 16,
@@ -458,61 +314,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      language["Name"] ?? "Name",
-                      style: FontConstants.caption1,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 16,
-                  ),
-                  child: TextFormField(
-                    controller: name,
-                    focusNode: _nameFocusNode,
-                    keyboardType: TextInputType.text,
-                    textInputAction: TextInputAction.next,
-                    style: FontConstants.body1,
-                    cursorColor: Colors.black,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: ColorConstants.fillColor,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return language["Enter Name"] ?? "Enter Name";
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 4,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
                       language["Phone Number"] ?? "Phone Number",
                       style: FontConstants.caption1,
                     ),
@@ -595,9 +396,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 showLoadingDialog(context);
-                if (pickedFile != null) {
-                  await uploadFile();
-                }
                 register();
               }
             },

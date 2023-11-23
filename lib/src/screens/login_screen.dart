@@ -70,12 +70,13 @@ class _LogInScreenState extends State<LogInScreen> {
     }
   }
 
-  login() async {
+  login({String method = 'password'}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       final body = {
         "username": email.text,
         "password": password.text,
+        "method": method,
       };
 
       final response = await authService.loginData(body);
@@ -190,8 +191,19 @@ class _LogInScreenState extends State<LogInScreen> {
             Routes.unauthorized,
           );
         } else {
-          ToastUtil.showToast(
-              e.response!.data['code'], e.response!.data['message']);
+          if (e.response!.data['code'] == 401 && method != 'password') {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.firebase_auth_register,
+              arguments: {
+                "method": method,
+              },
+              (route) => true,
+            );
+          } else {
+            ToastUtil.showToast(
+                e.response!.data['code'], e.response!.data['message']);
+          }
         }
       }
     }
@@ -519,7 +531,7 @@ class _LogInScreenState extends State<LogInScreen> {
                           if (user != null) {
                             email.text = user.email!;
                             showLoadingDialog(context);
-                            login();
+                            login(method: "google");
                           }
                         },
                       ),
@@ -534,7 +546,7 @@ class _LogInScreenState extends State<LogInScreen> {
                       //     if (user != null) {
                       //       email.text = user.email!;
                       //       showLoadingDialog(context);
-                      //       login();
+                      //       login(method: "facebook");
                       //     }
                       //   },
                       // ),
@@ -549,7 +561,7 @@ class _LogInScreenState extends State<LogInScreen> {
                       //     if (user != null) {
                       //       email.text = user.email!;
                       //       showLoadingDialog(context);
-                      //       login();
+                      //       login(method: "apple");
                       //     }
                       //   },
                       // ),

@@ -15,6 +15,7 @@ import 'package:e_commerce/src/screens/chat_history_screen.dart';
 import 'package:e_commerce/src/screens/chat_screen.dart';
 import 'package:e_commerce/src/screens/connection_timeout_screen.dart';
 import 'package:e_commerce/src/screens/contactus_screen.dart';
+import 'package:e_commerce/src/screens/firebase_auth_register_screen.dart';
 import 'package:e_commerce/src/screens/forgot_password_screen.dart';
 import 'package:e_commerce/src/screens/history_details_screen.dart';
 import 'package:e_commerce/src/screens/history_screen.dart';
@@ -54,6 +55,7 @@ class Routes {
   static const String splash = '/splash';
   static const String login = '/login';
   static const String register = '/register';
+  static const String firebase_auth_register = '/firebase_auth_register';
   static const String forgot_password = '/forgot_password';
   static const String home = '/home';
   static const String products = '/products';
@@ -109,6 +111,8 @@ class Routes {
     splash: (BuildContext context) => const SplashScreen(),
     login: (BuildContext context) => const LogInScreen(),
     register: (BuildContext context) => const RegisterScreen(),
+    firebase_auth_register: (BuildContext context) =>
+        const FirebaseAuthRegisterScreen(),
     forgot_password: (BuildContext context) => const ForgotPasswordScreen(),
     home: (BuildContext context) => const HomeScreen(),
     products: (BuildContext context) => const ProductsScreen(),
