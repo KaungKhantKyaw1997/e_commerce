@@ -145,8 +145,19 @@ class _OrderScreenState extends State<OrderScreen>
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           paymenttypes = (response["data"] as List).cast<String>();
+          for (var cart in carts) {
+            if (cart["is_preorder"]) {
+              paymenttypes = paymenttypes
+                  .where((element) => element != "Cash on Delivery")
+                  .toList();
+              break;
+            }
+          }
           paymenttype = paymenttypes[0];
           setState(() {});
+          if (paymenttype != 'Cash on Delivery') {
+            getBankAccounts('mbanking');
+          }
         }
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
