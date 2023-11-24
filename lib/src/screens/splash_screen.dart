@@ -99,10 +99,26 @@ class _SplashScreenState extends State<SplashScreen> {
   getData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String role = prefs.getString('role') ?? "";
+    bool termsandconditions = prefs.getBool("termsandconditions") ?? false;
     if (role == 'admin') {
       Navigator.pushNamedAndRemoveUntil(
         context,
         Routes.history,
+        (route) => false,
+      );
+    } else if (role == 'agent') {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        Routes.home,
+        (route) => false,
+      );
+    } else if (!termsandconditions && role == 'user') {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        Routes.termsandconditions,
+        arguments: {
+          "from": "login",
+        },
         (route) => false,
       );
     } else {

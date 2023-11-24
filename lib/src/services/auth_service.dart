@@ -528,12 +528,10 @@ class AuthService {
         Provider.of<SocketProvider>(context, listen: false);
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String _email = prefs.getString("email") ?? "";
     bool termsandconditions = prefs.getBool("termsandconditions") ?? false;
     String searchhistoriesJson = prefs.getString("searchhistories") ?? "";
 
     prefs.clear();
-    prefs.setString("email", _email);
     prefs.setBool("termsandconditions", termsandconditions);
     prefs.setString("searchhistories", searchhistoriesJson);
     prefs.setBool('firstLaunch', false);

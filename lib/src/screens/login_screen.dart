@@ -83,8 +83,7 @@ class _LogInScreenState extends State<LogInScreen> {
       final response = await authService.loginData(body);
 
       if (response!["code"] == 200) {
-        String _email = prefs.getString("email") ?? "";
-        prefs.setString("email", _email);
+        prefs.setString("email", email.text);
         prefs.setString("name", response["data"]["name"]);
         prefs.setString("role", response["data"]["role"]);
 
@@ -138,20 +137,25 @@ class _LogInScreenState extends State<LogInScreen> {
             Routes.history,
             (route) => false,
           );
-        } else if ((termsandconditions && _email == email.text) ||
-            response["data"]["role"] == 'agent') {
+        } else if (response["data"]["role"] == 'agent') {
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.home,
             (route) => false,
           );
-        } else {
+        } else if (!termsandconditions && response["data"]["role"] == 'user') {
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.termsandconditions,
             arguments: {
               "from": "login",
             },
+            (route) => false,
+          );
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            Routes.home,
             (route) => false,
           );
         }

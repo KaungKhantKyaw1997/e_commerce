@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:dio/dio.dart';
@@ -62,10 +63,28 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   deleteAccount() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String _email = prefs.getString("email") ?? "";
+    var switchuser = await storage.read(key: 'switchuser') ?? '';
     try {
       final response = await authService.deleteAccountData();
       Navigator.pop(context);
       if (response!["code"] == 204) {
+        if (switchuser.isNotEmpty) {
+          var users = jsonDecode(switchuser);
+          var usersFilter = [];
+          for (var user in users) {
+            if (user["email"] != _email) {
+              usersFilter.add({
+                "profile_image": user["profile_image"],
+                "email": user["email"],
+                "password": user["password"],
+                "method": user["method"],
+              });
+            }
+          }
+          storage.write(key: 'switchuser', value: jsonEncode(usersFilter));
+        }
         ToastUtil.showToast(response["code"], response["message"]);
         authService.logout(context);
       } else {

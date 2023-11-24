@@ -196,7 +196,7 @@ class _MyAppState extends State<MyApp> {
         primaryColorLight: Color(0xff485C7F),
         primaryColorDark: Color(0xff121E35),
         scaffoldBackgroundColor: Color(0xFFF1F3F6),
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+        textTheme: GoogleFonts.nunitoTextTheme(Theme.of(context).textTheme),
         dialogTheme: DialogTheme(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),

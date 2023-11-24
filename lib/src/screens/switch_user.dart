@@ -17,6 +17,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,6 +35,7 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   String _fcmToken = '';
   final authService = AuthService();
+  String email = "";
   var users = [];
 
   @override
@@ -49,6 +51,8 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
   }
 
   getData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    email = prefs.getString("email") ?? "";
     var switchuser = await storage.read(key: 'switchuser') ?? '';
     if (switchuser.isNotEmpty) {
       users = jsonDecode(switchuser);
@@ -69,13 +73,11 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
 
       final response = await authService.loginData(body);
 
-      Navigator.pop(context);
       if (response!["code"] == 200) {
         await storage.delete(key: "token");
         await FirebaseMessaging.instance.deleteToken();
 
-        String _email = prefs.getString("email") ?? "";
-        prefs.setString("email", _email);
+        prefs.setString("email", users[index]["email"]);
         prefs.setString("name", response["data"]["name"]);
         prefs.setString("role", response["data"]["role"]);
 
@@ -88,26 +90,32 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
 
         bool termsandconditions = prefs.getBool("termsandconditions") ?? false;
 
+        Navigator.pop(context);
         if (response["data"]["role"] == 'admin') {
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.history,
             (route) => false,
           );
-        } else if ((termsandconditions && _email == users[index]["email"]) ||
-            response["data"]["role"] == 'agent') {
+        } else if (response["data"]["role"] == 'agent') {
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.home,
             (route) => false,
           );
-        } else {
+        } else if (!termsandconditions && response["data"]["role"] == 'user') {
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.termsandconditions,
             arguments: {
               "from": "login",
             },
+            (route) => false,
+          );
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            Routes.home,
             (route) => false,
           );
         }
@@ -126,6 +134,7 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
+        Navigator.pop(context);
       }
     } catch (e, s) {
       Navigator.pop(context);
@@ -198,84 +207,136 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
                 shrinkWrap: true,
                 itemCount: users.length,
                 itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () async {
-                      if (users[index]["method"] == "google") {
-                        User? user = await AuthService.signInWithGoogle(
-                            context: context);
-                        if (user != null) {
-                          login(index, method: users[index]["method"]);
+                  return Slidable(
+                    key: const ValueKey(0),
+                    endActionPane: ActionPane(
+                      motion: const BehindMotion(),
+                      children: [
+                        SlidableAction(
+                          onPressed: (BuildContext context) {
+                            if (users[index]["email"] != email) {
+                              setState(() {
+                                users.removeAt(index);
+                                storage.write(
+                                    key: 'switchuser',
+                                    value: jsonEncode(users));
+                              });
+                            }
+                          },
+                          backgroundColor: ColorConstants.redColor,
+                          foregroundColor: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(index == 0 ? 10 : 0),
+                            bottomRight: Radius.circular(
+                                index == users.length - 1 ? 10 : 0),
+                          ),
+                          icon: Icons.delete,
+                          label: language["Delete"] ?? "Delete",
+                        ),
+                      ],
+                    ),
+                    child: GestureDetector(
+                      onTap: () async {
+                        if (users[index]["email"] != email) {
+                          if (users[index]["method"] == "google") {
+                            User? user = await AuthService.signInWithGoogle(
+                                context: context);
+                            if (user != null) {
+                              login(index, method: users[index]["method"]);
+                            }
+                          } else if (users[index]["method"] == "apple") {
+                            User? user = await AuthService.signInWithGoogle(
+                                context: context);
+                            if (user != null) {
+                              login(index, method: users[index]["method"]);
+                            }
+                          } else if (users[index]["method"] == "facebook") {
+                            User? user = await AuthService.signInWithFacebook(
+                                context: context);
+                            if (user != null) {
+                              login(index, method: users[index]["method"]);
+                            }
+                          } else {
+                            login(index);
+                          }
                         }
-                      } else if (users[index]["method"] == "apple") {
-                        User? user = await AuthService.signInWithGoogle(
-                            context: context);
-                        if (user != null) {
-                          login(index, method: users[index]["method"]);
-                        }
-                      } else if (users[index]["method"] == "facebook") {
-                        User? user = await AuthService.signInWithFacebook(
-                            context: context);
-                        if (user != null) {
-                          login(index, method: users[index]["method"]);
-                        }
-                      } else {
-                        login(index);
-                      }
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                      ),
-                      margin: EdgeInsets.only(
-                        bottom: 16,
-                      ),
-                      child: Row(
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            margin: const EdgeInsets.all(
+                            padding: const EdgeInsets.all(
                               16,
                             ),
-                            width: 40,
-                            height: 40,
-                            decoration: users[index]["profile_image"].isEmpty
-                                ? BoxDecoration(
-                                    color: ColorConstants.fillColor,
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                          "assets/images/profile.png"),
-                                      fit: BoxFit.cover,
-                                    ),
-                                    borderRadius: BorderRadius.circular(50),
-                                  )
-                                : BoxDecoration(
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                          '${users[index]["profile_image"].startsWith("/images") ? ApiConstants.baseUrl : ""}${users[index]["profile_image"]}'),
-                                      fit: BoxFit.cover,
-                                    ),
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                right: 16,
-                                top: 16,
-                                bottom: 16,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(index == 0 ? 10 : 0),
+                                topRight: Radius.circular(index == 0 ? 10 : 0),
+                                bottomLeft: Radius.circular(
+                                    index == users.length - 1 ? 10 : 0),
+                                bottomRight: Radius.circular(
+                                    index == users.length - 1 ? 10 : 0),
                               ),
-                              child: Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: users[index]["email"],
-                                      style: FontConstants.subheadline1,
-                                    )
-                                  ],
-                                ),
-                              ),
+                              color: Colors.white,
                             ),
-                          )
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration:
+                                      users[index]["profile_image"].isEmpty
+                                          ? BoxDecoration(
+                                              color: ColorConstants.fillColor,
+                                              image: DecorationImage(
+                                                image: AssetImage(
+                                                    "assets/images/profile.png"),
+                                                fit: BoxFit.cover,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            )
+                                          : BoxDecoration(
+                                              image: DecorationImage(
+                                                image: NetworkImage(
+                                                    '${users[index]["profile_image"].startsWith("/images") ? ApiConstants.baseUrl : ""}${users[index]["profile_image"]}'),
+                                                fit: BoxFit.cover,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 8,
+                                    ),
+                                    child: Text(
+                                      users[index]["email"],
+                                      overflow: TextOverflow.ellipsis,
+                                      style: FontConstants.subheadline1,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          index < users.length - 1
+                              ? Container(
+                                  padding: const EdgeInsets.only(
+                                    left: 16,
+                                    right: 16,
+                                  ),
+                                  child: const Divider(
+                                    height: 0,
+                                    thickness: 0.2,
+                                    color: Colors.grey,
+                                  ),
+                                )
+                              : Container(),
                         ],
                       ),
                     ),
