@@ -81,12 +81,13 @@ class _OrderScreenState extends State<OrderScreen>
 
       if (arguments != null) {
         carts = arguments["carts"] ?? [];
+        Map<String, dynamic>? highestPrice = getHighestPrice(carts);
         subtotal = arguments["subtotal"] ?? 0.0;
         total = arguments["total"] ?? 0.0;
+        getPaymentTypes(highestPrice!["discounted_price"]);
       }
     });
     getAddress();
-    getPaymentTypes();
     getInsuranceRules();
   }
 
@@ -95,6 +96,21 @@ class _OrderScreenState extends State<OrderScreen>
     _scrollController.dispose();
     _tabController.dispose();
     super.dispose();
+  }
+
+  Map<String, dynamic>? getHighestPrice(List<Map<String, dynamic>> carts) {
+    if (carts.isEmpty) {
+      return null;
+    }
+
+    Map<String, dynamic>? highestPrice = carts.reduce((currentMax, product) {
+      double currentMaxPrice = currentMax['discounted_price'];
+      double productPrice = product['discounted_price'];
+
+      return currentMaxPrice > productPrice ? currentMax : product;
+    });
+
+    return highestPrice;
   }
 
   getAddress() async {
@@ -139,9 +155,10 @@ class _OrderScreenState extends State<OrderScreen>
     }
   }
 
-  getPaymentTypes() async {
+  getPaymentTypes(amount) async {
     try {
-      final response = await paymentTypeService.getPaymentTypesData();
+      final response =
+          await paymentTypeService.getPaymentTypesData(amount: amount);
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           paymenttypes = (response["data"] as List).cast<String>();

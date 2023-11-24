@@ -504,6 +504,10 @@ class AuthService {
 
   logout(context) async {
     clearData(context);
+    getSettings(context);
+  }
+
+  clearData(context) async {
     CartProvider cartProvider =
         Provider.of<CartProvider>(context, listen: false);
     cartProvider.addCount(0);
@@ -520,10 +524,6 @@ class AuthService {
         Provider.of<BottomProvider>(context, listen: false);
     bottomProvider.selectIndex(0);
 
-    getSettings(context);
-  }
-
-  clearData(context) async {
     SocketProvider socketProvider =
         Provider.of<SocketProvider>(context, listen: false);
 

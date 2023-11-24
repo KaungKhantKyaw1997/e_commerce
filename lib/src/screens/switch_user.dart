@@ -62,6 +62,7 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
 
   login(index, {String method = 'password'}) async {
     showLoadingDialog(context);
+    authService.clearData(context);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       final body = {
@@ -74,9 +75,6 @@ class _SwitchUserScreenState extends State<SwitchUserScreen> {
       final response = await authService.loginData(body);
 
       if (response!["code"] == 200) {
-        await storage.delete(key: "token");
-        await FirebaseMessaging.instance.deleteToken();
-
         prefs.setString("email", users[index]["email"]);
         prefs.setString("name", response["data"]["name"]);
         prefs.setString("role", response["data"]["role"]);

@@ -15,6 +15,7 @@ import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ShopSetupScreen extends StatefulWidget {
   const ShopSetupScreen({super.key});
@@ -42,11 +43,15 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
 
   int id = 0;
   String status = 'Active';
+  String role = '';
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
+    Future.delayed(Duration.zero, () async {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      role = prefs.getString('role') ?? "";
+
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
@@ -327,7 +332,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
             color: Colors.black,
           ),
           actions: [
-            id != 0 && status != "Pending Approval"
+            id != 0 && status == "Active"
                 ? IconButton(
                     icon: SvgPicture.asset(
                       "assets/icons/product.svg",
@@ -609,7 +614,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
             ),
           ),
         ),
-        bottomNavigationBar: status == "Pending Approval"
+        bottomNavigationBar: status == "Pending Approval" && role == 'admin'
             ? Container(
                 margin: EdgeInsets.only(
                   left: 16,
@@ -618,6 +623,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
                 ),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
+                    elevation: 0,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,
                       vertical: 12,
@@ -625,6 +631,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
+                    backgroundColor: Theme.of(context).primaryColor,
                   ),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {

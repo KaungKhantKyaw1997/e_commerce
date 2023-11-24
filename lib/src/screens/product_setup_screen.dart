@@ -12,6 +12,7 @@ import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/currency_service.dart';
 import 'package:e_commerce/src/services/gender_service.dart';
 import 'package:e_commerce/src/services/product_service.dart';
+import 'package:e_commerce/src/services/user_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:e_commerce/src/widgets/custom_autocomplete.dart';
@@ -19,6 +20,7 @@ import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductSetupScreen extends StatefulWidget {
   const ProductSetupScreen({super.key});
@@ -33,6 +35,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   final _formKey = GlobalKey<FormState>();
   final productService = ProductService();
   final currencyService = CurrencyService();
+  final userService = UserService();
   final genderService = GenderService();
 
   FocusNode _modelFocusNode = FocusNode();
@@ -45,6 +48,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   FocusNode _warrantyPeriodFocusNode = FocusNode();
   FocusNode _waitingTimeFocusNode = FocusNode();
 
+  // TextEditingController userName = TextEditingController(text: '');
+  // int userId = 0;
   TextEditingController shopName = TextEditingController(text: '');
   int shopId = 0;
   TextEditingController categoryName = TextEditingController(text: '');
@@ -77,6 +82,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   bool isPreorder = false;
   List productImages = [];
   List<XFile> pickedMultiFile = <XFile>[];
+
+  // List users = [];
+  // List<String> usersName = [];
 
   List currencies = [];
   List<String> currencyCodes = [];
@@ -116,12 +124,18 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   int id = 0;
   String from = '';
+  // String role = '';
 
   @override
   void initState() {
     super.initState();
 
     Future.delayed(Duration.zero, () async {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      // role = prefs.getString('role') ?? "";
+      // if (role == 'admin') {
+      //   getUsers();
+      // }
       getGenders();
       getStrapMaterials();
       getCaseMaterials();
@@ -149,7 +163,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           shopName.text = arguments["shopName"] ?? '';
         }
         if (id != 0) {
-          await Future.delayed(Duration(milliseconds: 100));
+          showLoadingDialog(context);
+          await Future.delayed(Duration(milliseconds: 200));
           getProduct();
         }
       }
@@ -161,6 +176,53 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     _scrollController.dispose();
     super.dispose();
   }
+
+  // getUsers() async {
+  //   try {
+  //     final response = await userService.getUsersData(
+  //         page: 1, perPage: 999999, role: 'agent');
+  //     if (response!["code"] == 200) {
+  //       if (response["data"].isNotEmpty) {
+  //         users += response["data"];
+  //         for (var data in response["data"]) {
+  //           if (data["name"] != null) {
+  //             usersName.add(data["name"]);
+  //           }
+  //         }
+  //         userId = users[0]["user_id"];
+  //         userName.text = users[0]["name"];
+  //         setState(() {});
+  //       }
+  //     } else {
+  //       ToastUtil.showToast(response["code"], response["message"]);
+  //     }
+  //   } catch (e, s) {
+  //     if (e is DioException &&
+  //         e.error is SocketException &&
+  //         !isConnectionTimeout) {
+  //       isConnectionTimeout = true;
+  //       Navigator.pushNamed(
+  //         context,
+  //         Routes.connection_timeout,
+  //       );
+  //       return;
+  //     }
+  //     crashlytic.myGlobalErrorHandler(e, s);
+  //     if (e is DioException && e.response != null && e.response!.data != null) {
+  //       if (e.response!.data["message"] == "invalid token" ||
+  //           e.response!.data["message"] ==
+  //               "invalid authorization header format") {
+  //         Navigator.pushNamed(
+  //           context,
+  //           Routes.unauthorized,
+  //         );
+  //       } else {
+  //         ToastUtil.showToast(
+  //             e.response!.data['code'], e.response!.data['message']);
+  //       }
+  //     }
+  //   }
+  // }
 
   getGenders() async {
     try {
@@ -821,6 +883,14 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
       if (response!["code"] == 200) {
         setState(() {
           productImages = response["data"]["product_images"] ?? [];
+
+          // userId = response["data"]["creator_id"] ?? 0;
+          // for (var data in users) {
+          //   if (data["user_id"] == userId) {
+          //     userName.text = data["name"];
+          //     break;
+          //   }
+          // }
           if (from != 'shop') {
             shopName.text = response["data"]["shop_name"] ?? "";
             shopId = response["data"]["shop_id"] ?? 0;
@@ -870,7 +940,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
+      Navigator.pop(context);
     } catch (e, s) {
+      Navigator.pop(context);
       if (e is DioException &&
           e.error is SocketException &&
           !isConnectionTimeout) {
@@ -962,6 +1034,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "case_depth": caseDepth.text,
         "case_width": caseWidth.text,
         "discount_percent": discountPercent,
+        // "creator_id": userId,
       };
 
       final response = await productService.addProductData(body);
@@ -1050,6 +1123,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "case_depth": caseDepth.text,
         "case_width": caseWidth.text,
         "discount_percent": discountPercent,
+        // "creator_id": userId,
       };
 
       final response = await productService.updateProductData(body, id);
@@ -1285,12 +1359,60 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       style: FontConstants.button1,
                     ),
                   ),
+                  // if (role == 'admin')
+                  //   Padding(
+                  //     padding: EdgeInsets.only(
+                  //       left: 16,
+                  //       right: 16,
+                  //       bottom: 4,
+                  //       top: 24,
+                  //     ),
+                  //     child: Align(
+                  //       alignment: Alignment.centerLeft,
+                  //       child: Text(
+                  //         language["Agent"] ?? "Agent",
+                  //         style: FontConstants.caption1,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // if (role == 'admin')
+                  //   Padding(
+                  //     padding: const EdgeInsets.only(
+                  //       left: 16,
+                  //       right: 16,
+                  //       bottom: 16,
+                  //     ),
+                  //     child: CustomAutocomplete(
+                  //       datalist: usersName,
+                  //       textController: userName,
+                  //       onSelected: (String selection) {
+                  //         userName.text = selection;
+
+                  //         for (var data in users) {
+                  //           if (data["name"] == userName.text) {
+                  //             userId = data["user_id"];
+                  //           }
+                  //         }
+                  //       },
+                  //       onChanged: (String value) {
+                  //         userName.text = value;
+
+                  //         for (var data in users) {
+                  //           if (data["name"] == userName.text) {
+                  //             userId = data["user_id"];
+                  //           }
+                  //         }
+                  //       },
+                  //       maxWidth: 358,
+                  //     ),
+                  //   ),
                   Padding(
-                    padding: const EdgeInsets.only(
+                    padding: EdgeInsets.only(
                       left: 16,
                       right: 16,
                       bottom: 4,
                       top: 24,
+                      // top: role == 'admin' ? 0 : 24,
                     ),
                     child: Align(
                       alignment: Alignment.centerLeft,

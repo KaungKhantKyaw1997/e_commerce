@@ -58,10 +58,16 @@ class UserService {
   }
 
   Future<Map<String, dynamic>?> getUsersData(
-      {int page = 1, int perPage = 10, String search = ''}) async {
+      {int page = 1,
+      int perPage = 10,
+      String search = '',
+      String role = ''}) async {
     var token = await storage.read(key: "token") ?? '';
+    var url =
+        '${ApiConstants.usersUrl}?page=$page&per_page=$perPage&search=$search';
+    url = role.isNotEmpty ? '$url&role=$role' : url;
     final response = await dio.get(
-      '${ApiConstants.usersUrl}?page=$page&per_page=$perPage&search=$search',
+      url,
       options: Options(
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',

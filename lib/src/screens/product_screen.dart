@@ -666,11 +666,13 @@ class _ProductScreenState extends State<ProductScreen> {
                                         return InkWell(
                                           onTap: () {
                                             Navigator.pushNamed(
-                                                context, Routes.image_preview,
-                                                arguments: {
-                                                  "image_url":
-                                                      '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'
-                                                });
+                                              context,
+                                              Routes.image_preview,
+                                              arguments: {
+                                                "image_url":
+                                                    '${ApiConstants.baseUrl}${product["product_images"][index].toString()}'
+                                              },
+                                            );
                                           },
                                           child: Container(
                                             margin: EdgeInsets.symmetric(

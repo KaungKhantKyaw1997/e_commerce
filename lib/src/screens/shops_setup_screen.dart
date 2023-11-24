@@ -284,7 +284,7 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
                           Routes.shop_setup,
                           arguments: {
                             "id": shops[index]["shop_id"],
-                            "status": status,
+                            "status": shops[index]["status"],
                           },
                           (route) => true,
                         );

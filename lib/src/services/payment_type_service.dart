@@ -8,10 +8,12 @@ class PaymentTypeService {
   final Dio dio = Dio();
   CancelToken _cancelToken = CancelToken();
 
-  Future<Map<String, dynamic>?> getPaymentTypesData() async {
+  Future<Map<String, dynamic>?> getPaymentTypesData({
+    double amount = 0.0,
+  }) async {
     var token = await storage.read(key: "token") ?? '';
     final response = await dio.get(
-      ApiConstants.paymentTypesUrl,
+      '${ApiConstants.paymentTypesUrl}?amount=$amount',
       options: Options(
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
