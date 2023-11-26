@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "274063087309-gdck2pj8tg1n44a7evg9jsad78h4p8po.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.watchvault.app001",
+            "certificate_hash": "61e598b9f1d5326cbef150c02d708f8cad5ceb39"
+          }
+        },
+        {
           "client_id": "274063087309-reot51qnbnnvh3hrmm0d8lipq3l8db1v.apps.googleusercontent.com",
           "client_type": 3
         }

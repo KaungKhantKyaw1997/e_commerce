@@ -18,6 +18,7 @@ import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/setting_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
@@ -30,6 +31,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:store_redirect/store_redirect.dart';
+import 'package:the_apple_sign_in/scope.dart';
+import 'package:the_apple_sign_in/the_apple_sign_in.dart' as apple_sign_in;
 
 class AuthService {
   final crashlytic = new CrashlyticsService();
@@ -58,14 +61,15 @@ class AuthService {
     final GoogleSignInAccount? googleSignInAccount =
         await GoogleSignIn().signIn();
     if (googleSignInAccount != null) {
-      final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
-      );
-      authToken = googleSignInAuthentication.idToken!;
       try {
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+        authToken = googleSignInAuthentication.idToken!;
+
         final UserCredential userCredential =
             await FirebaseAuth.instance.signInWithCredential(credential);
 
@@ -97,6 +101,49 @@ class AuthService {
     return user;
   }
 
+  Future<User> signInWithApple({List<Scope> scopes = const []}) async {
+    final apple_sign_in.AuthorizationResult result =
+        await apple_sign_in.TheAppleSignIn.performRequests(
+            [apple_sign_in.AppleIdRequest(requestedScopes: scopes)]);
+
+    switch (result.status) {
+      case apple_sign_in.AuthorizationStatus.authorized:
+        final appleIdCredential = result.credential!;
+        final oAuthProvider = OAuthProvider('apple.com');
+        final credential = oAuthProvider.credential(
+          idToken: String.fromCharCodes(appleIdCredential.identityToken!),
+          accessToken:
+              String.fromCharCodes(appleIdCredential.authorizationCode!),
+        );
+        final userCredential =
+            await FirebaseAuth.instance.signInWithCredential(credential);
+        final firebaseUser = userCredential.user!;
+        if (scopes.contains(Scope.fullName)) {
+          final fullName = appleIdCredential.fullName;
+          if (fullName != null &&
+              fullName.givenName != null &&
+              fullName.familyName != null) {
+            final displayName = '${fullName.givenName} ${fullName.familyName}';
+            await firebaseUser.updateDisplayName(displayName);
+          }
+        }
+        return firebaseUser;
+      case apple_sign_in.AuthorizationStatus.error:
+        throw PlatformException(
+          code: 'ERROR_AUTHORIZATION_DENIED',
+          message: result.error.toString(),
+        );
+
+      case apple_sign_in.AuthorizationStatus.cancelled:
+        throw PlatformException(
+          code: 'ERROR_ABORTED_BY_USER',
+          message: 'Sign in aborted by user',
+        );
+      default:
+        throw UnimplementedError();
+    }
+  }
+
   static Future<User?> signInWithFacebook(
       {required BuildContext context}) async {
     User? user;
@@ -105,6 +152,8 @@ class AuthService {
       try {
         final AuthCredential credential =
             FacebookAuthProvider.credential(result.accessToken!.token);
+        authToken = result.accessToken!.token;
+
         final UserCredential userCredential =
             await FirebaseAuth.instance.signInWithCredential(credential);
 

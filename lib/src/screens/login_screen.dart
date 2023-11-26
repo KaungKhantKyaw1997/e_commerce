@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:e_commerce/apple_signIn_available.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/socket_provider.dart';
@@ -20,6 +21,7 @@ import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:the_apple_sign_in/scope.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -228,6 +230,9 @@ class _LogInScreenState extends State<LogInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appleSignInAvailable =
+        Provider.of<AppleSignInAvailable>(context, listen: false);
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
@@ -540,20 +545,22 @@ class _LogInScreenState extends State<LogInScreen> {
                           }
                         },
                       ),
-                      // SizedBox(
-                      //   width: 16,
-                      // ),
-                      // SquareTile(
-                      //   icon: 'assets/icons/apple.svg',
-                      //   onTap: () async {
-                      //     User? user = await AuthService.signInWithGoogle(
-                      //         context: context);
-                      //     if (user != null) {
-                      //       email.text = user.email!;
-                      //       login(method: "apple");
-                      //     }
-                      //   },
-                      // ),
+                      // if (appleSignInAvailable.isAvailable)
+                      //   SizedBox(
+                      //     width: 16,
+                      //   ),
+                      // if (appleSignInAvailable.isAvailable)
+                      //   SquareTile(
+                      //     icon: 'assets/icons/apple.svg',
+                      //     onTap: () async {
+                      //       // final authService = Provider.of<AuthService>(
+                      //       //     context,
+                      //       //     listen: false);
+                      //       final user = await authService.signInWithApple(
+                      //           scopes: [Scope.email, Scope.fullName]);
+                      //       print('uid: ${user.uid}');
+                      //     },
+                      //   ),
                       // SizedBox(
                       //   width: 16,
                       // ),

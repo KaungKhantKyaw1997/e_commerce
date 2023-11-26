@@ -72,6 +72,7 @@ dependencies:
   image_gallery_saver: ^2.0.3
   path_provider: ^2.1.1
   flutter_facebook_auth: ^6.0.3
+  the_apple_sign_in: ^1.1.1
 
 dev_dependencies:
   flutter_test:

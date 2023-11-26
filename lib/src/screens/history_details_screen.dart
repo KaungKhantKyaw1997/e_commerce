@@ -1145,76 +1145,108 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                       ),
                     ),
                   ...orderItems.map((item) {
-                    return Card(
-                      elevation: 0,
-                      margin: EdgeInsets.symmetric(
-                        vertical: 4,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          10,
+                    return GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                          left: 8,
+                          right: 8,
+                          top: 8,
+                          bottom: 8,
                         ),
-                      ),
-                      child: ListTile(
-                        leading: ClipRRect(
+                        decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          child: Image.network(
-                            '${ApiConstants.baseUrl}${item["product_images"][0]}',
-                            fit: BoxFit.cover,
-                            height: 60,
-                            width: 60,
-                          ),
+                          color: Colors.white,
                         ),
-                        title: Text(
-                          "${item["brand"]} ${item["model"]}",
-                          style: FontConstants.subheadline1,
-                        ),
-                        subtitle: Column(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline.alphabetic,
-                              children: [
-                                Text(
-                                  "${language["Quantity"] ?? "Quantity"}: ",
-                                  style: FontConstants.body2,
+                            Container(
+                              width: 85,
+                              height: 85,
+                              decoration: BoxDecoration(
+                                image: item["product_images"].isNotEmpty
+                                    ? DecorationImage(
+                                        image: NetworkImage(
+                                            '${ApiConstants.baseUrl}${item["product_images"][0]}'),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/profile.png'),
+                                        fit: BoxFit.cover,
+                                      ),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Colors.transparent,
                                 ),
-                                Text(
-                                  "${item["quantity"]}",
-                                  style: FontConstants.body1,
-                                ),
-                              ],
+                              ),
                             ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline.alphabetic,
-                              children: [
-                                Text(
-                                  "${language["Price"] ?? "Price"}: ",
-                                  style: FontConstants.body2,
+                            Expanded(
+                              child: Container(
+                                margin: const EdgeInsets.only(
+                                  left: 8,
                                 ),
-                                FormattedAmount(
-                                  amount: item["price"],
-                                  mainTextStyle: FontConstants.body1,
-                                  decimalTextStyle: FontConstants.body1,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "${item["brand"]} - ${item["model"]}",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: FontConstants.subheadline1,
+                                    ),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.baseline,
+                                      textBaseline: TextBaseline.alphabetic,
+                                      children: [
+                                        Text(
+                                          "${language["Quantity"] ?? "Quantity"}: ",
+                                          style: FontConstants.body2,
+                                        ),
+                                        Text(
+                                          "${item["quantity"]}",
+                                          style: FontConstants.body1,
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.baseline,
+                                      textBaseline: TextBaseline.alphabetic,
+                                      children: [
+                                        Text(
+                                          "${language["Price"] ?? "Price"}: ",
+                                          style: FontConstants.body2,
+                                        ),
+                                        FormattedAmount(
+                                          amount: item["price"],
+                                          mainTextStyle: FontConstants.body1,
+                                          decimalTextStyle: FontConstants.body1,
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.baseline,
+                                      textBaseline: TextBaseline.alphabetic,
+                                      children: [
+                                        Text(
+                                          "${language["Amount"] ?? "Amount"}: ",
+                                          style: FontConstants.body2,
+                                        ),
+                                        FormattedAmount(
+                                          amount: item["amount"],
+                                          mainTextStyle: FontConstants.body1,
+                                          decimalTextStyle: FontConstants.body1,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline.alphabetic,
-                              children: [
-                                Text(
-                                  "${language["Amount"] ?? "Amount"}: ",
-                                  style: FontConstants.body2,
-                                ),
-                                FormattedAmount(
-                                  amount: item["amount"],
-                                  mainTextStyle: FontConstants.body1,
-                                  decimalTextStyle: FontConstants.body1,
-                                ),
-                              ],
+                              ),
                             ),
                           ],
                         ),

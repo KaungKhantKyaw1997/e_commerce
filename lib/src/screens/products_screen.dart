@@ -6,6 +6,7 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/product_service.dart';
+import 'package:e_commerce/src/utils/format_amount.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -219,6 +220,78 @@ class _ProductsScreenState extends State<ProductsScreen>
               ),
             ),
           ),
+          if (products[index].isNotEmpty &&
+              products[index]["discount_percent"] > 0.0)
+            Padding(
+              padding: EdgeInsets.only(
+                left: 8,
+                right: 8,
+                bottom: 4,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    products[index]["symbol"].toString(),
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey,
+                      decoration: TextDecoration.lineThrough,
+                      decorationColor: Colors.grey,
+                    ),
+                  ),
+                  products[index]["price"] != null
+                      ? FormattedAmount(
+                          amount:
+                              double.parse(products[index]["price"].toString()),
+                          mainTextStyle: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey,
+                            decoration: TextDecoration.lineThrough,
+                            decorationColor: Colors.grey,
+                          ),
+                          decimalTextStyle: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey,
+                            decoration: TextDecoration.lineThrough,
+                            decorationColor: Colors.grey,
+                          ),
+                        )
+                      : Text(""),
+                ],
+              ),
+            ),
+          Padding(
+            padding: EdgeInsets.only(
+              left: 8,
+              right: 8,
+              bottom: 4,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(
+                  products[index]["symbol"].toString(),
+                  style: FontConstants.caption2,
+                ),
+                products[index]["discounted_price"] != null
+                    ? FormattedAmount(
+                        amount: double.parse(
+                            products[index]["discounted_price"].toString()),
+                        mainTextStyle: FontConstants.caption2,
+                        decimalTextStyle: FontConstants.caption2,
+                      )
+                    : Text(""),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -339,11 +412,11 @@ class _ProductsScreenState extends State<ProductsScreen>
                         itemCount: products.length,
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: 250,
+                          mainAxisExtent: 290,
                           childAspectRatio: 2 / 1,
-                          crossAxisSpacing: 15,
+                          crossAxisSpacing: 8,
                           crossAxisCount: 2,
-                          mainAxisSpacing: 15,
+                          mainAxisSpacing: 8,
                         ),
                         itemBuilder: (context, index) {
                           return GestureDetector(

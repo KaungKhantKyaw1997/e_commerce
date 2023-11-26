@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:e_commerce/agent_palette.dart';
+import 'package:e_commerce/apple_signIn_available.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/socket_manager.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
@@ -32,6 +33,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  final appleSignInAvailable = await AppleSignInAvailable.check();
 
   FirebaseMessaging.onBackgroundMessage(backgroundMessageHandler);
 
@@ -54,6 +56,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => NotiProvider(notiCount)),
         ChangeNotifierProvider(
             create: (context) => MessageProvider(messageCount)),
+        Provider<AppleSignInAvailable>.value(value: appleSignInAvailable),
       ],
       child: MyApp(),
       // child: MyApp(
