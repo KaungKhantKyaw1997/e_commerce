@@ -1,5 +1,4 @@
 import 'package:camera/camera.dart';
-import 'package:e_commerce/agent_palette.dart';
 import 'package:e_commerce/apple_signIn_available.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/socket_manager.dart';
@@ -19,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:e_commerce/palette.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';

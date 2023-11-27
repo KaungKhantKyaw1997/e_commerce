@@ -21,6 +21,7 @@ import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:share_extend/share_extend.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 
@@ -629,6 +630,25 @@ class _ProductScreenState extends State<ProductScreen> {
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
+        // actions: [
+        //   IconButton(
+        //     icon: SvgPicture.asset(
+        //       "assets/icons/share.svg",
+        //       width: 24,
+        //       height: 24,
+        //       colorFilter: const ColorFilter.mode(
+        //         Colors.black,
+        //         BlendMode.srcIn,
+        //       ),
+        //     ),
+        //     onPressed: () {
+        //       ShareExtend.share(
+        //         "https://www.google.com/",
+        //         "text/plain",
+        //       );
+        //     },
+        //   ),
+        // ],
       ),
       body: SingleChildScrollView(
         controller: _scrollController,

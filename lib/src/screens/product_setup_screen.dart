@@ -20,6 +20,7 @@ import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductSetupScreen extends StatefulWidget {
@@ -47,9 +48,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   FocusNode _priceFocusNode = FocusNode();
   FocusNode _warrantyPeriodFocusNode = FocusNode();
   FocusNode _waitingTimeFocusNode = FocusNode();
+  FocusNode _discountReasonFocusNode = FocusNode();
 
-  // TextEditingController userName = TextEditingController(text: '');
-  // int userId = 0;
   TextEditingController shopName = TextEditingController(text: '');
   int shopId = 0;
   TextEditingController categoryName = TextEditingController(text: '');
@@ -78,13 +78,12 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   TextEditingController waterResistance = TextEditingController(text: '');
   TextEditingController warrantyPeriod = TextEditingController(text: '');
   TextEditingController waitingTime = TextEditingController(text: '');
+  TextEditingController discountReason = TextEditingController(text: '');
+  TextEditingController discountExpiration = TextEditingController(text: '');
   bool isTopModel = false;
   bool isPreorder = false;
   List productImages = [];
   List<XFile> pickedMultiFile = <XFile>[];
-
-  // List users = [];
-  // List<String> usersName = [];
 
   List currencies = [];
   List<String> currencyCodes = [];
@@ -124,18 +123,12 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   int id = 0;
   String from = '';
-  // String role = '';
 
   @override
   void initState() {
     super.initState();
 
     Future.delayed(Duration.zero, () async {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      // role = prefs.getString('role') ?? "";
-      // if (role == 'admin') {
-      //   getUsers();
-      // }
       getGenders();
       getStrapMaterials();
       getCaseMaterials();
@@ -176,53 +169,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     _scrollController.dispose();
     super.dispose();
   }
-
-  // getUsers() async {
-  //   try {
-  //     final response = await userService.getUsersData(
-  //         page: 1, perPage: 999999, role: 'agent');
-  //     if (response!["code"] == 200) {
-  //       if (response["data"].isNotEmpty) {
-  //         users += response["data"];
-  //         for (var data in response["data"]) {
-  //           if (data["name"] != null) {
-  //             usersName.add(data["name"]);
-  //           }
-  //         }
-  //         userId = users[0]["user_id"];
-  //         userName.text = users[0]["name"];
-  //         setState(() {});
-  //       }
-  //     } else {
-  //       ToastUtil.showToast(response["code"], response["message"]);
-  //     }
-  //   } catch (e, s) {
-  //     if (e is DioException &&
-  //         e.error is SocketException &&
-  //         !isConnectionTimeout) {
-  //       isConnectionTimeout = true;
-  //       Navigator.pushNamed(
-  //         context,
-  //         Routes.connection_timeout,
-  //       );
-  //       return;
-  //     }
-  //     crashlytic.myGlobalErrorHandler(e, s);
-  //     if (e is DioException && e.response != null && e.response!.data != null) {
-  //       if (e.response!.data["message"] == "invalid token" ||
-  //           e.response!.data["message"] ==
-  //               "invalid authorization header format") {
-  //         Navigator.pushNamed(
-  //           context,
-  //           Routes.unauthorized,
-  //         );
-  //       } else {
-  //         ToastUtil.showToast(
-  //             e.response!.data['code'], e.response!.data['message']);
-  //       }
-  //     }
-  //   }
-  // }
 
   getGenders() async {
     try {
@@ -883,14 +829,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
       if (response!["code"] == 200) {
         setState(() {
           productImages = response["data"]["product_images"] ?? [];
-
-          // userId = response["data"]["creator_id"] ?? 0;
-          // for (var data in users) {
-          //   if (data["user_id"] == userId) {
-          //     userName.text = data["name"];
-          //     break;
-          //   }
-          // }
           if (from != 'shop') {
             shopName.text = response["data"]["shop_name"] ?? "";
             shopId = response["data"]["shop_id"] ?? 0;
@@ -924,6 +862,16 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
               response["data"]["stock_quantity"].toString() ?? "0";
           price.text = response["data"]["price"].toString() ?? "";
           discountPercent = response["data"]["discount_percent"] ?? 0.0;
+          discountExpiration.text =
+              response["data"]["discount_expiration"] ?? "";
+          if (discountExpiration.text.isNotEmpty) {
+            DateTime expirationDateTime =
+                DateTime.parse(discountExpiration.text);
+            discountExpiration.text =
+                DateFormat('dd/MM/yyyy').format(expirationDateTime);
+          }
+
+          discountReason.text = response["data"]["discount_reason"] ?? "";
           waterResistance.text = response["data"]["water_resistance"] ?? "";
           warrantyPeriod.text = response["data"]["warranty_period"] ?? "";
           warrantyTypeDesc =
@@ -1034,7 +982,12 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "case_depth": caseDepth.text,
         "case_width": caseWidth.text,
         "discount_percent": discountPercent,
-        // "creator_id": userId,
+        "discount_expiration": discountExpiration.text.isNotEmpty
+            ? DateFormat("yyyy-MM-dd")
+                .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
+                .toString()
+            : '',
+        "discount_reason": discountReason.text,
       };
 
       final response = await productService.addProductData(body);
@@ -1123,7 +1076,12 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "case_depth": caseDepth.text,
         "case_width": caseWidth.text,
         "discount_percent": discountPercent,
-        // "creator_id": userId,
+        "discount_expiration": discountExpiration.text.isNotEmpty
+            ? DateFormat("yyyy-MM-dd")
+                .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
+                .toString()
+            : '',
+        "discount_reason": discountReason.text,
       };
 
       final response = await productService.updateProductData(body, id);
@@ -1258,6 +1216,41 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     }
   }
 
+  getDate() async {
+    var data = await _getDate();
+    if (data != null) {
+      discountExpiration.text =
+          DateFormat("dd/MM/yyyy").format(data).toString();
+    } else {
+      discountExpiration.text = '';
+    }
+  }
+
+  Future<DateTime?> _getDate() async {
+    DateTime currentDate = DateTime.now();
+    DateTime firstDate = currentDate;
+    DateTime lastDate = DateTime(currentDate.year + 10);
+
+    DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: currentDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Theme.of(context).primaryColor,
+            ),
+          ),
+          child: child ?? Container(),
+        );
+      },
+    );
+
+    return selectedDate;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -1272,6 +1265,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         _movementCaliberFocusNode.unfocus();
         _priceFocusNode.unfocus();
         _waitingTimeFocusNode.unfocus();
+        _discountReasonFocusNode.unfocus();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -1359,60 +1353,12 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       style: FontConstants.button1,
                     ),
                   ),
-                  // if (role == 'admin')
-                  //   Padding(
-                  //     padding: EdgeInsets.only(
-                  //       left: 16,
-                  //       right: 16,
-                  //       bottom: 4,
-                  //       top: 24,
-                  //     ),
-                  //     child: Align(
-                  //       alignment: Alignment.centerLeft,
-                  //       child: Text(
-                  //         language["Agent"] ?? "Agent",
-                  //         style: FontConstants.caption1,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // if (role == 'admin')
-                  //   Padding(
-                  //     padding: const EdgeInsets.only(
-                  //       left: 16,
-                  //       right: 16,
-                  //       bottom: 16,
-                  //     ),
-                  //     child: CustomAutocomplete(
-                  //       datalist: usersName,
-                  //       textController: userName,
-                  //       onSelected: (String selection) {
-                  //         userName.text = selection;
-
-                  //         for (var data in users) {
-                  //           if (data["name"] == userName.text) {
-                  //             userId = data["user_id"];
-                  //           }
-                  //         }
-                  //       },
-                  //       onChanged: (String value) {
-                  //         userName.text = value;
-
-                  //         for (var data in users) {
-                  //           if (data["name"] == userName.text) {
-                  //             userId = data["user_id"];
-                  //           }
-                  //         }
-                  //       },
-                  //       maxWidth: 358,
-                  //     ),
-                  //   ),
                   Padding(
                     padding: EdgeInsets.only(
                       left: 16,
                       right: 16,
                       bottom: 4,
                       top: 24,
-                      // top: role == 'admin' ? 0 : 24,
                     ),
                     child: Align(
                       alignment: Alignment.centerLeft,
@@ -2525,6 +2471,123 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                         discountPercent = value / 10;
                       });
                     },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 4,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        language["Discount Expiration"] ??
+                            "Discount Expiration",
+                        style: FontConstants.caption1,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 16,
+                    ),
+                    child: TextFormField(
+                      controller: discountExpiration,
+                      readOnly: true,
+                      style: FontConstants.body2,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: ColorConstants.fillColor,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        suffixIcon: IconButton(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                          ),
+                          onPressed: () {
+                            getDate();
+                          },
+                          icon: SvgPicture.asset(
+                            "assets/icons/calendar.svg",
+                            width: 24,
+                            height: 24,
+                            colorFilter: ColorFilter.mode(
+                              Colors.black,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 4,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        language["Discount Reason"] ?? "Discount Reason",
+                        style: FontConstants.caption1,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 16,
+                    ),
+                    child: TextFormField(
+                      controller: discountReason,
+                      focusNode: _discountReasonFocusNode,
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.next,
+                      style: FontConstants.body1,
+                      cursorColor: Colors.black,
+                      maxLines: 2,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: ColorConstants.fillColor,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return language["Enter Discount Reason"] ??
+                              "Enter Discount Reason";
+                        }
+                        return null;
+                      },
+                    ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
