@@ -511,6 +511,9 @@ class _ShopScreenState extends State<ShopScreen> {
                   : Container(),
               products.isNotEmpty
                   ? Container(
+                      margin: EdgeInsets.only(
+                        bottom: 24,
+                      ),
                       height: 290,
                       child: ListView.builder(
                         controller: _scrollController,
