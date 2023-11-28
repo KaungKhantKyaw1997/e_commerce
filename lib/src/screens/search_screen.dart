@@ -6,6 +6,7 @@ import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/product_service.dart';
+import 'package:e_commerce/src/utils/format_amount.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -183,9 +184,67 @@ class _SearchScreenState extends State<SearchScreen>
                   ),
                   Text(
                     products[index]["model"].toString(),
-                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: FontConstants.caption1,
+                  ),
+                  if (products[index].isNotEmpty &&
+                      products[index]["discount_percent"] > 0.0)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Text(
+                          products[index]["symbol"].toString(),
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey,
+                            decoration: TextDecoration.lineThrough,
+                            decorationColor: Colors.grey,
+                          ),
+                        ),
+                        products[index]["price"] != null
+                            ? FormattedAmount(
+                                amount: double.parse(
+                                    products[index]["price"].toString()),
+                                mainTextStyle: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey,
+                                  decoration: TextDecoration.lineThrough,
+                                  decorationColor: Colors.grey,
+                                ),
+                                decimalTextStyle: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey,
+                                  decoration: TextDecoration.lineThrough,
+                                  decorationColor: Colors.grey,
+                                ),
+                              )
+                            : Text(""),
+                      ],
+                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(
+                        products[index]["symbol"].toString(),
+                        style: FontConstants.caption2,
+                      ),
+                      products[index]["discounted_price"] != null
+                          ? FormattedAmount(
+                              amount: double.parse(products[index]
+                                      ["discounted_price"]
+                                  .toString()),
+                              mainTextStyle: FontConstants.caption2,
+                              decimalTextStyle: FontConstants.caption2,
+                            )
+                          : Text(""),
+                    ],
                   ),
                 ],
               ),

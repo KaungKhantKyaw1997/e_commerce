@@ -6,6 +6,7 @@ import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
+import 'package:e_commerce/src/services/product_service.dart';
 import 'package:e_commerce/src/services/reason_type_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/widgets/custom_dropdown.dart';
@@ -29,6 +30,7 @@ class HistoryDetailsScreen extends StatefulWidget {
 
 class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
   final crashlytic = new CrashlyticsService();
+  final productService = ProductService();
   final orderService = OrderService();
   final reasonTypeService = ReasonTypeService();
   List<String> statuslist = [
@@ -659,6 +661,49 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
     }
   }
 
+  getProduct(item) async {
+    try {
+      final response = await productService.getProductData(item["product_id"]);
+      if (response!["code"] == 200) {
+        response["data"]["quantity"] = item["quantity"];
+        response["data"]["from"] = "details";
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.product,
+          arguments: response["data"],
+          (route) => true,
+        );
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1146,7 +1191,10 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
                     ),
                   ...orderItems.map((item) {
                     return GestureDetector(
-                      onTap: () {},
+                      onTap: () => role == 'user' ||
+                              (orderData["is_my_order"] && role == 'agent')
+                          ? getProduct(item)
+                          : null,
                       child: Container(
                         padding: const EdgeInsets.only(
                           left: 8,

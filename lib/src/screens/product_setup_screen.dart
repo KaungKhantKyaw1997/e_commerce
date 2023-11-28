@@ -21,7 +21,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductSetupScreen extends StatefulWidget {
   const ProductSetupScreen({super.key});
@@ -48,6 +47,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   FocusNode _priceFocusNode = FocusNode();
   FocusNode _warrantyPeriodFocusNode = FocusNode();
   FocusNode _waitingTimeFocusNode = FocusNode();
+  FocusNode _discountPercentFocusNode = FocusNode();
   FocusNode _discountReasonFocusNode = FocusNode();
 
   TextEditingController shopName = TextEditingController(text: '');
@@ -78,8 +78,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   TextEditingController waterResistance = TextEditingController(text: '');
   TextEditingController warrantyPeriod = TextEditingController(text: '');
   TextEditingController waitingTime = TextEditingController(text: '');
-  TextEditingController discountReason = TextEditingController(text: '');
+  TextEditingController discountPercent = TextEditingController(text: '');
   TextEditingController discountExpiration = TextEditingController(text: '');
+  TextEditingController discountReason = TextEditingController(text: '');
   bool isTopModel = false;
   bool isPreorder = false;
   List productImages = [];
@@ -119,7 +120,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   List<String> movementCountries = [];
   List<String> stockQuantities = [];
   List<String> waterResistances = [];
-  double discountPercent = 0.0;
+  // double discountPercent = 0.0;
 
   int id = 0;
   String from = '';
@@ -861,7 +862,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           stockQuantity.text =
               response["data"]["stock_quantity"].toString() ?? "0";
           price.text = response["data"]["price"].toString() ?? "";
-          discountPercent = response["data"]["discount_percent"] ?? 0.0;
           discountExpiration.text =
               response["data"]["discount_expiration"] ?? "";
           if (discountExpiration.text.isNotEmpty) {
@@ -870,7 +870,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
             discountExpiration.text =
                 DateFormat('dd/MM/yyyy').format(expirationDateTime);
           }
-
+          discountPercent.text =
+              response["data"]["discount_percent"].toString() ?? "";
           discountReason.text = response["data"]["discount_reason"] ?? "";
           waterResistance.text = response["data"]["water_resistance"] ?? "";
           warrantyPeriod.text = response["data"]["warranty_period"] ?? "";
@@ -948,6 +949,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
       double _price = price.text.isEmpty
           ? 0.0
           : double.parse(price.text.replaceAll(',', ''));
+      double _discountPercent = discountPercent.text.isEmpty
+          ? 0.0
+          : double.parse(discountPercent.text.replaceAll(',', ''));
 
       final body = {
         "shop_id": shopId,
@@ -981,12 +985,12 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "case_diameter": caseDiameter.text,
         "case_depth": caseDepth.text,
         "case_width": caseWidth.text,
-        "discount_percent": discountPercent,
         "discount_expiration": discountExpiration.text.isNotEmpty
             ? DateFormat("yyyy-MM-dd")
                 .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
                 .toString()
             : '',
+        "discount_percent": _discountPercent,
         "discount_reason": discountReason.text,
       };
 
@@ -1042,6 +1046,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
       double _price = price.text.isEmpty
           ? 0.0
           : double.parse(price.text.replaceAll(',', ''));
+      double _discountPercent = discountPercent.text.isEmpty
+          ? 0.0
+          : double.parse(discountPercent.text.replaceAll(',', ''));
 
       final body = {
         "shop_id": shopId,
@@ -1075,12 +1082,12 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "case_diameter": caseDiameter.text,
         "case_depth": caseDepth.text,
         "case_width": caseWidth.text,
-        "discount_percent": discountPercent,
         "discount_expiration": discountExpiration.text.isNotEmpty
             ? DateFormat("yyyy-MM-dd")
                 .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
                 .toString()
             : '',
+        "discount_percent": _discountPercent,
         "discount_reason": discountReason.text,
       };
 
@@ -1221,8 +1228,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     if (data != null) {
       discountExpiration.text =
           DateFormat("dd/MM/yyyy").format(data).toString();
-    } else {
-      discountExpiration.text = '';
     }
   }
 
@@ -1265,6 +1270,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         _movementCaliberFocusNode.unfocus();
         _priceFocusNode.unfocus();
         _waitingTimeFocusNode.unfocus();
+        _discountPercentFocusNode.unfocus();
         _discountReasonFocusNode.unfocus();
       },
       child: Scaffold(
@@ -2444,93 +2450,175 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       ),
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 4,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "${language["Discount Price"] ?? "Discount Price"}: ${discountPercent}%",
-                        style: FontConstants.caption1,
-                      ),
-                    ),
-                  ),
-                  Slider(
-                    value: discountPercent * 10,
-                    max: 1000,
-                    divisions: 1000,
-                    label: (discountPercent * 10 / 10).toString(),
-                    thumbColor: Theme.of(context).primaryColorLight,
-                    activeColor: Theme.of(context).primaryColor,
-                    inactiveColor: ColorConstants.borderColor,
-                    onChanged: (double value) {
-                      setState(() {
-                        discountPercent = value / 10;
-                      });
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 4,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        language["Discount Expiration"] ??
-                            "Discount Expiration",
-                        style: FontConstants.caption1,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
-                    ),
-                    child: TextFormField(
-                      controller: discountExpiration,
-                      readOnly: true,
-                      style: FontConstants.body2,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: ColorConstants.fillColor,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: IconButton(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                          ),
-                          onPressed: () {
-                            getDate();
-                          },
-                          icon: SvgPicture.asset(
-                            "assets/icons/calendar.svg",
-                            width: 24,
-                            height: 24,
-                            colorFilter: ColorFilter.mode(
-                              Colors.black,
-                              BlendMode.srcIn,
+                  // Padding(
+                  //   padding: const EdgeInsets.only(
+                  //     left: 16,
+                  //     right: 16,
+                  //     bottom: 4,
+                  //   ),
+                  //   child: Align(
+                  //     alignment: Alignment.centerLeft,
+                  //     child: Text(
+                  //       "${language["Discount Price"] ?? "Discount Price"}: ${discountPercent}%",
+                  //       style: FontConstants.caption1,
+                  //     ),
+                  //   ),
+                  // ),
+                  // Slider(
+                  //   value: discountPercent * 10,
+                  //   max: 1000,
+                  //   divisions: 1000,
+                  //   label: (discountPercent * 10 / 10).toString(),
+                  //   thumbColor: Theme.of(context).primaryColorLight,
+                  //   activeColor: Theme.of(context).primaryColor,
+                  //   inactiveColor: ColorConstants.borderColor,
+                  //   onChanged: (double value) {
+                  //     setState(() {
+                  //       discountPercent = value / 10;
+                  //     });
+                  //   },
+                  // ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 4,
+                                bottom: 4,
+                              ),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  language["Discount Expiration"] ??
+                                      "Discount Expiration",
+                                  style: FontConstants.caption1,
+                                ),
+                              ),
                             ),
-                          ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 4,
+                                bottom: 16,
+                              ),
+                              child: TextFormField(
+                                controller: discountExpiration,
+                                readOnly: true,
+                                style: FontConstants.body2,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: ColorConstants.fillColor,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 14,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  suffixIcon: IconButton(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    onPressed: () {
+                                      getDate();
+                                    },
+                                    icon: SvgPicture.asset(
+                                      "assets/icons/calendar.svg",
+                                      width: 24,
+                                      height: 24,
+                                      colorFilter: ColorFilter.mode(
+                                        Colors.black,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return language[
+                                            "Enter Discount Expiration"] ??
+                                        "Enter Discount Expiration";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 4,
+                                right: 16,
+                                bottom: 4,
+                              ),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  language["Discount Price"] ??
+                                      "Discount Price",
+                                  style: FontConstants.caption1,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 4,
+                                right: 16,
+                                bottom: 16,
+                              ),
+                              child: TextFormField(
+                                controller: discountPercent,
+                                focusNode: _discountPercentFocusNode,
+                                keyboardType: TextInputType.number,
+                                textInputAction: TextInputAction.next,
+                                style: FontConstants.body1,
+                                cursorColor: Colors.black,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: ColorConstants.fillColor,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 14,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return language["Enter Discount Price"] ??
+                                        "Enter Discount Price";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
@@ -2580,13 +2668,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                           borderSide: BorderSide.none,
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return language["Enter Discount Reason"] ??
-                              "Enter Discount Reason";
-                        }
-                        return null;
-                      },
                     ),
                   ),
                   Row(

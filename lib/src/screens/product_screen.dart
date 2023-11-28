@@ -14,6 +14,7 @@ import 'package:e_commerce/src/services/buyer_protection_service.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/seller_report_service.dart';
+import 'package:e_commerce/src/services/shop_service.dart';
 import 'package:e_commerce/src/services/user_service.dart';
 import 'package:e_commerce/src/utils/format_amount.dart';
 import 'package:e_commerce/src/utils/loading.dart';
@@ -38,6 +39,7 @@ class _ProductScreenState extends State<ProductScreen> {
   final buyerProtectionService = BuyerProtectionService();
   final chatService = ChatService();
   final userService = UserService();
+  final shopsService = ShopService();
   final sellerReportService = SellerReportService();
   final PageController _imageController = PageController();
   final _formKey = GlobalKey<FormState>();
@@ -56,6 +58,7 @@ class _ProductScreenState extends State<ProductScreen> {
   int reportSubjectId = 0;
   String reportSubjectDesc = '';
   String role = '';
+  String from = '';
 
   @override
   void initState() {
@@ -77,15 +80,21 @@ class _ProductScreenState extends State<ProductScreen> {
         getSellerInformation(product["creator_id"]);
 
         setState(() {
-          product["quantity"] = 0;
-          product["totalamount"] = 0.0;
+          if (product["from"] == "details") {
+            product["totalamount"] =
+                double.parse(product["discounted_price"].toString()) *
+                    product['quantity'];
+          } else {
+            product["quantity"] = 0;
+            product["totalamount"] = 0.0;
 
-          for (var cart in carts) {
-            if (cart["product_id"] == product['product_id']) {
-              product["quantity"] = cart["quantity"] ?? 0;
-              product["totalamount"] = cart["totalamount"] ?? 0.0;
-              updateCart = true;
-              break;
+            for (var cart in carts) {
+              if (cart["product_id"] == product['product_id']) {
+                product["quantity"] = cart["quantity"] ?? 0;
+                product["totalamount"] = cart["totalamount"] ?? 0.0;
+                updateCart = true;
+                break;
+              }
             }
           }
         });
@@ -615,6 +624,47 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 
+  getShop(id) async {
+    try {
+      final response = await shopsService.getShopData(id);
+      if (response!["code"] == 200) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.shop,
+          arguments: response["data"],
+          (route) => true,
+        );
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -630,25 +680,29 @@ class _ProductScreenState extends State<ProductScreen> {
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
-        // actions: [
-        //   IconButton(
-        //     icon: SvgPicture.asset(
-        //       "assets/icons/share.svg",
-        //       width: 24,
-        //       height: 24,
-        //       colorFilter: const ColorFilter.mode(
-        //         Colors.black,
-        //         BlendMode.srcIn,
-        //       ),
-        //     ),
-        //     onPressed: () {
-        //       ShareExtend.share(
-        //         "https://www.google.com/",
-        //         "text/plain",
-        //       );
-        //     },
-        //   ),
-        // ],
+        actions: [
+          IconButton(
+            icon: SvgPicture.asset(
+              "assets/icons/share.svg",
+              width: 24,
+              height: 24,
+              colorFilter: const ColorFilter.mode(
+                Colors.black,
+                BlendMode.srcIn,
+              ),
+            ),
+            onPressed: () {
+              var url =
+                  ('${product["brand_name"]} ${product["model"]} ${product["product_id"]}')
+                      .toLowerCase()
+                      .replaceAll(" ", "-");
+              ShareExtend.share(
+                '${ApiConstants.baseUrl}/products/$url',
+                "text/plain",
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         controller: _scrollController,
@@ -1473,9 +1527,19 @@ class _ProductScreenState extends State<ProductScreen> {
                           SizedBox(
                             height: 16,
                           ),
-                          Text(
-                            sellerinfo["company_name"] ?? "",
-                            style: FontConstants.subheadline1,
+                          GestureDetector(
+                            onTap: () {
+                              getShop(product["shop_id"]);
+                            },
+                            child: Text(
+                              sellerinfo["company_name"] ?? "",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
                           ),
                           Text(
                             sellerinfo["professional_title"] ?? "",
@@ -2026,189 +2090,199 @@ class _ProductScreenState extends State<ProductScreen> {
                     : Text(""),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(
-                bottom: 4,
+            if (product["from"] == "details")
+              SizedBox(
+                height: 24,
               ),
-              child: Divider(
-                height: 0,
-                thickness: 0.2,
-                color: Colors.grey,
+            if (product["from"] != "details")
+              Padding(
+                padding: const EdgeInsets.only(
+                  bottom: 4,
+                ),
+                child: Divider(
+                  height: 0,
+                  thickness: 0.2,
+                  color: Colors.grey,
+                ),
               ),
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: FractionallySizedBox(
-                    widthFactor: 1,
-                    child: Container(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 24,
-                      ),
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 12,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          backgroundColor: Colors.white,
-                          side: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                            width: 0.5,
-                          ),
+            if (product["from"] != "details")
+              Row(
+                children: [
+                  Expanded(
+                    child: FractionallySizedBox(
+                      widthFactor: 1,
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          bottom: 24,
                         ),
-                        onPressed: () async {
-                          if (product['quantity'] <= 0) {
-                            ToastUtil.showToast(
-                                0,
-                                language["Choose Quantity"] ??
-                                    "Choose Quantity");
-                            return;
-                          }
-                          if (carts.isNotEmpty) {
-                            if (product['shop_id'] != carts[0]['shop_id']) {
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            backgroundColor: Colors.white,
+                            side: BorderSide(
+                              color: Theme.of(context).primaryColor,
+                              width: 0.5,
+                            ),
+                          ),
+                          onPressed: () async {
+                            if (product['quantity'] <= 0) {
                               ToastUtil.showToast(
                                   0,
-                                  language[
-                                          "You can only order items from one shop at a time. Please place separate orders for items from different shops!"] ??
-                                      "You can only order items from one shop at a time. Please place separate orders for items from different shops!");
+                                  language["Choose Quantity"] ??
+                                      "Choose Quantity");
                               return;
                             }
-                            if (product['currency_id'] !=
-                                carts[0]['currency_id']) {
-                              ToastUtil.showToast(
-                                  0,
-                                  language[
-                                          "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!"] ??
-                                      "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!");
-                              return;
-                            }
-                          }
-                          if (updateCart) {
-                            for (var cart in carts) {
-                              if (cart["product_id"] == product["product_id"]) {
-                                cart["quantity"] = product["quantity"] ?? 0;
-                                cart["totalamount"] =
-                                    product["totalamount"] ?? 0.0;
-                                break;
+                            if (carts.isNotEmpty) {
+                              if (product['shop_id'] != carts[0]['shop_id']) {
+                                ToastUtil.showToast(
+                                    0,
+                                    language[
+                                            "You can only order items from one shop at a time. Please place separate orders for items from different shops!"] ??
+                                        "You can only order items from one shop at a time. Please place separate orders for items from different shops!");
+                                return;
+                              }
+                              if (product['currency_id'] !=
+                                  carts[0]['currency_id']) {
+                                ToastUtil.showToast(
+                                    0,
+                                    language[
+                                            "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!"] ??
+                                        "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!");
+                                return;
                               }
                             }
-                          } else {
-                            carts.add(product);
-                          }
+                            if (updateCart) {
+                              for (var cart in carts) {
+                                if (cart["product_id"] ==
+                                    product["product_id"]) {
+                                  cart["quantity"] = product["quantity"] ?? 0;
+                                  cart["totalamount"] =
+                                      product["totalamount"] ?? 0.0;
+                                  break;
+                                }
+                              }
+                            } else {
+                              carts.add(product);
+                            }
 
-                          saveListToSharedPreferences(carts);
+                            saveListToSharedPreferences(carts);
 
-                          CartProvider cartProvider =
-                              Provider.of<CartProvider>(context, listen: false);
-                          cartProvider.addCount(carts.length);
+                            CartProvider cartProvider =
+                                Provider.of<CartProvider>(context,
+                                    listen: false);
+                            cartProvider.addCount(carts.length);
 
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          language["Add to cart"] ?? "Add to cart",
-                          style: FontConstants.button4,
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            language["Add to cart"] ?? "Add to cart",
+                            style: FontConstants.button4,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: FractionallySizedBox(
-                    widthFactor: 1,
-                    child: Container(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        bottom: 24,
-                      ),
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 12,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          backgroundColor: Theme.of(context).primaryColor,
+                  Expanded(
+                    child: FractionallySizedBox(
+                      widthFactor: 1,
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          bottom: 24,
                         ),
-                        onPressed: () async {
-                          if (product['quantity'] <= 0) {
-                            ToastUtil.showToast(
-                                0,
-                                language["Choose Quantity"] ??
-                                    "Choose Quantity");
-                            return;
-                          }
-                          if (carts.isNotEmpty) {
-                            if (product['shop_id'] != carts[0]['shop_id']) {
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            backgroundColor: Theme.of(context).primaryColor,
+                          ),
+                          onPressed: () async {
+                            if (product['quantity'] <= 0) {
                               ToastUtil.showToast(
                                   0,
-                                  language[
-                                          "You can only order items from one shop at a time. Please place separate orders for items from different shops!"] ??
-                                      "You can only order items from one shop at a time. Please place separate orders for items from different shops!");
+                                  language["Choose Quantity"] ??
+                                      "Choose Quantity");
                               return;
                             }
-                            if (product['currency_id'] !=
-                                carts[0]['currency_id']) {
-                              ToastUtil.showToast(
-                                  0,
-                                  language[
-                                          "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!"] ??
-                                      "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!");
-                              return;
-                            }
-                          }
-                          if (updateCart) {
-                            for (var cart in carts) {
-                              if (cart["product_id"] == product["product_id"]) {
-                                cart["quantity"] = product["quantity"] ?? 0;
-                                cart["totalamount"] =
-                                    product["totalamount"] ?? 0.0;
-                                break;
+                            if (carts.isNotEmpty) {
+                              if (product['shop_id'] != carts[0]['shop_id']) {
+                                ToastUtil.showToast(
+                                    0,
+                                    language[
+                                            "You can only order items from one shop at a time. Please place separate orders for items from different shops!"] ??
+                                        "You can only order items from one shop at a time. Please place separate orders for items from different shops!");
+                                return;
+                              }
+                              if (product['currency_id'] !=
+                                  carts[0]['currency_id']) {
+                                ToastUtil.showToast(
+                                    0,
+                                    language[
+                                            "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!"] ??
+                                        "You can only order items with the same currency at a time. Please place separate orders for items with different currencies!");
+                                return;
                               }
                             }
-                          } else {
-                            carts.add(product);
-                          }
+                            if (updateCart) {
+                              for (var cart in carts) {
+                                if (cart["product_id"] ==
+                                    product["product_id"]) {
+                                  cart["quantity"] = product["quantity"] ?? 0;
+                                  cart["totalamount"] =
+                                      product["totalamount"] ?? 0.0;
+                                  break;
+                                }
+                              }
+                            } else {
+                              carts.add(product);
+                            }
 
-                          saveListToSharedPreferences(carts);
+                            saveListToSharedPreferences(carts);
 
-                          CartProvider cartProvider =
-                              Provider.of<CartProvider>(context, listen: false);
-                          cartProvider.addCount(carts.length);
+                            CartProvider cartProvider =
+                                Provider.of<CartProvider>(context,
+                                    listen: false);
+                            cartProvider.addCount(carts.length);
 
-                          BottomProvider bottomProvider =
-                              Provider.of<BottomProvider>(context,
-                                  listen: false);
-                          bottomProvider.selectIndex(1);
+                            BottomProvider bottomProvider =
+                                Provider.of<BottomProvider>(context,
+                                    listen: false);
+                            bottomProvider.selectIndex(1);
 
-                          Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            Routes.cart,
-                            (route) => false,
-                          );
-                        },
-                        child: Text(
-                          language["Buy Now"] ?? "Buy Now",
-                          style: FontConstants.button1,
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              Routes.cart,
+                              (route) => false,
+                            );
+                          },
+                          child: Text(
+                            language["Buy Now"] ?? "Buy Now",
+                            style: FontConstants.button1,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
           ],
         ),
       ),

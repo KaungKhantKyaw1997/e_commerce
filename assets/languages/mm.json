@@ -215,5 +215,7 @@
   "Or continue with": "သို့မဟုတ် ဆက်လုပ်ပါ",
   "Agent": "ကိုယ်စားလှယ်",
   "Discount Expiration": "လျှော့စျေးကုန်ဆုံးသက်တမ်း",
-  "Discount Reason": "လျှော့စျေးအကြောင်းပြချက်"
+  "Discount Reason": "လျှော့စျေးအကြောင်းပြချက်",
+  "Enter Discount Expiration": "လျှော့စျေးကုန်ဆုံးသက်တမ်းထည့်ပါ",
+  "Enter Discount Price": "လျှော့စျေးထည့်ပါ"
 }
