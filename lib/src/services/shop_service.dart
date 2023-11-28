@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:package_info/package_info.dart';
 
 class ShopService {
   final storage = FlutterSecureStorage();
@@ -65,9 +66,14 @@ class ShopService {
       String status = 'Active',
       String view = ''}) async {
     var token = await storage.read(key: "token") ?? '';
+
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    var version = packageInfo.version;
+
     var deviceType = Platform.isIOS ? "ios" : "android";
+
     var url =
-        '${ApiConstants.shopsUrl}?page=$page&per_page=$perPage&search=$search&status=$status&platform=$deviceType';
+        '${ApiConstants.shopsUrl}?page=$page&per_page=$perPage&search=$search&status=$status&platform=$deviceType&version=$version';
     url = view.isNotEmpty ? '$url&view=$view' : url;
     final response = await dio.get(
       url,

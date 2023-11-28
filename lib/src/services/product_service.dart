@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:package_info/package_info.dart';
 
 class ProductService {
   final storage = FlutterSecureStorage();
@@ -62,8 +63,14 @@ class ProductService {
   Future<Map<String, dynamic>?> getProductsData(
       Map<String, dynamic> body) async {
     var token = await storage.read(key: "token") ?? '';
+
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    var version = packageInfo.version;
+
     var deviceType = Platform.isIOS ? "ios" : "android";
+
     body["platform"] = deviceType;
+    body["version"] = version;
 
     final response = await dio.post(
       ApiConstants.getProductsUrl,
