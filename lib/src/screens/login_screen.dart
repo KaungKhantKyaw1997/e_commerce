@@ -488,103 +488,102 @@ class _LogInScreenState extends State<LogInScreen> {
                     ),
                   ),
                 ),
-                if (Platform.isAndroid)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 16,
-                          ),
-                          child: Divider(
-                            height: 0,
-                            thickness: 0.2,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                        ),
-                        child: Text(
-                          language["Or continue with"] ?? "Or continue with",
-                          style: FontConstants.caption1,
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            right: 16,
-                          ),
-                          child: Divider(
-                            height: 0,
-                            thickness: 0.2,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                if (Platform.isAndroid)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 32,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SquareTile(
-                          icon: 'assets/icons/google.svg',
-                          onTap: () async {
-                            User? user = await AuthService.signInWithGoogle(
-                                context: context);
-                            if (user != null) {
-                              email.text = user.email!;
-                              login(method: "google");
-                            }
-                          },
-                        ),
-                        // if (appleSignInAvailable.isAvailable)
-                        //   SizedBox(
-                        //     width: 16,
-                        //   ),
-                        // if (appleSignInAvailable.isAvailable)
-                        //   SquareTile(
-                        //     icon: 'assets/icons/apple.svg',
-                        //     onTap: () async {
-                        //       // final authService = Provider.of<AuthService>(
-                        //       //     context,
-                        //       //     listen: false);
-                        //       final user = await authService.signInWithApple(
-                        //           scopes: [Scope.email, Scope.fullName]);
-                        //       print('uid: ${user.uid}');
-                        //     },
-                        //   ),
-                        // SizedBox(
-                        //   width: 16,
-                        // ),
-                        // SquareTile(
-                        //   icon: 'assets/icons/facebook.svg',
-                        //   onTap: () async {
-                        //     User? user = await AuthService.signInWithFacebook(
-                        //         context: context);
-                        //     if (user != null) {
-                        //       email.text = user.email!;
-                        //       login(method: "facebook");
-                        //     }
-                        //   },
-                        // ),
-                      ],
-                    ),
-                  ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     Expanded(
+                //       child: Padding(
+                //         padding: const EdgeInsets.only(
+                //           left: 16,
+                //         ),
+                //         child: Divider(
+                //           height: 0,
+                //           thickness: 0.2,
+                //           color: Colors.grey,
+                //         ),
+                //       ),
+                //     ),
+                //     Padding(
+                //       padding: const EdgeInsets.symmetric(
+                //         horizontal: 8,
+                //       ),
+                //       child: Text(
+                //         language["Or continue with"] ?? "Or continue with",
+                //         style: FontConstants.caption1,
+                //       ),
+                //     ),
+                //     Expanded(
+                //       child: Padding(
+                //         padding: const EdgeInsets.only(
+                //           right: 16,
+                //         ),
+                //         child: Divider(
+                //           height: 0,
+                //           thickness: 0.2,
+                //           color: Colors.grey,
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(
+                //     horizontal: 16,
+                //     vertical: 32,
+                //   ),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       SquareTile(
+                //         icon: 'assets/icons/google.svg',
+                //         onTap: () async {
+                //           User? user = await AuthService.signInWithGoogle(
+                //               context: context);
+                //           if (user != null) {
+                //             email.text = user.email!;
+                //             login(method: "google");
+                //           }
+                //         },
+                //       ),
+                //       if (appleSignInAvailable.isAvailable)
+                //         SizedBox(
+                //           width: 16,
+                //         ),
+                //       if (appleSignInAvailable.isAvailable)
+                //         SquareTile(
+                //           icon: 'assets/icons/apple.svg',
+                //           onTap: () async {
+                //             // final authService = Provider.of<AuthService>(
+                //             //     context,
+                //             //     listen: false);
+                //             final user = await authService.signInWithApple(
+                //                 scopes: [Scope.email, Scope.fullName]);
+                //             print('uid: ${user.uid}');
+                //           },
+                //         ),
+                //       SizedBox(
+                //         width: 16,
+                //       ),
+                //       SquareTile(
+                //         icon: 'assets/icons/facebook.svg',
+                //         onTap: () async {
+                //           User? user = await AuthService.signInWithFacebook(
+                //               context: context);
+                //           if (user != null) {
+                //             email.text = user.email!;
+                //             login(method: "facebook");
+                //           }
+                //         },
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 if (!firstPage)
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 16,
                       right: 16,
+                      top: 32,
                       bottom: 16,
                     ),
                     child: Row(
