@@ -693,7 +693,7 @@ class _ProductScreenState extends State<ProductScreen> {
             ),
             onPressed: () {
               var url =
-                  ('${product["brand_name"]} ${product["model"]} ${product["product_id"]}')
+                  ('${product["brand_name"]} ${product["model"]} ${product["product_id"]}.html')
                       .toLowerCase()
                       .replaceAll(" ", "-");
               ShareExtend.share(
