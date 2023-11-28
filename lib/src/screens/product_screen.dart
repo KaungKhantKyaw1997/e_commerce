@@ -698,7 +698,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       .replaceAll(" ", "-");
               ShareExtend.share(
                 '${ApiConstants.baseUrl}/products/$url',
-                "text/plain",
+                "text",
               );
             },
           ),
