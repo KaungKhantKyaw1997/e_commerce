@@ -1898,7 +1898,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         left: 16,
                       ),
                       child: Text(
-                        "${language["Discount Price"] ?? "Discount Price"} ${product["discount_percent"]}%",
+                        "${language["Discount"] ?? "Discount"} ${product["discount_percent"]}%",
                         style: FontConstants.subheadline2,
                       ),
                     ),

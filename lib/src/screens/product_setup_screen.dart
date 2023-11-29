@@ -2459,7 +2459,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                   //   child: Align(
                   //     alignment: Alignment.centerLeft,
                   //     child: Text(
-                  //       "${language["Discount Price"] ?? "Discount Price"}: ${discountPercent}%",
+                  //       "${language["Discount Percent"] ?? "Discount Percent"}: ${discountPercent}%",
                   //       style: FontConstants.caption1,
                   //     ),
                   //   ),
@@ -2567,8 +2567,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  language["Discount Price"] ??
-                                      "Discount Price",
+                                  language["Discount Percent"] ??
+                                      "Discount Percent",
                                   style: FontConstants.caption1,
                                 ),
                               ),
@@ -2608,8 +2608,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return language["Enter Discount Price"] ??
-                                        "Enter Discount Price";
+                                    return language["Enter Discount Percent"] ??
+                                        "Enter Discount Percent";
                                   }
                                   return null;
                                 },

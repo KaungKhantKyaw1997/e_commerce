@@ -195,7 +195,7 @@
   "Switch User": "Switch User",
   "Shop Approval": "Shop Approval",
   "Chat": "Chat",
-  "Discount Price": "Discount Price",
+  "Discount": "Discount",
   "Price dropped!": "Price dropped!",
   "You save": "You save",
   "left": "left",
@@ -215,7 +215,8 @@
   "Or continue with": "Or continue with",
   "Agent": "Agent",
   "Discount Expiration": "Discount Expiration",
-  "Discount Reason": "Discount Reason",
   "Enter Discount Expiration": "Enter Discount Expiration",
-  "Enter Discount Price": "Enter Discount Price"
+  "Discount Percent": "Discount Percent",
+  "Enter Discount Percent": "Enter Discount Percent",
+  "Discount Reason": "Discount Reason"
 }

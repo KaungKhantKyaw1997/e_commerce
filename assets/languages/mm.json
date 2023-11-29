@@ -195,7 +195,7 @@
   "Switch User": "အသုံးပြုသူကိုပြောင်းပါ",
   "Shop Approval": "ဆိုင်ခွင့်ပြုချက်",
   "Chat": "စကားပြောခန်း",
-  "Discount Price": "လျှော့စျေး",
+  "Discount": "လျှော့စျေး",
   "Price dropped!": "ဈေးကျသွားတယ်။",
   "You save": "You save",
   "left": "ခုကျန်",
@@ -215,7 +215,8 @@
   "Or continue with": "သို့မဟုတ် ဆက်လုပ်ပါ",
   "Agent": "ကိုယ်စားလှယ်",
   "Discount Expiration": "လျှော့စျေးကုန်ဆုံးသက်တမ်း",
-  "Discount Reason": "လျှော့စျေးအကြောင်းပြချက်",
   "Enter Discount Expiration": "လျှော့စျေးကုန်ဆုံးသက်တမ်းထည့်ပါ",
-  "Enter Discount Price": "လျှော့စျေးထည့်ပါ"
+  "Discount Percent": "လျှော့စျေးရာခိုင်နှုန်း",
+  "Enter Discount Percent": "လျှော့စျေးရာခိုင်နှုန်းထည့်ပါ",
+  "Discount Reason": "လျှော့စျေးအကြောင်းပြချက်"
 }
