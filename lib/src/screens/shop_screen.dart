@@ -324,7 +324,8 @@ class _ShopScreenState extends State<ShopScreen> {
             ),
           ),
           if (products[index].isNotEmpty &&
-              products[index]["discount_percent"] > 0.0)
+              products[index]["discount_type"] != 'No Discount' &&
+              products[index]["price"] != products[index]["discounted_price"])
             Padding(
               padding: EdgeInsets.only(
                 left: 8,

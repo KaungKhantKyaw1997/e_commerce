@@ -1790,7 +1790,9 @@ class _ProductScreenState extends State<ProductScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (product.isNotEmpty && product["discount_percent"] > 0.0)
+            if (product.isNotEmpty &&
+                product["discount_type"] != 'No Discount' &&
+                product["price"] != product["discounted_price"])
               Padding(
                 padding: EdgeInsets.only(
                   left: 16,
@@ -1866,7 +1868,9 @@ class _ProductScreenState extends State<ProductScreen> {
                 left: 16,
                 right: 16,
                 bottom: 8,
-                top: product.isNotEmpty && product["discount_percent"] > 0.0
+                top: product.isNotEmpty &&
+                        product["discount_type"] != 'No Discount' &&
+                        product["price"] != product["discounted_price"]
                     ? 0
                     : 16,
               ),
@@ -1892,14 +1896,52 @@ class _ProductScreenState extends State<ProductScreen> {
                           : Text(""),
                     ],
                   ),
-                  if (product.isNotEmpty && product["discount_percent"] > 0.0)
+                  if (product.isNotEmpty &&
+                      product["discount_type"] ==
+                          'Discount by Specific Amount' &&
+                      product["price"] != product["discounted_price"])
                     Padding(
                       padding: const EdgeInsets.only(
                         left: 16,
                       ),
-                      child: Text(
-                        "${language["Discount"] ?? "Discount"} ${product["discount_percent"]}%",
-                        style: FontConstants.subheadline2,
+                      child: Row(
+                        children: [
+                          product["discounted_price"] != null
+                              ? FormattedAmount(
+                                  amount: double.parse(
+                                          product["price"].toString()) -
+                                      double.parse(product["discounted_price"]
+                                          .toString()),
+                                  mainTextStyle: FontConstants.subheadline2,
+                                  decimalTextStyle: FontConstants.subheadline2,
+                                )
+                              : Text(""),
+                          Text(
+                            " off",
+                            style: FontConstants.subheadline2,
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (product.isNotEmpty &&
+                      product["discount_type"] ==
+                          'Discount by Specific Percentage' &&
+                      product["price"] != product["discounted_price"])
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            "${product["discount_percent"]}",
+                            style: FontConstants.subheadline2,
+                          ),
+                          Text(
+                            "% off",
+                            style: FontConstants.subheadline2,
+                          ),
+                        ],
                       ),
                     ),
                 ],

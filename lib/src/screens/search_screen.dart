@@ -188,7 +188,9 @@ class _SearchScreenState extends State<SearchScreen>
                     style: FontConstants.caption1,
                   ),
                   if (products[index].isNotEmpty &&
-                      products[index]["discount_percent"] > 0.0)
+                      products[index]["discount_type"] != 'No Discount' &&
+                      products[index]["price"] !=
+                          products[index]["discounted_price"])
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.baseline,
