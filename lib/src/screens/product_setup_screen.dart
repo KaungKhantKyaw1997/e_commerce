@@ -2787,8 +2787,21 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                         borderRadius: BorderRadius.circular(8),
                                         borderSide: BorderSide.none,
                                       ),
-                                      suffixText: "%",
-                                      suffixStyle: FontConstants.body1,
+                                      suffixIcon: IconButton(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                        ),
+                                        onPressed: null,
+                                        icon: SvgPicture.asset(
+                                          "assets/icons/percent.svg",
+                                          width: 24,
+                                          height: 24,
+                                          colorFilter: ColorFilter.mode(
+                                            Colors.black,
+                                            BlendMode.srcIn,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
