@@ -21,6 +21,7 @@ import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:share_extend/share_extend.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -859,7 +860,7 @@ class _ProductScreenState extends State<ProductScreen> {
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 product["description"] ?? "",
-                                style: FontConstants.caption1,
+                                style: FontConstants.caption2,
                               ),
                             ),
                           ),
@@ -1840,26 +1841,22 @@ class _ProductScreenState extends State<ProductScreen> {
                             : Text(""),
                       ],
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(
-                        left: 16,
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 5,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: ColorConstants.yellowColor,
-                      ),
-                      child: Center(
+                    if (product.isNotEmpty &&
+                        product["discount_type"] != 'No Discount' &&
+                        product["price"] != product["discounted_price"] &&
+                        product["discount_expiration"] != null)
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 16,
+                        ),
                         child: Text(
-                          language["Price dropped!"] ?? "Price dropped!",
-                          textAlign: TextAlign.center,
-                          style: FontConstants.body3,
+                          Jiffy.parseFromDateTime(DateTime.parse(
+                                      product["discount_expiration"] + "Z")
+                                  .toLocal())
+                              .format(pattern: "dd MMM yyyy"),
+                          style: FontConstants.caption2,
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
@@ -1867,7 +1864,12 @@ class _ProductScreenState extends State<ProductScreen> {
               padding: EdgeInsets.only(
                 left: 16,
                 right: 16,
-                bottom: 8,
+                bottom: product.isNotEmpty &&
+                        product["discount_type"] != 'No Discount' &&
+                        product["price"] != product["discounted_price"] &&
+                        product["discount_reason"].isNotEmpty
+                    ? 4
+                    : 8,
                 top: product.isNotEmpty &&
                         product["discount_type"] != 'No Discount' &&
                         product["price"] != product["discounted_price"]
@@ -1912,13 +1914,13 @@ class _ProductScreenState extends State<ProductScreen> {
                                           product["price"].toString()) -
                                       double.parse(product["discounted_price"]
                                           .toString()),
-                                  mainTextStyle: FontConstants.subheadline2,
-                                  decimalTextStyle: FontConstants.subheadline2,
+                                  mainTextStyle: FontConstants.subheadline1,
+                                  decimalTextStyle: FontConstants.subheadline1,
                                 )
                               : Text(""),
                           Text(
                             " off",
-                            style: FontConstants.subheadline2,
+                            style: FontConstants.subheadline1,
                           ),
                         ],
                       ),
@@ -1935,11 +1937,11 @@ class _ProductScreenState extends State<ProductScreen> {
                         children: [
                           Text(
                             "${product["discount_percent"]}",
-                            style: FontConstants.subheadline2,
+                            style: FontConstants.subheadline1,
                           ),
                           Text(
                             "% off",
-                            style: FontConstants.subheadline2,
+                            style: FontConstants.subheadline1,
                           ),
                         ],
                       ),
@@ -1947,6 +1949,27 @@ class _ProductScreenState extends State<ProductScreen> {
                 ],
               ),
             ),
+            if (product.isNotEmpty &&
+                product["discount_type"] != 'No Discount' &&
+                product["price"] != product["discounted_price"] &&
+                product["discount_reason"].isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  bottom: 4,
+                ),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    product["discount_reason"],
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    textAlign: TextAlign.end,
+                    style: FontConstants.body1,
+                  ),
+                ),
+              ),
             Padding(
               padding: EdgeInsets.only(
                 left: 16,
