@@ -222,10 +222,10 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                                 Positioned(
                                   right: 2,
                                   child: Container(
-                                    padding: const EdgeInsets.all(2),
+                                    padding: const EdgeInsets.all(3),
                                     decoration: BoxDecoration(
                                       color: ColorConstants.redColor,
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(30),
                                     ),
                                     constraints: const BoxConstraints(
                                       minWidth: 20,
@@ -246,10 +246,10 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                                 Positioned(
                                   right: 2,
                                   child: Container(
-                                    padding: const EdgeInsets.all(2),
+                                    padding: const EdgeInsets.all(3),
                                     decoration: BoxDecoration(
                                       color: ColorConstants.redColor,
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(30),
                                     ),
                                     constraints: const BoxConstraints(
                                       minWidth: 20,

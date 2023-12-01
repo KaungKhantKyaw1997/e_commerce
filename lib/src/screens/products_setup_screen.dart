@@ -145,8 +145,11 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
         "case_diameter": products[index]['case_diameter'],
         "case_depth": products[index]['case_depth'],
         "case_width": products[index]['case_width'],
+        "discount_type": products[index]['discount_type'],
+        "discount_expiration": products[index]['discount_expiration'],
+        "discounted_price": products[index]['discounted_price'],
         "discount_percent": products[index]['discount_percent'],
-        // "creator_id": products[index]['creator_id'],
+        "discount_reason": products[index]['discount_reason'],
       };
 
       final response = await productService.updateProductData(

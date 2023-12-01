@@ -14,10 +14,12 @@ import 'package:e_commerce/src/services/gender_service.dart';
 import 'package:e_commerce/src/services/product_service.dart';
 import 'package:e_commerce/src/services/user_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
+import 'package:e_commerce/src/utils/range_text_input_formatter.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:e_commerce/src/widgets/custom_autocomplete.dart';
 import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -47,6 +49,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   FocusNode _priceFocusNode = FocusNode();
   FocusNode _warrantyPeriodFocusNode = FocusNode();
   FocusNode _waitingTimeFocusNode = FocusNode();
+  FocusNode _discountPriceFocusNode = FocusNode();
   FocusNode _discountPercentFocusNode = FocusNode();
   FocusNode _discountReasonFocusNode = FocusNode();
 
@@ -78,7 +81,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   TextEditingController waterResistance = TextEditingController(text: '');
   TextEditingController warrantyPeriod = TextEditingController(text: '');
   TextEditingController waitingTime = TextEditingController(text: '');
+  TextEditingController discountType = TextEditingController(text: '');
   TextEditingController discountPercent = TextEditingController(text: '');
+  TextEditingController discountPrice = TextEditingController(text: '');
   TextEditingController discountExpiration = TextEditingController(text: '');
   TextEditingController discountReason = TextEditingController(text: '');
   bool isTopModel = false;
@@ -120,6 +125,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   List<String> movementCountries = [];
   List<String> stockQuantities = [];
   List<String> waterResistances = [];
+  List<String> discountTypes = [];
   // double discountPercent = 0.0;
 
   int id = 0;
@@ -139,9 +145,10 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
       getDialGlassTypes();
       getConditions();
       getMovementTypes();
-      getMmovementCountries();
+      getMovementCountries();
       getCurrencies();
       getStockQuantities();
+      getDiscountTypes();
       getWaterResistances();
       getWarrantyTypes();
       getOtherAccessoriesTypes();
@@ -557,7 +564,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     }
   }
 
-  getMmovementCountries() async {
+  getMovementCountries() async {
     try {
       final response = await productService.getMovementCountriesData();
       if (response!["code"] == 200) {
@@ -654,6 +661,48 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           List<dynamic> dynamicList = response["data"];
           stockQuantities = dynamicList.map((item) => item.toString()).toList();
           stockQuantity.text = stockQuantities[0];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getDiscountTypes() async {
+    try {
+      final response = await productService.getDiscountTypesData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          List<dynamic> dynamicList = response["data"];
+          discountTypes = dynamicList.map((item) => item.toString()).toList();
+          waterResistance.text = discountTypes[0];
+          discountType.text = discountTypes[0];
           setState(() {});
         }
       } else {
@@ -859,9 +908,13 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           movementCaliber.text = response["data"]["movement_caliber"] ?? "";
           currencyCode.text = response["data"]["currency_code"] ?? "";
           currencyId = response["data"]["currency_id"] ?? 0;
-          stockQuantity.text =
-              response["data"]["stock_quantity"].toString() ?? "0";
-          price.text = response["data"]["price"].toString() ?? "";
+          stockQuantity.text = response["data"]["stock_quantity"] != 0
+              ? response["data"]["stock_quantity"].toString()
+              : "0";
+          price.text = response["data"]["price"] != 0.0
+              ? response["data"]["price"].toString()
+              : "";
+          discountType.text = response["data"]["discount_type"] ?? "";
           discountExpiration.text =
               response["data"]["discount_expiration"] ?? "";
           if (discountExpiration.text.isNotEmpty) {
@@ -870,8 +923,14 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
             discountExpiration.text =
                 DateFormat('dd/MM/yyyy').format(expirationDateTime);
           }
-          discountPercent.text =
-              response["data"]["discount_percent"].toString() ?? "";
+          discountPercent.text = response["data"]["discount_percent"] != 0.0
+              ? response["data"]["discount_percent"].toString()
+              : "";
+          if (discountType.text == "Discount by Specific Amount") {
+            discountPrice.text = response["data"]["discounted_price"] != 0.0
+                ? response["data"]["discounted_price"].toString()
+                : "";
+          }
           discountReason.text = response["data"]["discount_reason"] ?? "";
           waterResistance.text = response["data"]["water_resistance"] ?? "";
           warrantyPeriod.text = response["data"]["warranty_period"] ?? "";
@@ -949,9 +1008,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
       double _price = price.text.isEmpty
           ? 0.0
           : double.parse(price.text.replaceAll(',', ''));
-      double _discountPercent = discountPercent.text.isEmpty
-          ? 0.0
-          : double.parse(discountPercent.text.replaceAll(',', ''));
 
       final body = {
         "shop_id": shopId,
@@ -985,14 +1041,25 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "case_diameter": caseDiameter.text,
         "case_depth": caseDepth.text,
         "case_width": caseWidth.text,
-        "discount_expiration": discountExpiration.text.isNotEmpty
-            ? DateFormat("yyyy-MM-dd")
-                .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
-                .toString()
-            : '',
-        "discount_percent": _discountPercent,
-        "discount_reason": discountReason.text,
+        "discount_type": discountType,
       };
+
+      if (discountType.text != 'No Discount') {
+        if (discountExpiration.text.isNotEmpty) {
+          body["discount_expiration"] = DateFormat("yyyy-MM-dd")
+              .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
+              .toString();
+        }
+        if (discountPrice.text.isNotEmpty) {
+          body["discounted_price"] =
+              double.parse(discountPrice.text.replaceAll(',', ''));
+        }
+        if (discountPercent.text.isNotEmpty) {
+          body["discount_percent"] =
+              double.parse(discountPercent.text.replaceAll(',', ''));
+        }
+        body["discount_reason"] = discountReason.text;
+      }
 
       final response = await productService.addProductData(body);
       Navigator.pop(context);
@@ -1046,9 +1113,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
       double _price = price.text.isEmpty
           ? 0.0
           : double.parse(price.text.replaceAll(',', ''));
-      double _discountPercent = discountPercent.text.isEmpty
-          ? 0.0
-          : double.parse(discountPercent.text.replaceAll(',', ''));
 
       final body = {
         "shop_id": shopId,
@@ -1082,14 +1146,25 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "case_diameter": caseDiameter.text,
         "case_depth": caseDepth.text,
         "case_width": caseWidth.text,
-        "discount_expiration": discountExpiration.text.isNotEmpty
-            ? DateFormat("yyyy-MM-dd")
-                .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
-                .toString()
-            : '',
-        "discount_percent": _discountPercent,
-        "discount_reason": discountReason.text,
+        "discount_type": discountType.text,
       };
+
+      if (discountType.text != 'No Discount') {
+        if (discountExpiration.text.isNotEmpty) {
+          body["discount_expiration"] = DateFormat("yyyy-MM-dd")
+              .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
+              .toString();
+        }
+        if (discountPrice.text.isNotEmpty) {
+          body["discounted_price"] =
+              double.parse(discountPrice.text.replaceAll(',', ''));
+        }
+        if (discountPercent.text.isNotEmpty) {
+          body["discount_percent"] =
+              double.parse(discountPercent.text.replaceAll(',', ''));
+        }
+        body["discount_reason"] = discountReason.text;
+      }
 
       final response = await productService.updateProductData(body, id);
       Navigator.pop(context);
@@ -1228,6 +1303,8 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     if (data != null) {
       discountExpiration.text =
           DateFormat("dd/MM/yyyy").format(data).toString();
+    } else {
+      discountExpiration.text = "";
     }
   }
 
@@ -1270,6 +1347,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         _movementCaliberFocusNode.unfocus();
         _priceFocusNode.unfocus();
         _waitingTimeFocusNode.unfocus();
+        _discountPriceFocusNode.unfocus();
         _discountPercentFocusNode.unfocus();
         _discountReasonFocusNode.unfocus();
       },
@@ -2478,148 +2556,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                   //     });
                   //   },
                   // ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                left: 16,
-                                right: 4,
-                                bottom: 4,
-                              ),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  language["Discount Expiration"] ??
-                                      "Discount Expiration",
-                                  style: FontConstants.caption1,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                left: 16,
-                                right: 4,
-                                bottom: 16,
-                              ),
-                              child: TextFormField(
-                                controller: discountExpiration,
-                                readOnly: true,
-                                style: FontConstants.body2,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: ColorConstants.fillColor,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 14,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  suffixIcon: IconButton(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                    ),
-                                    onPressed: () {
-                                      getDate();
-                                    },
-                                    icon: SvgPicture.asset(
-                                      "assets/icons/calendar.svg",
-                                      width: 24,
-                                      height: 24,
-                                      colorFilter: ColorFilter.mode(
-                                        Colors.black,
-                                        BlendMode.srcIn,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return language[
-                                            "Enter Discount Expiration"] ??
-                                        "Enter Discount Expiration";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                left: 4,
-                                right: 16,
-                                bottom: 4,
-                              ),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  language["Discount Percent"] ??
-                                      "Discount Percent",
-                                  style: FontConstants.caption1,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                left: 4,
-                                right: 16,
-                                bottom: 16,
-                              ),
-                              child: TextFormField(
-                                controller: discountPercent,
-                                focusNode: _discountPercentFocusNode,
-                                keyboardType: TextInputType.number,
-                                textInputAction: TextInputAction.next,
-                                style: FontConstants.body1,
-                                cursorColor: Colors.black,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: ColorConstants.fillColor,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 14,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return language["Enter Discount Percent"] ??
-                                        "Enter Discount Percent";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 16,
@@ -2629,7 +2565,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        language["Discount Reason"] ?? "Discount Reason",
+                        language["Discount Type"] ?? "Discount Type",
                         style: FontConstants.caption1,
                       ),
                     ),
@@ -2640,36 +2576,285 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       right: 16,
                       bottom: 16,
                     ),
-                    child: TextFormField(
-                      controller: discountReason,
-                      focusNode: _discountReasonFocusNode,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.next,
-                      style: FontConstants.body1,
-                      cursorColor: Colors.black,
-                      maxLines: 2,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: ColorConstants.fillColor,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
+                    child: CustomDropDown(
+                      value: discountType.text,
+                      fillColor: ColorConstants.fillColor,
+                      onChanged: (newValue) {
+                        setState(() {
+                          discountType.text = newValue ?? discountTypes[0];
+                          discountExpiration.text = "";
+                          discountPrice.text = "";
+                          discountPercent.text = "";
+                          discountReason.text = "";
+                        });
+                      },
+                      items: discountTypes,
+                    ),
+                  ),
+                  if (discountType.text != 'No Discount')
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 4,
+                                  bottom: 4,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    language["Discount Expiration"] ??
+                                        "Discount Expiration",
+                                    style: FontConstants.caption1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                  right: 4,
+                                  bottom: 16,
+                                ),
+                                child: TextFormField(
+                                  controller: discountExpiration,
+                                  readOnly: true,
+                                  style: FontConstants.body2,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: ColorConstants.fillColor,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 14,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    suffixIcon: IconButton(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                      ),
+                                      onPressed: () {
+                                        getDate();
+                                      },
+                                      icon: SvgPicture.asset(
+                                        "assets/icons/calendar.svg",
+                                        width: 24,
+                                        height: 24,
+                                        colorFilter: ColorFilter.mode(
+                                          Colors.black,
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
+                        if (discountType.text == "Discount by Specific Amount")
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 4,
+                                    right: 16,
+                                    bottom: 4,
+                                  ),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      language["Discount Price"] ??
+                                          "Discount Price",
+                                      style: FontConstants.caption1,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 4,
+                                    right: 16,
+                                    bottom: 16,
+                                  ),
+                                  child: TextFormField(
+                                    controller: discountPrice,
+                                    focusNode: _discountPriceFocusNode,
+                                    keyboardType: TextInputType.number,
+                                    textInputAction: TextInputAction.next,
+                                    style: FontConstants.body1,
+                                    cursorColor: Colors.black,
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: ColorConstants.fillColor,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 14,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      focusedErrorBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return language[
+                                                "Enter Discount Price"] ??
+                                            "Enter Discount Price";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (discountType.text ==
+                            "Discount by Specific Percentage")
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 4,
+                                    right: 16,
+                                    bottom: 4,
+                                  ),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      language["Discount Percent"] ??
+                                          "Discount Percent",
+                                      style: FontConstants.caption1,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 4,
+                                    right: 16,
+                                    bottom: 16,
+                                  ),
+                                  child: TextFormField(
+                                    controller: discountPercent,
+                                    focusNode: _discountPercentFocusNode,
+                                    inputFormatters: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'^\d+\.?\d{0,1}$')),
+                                      FilteringTextInputFormatter
+                                          .singleLineFormatter,
+                                      RangeTextInputFormatter(min: 0, max: 100),
+                                    ],
+                                    keyboardType: TextInputType.number,
+                                    textInputAction: TextInputAction.next,
+                                    style: FontConstants.body1,
+                                    cursorColor: Colors.black,
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: ColorConstants.fillColor,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 14,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      focusedErrorBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return language[
+                                                "Enter Discount Percent"] ??
+                                            "Enter Discount Percent";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+                  if (discountType.text != 'No Discount')
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["Discount Reason"] ?? "Discount Reason",
+                          style: FontConstants.caption1,
                         ),
                       ),
                     ),
-                  ),
+                  if (discountType.text != 'No Discount')
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      child: TextFormField(
+                        controller: discountReason,
+                        focusNode: _discountReasonFocusNode,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.next,
+                        style: FontConstants.body1,
+                        cursorColor: Colors.black,
+                        maxLines: 2,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: ColorConstants.fillColor,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                    ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
