@@ -1850,10 +1850,7 @@ class _ProductScreenState extends State<ProductScreen> {
                           left: 16,
                         ),
                         child: Text(
-                          Jiffy.parseFromDateTime(DateTime.parse(
-                                      product["discount_expiration"] + "Z")
-                                  .toLocal())
-                              .format(pattern: "dd MMM yyyy"),
+                          "Until ${Jiffy.parseFromDateTime(DateTime.parse(product["discount_expiration"] + "Z").toLocal()).format(pattern: "dd MMM yyyy")}",
                           style: FontConstants.caption2,
                         ),
                       ),
