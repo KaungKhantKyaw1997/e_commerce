@@ -2787,6 +2787,17 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                                         borderRadius: BorderRadius.circular(8),
                                         borderSide: BorderSide.none,
                                       ),
+                                      suffixIcon: IconButton(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                        ),
+                                        onPressed: fetchCategoryData,
+                                        icon: Icon(
+                                          Icons.percent,
+                                          size: 24,
+                                          color: Colors.black,
+                                        ),
+                                      ),
                                     ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
