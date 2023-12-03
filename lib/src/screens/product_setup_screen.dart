@@ -23,6 +23,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:share_extend/share_extend.dart';
 
 class ProductSetupScreen extends StatefulWidget {
   const ProductSetupScreen({super.key});
@@ -1364,6 +1365,29 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           iconTheme: IconThemeData(
             color: Colors.black,
           ),
+          actions: [
+            if (id == 0)
+              IconButton(
+                icon: SvgPicture.asset(
+                  "assets/icons/share.svg",
+                  width: 24,
+                  height: 24,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.black,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                onPressed: () {
+                  var url = ('${brandName.text} ${model.text} ${id}.html')
+                      .toLowerCase()
+                      .replaceAll(" ", "-");
+                  ShareExtend.share(
+                    '${ApiConstants.baseUrl}/products/$url',
+                    "text",
+                  );
+                },
+              ),
+          ],
         ),
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
