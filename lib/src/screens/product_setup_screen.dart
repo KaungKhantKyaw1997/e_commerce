@@ -1366,7 +1366,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
             color: Colors.black,
           ),
           actions: [
-            if (id == 0)
+            if (id != 0)
               IconButton(
                 icon: SvgPicture.asset(
                   "assets/icons/share.svg",
