@@ -1041,7 +1041,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "case_diameter": caseDiameter.text,
         "case_depth": caseDepth.text,
         "case_width": caseWidth.text,
-        "discount_type": discountType,
+        "discount_type": discountType.text,
       };
 
       if (discountType.text != 'No Discount') {
