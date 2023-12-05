@@ -335,7 +335,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
             id != 0 && status == "Active"
                 ? IconButton(
                     icon: SvgPicture.asset(
-                      "assets/icons/product.svg",
+                      "assets/icons/brand.svg",
                       width: 24,
                       height: 24,
                       colorFilter: const ColorFilter.mode(
@@ -346,7 +346,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
                     onPressed: () {
                       Navigator.pushNamedAndRemoveUntil(
                         context,
-                        Routes.products_setup,
+                        Routes.brands_setup,
                         arguments: {
                           "shopId": id,
                           "shopName": name.text,

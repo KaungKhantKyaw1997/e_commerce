@@ -32,6 +32,8 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
   int page = 1;
   int shopId = 0;
   String shopName = '';
+  int brandId = 0;
+  String brandName = '';
   String from = '';
   Timer? _debounce;
 
@@ -45,6 +47,8 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
       if (arguments != null) {
         shopId = arguments["shopId"] ?? 0;
         shopName = arguments["shopName"] ?? '';
+        brandId = arguments["brandId"] ?? 0;
+        brandName = arguments["brandName"] ?? '';
         from = arguments["from"] ?? '';
       }
       getProducts();
@@ -65,6 +69,7 @@ class _ProductsSetupScreenState extends State<ProductsSetupScreen> {
         "per_page": 10,
         "search": search.text,
         if (shopId != 0) "shop_id": shopId,
+        if (brandId != 0) "brands": [brandId],
       };
 
       final response = await productService.getProductsData(body);

@@ -60,7 +60,10 @@ class BrandService {
   }
 
   Future<Map<String, dynamic>?> getBrandsData(
-      {int page = 1, int perPage = 10, String search = ''}) async {
+      {int page = 1,
+      int perPage = 10,
+      String search = '',
+      int shopId = 0}) async {
     var token = await storage.read(key: "token") ?? '';
 
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -68,8 +71,11 @@ class BrandService {
 
     var deviceType = Platform.isIOS ? "ios" : "android";
 
+    var url =
+        '${ApiConstants.brandsUrl}?page=$page&per_page=$perPage&search=$search&platform=$deviceType&version$version';
+    url = shopId != 0 ? '${url}&shop_id=$shopId' : url;
     final response = await dio.get(
-      '${ApiConstants.brandsUrl}?page=$page&per_page=$perPage&search=$search&platform=$deviceType&version$version',
+      url,
       options: Options(
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',

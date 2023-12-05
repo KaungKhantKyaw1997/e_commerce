@@ -11,6 +11,7 @@ import 'package:e_commerce/src/services/brand_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -31,6 +32,8 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
   List brands = [];
   int page = 1;
   Timer? _debounce;
+  int shopId = 0;
+  String shopName = '';
   String from = "";
 
   @override
@@ -41,10 +44,12 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
       if (arguments != null) {
-        from = arguments["from"];
+        shopId = arguments["shopId"] ?? 0;
+        shopName = arguments["shopName"] ?? '';
+        from = arguments["from"] ?? '';
       }
+      getBrands();
     });
-    getBrands();
   }
 
   @override
@@ -56,8 +61,8 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
 
   getBrands() async {
     try {
-      final response =
-          await brandService.getBrandsData(page: page, search: search.text);
+      final response = await brandService.getBrandsData(
+          page: page, search: search.text, shopId: shopId);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
 
@@ -227,6 +232,33 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
+        actions: [
+          from == "shop"
+              ? IconButton(
+                  icon: SvgPicture.asset(
+                    "assets/icons/product.svg",
+                    width: 24,
+                    height: 24,
+                    colorFilter: const ColorFilter.mode(
+                      Colors.black,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      Routes.products_setup,
+                      arguments: {
+                        "shopId": shopId,
+                        "shopName": shopName,
+                        "from": "shop",
+                      },
+                      (route) => true,
+                    );
+                  },
+                )
+              : Container(),
+        ],
       ),
       body: SmartRefresher(
         header: WaterDropMaterialHeader(
@@ -262,7 +294,20 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        if (from != "product") {
+                        if (from == "shop") {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            Routes.products_setup,
+                            arguments: {
+                              "shopId": shopId,
+                              "shopName": shopName,
+                              "brandId": brands[index]["brand_id"],
+                              "brandName": brands[index]["name"],
+                              "from": "shop",
+                            },
+                            (route) => true,
+                          );
+                        } else {
                           Navigator.pushNamedAndRemoveUntil(
                             context,
                             Routes.brand_setup,
@@ -271,8 +316,6 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
                             },
                             (route) => true,
                           );
-                        } else {
-                          Navigator.of(context).pop(brands[index]);
                         }
                       },
                       child: Column(
@@ -303,7 +346,7 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
           ),
         ),
       ),
-      floatingActionButton: from != "product"
+      floatingActionButton: from != "shop"
           ? FloatingActionButton(
               onPressed: () {
                 Navigator.pushNamedAndRemoveUntil(
