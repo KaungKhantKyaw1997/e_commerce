@@ -893,6 +893,64 @@ class _SettingScreenState extends State<SettingScreen> {
                             onTap: () {
                               Navigator.pushNamedAndRemoveUntil(
                                 context,
+                                Routes.seller_registration_fees,
+                                (route) => true,
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                              ),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 16,
+                                      top: 16,
+                                      bottom: 16,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      "assets/icons/percent.svg",
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: language[
+                                                      "Seller Registration Fee"] ??
+                                                  "Seller Registration Fee",
+                                              style: FontConstants.caption2,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    role == 'admin'
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
                                 Routes.seller_reports,
                                 (route) => true,
                               );
