@@ -88,6 +88,8 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         _bottomProvider!.selectIndex(1);
       } else if (previousRouteName == '/setting') {
         _bottomProvider!.selectIndex(3);
+      } else {
+        _bottomProvider!.selectIndex(2);
       }
     }
 
