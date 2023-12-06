@@ -46,6 +46,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   String chatName = '';
   String lastSeenTime = '';
   String profileImage = '';
+  String from = '';
   int page = 1;
   String status = '';
   String role = "";
@@ -66,6 +67,7 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         chatId = arguments["chat_id"] ?? 0;
         chatName = arguments["chat_name"] ?? '';
         profileImage = arguments["profile_image"] ?? '';
+        from = arguments["from"] ?? '';
       }
       getData();
       getLastActiveAt(arguments!["user_id"]);
@@ -88,8 +90,6 @@ class ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         _bottomProvider!.selectIndex(1);
       } else if (previousRouteName == '/setting') {
         _bottomProvider!.selectIndex(3);
-      } else {
-        _bottomProvider!.selectIndex(2);
       }
     }
 

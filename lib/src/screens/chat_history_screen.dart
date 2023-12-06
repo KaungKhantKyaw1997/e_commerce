@@ -22,12 +22,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatHistoryScreen extends StatefulWidget {
-  String from;
-
-  ChatHistoryScreen({
-    Key? key,
-    required this.from,
-  }) : super(key: key);
+  const ChatHistoryScreen({Key? key}) : super(key: key);
 
   @override
   State<ChatHistoryScreen> createState() => _ChatHistoryScreenState();
@@ -42,6 +37,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
   int crossAxisCount = 1;
   final chatService = ChatService();
   int page = 1;
+  String from = '';
   String role = "";
   bool _dataLoaded = false;
   Timer? _debounce;
@@ -49,6 +45,14 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
   @override
   void initState() {
     super.initState();
+    Future.delayed(Duration.zero, () async {
+      final arguments =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
+      if (arguments != null) {
+        from = arguments["from"] ?? '';
+      }
+    });
     getData();
     getChatSessions();
   }
@@ -445,6 +449,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                                       .map<String>((participant) =>
                                           participant["user_id"].toString())
                                       .toList()[0],
+                                  'from': from,
                                 },
                                 (route) => true,
                               );
@@ -563,8 +568,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                   )
                 : Container(),
       ),
-      bottomNavigationBar:
-          widget.from == 'bottom' ? const BottomBarScreen() : null,
+      bottomNavigationBar: from == 'bottom' ? const BottomBarScreen() : null,
     );
   }
 }

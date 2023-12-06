@@ -1,16 +1,11 @@
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/providers/chat_histories_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
-import 'package:e_commerce/src/screens/cart_screen.dart';
-import 'package:e_commerce/src/screens/chat_history_screen.dart';
-import 'package:e_commerce/src/screens/history_screen.dart';
-import 'package:e_commerce/src/screens/home_screen.dart';
-import 'package:e_commerce/src/screens/notification_screen.dart';
-import 'package:e_commerce/src/screens/setting_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/providers/bottom_provider.dart';
 import 'package:e_commerce/src/providers/cart_provider.dart';
 import 'package:provider/provider.dart';
@@ -76,114 +71,43 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
 
       var data = navItems[index];
       if (data["label"] == 'Home') {
-        Navigator.pushAndRemoveUntil(
+        Navigator.pushNamedAndRemoveUntil(
           context,
-          PageRouteBuilder(
-            pageBuilder: (BuildContext context, Animation<double> animation,
-                Animation<double> secondaryAnimation) {
-              return HomeScreen();
-            },
-            transitionsBuilder: (BuildContext context,
-                Animation<double> animation,
-                Animation<double> secondaryAnimation,
-                Widget child) {
-              return child;
-            },
-            transitionDuration: Duration(seconds: 0),
-          ),
+          Routes.home,
           (route) => false,
         );
       } else if (data["label"] == 'Cart') {
-        Navigator.pushAndRemoveUntil(
+        Navigator.pushNamedAndRemoveUntil(
           context,
-          PageRouteBuilder(
-            pageBuilder: (BuildContext context, Animation<double> animation,
-                Animation<double> secondaryAnimation) {
-              return CartScreen();
-            },
-            transitionsBuilder: (BuildContext context,
-                Animation<double> animation,
-                Animation<double> secondaryAnimation,
-                Widget child) {
-              return child;
-            },
-            transitionDuration: Duration(seconds: 0),
-          ),
+          Routes.cart,
           (route) => false,
         );
       } else if (data["label"] == 'History' || data["label"] == 'Order') {
-        Navigator.pushAndRemoveUntil(
+        Navigator.pushNamedAndRemoveUntil(
           context,
-          PageRouteBuilder(
-            pageBuilder: (BuildContext context, Animation<double> animation,
-                Animation<double> secondaryAnimation) {
-              return HistoryScreen();
-            },
-            transitionsBuilder: (BuildContext context,
-                Animation<double> animation,
-                Animation<double> secondaryAnimation,
-                Widget child) {
-              return child;
-            },
-            transitionDuration: Duration(seconds: 0),
-          ),
+          Routes.history,
           (route) => false,
         );
       } else if (data["label"] == 'Notification') {
-        Navigator.pushAndRemoveUntil(
+        Navigator.pushNamedAndRemoveUntil(
           context,
-          PageRouteBuilder(
-            pageBuilder: (BuildContext context, Animation<double> animation,
-                Animation<double> secondaryAnimation) {
-              return NotificationScreen();
-            },
-            transitionsBuilder: (BuildContext context,
-                Animation<double> animation,
-                Animation<double> secondaryAnimation,
-                Widget child) {
-              return child;
-            },
-            transitionDuration: Duration(seconds: 0),
-          ),
+          Routes.noti,
           (route) => false,
         );
       } else if (data["label"] == 'Chat') {
         chatHistoriesProvider.setChatHistories([]);
-        Navigator.pushAndRemoveUntil(
+        Navigator.pushNamedAndRemoveUntil(
           context,
-          PageRouteBuilder(
-            pageBuilder: (BuildContext context, Animation<double> animation,
-                Animation<double> secondaryAnimation) {
-              return ChatHistoryScreen(
-                from: 'bottom',
-              );
-            },
-            transitionsBuilder: (BuildContext context,
-                Animation<double> animation,
-                Animation<double> secondaryAnimation,
-                Widget child) {
-              return child;
-            },
-            transitionDuration: Duration(seconds: 0),
-          ),
+          Routes.chat_history,
+          arguments: {
+            'from': 'bottom',
+          },
           (route) => false,
         );
       } else if (data["label"] == 'Settings') {
-        Navigator.pushAndRemoveUntil(
+        Navigator.pushNamedAndRemoveUntil(
           context,
-          PageRouteBuilder(
-            pageBuilder: (BuildContext context, Animation<double> animation,
-                Animation<double> secondaryAnimation) {
-              return SettingScreen();
-            },
-            transitionsBuilder: (BuildContext context,
-                Animation<double> animation,
-                Animation<double> secondaryAnimation,
-                Widget child) {
-              return child;
-            },
-            transitionDuration: Duration(seconds: 0),
-          ),
+          Routes.setting,
           (route) => false,
         );
       }

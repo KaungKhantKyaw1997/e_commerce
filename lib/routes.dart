@@ -11,6 +11,7 @@ import 'package:e_commerce/src/screens/categories_screen.dart';
 import 'package:e_commerce/src/screens/categories_setup_screen.dart';
 import 'package:e_commerce/src/screens/category_setup_screen.dart';
 import 'package:e_commerce/src/screens/change_password_screen.dart';
+import 'package:e_commerce/src/screens/chat_history_screen.dart';
 import 'package:e_commerce/src/screens/chat_screen.dart';
 import 'package:e_commerce/src/screens/connection_timeout_screen.dart';
 import 'package:e_commerce/src/screens/contactus_screen.dart';
@@ -161,6 +162,7 @@ class Routes {
         const BankAccountSetupScreen(),
     switch_user: (BuildContext context) => const SwitchUserScreen(),
     chat: (BuildContext context) => const ChatScreen(),
+    chat_history: (BuildContext context) => const ChatHistoryScreen(),
     contact_us: (BuildContext context) => const ContactUsScreen(),
     broadcast_notification_setup: (BuildContext context) =>
         const BroadcastNotificationSetupScreen(),
