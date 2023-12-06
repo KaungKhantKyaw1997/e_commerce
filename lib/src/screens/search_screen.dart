@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -32,9 +33,11 @@ class _SearchScreenState extends State<SearchScreen>
       RefreshController(initialRefresh: false);
   TextEditingController search = TextEditingController(text: '');
 
+  List suggestionProducts = [];
   List products = [];
   int page = 1;
   List<String> searchhistories = [];
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -45,6 +48,7 @@ class _SearchScreenState extends State<SearchScreen>
   @override
   void dispose() {
     _scrollController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -68,6 +72,116 @@ class _SearchScreenState extends State<SearchScreen>
     final jsonData = jsonEncode(datalist);
 
     await prefs.setString(key, jsonData);
+  }
+
+  getSuggestionProducts() async {
+    try {
+      final body = {
+        "page": 1,
+        "per_page": 10,
+        "search": search.text,
+        "view": "user"
+      };
+
+      final response = await productService.getProductsData(body);
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          suggestionProducts = response["data"];
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+      setState(() {});
+    } catch (e, s) {
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  suggestionProductCard(index) {
+    return Container(
+      padding: const EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 8,
+        bottom: 8,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(index == 0 ? 10 : 0),
+          topRight: Radius.circular(index == 0 ? 10 : 0),
+          bottomLeft:
+              Radius.circular(index == suggestionProducts.length - 1 ? 10 : 0),
+          bottomRight:
+              Radius.circular(index == suggestionProducts.length - 1 ? 10 : 0),
+        ),
+        color: Colors.white,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              image: suggestionProducts.length > 0 &&
+                      suggestionProducts[index]["product_images"].isNotEmpty
+                  ? DecorationImage(
+                      image: NetworkImage(
+                          '${ApiConstants.baseUrl}${suggestionProducts[index]["product_images"][0].toString()}'),
+                      fit: BoxFit.cover,
+                    )
+                  : DecorationImage(
+                      image: AssetImage('assets/images/logo.png'),
+                      fit: BoxFit.cover,
+                    ),
+              borderRadius: BorderRadius.circular(50),
+              border: Border.all(
+                color: Colors.transparent,
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(
+              left: 15,
+            ),
+            child: Text(
+              suggestionProducts[index]["brand_name"].toString(),
+              overflow: TextOverflow.ellipsis,
+              style: FontConstants.body1,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   getProducts() async {
@@ -279,6 +393,7 @@ class _SearchScreenState extends State<SearchScreen>
               showCheckmark: false,
               onSelected: (selected) async {
                 search.text = item;
+                suggestionProducts = [];
                 page = 1;
                 products = [];
                 await getProducts();
@@ -321,14 +436,31 @@ class _SearchScreenState extends State<SearchScreen>
               borderSide: BorderSide.none,
             ),
           ),
+          onChanged: (value) {
+            _debounce?.cancel();
+            _debounce = Timer(Duration(milliseconds: 300), () {
+              suggestionProducts = [];
+              page = 1;
+              products = [];
+              if (value.isEmpty) {
+                setState(() {});
+                return;
+              }
+              getSuggestionProducts();
+            });
+          },
           onSubmitted: (value) {
-            page = 1;
-            products = [];
-            if (value.isEmpty) {
-              setState(() {});
-              return;
-            }
-            getProducts();
+            _debounce?.cancel();
+            _debounce = Timer(Duration(milliseconds: 300), () {
+              suggestionProducts = [];
+              page = 1;
+              products = [];
+              if (value.isEmpty) {
+                setState(() {});
+                return;
+              }
+              getProducts();
+            });
           },
         ),
         actions: [
@@ -343,13 +475,17 @@ class _SearchScreenState extends State<SearchScreen>
               ),
             ),
             onPressed: () {
-              page = 1;
-              products = [];
-              if (search.text.isEmpty) {
-                setState(() {});
-                return;
-              }
-              getProducts();
+              _debounce?.cancel();
+              _debounce = Timer(Duration(milliseconds: 300), () {
+                suggestionProducts = [];
+                page = 1;
+                products = [];
+                if (search.text.isEmpty) {
+                  setState(() {});
+                  return;
+                }
+                getProducts();
+              });
             },
           ),
         ],
@@ -357,126 +493,183 @@ class _SearchScreenState extends State<SearchScreen>
           color: Colors.black,
         ),
       ),
-      body: SmartRefresher(
-        header: WaterDropMaterialHeader(
-          backgroundColor: Theme.of(context).primaryColor,
-          color: Colors.white,
-        ),
-        footer: ClassicFooter(),
-        controller: _refreshController,
-        enablePullDown: search.text.isNotEmpty ? true : false,
-        enablePullUp: search.text.isNotEmpty ? true : false,
-        onRefresh: () async {
-          page = 1;
-          products = [];
-          await getProducts();
-        },
-        onLoading: () async {
-          await getProducts();
-        },
-        child: products.isNotEmpty
-            ? SingleChildScrollView(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 24,
-                  ),
-                  width: double.infinity,
-                  child: Column(
-                    children: [
-                      ListView.builder(
-                        controller: _scrollController,
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        itemCount: products.length,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamedAndRemoveUntil(
-                                context,
-                                Routes.product,
-                                arguments: products[index],
-                                (route) => true,
-                              );
-                            },
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                productCard(index),
-                                index < products.length - 1
-                                    ? Container(
-                                        padding: const EdgeInsets.only(
-                                          left: 100,
-                                          right: 16,
-                                        ),
-                                        child: const Divider(
-                                          height: 0,
-                                          thickness: 0.2,
-                                          color: Colors.grey,
-                                        ),
-                                      )
-                                    : Container(),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+      body: suggestionProducts.isNotEmpty
+          ? SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 24,
                 ),
-              )
-            : searchhistories.isNotEmpty
-                ? SingleChildScrollView(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 24,
-                      ),
-                      width: double.infinity,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
+                width: double.infinity,
+                child: Column(
+                  children: [
+                    ListView.builder(
+                      controller: _scrollController,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: suggestionProducts.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            search.text = suggestionProducts[index]
+                                    ["brand_name"]
+                                .toString();
+                            suggestionProducts = [];
+                            page = 1;
+                            products = [];
+                            getProducts();
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                language["Search Histories"] ??
-                                    "Search Histories",
-                                style: FontConstants.subheadline1,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  searchhistories = [];
-                                  saveListToSharedPreferences(searchhistories);
-                                  setState(() {});
-                                },
-                                child: SvgPicture.asset(
-                                  "assets/icons/trash.svg",
-                                  width: 24,
-                                  height: 24,
-                                  colorFilter: ColorFilter.mode(
-                                    Colors.black,
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                              ),
+                              suggestionProductCard(index),
+                              index < suggestionProducts.length - 1
+                                  ? Container(
+                                      padding: const EdgeInsets.only(
+                                        left: 72,
+                                        right: 16,
+                                      ),
+                                      child: const Divider(
+                                        height: 0,
+                                        thickness: 0.2,
+                                        color: Colors.grey,
+                                      ),
+                                    )
+                                  : Container(),
                             ],
                           ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Wrap(
-                            children: searchHistoriesList(),
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  )
-                : Container(),
-      ),
+                  ],
+                ),
+              ),
+            )
+          : SmartRefresher(
+              header: WaterDropMaterialHeader(
+                backgroundColor: Theme.of(context).primaryColor,
+                color: Colors.white,
+              ),
+              footer: ClassicFooter(),
+              controller: _refreshController,
+              enablePullDown: search.text.isNotEmpty ? true : false,
+              enablePullUp: search.text.isNotEmpty ? true : false,
+              onRefresh: () async {
+                page = 1;
+                products = [];
+                await getProducts();
+              },
+              onLoading: () async {
+                await getProducts();
+              },
+              child: products.isNotEmpty
+                  ? SingleChildScrollView(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 24,
+                        ),
+                        width: double.infinity,
+                        child: Column(
+                          children: [
+                            ListView.builder(
+                              controller: _scrollController,
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: products.length,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      Routes.product,
+                                      arguments: products[index],
+                                      (route) => true,
+                                    );
+                                  },
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      productCard(index),
+                                      index < products.length - 1
+                                          ? Container(
+                                              padding: const EdgeInsets.only(
+                                                left: 100,
+                                                right: 16,
+                                              ),
+                                              child: const Divider(
+                                                height: 0,
+                                                thickness: 0.2,
+                                                color: Colors.grey,
+                                              ),
+                                            )
+                                          : Container(),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : searchhistories.isNotEmpty
+                      ? SingleChildScrollView(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 24,
+                            ),
+                            width: double.infinity,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.baseline,
+                                  textBaseline: TextBaseline.alphabetic,
+                                  children: [
+                                    Text(
+                                      language["Search Histories"] ??
+                                          "Search Histories",
+                                      style: FontConstants.subheadline1,
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        searchhistories = [];
+                                        saveListToSharedPreferences(
+                                            searchhistories);
+                                        setState(() {});
+                                      },
+                                      child: SvgPicture.asset(
+                                        "assets/icons/trash.svg",
+                                        width: 24,
+                                        height: 24,
+                                        colorFilter: ColorFilter.mode(
+                                          Colors.black,
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 8,
+                                ),
+                                Wrap(
+                                  children: searchHistoriesList(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : Container(),
+            ),
     );
   }
 }

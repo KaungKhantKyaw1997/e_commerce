@@ -10,6 +10,7 @@ import 'package:e_commerce/src/providers/chat_histories_provider.dart';
 import 'package:e_commerce/src/providers/message_provider.dart';
 import 'package:e_commerce/src/providers/noti_provider.dart';
 import 'package:e_commerce/src/screens/bottombar_screen.dart';
+import 'package:e_commerce/src/screens/chat_history_screen.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/brand_service.dart';
 import 'package:e_commerce/src/services/category_service.dart';
@@ -786,12 +787,24 @@ class _HomeScreenState extends State<HomeScreen>
                             Provider.of<ChatHistoriesProvider>(context,
                                 listen: false);
                         chatHistoriesProvider.setChatHistories([]);
-                        Navigator.pushNamedAndRemoveUntil(
+                        Navigator.pushAndRemoveUntil(
                           context,
-                          Routes.chat_history,
-                          arguments: {
-                            'from': 'home',
-                          },
+                          PageRouteBuilder(
+                            pageBuilder: (BuildContext context,
+                                Animation<double> animation,
+                                Animation<double> secondaryAnimation) {
+                              return ChatHistoryScreen(
+                                from: 'home',
+                              );
+                            },
+                            transitionsBuilder: (BuildContext context,
+                                Animation<double> animation,
+                                Animation<double> secondaryAnimation,
+                                Widget child) {
+                              return child;
+                            },
+                            transitionDuration: Duration(seconds: 0),
+                          ),
                           (route) => true,
                         );
                       },
