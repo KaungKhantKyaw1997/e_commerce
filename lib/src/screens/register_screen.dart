@@ -272,7 +272,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   foregroundColor: Theme.of(context).primaryColorLight,
                   elevation: 0.5,
                   borderColor: Colors.white,
-                  borderWidth: 1,
+                  borderWidth: 0,
                   innerVerticalPadding: 12,
                   children: [
                     ButtonBarEntry(
