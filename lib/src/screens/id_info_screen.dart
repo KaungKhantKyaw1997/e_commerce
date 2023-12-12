@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:animated_button_bar/animated_button_bar.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
@@ -33,6 +34,13 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
   String nrcFrontImage = '';
   XFile? nrcBackPickedFile;
   String nrcBackImage = '';
+  XFile? passportPickedFile;
+  String passportImage = '';
+  XFile? drivingLicencePickedFile;
+  String drivingLicenceImage = '';
+  XFile? signaturePickedFile;
+  String signatureImage = '';
+  int idIndex = 0;
   var data = {};
   var sellerInformation = {};
 
@@ -65,6 +73,12 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
         nrcFrontPickedFile = file;
       } else if (type == "backnrc") {
         nrcBackPickedFile = file;
+      } else if (type == "passport") {
+        passportPickedFile = file;
+      } else if (type == "drivinglicence") {
+        drivingLicencePickedFile = file;
+      } else if (type == "signature") {
+        signaturePickedFile = file;
       }
       setState(() {});
     } catch (e) {
@@ -82,6 +96,12 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
           nrcFrontImage = res["url"];
         } else if (type == "backnrc") {
           nrcBackImage = res["url"];
+        } else if (type == "passport") {
+          passportImage = res["url"];
+        } else if (type == "drivinglicence") {
+          drivingLicenceImage = res["url"];
+        } else if (type == "signature") {
+          signatureImage = res["url"];
         }
       }
     } catch (error) {
@@ -119,136 +139,401 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 24,
-                    left: 16,
-                    right: 16,
-                    bottom: 4,
+                AnimatedButtonBar(
+                  radius: 20,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
                   ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      language["NRC"] ?? "NRC",
-                      style: FontConstants.caption1,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 16,
-                  ),
-                  child: TextFormField(
-                    controller: nrc,
-                    focusNode: _nrcFocusNode,
-                    keyboardType: TextInputType.text,
-                    textInputAction: TextInputAction.next,
-                    style: FontConstants.body1,
-                    cursorColor: Colors.black,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: ColorConstants.fillColor,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
+                  backgroundColor: Colors.white,
+                  foregroundColor: Theme.of(context).primaryColorLight,
+                  elevation: 0.5,
+                  borderColor: Colors.white,
+                  borderWidth: 0,
+                  innerVerticalPadding: 12,
+                  children: [
+                    ButtonBarEntry(
+                      onTap: () {
+                        nrc.text = "";
+                        nrcFrontPickedFile = null;
+                        nrcFrontImage = '';
+                        nrcBackPickedFile = null;
+                        nrcBackImage = '';
+                        passportPickedFile = null;
+                        passportImage = '';
+                        drivingLicencePickedFile = null;
+                        drivingLicenceImage = '';
+
+                        setState(() {
+                          idIndex = 0;
+                        });
+                      },
+                      child: Text(
+                        language["NRC"] ?? "NRC",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: idIndex == 0
+                              ? Colors.white
+                              : Theme.of(context).primaryColor,
+                        ),
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return language["Enter NRC"] ?? "Enter NRC";
-                      }
-                      return null;
-                    },
-                  ),
+                    ButtonBarEntry(
+                      onTap: () {
+                        nrc.text = "";
+                        nrcFrontPickedFile = null;
+                        nrcFrontImage = '';
+                        nrcBackPickedFile = null;
+                        nrcBackImage = '';
+                        passportPickedFile = null;
+                        passportImage = '';
+                        drivingLicencePickedFile = null;
+                        drivingLicenceImage = '';
+
+                        setState(() {
+                          idIndex = 1;
+                        });
+                      },
+                      child: Text(
+                        language["Passport"] ?? "Passport",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: idIndex == 1
+                              ? Colors.white
+                              : Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                    ButtonBarEntry(
+                      onTap: () {
+                        nrc.text = "";
+                        nrcFrontPickedFile = null;
+                        nrcFrontImage = '';
+                        nrcBackPickedFile = null;
+                        nrcBackImage = '';
+                        passportPickedFile = null;
+                        passportImage = '';
+                        drivingLicencePickedFile = null;
+                        drivingLicenceImage = '';
+
+                        setState(() {
+                          idIndex = 2;
+                        });
+                      },
+                      child: Text(
+                        language["Driving Licence"] ?? "Driving Licence",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: idIndex == 2
+                              ? Colors.white
+                              : Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                Container(
-                  margin: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 16,
+                if (idIndex == 0)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 24,
+                      left: 16,
+                      right: 16,
+                      bottom: 4,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        language["NRC"] ?? "NRC",
+                        style: FontConstants.caption1,
+                      ),
+                    ),
                   ),
-                  decoration: BoxDecoration(
-                    color: ColorConstants.fillColor,
-                    borderRadius: BorderRadius.circular(10),
+                if (idIndex == 0)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 16,
+                    ),
+                    child: TextFormField(
+                      controller: nrc,
+                      focusNode: _nrcFocusNode,
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.next,
+                      style: FontConstants.body1,
+                      cursorColor: Colors.black,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: ColorConstants.fillColor,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return language["Enter NRC"] ?? "Enter NRC";
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                  width: double.infinity,
-                  child: GestureDetector(
+                if (idIndex == 0)
+                  GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "frontnrc");
                     },
-                    child: nrcFrontPickedFile != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.file(
-                              File(nrcFrontPickedFile!.path),
-                              height: 180,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : Container(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 48,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  "assets/icons/front_nrc.svg",
-                                  width: 48,
-                                  height: 48,
-                                  colorFilter: const ColorFilter.mode(
-                                    Colors.grey,
-                                    BlendMode.srcIn,
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorConstants.fillColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      width: double.infinity,
+                      child: nrcFrontPickedFile != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.file(
+                                File(nrcFrontPickedFile!.path),
+                                height: 180,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : Container(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 48,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    "assets/icons/front_id.svg",
+                                    width: 48,
+                                    height: 48,
+                                    colorFilter: const ColorFilter.mode(
+                                      Colors.grey,
+                                      BlendMode.srcIn,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 16,
-                                ),
-                                Text(
-                                  language["Upload Front NRC"] ??
-                                      "Upload Front NRC",
-                                  style: FontConstants.subheadline2,
-                                ),
-                              ],
+                                  SizedBox(
+                                    height: 16,
+                                  ),
+                                  Text(
+                                    language["Upload Front NRC"] ??
+                                        "Upload Front NRC",
+                                    style: FontConstants.subheadline2,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
+                    ),
                   ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: ColorConstants.fillColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  width: double.infinity,
-                  child: GestureDetector(
+                if (idIndex == 0)
+                  GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "backnrc");
                     },
-                    child: nrcBackPickedFile != null
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorConstants.fillColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      width: double.infinity,
+                      child: nrcBackPickedFile != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.file(
+                                File(nrcBackPickedFile!.path),
+                                height: 180,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : Container(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 48,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    "assets/icons/back_id.svg",
+                                    width: 48,
+                                    height: 48,
+                                    colorFilter: const ColorFilter.mode(
+                                      Colors.grey,
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 16,
+                                  ),
+                                  Text(
+                                    language["Upload Back NRC"] ??
+                                        "Upload Back NRC",
+                                    style: FontConstants.subheadline2,
+                                  ),
+                                ],
+                              ),
+                            ),
+                    ),
+                  ),
+                if (idIndex == 1)
+                  GestureDetector(
+                    onTap: () {
+                      _pickImage(ImageSource.gallery, "passport");
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        top: 24,
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorConstants.fillColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      width: double.infinity,
+                      child: passportPickedFile != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.file(
+                                File(passportPickedFile!.path),
+                                height: 180,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : Container(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 48,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    "assets/icons/front_id.svg",
+                                    width: 48,
+                                    height: 48,
+                                    colorFilter: const ColorFilter.mode(
+                                      Colors.grey,
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 16,
+                                  ),
+                                  Text(
+                                    language["Upload Passport"] ??
+                                        "Upload Passport",
+                                    style: FontConstants.subheadline2,
+                                  ),
+                                ],
+                              ),
+                            ),
+                    ),
+                  ),
+                if (idIndex == 2)
+                  GestureDetector(
+                    onTap: () {
+                      _pickImage(ImageSource.gallery, "drivinglicence");
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        top: 24,
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorConstants.fillColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      width: double.infinity,
+                      child: drivingLicencePickedFile != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.file(
+                                File(drivingLicencePickedFile!.path),
+                                height: 180,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : Container(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 48,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    "assets/icons/front_id.svg",
+                                    width: 48,
+                                    height: 48,
+                                    colorFilter: const ColorFilter.mode(
+                                      Colors.grey,
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 16,
+                                  ),
+                                  Text(
+                                    language["Upload Driving Licence"] ??
+                                        "Upload Driving Licence",
+                                    style: FontConstants.subheadline2,
+                                  ),
+                                ],
+                              ),
+                            ),
+                    ),
+                  ),
+                GestureDetector(
+                  onTap: () {
+                    _pickImage(ImageSource.gallery, "signature");
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 24,
+                    ),
+                    decoration: BoxDecoration(
+                      color: ColorConstants.fillColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    width: double.infinity,
+                    child: signaturePickedFile != null
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: Image.file(
-                              File(nrcBackPickedFile!.path),
+                              File(signaturePickedFile!.path),
                               height: 180,
                               fit: BoxFit.cover,
                             ),
@@ -262,7 +547,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 SvgPicture.asset(
-                                  "assets/icons/back_nrc.svg",
+                                  "assets/icons/signature.svg",
                                   width: 48,
                                   height: 48,
                                   colorFilter: const ColorFilter.mode(
@@ -274,8 +559,8 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                                   height: 16,
                                 ),
                                 Text(
-                                  language["Upload Back NRC"] ??
-                                      "Upload Back NRC",
+                                  language["Upload Signature"] ??
+                                      "Upload Signature",
                                   style: FontConstants.subheadline2,
                                 ),
                               ],
@@ -308,27 +593,55 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                if (nrcFrontPickedFile == null) {
+                if (idIndex == 0 && nrcFrontPickedFile == null) {
                   ToastUtil.showToast(
-                      0,
-                      language["Choose Front NRC Image"] ??
-                          "Choose Front NRC Image");
+                      0, language["Choose Front NRC"] ?? "Choose Front NRC");
                   return;
                 }
-                if (nrcBackPickedFile == null) {
+                if (idIndex == 0 && nrcBackPickedFile == null) {
+                  ToastUtil.showToast(
+                      0, language["Choose Back NRC"] ?? "Choose Back NRC");
+                  return;
+                }
+                if (idIndex == 1 && passportPickedFile == null) {
+                  ToastUtil.showToast(
+                      0, language["Choose Passport"] ?? "Choose Passport");
+                  return;
+                }
+                if (idIndex == 2 && drivingLicencePickedFile == null) {
                   ToastUtil.showToast(
                       0,
-                      language["Choose Back NRC Image"] ??
-                          "Choose Back NRC Image");
+                      language["Choose Driving Licence"] ??
+                          "Choose Driving Licence");
+                  return;
+                }
+                if (signaturePickedFile == null) {
+                  ToastUtil.showToast(
+                      0, language["Choose Signature"] ?? "Choose Signature");
                   return;
                 }
                 showLoadingDialog(context);
-                await uploadFile(nrcFrontPickedFile, 'frontnrc');
-                await uploadFile(nrcBackPickedFile, 'backnrc');
+                if (idIndex == 0) {
+                  await uploadFile(nrcFrontPickedFile, 'frontnrc');
+                  await uploadFile(nrcBackPickedFile, 'backnrc');
+                } else if (idIndex == 1) {
+                  await uploadFile(passportPickedFile, 'passport');
+                } else if (idIndex == 2) {
+                  await uploadFile(drivingLicencePickedFile, 'drivinglicence');
+                }
+                await uploadFile(signaturePickedFile, 'signature');
+
                 Navigator.pop(context);
-                sellerInformation["nrc"] = nrc.text;
-                sellerInformation["nrc_front_image"] = nrcFrontImage;
-                sellerInformation["nrc_back_image"] = nrcBackImage;
+                sellerInformation["nrc"] = idIndex == 0 ? nrc.text : "";
+                sellerInformation["nrc_front_image"] =
+                    idIndex == 0 ? nrcFrontImage : "";
+                sellerInformation["nrc_back_image"] =
+                    idIndex == 0 ? nrcBackImage : "";
+                sellerInformation["passport_image"] =
+                    idIndex == 1 ? passportImage : "";
+                sellerInformation["driving_licence_image"] =
+                    idIndex == 2 ? drivingLicenceImage : "";
+                sellerInformation["signature_image"] = signatureImage;
 
                 Navigator.pushNamedAndRemoveUntil(
                   context,

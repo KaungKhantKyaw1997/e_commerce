@@ -399,21 +399,21 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                     ),
                   ],
                 ),
-                Container(
-                  margin: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: ColorConstants.fillColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  width: double.infinity,
-                  child: GestureDetector(
-                    onTap: () {
-                      _pickImage(ImageSource.gallery, "bankaccount");
-                    },
+                GestureDetector(
+                  onTap: () {
+                    _pickImage(ImageSource.gallery, "bankaccount");
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: ColorConstants.fillColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    width: double.infinity,
                     child: bankAccountPickedFile != null
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(10),
@@ -444,8 +444,8 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                                   height: 16,
                                 ),
                                 Text(
-                                  language["Upload Bank Book"] ??
-                                      "Upload Bank Book",
+                                  language["Upload Bank Account Photo"] ??
+                                      "Upload Bank Account Photo",
                                   style: FontConstants.subheadline2,
                                 ),
                               ],
@@ -623,21 +623,21 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                     items: sellerRegistrationFeesDesc,
                   ),
                 ),
-                Container(
-                  margin: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: ColorConstants.fillColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  width: double.infinity,
-                  child: GestureDetector(
-                    onTap: () {
-                      _pickImage(ImageSource.gallery, "monthlytransaction");
-                    },
+                GestureDetector(
+                  onTap: () {
+                    _pickImage(ImageSource.gallery, "monthlytransaction");
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 24,
+                    ),
+                    decoration: BoxDecoration(
+                      color: ColorConstants.fillColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    width: double.infinity,
                     child: monthlyTransactionPickedFile != null
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(10),
@@ -668,8 +668,9 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                                   height: 16,
                                 ),
                                 Text(
-                                  language["Upload Monthly Transaction"] ??
-                                      "Upload Monthly Transaction",
+                                  language[
+                                          "Upload Monthly Fees Transaction Screenshot"] ??
+                                      "Upload Monthly Fees Transaction Screenshot",
                                   style: FontConstants.subheadline2,
                                 ),
                               ],
@@ -705,15 +706,15 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                 if (bankAccountPickedFile == null) {
                   ToastUtil.showToast(
                       0,
-                      language["Choose Bank Book Image"] ??
-                          "Choose Bank Book Image");
+                      language["Choose Bank Account Photo"] ??
+                          "Choose Bank Account Photo");
                   return;
                 }
                 if (monthlyTransactionPickedFile == null) {
                   ToastUtil.showToast(
                       0,
-                      language["Choose Monthly Transaction Image"] ??
-                          "Choose Monthly Transaction Image");
+                      language["Choose Monthly Fees Transaction Screenshot"] ??
+                          "Choose Monthly Fees Transaction Screenshot");
                   return;
                 }
                 showLoadingDialog(context);

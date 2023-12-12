@@ -193,104 +193,12 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
                             ),
                           ),
                         ),
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              language["Facebook Profile"] ??
-                                  "Facebook Profile",
-                              style: FontConstants.caption1,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.only(
-                            top: 24,
-                            bottom: 24,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorConstants.fillColor,
-                            shape: BoxShape.circle,
-                          ),
-                          child: GestureDetector(
-                            onTap: () {
-                              _pickImage(ImageSource.gallery, "facebookpage");
-                            },
-                            child: facebookPagePickedFile == null
-                                ? ClipOval(
-                                    child: Image.asset(
-                                      'assets/images/profile.png',
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                                : ClipOval(
-                                    child: Image.file(
-                                      File(facebookPagePickedFile!.path),
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 24,
-                          right: 0,
-                          child: GestureDetector(
-                            onTap: () {
-                              _pickImage(ImageSource.gallery, "facebookpage");
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 3,
-                                ),
-                                color: Theme.of(context).primaryColorLight,
-                              ),
-                              child: SvgPicture.asset(
-                                "assets/icons/gallery.svg",
-                                width: 16,
-                                height: 16,
-                                colorFilter: ColorFilter.mode(
-                                  Colors.white,
-                                  BlendMode.srcIn,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              language["Facebook Page"] ?? "Facebook Page",
-                              style: FontConstants.caption1,
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ],
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
-                    top: 24,
                     left: 16,
                     right: 16,
                     bottom: 4,
@@ -298,7 +206,8 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      language["Shop Or Page Name"] ?? "Shop Or Page Name",
+                      language["Your Shop Name or Facebook Page Name"] ??
+                          "Your Shop Name or Facebook Page Name",
                       style: FontConstants.caption1,
                     ),
                   ),
@@ -338,11 +247,66 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return language["Enter Shop Or Page Name"] ??
-                            "Enter Shop Or Page Name";
+                        return language[
+                                "Enter Your Shop Name or Facebook Page Name"] ??
+                            "Enter Your Shop Name or Facebook Page Name";
                       }
                       return null;
                     },
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    _pickImage(ImageSource.gallery, "facebookpage");
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: ColorConstants.fillColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    width: double.infinity,
+                    child: facebookPagePickedFile != null
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.file(
+                              File(facebookPagePickedFile!.path),
+                              height: 180,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : Container(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 48,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  "assets/icons/facebook_bw.svg",
+                                  width: 48,
+                                  height: 48,
+                                  colorFilter: const ColorFilter.mode(
+                                    Colors.grey,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                Text(
+                                  language["Upload Facebook Page Screenshot"] ??
+                                      "Upload Facebook Page Screenshot",
+                                  style: FontConstants.subheadline2,
+                                ),
+                              ],
+                            ),
+                          ),
                   ),
                 ),
                 Padding(
@@ -429,7 +393,7 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
                   padding: const EdgeInsets.only(
                     left: 16,
                     right: 16,
-                    bottom: 16,
+                    bottom: 24,
                   ),
                   child: TextFormField(
                     controller: address,
@@ -495,15 +459,15 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
                 if (facebookProfilePickedFile == null) {
                   ToastUtil.showToast(
                       0,
-                      language["Choose Facebook Profile Image"] ??
-                          "Choose Facebook Profile Image");
+                      language["Choose Facebook Profile"] ??
+                          "Choose Facebook Profile");
                   return;
                 }
                 if (facebookPagePickedFile == null) {
                   ToastUtil.showToast(
                       0,
-                      language["Choose Facebook Page Image"] ??
-                          "Choose Facebook Page Image");
+                      language["Choose Facebook Page Screenshot"] ??
+                          "Choose Facebook Page Screenshot");
                   return;
                 }
                 showLoadingDialog(context);

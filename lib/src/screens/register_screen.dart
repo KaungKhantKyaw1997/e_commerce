@@ -673,7 +673,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   padding: const EdgeInsets.only(
                     left: 16,
                     right: 16,
-                    bottom: 16,
+                    bottom: 24,
                   ),
                   child: TextFormField(
                     controller: phone,
