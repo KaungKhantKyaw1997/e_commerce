@@ -261,7 +261,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                       controller: nrc,
                       focusNode: _nrcFocusNode,
                       keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.next,
+                      textInputAction: TextInputAction.done,
                       style: FontConstants.body1,
                       cursorColor: Colors.black,
                       decoration: InputDecoration(

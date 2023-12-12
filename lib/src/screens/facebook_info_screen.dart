@@ -399,7 +399,7 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
                     controller: address,
                     focusNode: _addressFocusNode,
                     keyboardType: TextInputType.text,
-                    textInputAction: TextInputAction.next,
+                    textInputAction: TextInputAction.done,
                     style: FontConstants.body1,
                     cursorColor: Colors.black,
                     maxLines: 2,

@@ -181,7 +181,7 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
           "bank_account": bankAccount.text,
           "bank_account_image": bankAccountImage,
           "wallet_type": walletType.text,
-          "wallet_account": walletAccount.text,
+          "wallet_account": '959${walletAccount.text}',
           "fee_id": sellerRegistrationFeeId,
           "monthly_transaction_screenshot": monthlyTransactionImage,
         }
@@ -547,11 +547,13 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                             child: TextFormField(
                               controller: walletAccount,
                               focusNode: _walletAccountFocusNode,
-                              keyboardType: TextInputType.text,
-                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.phone,
+                              textInputAction: TextInputAction.done,
                               style: FontConstants.body1,
                               cursorColor: Colors.black,
                               decoration: InputDecoration(
+                                prefixText: '+959',
+                                prefixStyle: FontConstants.body2,
                                 filled: true,
                                 fillColor: ColorConstants.fillColor,
                                 contentPadding: const EdgeInsets.symmetric(
@@ -576,6 +578,14 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                                   return language[
                                           "Enter Wallet Account Number"] ??
                                       "Enter Wallet Account Number";
+                                }
+                                final RegExp phoneRegExp =
+                                    RegExp(r"^[+]{0,1}[0-9]{7,9}$");
+
+                                if (!phoneRegExp.hasMatch(value)) {
+                                  return language[
+                                          "Invalid Wallet Account Number"] ??
+                                      "Invalid Wallet Account Number";
                                 }
                                 return null;
                               },
