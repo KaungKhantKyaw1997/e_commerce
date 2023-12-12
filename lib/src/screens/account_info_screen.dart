@@ -195,6 +195,7 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
         Navigator.pop(context);
         Navigator.pop(context);
         Navigator.pop(context);
+        Navigator.pop(context);
         Navigator.pushNamed(
           context,
           Routes.login,
@@ -273,6 +274,7 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(
+                              top: 24,
                               left: 16,
                               right: 4,
                               bottom: 4,
@@ -335,6 +337,7 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(
+                              top: 24,
                               left: 4,
                               right: 16,
                               bottom: 4,
