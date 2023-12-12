@@ -74,6 +74,7 @@ dependencies:
   flutter_facebook_auth: ^6.0.3
   the_apple_sign_in: ^1.1.1
   share_extend: ^2.0.0
+  animated_button_bar: ^1.0.0
 
 dev_dependencies:
   flutter_test:

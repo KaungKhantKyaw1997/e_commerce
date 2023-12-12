@@ -1,3 +1,4 @@
+import 'package:e_commerce/src/screens/account_info_screen.dart';
 import 'package:e_commerce/src/screens/bank_account_setup_screen.dart';
 import 'package:e_commerce/src/screens/bank_accounts_setup_screen.dart';
 import 'package:e_commerce/src/screens/brand_setup_screen.dart';
@@ -15,11 +16,13 @@ import 'package:e_commerce/src/screens/chat_history_screen.dart';
 import 'package:e_commerce/src/screens/chat_screen.dart';
 import 'package:e_commerce/src/screens/connection_timeout_screen.dart';
 import 'package:e_commerce/src/screens/contactus_screen.dart';
+import 'package:e_commerce/src/screens/facebook_info_screen.dart';
 import 'package:e_commerce/src/screens/firebase_auth_register_screen.dart';
 import 'package:e_commerce/src/screens/forgot_password_screen.dart';
 import 'package:e_commerce/src/screens/history_details_screen.dart';
 import 'package:e_commerce/src/screens/history_screen.dart';
 import 'package:e_commerce/src/screens/home_screen.dart';
+import 'package:e_commerce/src/screens/id_info_screen.dart';
 import 'package:e_commerce/src/screens/image_preview_screen.dart';
 import 'package:e_commerce/src/screens/language_screen.dart';
 import 'package:e_commerce/src/screens/login_screen.dart';
@@ -110,6 +113,9 @@ class Routes {
   static const String seller_report = '/seller_report';
   static const String seller_registration_fees = '/seller_registration_fees';
   static const String seller_registration_fee = '/seller_registration_fee';
+  static const String facebook_info = '/facebook_info';
+  static const String id_info = '/id_info';
+  static const String account_info = '/account_info';
 
   static final Map<String, WidgetBuilder> routes = {
     splash: (BuildContext context) => const SplashScreen(),
@@ -176,5 +182,8 @@ class Routes {
         const SellerRegistrationFeesScreen(),
     seller_registration_fee: (BuildContext context) =>
         const SellerRegistrationFeeScreen(),
+    facebook_info: (BuildContext context) => const FacebookInfoScreen(),
+    id_info: (BuildContext context) => const IDInfoScreen(),
+    account_info: (BuildContext context) => const AccountInfoScreen(),
   };
 }

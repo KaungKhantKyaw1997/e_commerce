@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:animated_button_bar/animated_button_bar.dart';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
@@ -21,7 +22,8 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterScreenState extends State<RegisterScreen>
+    with SingleTickerProviderStateMixin {
   final crashlytic = new CrashlyticsService();
   final _formKey = GlobalKey<FormState>();
   final authService = AuthService();
@@ -44,6 +46,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final ImagePicker _picker = ImagePicker();
   XFile? pickedFile;
   String profileImage = '';
+  int userIndex = 0;
 
   @override
   void initState() {
@@ -58,9 +61,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> _pickImage(source) async {
     try {
-      pickedFile = await _picker.pickImage(
+      XFile? file = await _picker.pickImage(
         source: source,
       );
+      pickedFile = file;
       setState(() {});
     } catch (e) {
       print(e);
@@ -93,7 +97,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         "method": "password",
         "token": "",
       };
-
       final response = await authService.registerData(body);
       Navigator.pop(context);
       if (response!["code"] == 200) {
@@ -136,15 +139,105 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+  void _showImageBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isDismissible: false,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(
+                  16,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      language["Make a Choice"] ?? "Make a Choice",
+                      style: FontConstants.subheadline1,
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.close,
+                        size: 22,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              ListTile(
+                leading: SvgPicture.asset(
+                  "assets/icons/gallery.svg",
+                  width: 16,
+                  height: 16,
+                  colorFilter: ColorFilter.mode(
+                    Colors.black,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                title: Text(
+                  language["Galery"] ?? "Galery",
+                  style: FontConstants.caption2,
+                ),
+                onTap: () async {
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  bottom: 32,
+                ),
+                child: ListTile(
+                  leading: SvgPicture.asset(
+                    "assets/icons/camera.svg",
+                    width: 16,
+                    height: 16,
+                    colorFilter: ColorFilter.mode(
+                      Colors.black,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  title: Text(
+                    language["Camera"] ?? "Camera",
+                    style: FontConstants.caption2,
+                  ),
+                  onTap: () async {
+                    _pickImage(ImageSource.camera);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
+        _emailFocusNode.unfocus();
         _passwordFocusNode.unfocus();
         _confirmPasswordFocusNode.unfocus();
         _nameFocusNode.unfocus();
-        _emailFocusNode.unfocus();
         _phoneFocusNode.unfocus();
       },
       child: Scaffold(
@@ -170,6 +263,56 @@ class _RegisterScreenState extends State<RegisterScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                AnimatedButtonBar(
+                  radius: 20,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 100,
+                  ),
+                  backgroundColor: Colors.white,
+                  foregroundColor: Theme.of(context).primaryColorLight,
+                  elevation: 0.5,
+                  borderColor: Colors.white,
+                  borderWidth: 1,
+                  innerVerticalPadding: 12,
+                  children: [
+                    ButtonBarEntry(
+                      onTap: () {
+                        setState(() {
+                          userIndex = 0;
+                        });
+                      },
+                      child: SvgPicture.asset(
+                        "assets/icons/profile.svg",
+                        width: 24,
+                        height: 24,
+                        colorFilter: ColorFilter.mode(
+                          userIndex == 0
+                              ? Colors.white
+                              : Theme.of(context).primaryColor,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ),
+                    ButtonBarEntry(
+                      onTap: () {
+                        setState(() {
+                          userIndex = 1;
+                        });
+                      },
+                      child: SvgPicture.asset(
+                        "assets/icons/agent.svg",
+                        width: 24,
+                        height: 24,
+                        colorFilter: ColorFilter.mode(
+                          userIndex == 1
+                              ? Colors.white
+                              : Theme.of(context).primaryColor,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 Stack(
                   clipBehavior: Clip.none,
                   children: [
@@ -184,7 +327,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       child: GestureDetector(
                         onTap: () {
-                          _pickImage(ImageSource.gallery);
+                          if (userIndex == 1) {
+                            _pickImage(ImageSource.camera);
+                          } else {
+                            _showImageBottomSheet(context);
+                          }
                         },
                         child: pickedFile == null
                             ? ClipOval(
@@ -210,7 +357,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       right: 0,
                       child: GestureDetector(
                         onTap: () {
-                          _pickImage(ImageSource.gallery);
+                          if (userIndex == 1) {
+                            _pickImage(ImageSource.camera);
+                          } else {
+                            _showImageBottomSheet(context);
+                          }
                         },
                         child: Container(
                           padding: EdgeInsets.all(8),
@@ -522,13 +673,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: const EdgeInsets.only(
                     left: 16,
                     right: 16,
-                    bottom: 24,
+                    bottom: 16,
                   ),
                   child: TextFormField(
                     controller: phone,
                     focusNode: _phoneFocusNode,
                     keyboardType: TextInputType.phone,
-                    textInputAction: TextInputAction.done,
+                    textInputAction: TextInputAction.next,
                     style: FontConstants.body1,
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
@@ -598,11 +749,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 if (pickedFile != null) {
                   await uploadFile();
                 }
-                register();
+                if (userIndex == 0) {
+                  register();
+                } else {
+                  Navigator.pop(context);
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    Routes.facebook_info,
+                    arguments: {
+                      "username": email.text,
+                      "email": email.text,
+                      "password": password.text,
+                      "name": name.text,
+                      "phone": phone.text,
+                      "profile_image": profileImage,
+                      "role": "agent",
+                      "method": "password",
+                      "token": "",
+                    },
+                    (route) => true,
+                  );
+                }
               }
             },
             child: Text(
-              language["Register"] ?? "Register",
+              userIndex == 0
+                  ? language["Register"] ?? "Register"
+                  : language["Next"] ?? "Next",
               style: FontConstants.button1,
             ),
           ),

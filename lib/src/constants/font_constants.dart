@@ -136,5 +136,11 @@ class FontConstants {
     color: Colors.black,
   );
 
+  static TextStyle subtitle2 = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    color: Colors.white,
+  );
+
   static double bottom = 10;
 }
