@@ -26,6 +26,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
   final _formKey = GlobalKey<FormState>();
   final authService = AuthService();
   ScrollController _scrollController = ScrollController();
+  AnimatedButtonController _buttonBarController = AnimatedButtonController();
   FocusNode _nrcFocusNode = FocusNode();
   TextEditingController nrc = TextEditingController(text: '');
 
@@ -40,7 +41,6 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
   String drivingLicenceImage = '';
   XFile? signaturePickedFile;
   String signatureImage = '';
-  int idIndex = 0;
   var data = {};
   var sellerInformation = {};
 
@@ -139,6 +139,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 AnimatedButtonBar(
+                  controller: _buttonBarController,
                   radius: 20,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -163,7 +164,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                         drivingLicenceImage = '';
 
                         setState(() {
-                          idIndex = 0;
+                          _buttonBarController.setIndex(0);
                         });
                       },
                       child: Text(
@@ -171,7 +172,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
-                          color: idIndex == 0
+                          color: _buttonBarController.index == 0
                               ? Colors.white
                               : Theme.of(context).primaryColor,
                         ),
@@ -190,7 +191,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                         drivingLicenceImage = '';
 
                         setState(() {
-                          idIndex = 1;
+                          _buttonBarController.setIndex(1);
                         });
                       },
                       child: Text(
@@ -198,7 +199,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
-                          color: idIndex == 1
+                          color: _buttonBarController.index == 1
                               ? Colors.white
                               : Theme.of(context).primaryColor,
                         ),
@@ -217,7 +218,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                         drivingLicenceImage = '';
 
                         setState(() {
-                          idIndex = 2;
+                          _buttonBarController.setIndex(2);
                         });
                       },
                       child: Text(
@@ -225,7 +226,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
-                          color: idIndex == 2
+                          color: _buttonBarController.index == 2
                               ? Colors.white
                               : Theme.of(context).primaryColor,
                         ),
@@ -233,7 +234,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                     ),
                   ],
                 ),
-                if (idIndex == 0)
+                if (_buttonBarController.index == 0)
                   Padding(
                     padding: const EdgeInsets.only(
                       top: 24,
@@ -249,7 +250,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                       ),
                     ),
                   ),
-                if (idIndex == 0)
+                if (_buttonBarController.index == 0)
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 16,
@@ -291,7 +292,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                       },
                     ),
                   ),
-                if (idIndex == 0)
+                if (_buttonBarController.index == 0)
                   GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "frontnrc");
@@ -346,7 +347,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                             ),
                     ),
                   ),
-                if (idIndex == 0)
+                if (_buttonBarController.index == 0)
                   GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "backnrc");
@@ -401,7 +402,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                             ),
                     ),
                   ),
-                if (idIndex == 1)
+                if (_buttonBarController.index == 1)
                   GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "passport");
@@ -457,7 +458,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                             ),
                     ),
                   ),
-                if (idIndex == 2)
+                if (_buttonBarController.index == 2)
                   GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "drivinglicence");
@@ -592,22 +593,26 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                if (idIndex == 0 && nrcFrontPickedFile == null) {
+                if (_buttonBarController.index == 0 &&
+                    nrcFrontPickedFile == null) {
                   ToastUtil.showToast(
                       0, language["Choose Front NRC"] ?? "Choose Front NRC");
                   return;
                 }
-                if (idIndex == 0 && nrcBackPickedFile == null) {
+                if (_buttonBarController.index == 0 &&
+                    nrcBackPickedFile == null) {
                   ToastUtil.showToast(
                       0, language["Choose Back NRC"] ?? "Choose Back NRC");
                   return;
                 }
-                if (idIndex == 1 && passportPickedFile == null) {
+                if (_buttonBarController.index == 1 &&
+                    passportPickedFile == null) {
                   ToastUtil.showToast(
                       0, language["Choose Passport"] ?? "Choose Passport");
                   return;
                 }
-                if (idIndex == 2 && drivingLicencePickedFile == null) {
+                if (_buttonBarController.index == 2 &&
+                    drivingLicencePickedFile == null) {
                   ToastUtil.showToast(
                       0,
                       language["Choose Driving Licence"] ??
@@ -620,26 +625,27 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                   return;
                 }
                 showLoadingDialog(context);
-                if (idIndex == 0) {
+                if (_buttonBarController.index == 0) {
                   await uploadFile(nrcFrontPickedFile, 'frontnrc');
                   await uploadFile(nrcBackPickedFile, 'backnrc');
-                } else if (idIndex == 1) {
+                } else if (_buttonBarController.index == 1) {
                   await uploadFile(passportPickedFile, 'passport');
-                } else if (idIndex == 2) {
+                } else if (_buttonBarController.index == 2) {
                   await uploadFile(drivingLicencePickedFile, 'drivinglicence');
                 }
                 await uploadFile(signaturePickedFile, 'signature');
 
                 Navigator.pop(context);
-                sellerInformation["nrc"] = idIndex == 0 ? nrc.text : "";
+                sellerInformation["nrc"] =
+                    _buttonBarController.index == 0 ? nrc.text : "";
                 sellerInformation["nrc_front_image"] =
-                    idIndex == 0 ? nrcFrontImage : "";
+                    _buttonBarController.index == 0 ? nrcFrontImage : "";
                 sellerInformation["nrc_back_image"] =
-                    idIndex == 0 ? nrcBackImage : "";
+                    _buttonBarController.index == 0 ? nrcBackImage : "";
                 sellerInformation["passport_image"] =
-                    idIndex == 1 ? passportImage : "";
+                    _buttonBarController.index == 1 ? passportImage : "";
                 sellerInformation["driving_licence_image"] =
-                    idIndex == 2 ? drivingLicenceImage : "";
+                    _buttonBarController.index == 2 ? drivingLicenceImage : "";
                 sellerInformation["signature_image"] = signatureImage;
 
                 Navigator.pushNamedAndRemoveUntil(

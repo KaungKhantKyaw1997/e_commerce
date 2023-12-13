@@ -32,6 +32,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
   final _formKey = GlobalKey<FormState>();
   final userService = UserService();
   final sellerRegistrationFeeService = SellerRegistrationFeeService();
+  AnimatedButtonController _buttonBarController = AnimatedButtonController();
   FocusNode _emailFocusNode = FocusNode();
   FocusNode _passwordFocusNode = FocusNode();
   FocusNode _confirmPasswordFocusNode = FocusNode();
@@ -90,7 +91,6 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
   String drivingLicenceImage = '';
   XFile? signaturePickedFile;
   String signatureImage = '';
-  int idIndex = 0;
   XFile? bankAccountPickedFile;
   String bankAccountImage = '';
   XFile? monthlyTransactionPickedFile;
@@ -265,11 +265,12 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
           monthlyTransactionImage = response["data"]["seller_information"]
                   ["monthly_transaction_screenshot"] ??
               "";
-          idIndex = nrc.text.isNotEmpty
+          int index = nrc.text.isNotEmpty
               ? 0
               : passportImage.isNotEmpty
                   ? 1
                   : 2;
+          _buttonBarController.setIndex(index);
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -1750,6 +1751,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                   ),
                 if (role == 'agent')
                   AnimatedButtonBar(
+                    controller: _buttonBarController,
                     radius: 20,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -1774,7 +1776,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                           drivingLicenceImage = '';
 
                           setState(() {
-                            idIndex = 0;
+                            _buttonBarController.setIndex(0);
                           });
                         },
                         child: Text(
@@ -1782,7 +1784,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
-                            color: idIndex == 0
+                            color: _buttonBarController.index == 0
                                 ? Colors.white
                                 : Theme.of(context).primaryColor,
                           ),
@@ -1801,7 +1803,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                           drivingLicenceImage = '';
 
                           setState(() {
-                            idIndex = 1;
+                            _buttonBarController.setIndex(1);
                           });
                         },
                         child: Text(
@@ -1809,7 +1811,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
-                            color: idIndex == 1
+                            color: _buttonBarController.index == 1
                                 ? Colors.white
                                 : Theme.of(context).primaryColor,
                           ),
@@ -1828,7 +1830,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                           drivingLicenceImage = '';
 
                           setState(() {
-                            idIndex = 2;
+                            _buttonBarController.setIndex(2);
                           });
                         },
                         child: Text(
@@ -1836,7 +1838,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
-                            color: idIndex == 2
+                            color: _buttonBarController.index == 2
                                 ? Colors.white
                                 : Theme.of(context).primaryColor,
                           ),
@@ -1844,7 +1846,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       ),
                     ],
                   ),
-                if (role == 'agent' && idIndex == 0)
+                if (role == 'agent' && _buttonBarController.index == 0)
                   Padding(
                     padding: const EdgeInsets.only(
                       top: 24,
@@ -1860,7 +1862,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       ),
                     ),
                   ),
-                if (role == 'agent' && idIndex == 0)
+                if (role == 'agent' && _buttonBarController.index == 0)
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 16,
@@ -1902,7 +1904,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       },
                     ),
                   ),
-                if (role == 'agent' && idIndex == 0)
+                if (role == 'agent' && _buttonBarController.index == 0)
                   GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "frontnrc");
@@ -1967,7 +1969,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                 ),
                     ),
                   ),
-                if (role == 'agent' && idIndex == 0)
+                if (role == 'agent' && _buttonBarController.index == 0)
                   GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "backnrc");
@@ -2032,7 +2034,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                 ),
                     ),
                   ),
-                if (role == 'agent' && idIndex == 1)
+                if (role == 'agent' && _buttonBarController.index == 1)
                   GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "passport");
@@ -2098,7 +2100,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                 ),
                     ),
                   ),
-                if (role == 'agent' && idIndex == 2)
+                if (role == 'agent' && _buttonBarController.index == 2)
                   GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "drivinglicence");
@@ -2719,28 +2721,28 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                         return;
                       }
                       if (role == 'agent' &&
-                          idIndex == 0 &&
+                          _buttonBarController.index == 0 &&
                           nrcFrontPickedFile == null) {
                         ToastUtil.showToast(0,
                             language["Choose Front NRC"] ?? "Choose Front NRC");
                         return;
                       }
                       if (role == 'agent' &&
-                          idIndex == 0 &&
+                          _buttonBarController.index == 0 &&
                           nrcBackPickedFile == null) {
                         ToastUtil.showToast(0,
                             language["Choose Back NRC"] ?? "Choose Back NRC");
                         return;
                       }
                       if (role == 'agent' &&
-                          idIndex == 1 &&
+                          _buttonBarController.index == 1 &&
                           passportPickedFile == null) {
                         ToastUtil.showToast(0,
                             language["Choose Passport"] ?? "Choose Passport");
                         return;
                       }
                       if (role == 'agent' &&
-                          idIndex == 2 &&
+                          _buttonBarController.index == 2 &&
                           drivingLicencePickedFile == null) {
                         ToastUtil.showToast(
                             0,
@@ -2779,12 +2781,12 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                             facebookProfilePickedFile, 'facebookprofile');
                         await uploadFile(
                             facebookPagePickedFile, 'facebookpage');
-                        if (idIndex == 0) {
+                        if (_buttonBarController.index == 0) {
                           await uploadFile(nrcFrontPickedFile, 'frontnrc');
                           await uploadFile(nrcBackPickedFile, 'backnrc');
-                        } else if (idIndex == 1) {
+                        } else if (_buttonBarController.index == 1) {
                           await uploadFile(passportPickedFile, 'passport');
-                        } else if (idIndex == 2) {
+                        } else if (_buttonBarController.index == 2) {
                           await uploadFile(
                               drivingLicencePickedFile, 'drivinglicence');
                         }
@@ -2881,7 +2883,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                 return;
                               }
                               if (role == 'agent' &&
-                                  idIndex == 0 &&
+                                  _buttonBarController.index == 0 &&
                                   nrcFrontPickedFile == null &&
                                   nrcFrontImage.isEmpty) {
                                 ToastUtil.showToast(
@@ -2891,7 +2893,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                 return;
                               }
                               if (role == 'agent' &&
-                                  idIndex == 0 &&
+                                  _buttonBarController.index == 0 &&
                                   nrcBackPickedFile == null &&
                                   nrcBackImage.isEmpty) {
                                 ToastUtil.showToast(
@@ -2901,7 +2903,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                 return;
                               }
                               if (role == 'agent' &&
-                                  idIndex == 1 &&
+                                  _buttonBarController.index == 1 &&
                                   passportPickedFile == null &&
                                   passportImage.isEmpty) {
                                 ToastUtil.showToast(
@@ -2911,7 +2913,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                 return;
                               }
                               if (role == 'agent' &&
-                                  idIndex == 2 &&
+                                  _buttonBarController.index == 2 &&
                                   drivingLicencePickedFile == null &&
                                   drivingLicenceImage.isEmpty) {
                                 ToastUtil.showToast(
@@ -2962,7 +2964,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                   await uploadFile(
                                       facebookPagePickedFile, 'facebookpage');
                                 }
-                                if (idIndex == 0) {
+                                if (_buttonBarController.index == 0) {
                                   if (nrcFrontPickedFile != null) {
                                     await uploadFile(
                                         nrcFrontPickedFile, 'frontnrc');
@@ -2971,12 +2973,12 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                     await uploadFile(
                                         nrcBackPickedFile, 'backnrc');
                                   }
-                                } else if (idIndex == 1) {
+                                } else if (_buttonBarController.index == 1) {
                                   if (passportPickedFile != null) {
                                     await uploadFile(
                                         passportPickedFile, 'passport');
                                   }
-                                } else if (idIndex == 2) {
+                                } else if (_buttonBarController.index == 2) {
                                   if (drivingLicencePickedFile != null) {
                                     await uploadFile(drivingLicencePickedFile,
                                         'drivinglicence');
