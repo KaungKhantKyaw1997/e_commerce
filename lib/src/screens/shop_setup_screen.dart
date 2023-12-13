@@ -379,21 +379,21 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
                         onTap: () {
                           _pickImage(ImageSource.gallery);
                         },
-                        child: coverImage.isNotEmpty
+                        child: pickedFile != null
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
-                                child: Image.network(
-                                  '${ApiConstants.baseUrl}${coverImage.toString()}',
+                                child: Image.file(
+                                  File(pickedFile!.path),
                                   width: 100,
                                   height: 100,
                                   fit: BoxFit.cover,
                                 ),
                               )
-                            : pickedFile != null
+                            : coverImage.isNotEmpty
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
-                                    child: Image.file(
-                                      File(pickedFile!.path),
+                                    child: Image.network(
+                                      '${ApiConstants.baseUrl}${coverImage.toString()}',
                                       width: 100,
                                       height: 100,
                                       fit: BoxFit.cover,
