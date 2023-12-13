@@ -137,8 +137,7 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
 
   Future<void> uploadFile(pickedFile, type) async {
     try {
-      var response = await AuthService.uploadFile(File(pickedFile!.path),
-          resolution: "100x100");
+      var response = await AuthService.uploadFile(File(pickedFile!.path));
       var res = jsonDecode(response.body);
       if (res["code"] == 200) {
         if (type == "bankaccount") {
@@ -177,6 +176,9 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
           "nrc": sellerInformation["nrc"],
           "nrc_front_image": sellerInformation["nrc_front_image"],
           "nrc_back_image": sellerInformation["nrc_back_image"],
+          "passport_image": sellerInformation["passport_image"],
+          "driving_licence_image": sellerInformation["driving_licence_image"],
+          "signature_image": sellerInformation["signature_image"],
           "bank_code": bankCode.text,
           "bank_account": bankAccount.text,
           "bank_account_image": bankAccountImage,

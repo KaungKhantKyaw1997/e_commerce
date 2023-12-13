@@ -78,7 +78,7 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
   Future<void> uploadFile(pickedFile, type) async {
     try {
       var response = await AuthService.uploadFile(File(pickedFile!.path),
-          resolution: "100x100");
+          resolution: type == "facebookprofile" ? "100x100" : "");
       var res = jsonDecode(response.body);
       if (res["code"] == 200) {
         if (type == "facebookprofile") {
@@ -124,76 +124,69 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                Stack(
+                  clipBehavior: Clip.none,
                   children: [
-                    Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.only(
-                            top: 24,
-                            bottom: 24,
-                          ),
+                    Container(
+                      padding: EdgeInsets.only(
+                        top: 24,
+                        bottom: 24,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorConstants.fillColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: GestureDetector(
+                        onTap: () {
+                          _pickImage(ImageSource.gallery, "facebookprofile");
+                        },
+                        child: facebookProfilePickedFile == null
+                            ? ClipOval(
+                                child: Image.asset(
+                                  'assets/images/profile.png',
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : ClipOval(
+                                child: Image.file(
+                                  File(facebookProfilePickedFile!.path),
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 24,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: () {
+                          _pickImage(ImageSource.gallery, "facebookprofile");
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: ColorConstants.fillColor,
                             shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 3,
+                            ),
+                            color: Theme.of(context).primaryColorLight,
                           ),
-                          child: GestureDetector(
-                            onTap: () {
-                              _pickImage(
-                                  ImageSource.gallery, "facebookprofile");
-                            },
-                            child: facebookProfilePickedFile == null
-                                ? ClipOval(
-                                    child: Image.asset(
-                                      'assets/images/profile.png',
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                                : ClipOval(
-                                    child: Image.file(
-                                      File(facebookProfilePickedFile!.path),
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 24,
-                          right: 0,
-                          child: GestureDetector(
-                            onTap: () {
-                              _pickImage(
-                                  ImageSource.gallery, "facebookprofile");
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 3,
-                                ),
-                                color: Theme.of(context).primaryColorLight,
-                              ),
-                              child: SvgPicture.asset(
-                                "assets/icons/gallery.svg",
-                                width: 16,
-                                height: 16,
-                                colorFilter: ColorFilter.mode(
-                                  Colors.white,
-                                  BlendMode.srcIn,
-                                ),
-                              ),
+                          child: SvgPicture.asset(
+                            "assets/icons/gallery.svg",
+                            width: 16,
+                            height: 16,
+                            colorFilter: ColorFilter.mode(
+                              Colors.white,
+                              BlendMode.srcIn,
                             ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),

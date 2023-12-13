@@ -88,8 +88,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
 
   Future<void> uploadFile(pickedFile, type) async {
     try {
-      var response = await AuthService.uploadFile(File(pickedFile!.path),
-          resolution: "100x100");
+      var response = await AuthService.uploadFile(File(pickedFile!.path));
       var res = jsonDecode(response.body);
       if (res["code"] == 200) {
         if (type == "frontnrc") {
