@@ -215,62 +215,65 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
           canViewAddress = response["data"]["can_view_address"] ?? false;
           canViewPhone = response["data"]["can_view_phone"] ?? false;
 
-          facebookProfileImage = response["data"]["seller_information"]
-                  ["facebook_profile_image"] ??
-              "";
-          facebookPageImage = response["data"]["seller_information"]
-                  ["facebook_page_image"] ??
-              "";
-          shopOrPageName.text =
-              response["data"]["seller_information"]["shop_or_page_name"] ?? "";
-          businessPhone.text =
-              response["data"]["seller_information"]["bussiness_phone"] ?? "";
-          businessPhone.text = businessPhone.text.replaceAll("959", "");
-          address.text =
-              response["data"]["seller_information"]["address"] ?? "";
+          if (role == 'agent') {
+            facebookProfileImage = response["data"]["seller_information"]
+                    ["facebook_profile_image"] ??
+                "";
+            facebookPageImage = response["data"]["seller_information"]
+                    ["facebook_page_image"] ??
+                "";
+            shopOrPageName.text = response["data"]["seller_information"]
+                    ["shop_or_page_name"] ??
+                "";
+            businessPhone.text =
+                response["data"]["seller_information"]["bussiness_phone"] ?? "";
+            businessPhone.text = businessPhone.text.replaceAll("959", "");
+            address.text =
+                response["data"]["seller_information"]["address"] ?? "";
 
-          nrc.text = response["data"]["seller_information"]["nrc"] ?? "";
-          nrcFrontImage =
-              response["data"]["seller_information"]["nrc_front_image"] ?? "";
-          nrcBackImage =
-              response["data"]["seller_information"]["nrc_back_image"] ?? "";
-          passportImage =
-              response["data"]["seller_information"]["passport_image"] ?? "";
-          drivingLicenceImage = response["data"]["seller_information"]
-                  ["driving_licence_image"] ??
-              "";
-          signatureImage =
-              response["data"]["seller_information"]["signature_image"] ?? "";
+            nrc.text = response["data"]["seller_information"]["nrc"] ?? "";
+            nrcFrontImage =
+                response["data"]["seller_information"]["nrc_front_image"] ?? "";
+            nrcBackImage =
+                response["data"]["seller_information"]["nrc_back_image"] ?? "";
+            passportImage =
+                response["data"]["seller_information"]["passport_image"] ?? "";
+            drivingLicenceImage = response["data"]["seller_information"]
+                    ["driving_licence_image"] ??
+                "";
+            signatureImage =
+                response["data"]["seller_information"]["signature_image"] ?? "";
 
-          bankCode.text =
-              response["data"]["seller_information"]["bank_code"] ?? "";
-          bankAccount.text =
-              response["data"]["seller_information"]["bank_account"] ?? "";
-          bankAccountImage = response["data"]["seller_information"]
-                  ["bank_account_image"] ??
-              "";
-          walletType.text =
-              response["data"]["seller_information"]["wallet_type"] ?? "";
-          walletAccount.text =
-              response["data"]["seller_information"]["wallet_account"] ?? "";
-          walletAccount.text = walletAccount.text.replaceAll("959", "");
-          sellerRegistrationFeeId =
-              response["data"]["seller_information"]["fee_id"] ?? 0;
-          for (var data in sellerRegistrationFees) {
-            if (data["fee_id"] == sellerRegistrationFeeId) {
-              sellerRegistrationFeeDesc = data["description"];
-              break;
+            bankCode.text =
+                response["data"]["seller_information"]["bank_code"] ?? "";
+            bankAccount.text =
+                response["data"]["seller_information"]["bank_account"] ?? "";
+            bankAccountImage = response["data"]["seller_information"]
+                    ["bank_account_image"] ??
+                "";
+            walletType.text =
+                response["data"]["seller_information"]["wallet_type"] ?? "";
+            walletAccount.text =
+                response["data"]["seller_information"]["wallet_account"] ?? "";
+            walletAccount.text = walletAccount.text.replaceAll("959", "");
+            sellerRegistrationFeeId =
+                response["data"]["seller_information"]["fee_id"] ?? 0;
+            for (var data in sellerRegistrationFees) {
+              if (data["fee_id"] == sellerRegistrationFeeId) {
+                sellerRegistrationFeeDesc = data["description"];
+                break;
+              }
             }
+            monthlyTransactionImage = response["data"]["seller_information"]
+                    ["monthly_transaction_screenshot"] ??
+                "";
+            int index = nrc.text.isNotEmpty
+                ? 0
+                : passportImage.isNotEmpty
+                    ? 1
+                    : 2;
+            _buttonBarController.setIndex(index);
           }
-          monthlyTransactionImage = response["data"]["seller_information"]
-                  ["monthly_transaction_screenshot"] ??
-              "";
-          int index = nrc.text.isNotEmpty
-              ? 0
-              : passportImage.isNotEmpty
-                  ? 1
-                  : 2;
-          _buttonBarController.setIndex(index);
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);

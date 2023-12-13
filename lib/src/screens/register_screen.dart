@@ -28,6 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   final _formKey = GlobalKey<FormState>();
   final authService = AuthService();
   ScrollController _scrollController = ScrollController();
+  AnimatedButtonController _buttonBarController = AnimatedButtonController();
   FocusNode _emailFocusNode = FocusNode();
   FocusNode _passwordFocusNode = FocusNode();
   FocusNode _confirmPasswordFocusNode = FocusNode();
@@ -46,7 +47,6 @@ class _RegisterScreenState extends State<RegisterScreen>
   final ImagePicker _picker = ImagePicker();
   XFile? pickedFile;
   String profileImage = '';
-  int userIndex = 0;
 
   @override
   void initState() {
@@ -196,6 +196,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   style: FontConstants.caption2,
                 ),
                 onTap: () async {
+                  Navigator.of(context).pop();
                   _pickImage(ImageSource.gallery);
                 },
               ),
@@ -218,6 +219,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                     style: FontConstants.caption2,
                   ),
                   onTap: () async {
+                    Navigator.of(context).pop();
                     _pickImage(ImageSource.camera);
                   },
                 ),
@@ -264,6 +266,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 AnimatedButtonBar(
+                  controller: _buttonBarController,
                   radius: 20,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 100,
@@ -278,36 +281,34 @@ class _RegisterScreenState extends State<RegisterScreen>
                     ButtonBarEntry(
                       onTap: () {
                         setState(() {
-                          userIndex = 0;
+                          _buttonBarController.setIndex(0);
                         });
                       },
-                      child: SvgPicture.asset(
-                        "assets/icons/profile.svg",
-                        width: 24,
-                        height: 24,
-                        colorFilter: ColorFilter.mode(
-                          userIndex == 0
+                      child: Text(
+                        language["User"] ?? "User",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: _buttonBarController.index == 0
                               ? Colors.white
                               : Theme.of(context).primaryColor,
-                          BlendMode.srcIn,
                         ),
                       ),
                     ),
                     ButtonBarEntry(
                       onTap: () {
                         setState(() {
-                          userIndex = 1;
+                          _buttonBarController.setIndex(1);
                         });
                       },
-                      child: SvgPicture.asset(
-                        "assets/icons/agent.svg",
-                        width: 24,
-                        height: 24,
-                        colorFilter: ColorFilter.mode(
-                          userIndex == 1
+                      child: Text(
+                        language["Vendor"] ?? "Vendor",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: _buttonBarController.index == 1
                               ? Colors.white
                               : Theme.of(context).primaryColor,
-                          BlendMode.srcIn,
                         ),
                       ),
                     ),
@@ -327,7 +328,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                       ),
                       child: GestureDetector(
                         onTap: () {
-                          if (userIndex == 1) {
+                          if (_buttonBarController.index == 1) {
                             _pickImage(ImageSource.camera);
                           } else {
                             _showImageBottomSheet(context);
@@ -357,7 +358,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                       right: 0,
                       child: GestureDetector(
                         onTap: () {
-                          if (userIndex == 1) {
+                          if (_buttonBarController.index == 1) {
                             _pickImage(ImageSource.camera);
                           } else {
                             _showImageBottomSheet(context);
@@ -745,13 +746,20 @@ class _RegisterScreenState extends State<RegisterScreen>
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                showLoadingDialog(context);
-                if (pickedFile != null) {
-                  await uploadFile();
-                }
-                if (userIndex == 0) {
+                if (_buttonBarController.index == 0) {
+                  showLoadingDialog(context);
+                  if (pickedFile != null) {
+                    await uploadFile();
+                  }
                   register();
                 } else {
+                  if (pickedFile == null) {
+                    ToastUtil.showToast(
+                        0, language["Take Photo"] ?? "Take Photo");
+                    return;
+                  }
+                  showLoadingDialog(context);
+                  await uploadFile();
                   Navigator.pop(context);
                   Navigator.pushNamedAndRemoveUntil(
                     context,
@@ -773,7 +781,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               }
             },
             child: Text(
-              userIndex == 0
+              _buttonBarController.index == 0
                   ? language["Register"] ?? "Register"
                   : language["Next"] ?? "Next",
               style: FontConstants.button1,
