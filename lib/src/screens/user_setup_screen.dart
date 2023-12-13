@@ -1559,8 +1559,8 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return language[
-                                  "Enter Your Shop Name or Facebook Page Name"] ??
-                              "Enter Your Shop Name or Facebook Page Name";
+                                  "Enter Shop Name or Facebook Page Name"] ??
+                              "Enter Shop Name or Facebook Page Name";
                         }
                         return null;
                       },

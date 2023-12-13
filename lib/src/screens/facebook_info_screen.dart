@@ -199,8 +199,8 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      language["Your Shop Name or Facebook Page Name"] ??
-                          "Your Shop Name or Facebook Page Name",
+                      language["Shop Name or Facebook Page Name"] ??
+                          "Shop Name or Facebook Page Name",
                       style: FontConstants.caption1,
                     ),
                   ),
@@ -241,8 +241,8 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return language[
-                                "Enter Your Shop Name or Facebook Page Name"] ??
-                            "Enter Your Shop Name or Facebook Page Name";
+                                "Enter Shop Name or Facebook Page Name"] ??
+                            "Enter Shop Name or Facebook Page Name";
                       }
                       return null;
                     },
