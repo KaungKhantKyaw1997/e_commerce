@@ -655,7 +655,6 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                             borderRadius: BorderRadius.circular(10),
                             child: Image.file(
                               File(monthlyTransactionPickedFile!.path),
-                              height: 180,
                               fit: BoxFit.cover,
                             ),
                           )
