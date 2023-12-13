@@ -181,47 +181,111 @@ class _RegisterScreenState extends State<RegisterScreen>
                   ],
                 ),
               ),
-              ListTile(
-                leading: SvgPicture.asset(
-                  "assets/icons/gallery.svg",
-                  width: 16,
-                  height: 16,
-                  colorFilter: ColorFilter.mode(
-                    Colors.black,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                title: Text(
-                  language["Galery"] ?? "Galery",
-                  style: FontConstants.caption2,
-                ),
-                onTap: () async {
-                  Navigator.of(context).pop();
-                  _pickImage(ImageSource.gallery);
-                },
-              ),
               Padding(
                 padding: const EdgeInsets.only(
-                  bottom: 32,
+                  left: 16,
+                  right: 16,
+                  bottom: 48,
                 ),
-                child: ListTile(
-                  leading: SvgPicture.asset(
-                    "assets/icons/camera.svg",
-                    width: 16,
-                    height: 16,
-                    colorFilter: ColorFilter.mode(
-                      Colors.black,
-                      BlendMode.srcIn,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Expanded(
+                      child: FractionallySizedBox(
+                        widthFactor: 1,
+                        child: GestureDetector(
+                          onTap: () async {
+                            Navigator.of(context).pop();
+                            _pickImage(ImageSource.gallery);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 16,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Theme.of(context).primaryColor,
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  "assets/icons/gallery.svg",
+                                  width: 24,
+                                  height: 24,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  language["Galery"] ?? "Galery",
+                                  style: FontConstants.caption2,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  title: Text(
-                    language["Camera"] ?? "Camera",
-                    style: FontConstants.caption2,
-                  ),
-                  onTap: () async {
-                    Navigator.of(context).pop();
-                    _pickImage(ImageSource.camera);
-                  },
+                    SizedBox(
+                      width: 16,
+                    ),
+                    Expanded(
+                      child: FractionallySizedBox(
+                        widthFactor: 1,
+                        child: GestureDetector(
+                          onTap: () async {
+                            Navigator.of(context).pop();
+                            _pickImage(ImageSource.camera);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 16,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Theme.of(context).primaryColor,
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  "assets/icons/camera.svg",
+                                  width: 24,
+                                  height: 24,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  language["Camera"] ?? "Camera",
+                                  style: FontConstants.caption2,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

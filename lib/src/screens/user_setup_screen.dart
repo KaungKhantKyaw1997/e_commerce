@@ -384,7 +384,10 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
         "can_modify_order_status": modifyOrderStatus,
         "can_view_address": canViewAddress,
         "can_view_phone": canViewPhone,
-        "seller_information": {
+      };
+
+      if (role == 'agent') {
+        body["seller_information"] = {
           "company_name": companyName.text,
           "professional_title": professionalTitle.text,
           "location": location.text,
@@ -407,8 +410,8 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
           "wallet_account": '959${walletAccount.text}',
           "fee_id": sellerRegistrationFeeId,
           "monthly_transaction_screenshot": monthlyTransactionImage,
-        }
-      };
+        };
+      }
 
       final response = await userService.addUserData(body);
       Navigator.pop(context);
@@ -465,7 +468,10 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
         "can_modify_order_status": modifyOrderStatus,
         "can_view_address": canViewAddress,
         "can_view_phone": canViewPhone,
-        "seller_information": {
+      };
+
+      if (role == 'agent') {
+        body["seller_information"] = {
           "company_name": companyName.text,
           "professional_title": professionalTitle.text,
           "location": location.text,
@@ -488,8 +494,8 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
           "wallet_account": '959${walletAccount.text}',
           "fee_id": sellerRegistrationFeeId,
           "monthly_transaction_screenshot": monthlyTransactionImage,
-        }
-      };
+        };
+      }
 
       final response = await userService.updateUserData(body, id);
       Navigator.pop(context);

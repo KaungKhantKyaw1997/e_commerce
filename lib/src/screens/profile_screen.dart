@@ -111,12 +111,168 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  void _showImageBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isDismissible: false,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(
+                  16,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      language["Make a Choice"] ?? "Make a Choice",
+                      style: FontConstants.subheadline1,
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.close,
+                        size: 22,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  bottom: 48,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Expanded(
+                      child: FractionallySizedBox(
+                        widthFactor: 1,
+                        child: GestureDetector(
+                          onTap: () async {
+                            Navigator.of(context).pop();
+                            _pickImage(ImageSource.gallery);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 16,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Theme.of(context).primaryColor,
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  "assets/icons/gallery.svg",
+                                  width: 24,
+                                  height: 24,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  language["Galery"] ?? "Galery",
+                                  style: FontConstants.caption2,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 16,
+                    ),
+                    Expanded(
+                      child: FractionallySizedBox(
+                        widthFactor: 1,
+                        child: GestureDetector(
+                          onTap: () async {
+                            Navigator.of(context).pop();
+                            _pickImage(ImageSource.camera);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 16,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Theme.of(context).primaryColor,
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  "assets/icons/camera.svg",
+                                  width: 24,
+                                  height: 24,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  language["Camera"] ?? "Camera",
+                                  style: FontConstants.caption2,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _pickImage(source) async {
     try {
-      pickedFile = await _picker.pickImage(
+      XFile? file = await _picker.pickImage(
         source: source,
       );
-      profileImage = "";
+      pickedFile = file;
       setState(() {});
     } catch (e) {
       print(e);
@@ -256,21 +412,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: GestureDetector(
                         onTap: () {
-                          _pickImage(ImageSource.gallery);
+                          _showImageBottomSheet(context);
                         },
-                        child: profileImage.isNotEmpty
+                        child: pickedFile != null
                             ? ClipOval(
-                                child: Image.network(
-                                  '${profileImage.startsWith("/images") ? ApiConstants.baseUrl : ""}$profileImage',
+                                child: Image.file(
+                                  File(pickedFile!.path),
                                   width: 100,
                                   height: 100,
                                   fit: BoxFit.cover,
                                 ),
                               )
-                            : pickedFile != null
+                            : profileImage.isNotEmpty
                                 ? ClipOval(
-                                    child: Image.file(
-                                      File(pickedFile!.path),
+                                    child: Image.network(
+                                      '${profileImage.startsWith("/images") ? ApiConstants.baseUrl : ""}$profileImage',
                                       width: 100,
                                       height: 100,
                                       fit: BoxFit.cover,
@@ -291,7 +447,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       right: 0,
                       child: GestureDetector(
                         onTap: () {
-                          _pickImage(ImageSource.gallery);
+                          _showImageBottomSheet(context);
                         },
                         child: Container(
                           padding: EdgeInsets.all(8),
