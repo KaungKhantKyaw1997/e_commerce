@@ -219,7 +219,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                                   width: 24,
                                   height: 24,
                                   colorFilter: ColorFilter.mode(
-                                    Colors.black,
+                                    Theme.of(context).primaryColor,
                                     BlendMode.srcIn,
                                   ),
                                 ),
@@ -268,7 +268,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                                   width: 24,
                                   height: 24,
                                   colorFilter: ColorFilter.mode(
-                                    Colors.black,
+                                    Theme.of(context).primaryColor,
                                     BlendMode.srcIn,
                                   ),
                                 ),
