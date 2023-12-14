@@ -292,10 +292,17 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
                                 SizedBox(
                                   height: 16,
                                 ),
-                                Text(
-                                  language["Upload Facebook Page Screenshot"] ??
-                                      "Upload Facebook Page Screenshot",
-                                  style: FontConstants.subheadline2,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  child: Text(
+                                    language[
+                                            "Upload Facebook Page Screenshot"] ??
+                                        "Upload Facebook Page Screenshot",
+                                    textAlign: TextAlign.center,
+                                    style: FontConstants.subheadline2,
+                                  ),
                                 ),
                               ],
                             ),

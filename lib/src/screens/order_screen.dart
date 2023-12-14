@@ -1071,11 +1071,17 @@ class _OrderScreenState extends State<OrderScreen>
                                         SizedBox(
                                           height: 16,
                                         ),
-                                        Text(
-                                          language[
-                                                  "Upload transaction history screenshot"] ??
-                                              "Upload transaction history screenshot",
-                                          style: FontConstants.subheadline2,
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                          ),
+                                          child: Text(
+                                            language[
+                                                    "Upload transaction history screenshot"] ??
+                                                "Upload transaction history screenshot",
+                                            textAlign: TextAlign.center,
+                                            style: FontConstants.subheadline2,
+                                          ),
                                         ),
                                       ],
                                     ),

@@ -15,6 +15,7 @@ import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class AccountInfoScreen extends StatefulWidget {
   const AccountInfoScreen({super.key});
@@ -29,6 +30,7 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
   final authService = AuthService();
   final sellerRegistrationFeeService = SellerRegistrationFeeService();
   ScrollController _scrollController = ScrollController();
+  NumberFormat formatter = NumberFormat('###,###.00', 'en_US');
   FocusNode _bankCodeFocusNode = FocusNode();
   FocusNode _bankAccountFocusNode = FocusNode();
   FocusNode _walletTypeFocusNode = FocusNode();
@@ -47,6 +49,7 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
   List<String> sellerRegistrationFeesDesc = [];
   int sellerRegistrationFeeId = 0;
   String sellerRegistrationFeeDesc = '';
+  double amount = 0.0;
   var data = {};
   var sellerInformation = {};
 
@@ -86,6 +89,7 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
           }
           sellerRegistrationFeeId = sellerRegistrationFees[0]["fee_id"];
           sellerRegistrationFeeDesc = sellerRegistrationFees[0]["description"];
+          amount = sellerRegistrationFees[0]["amount"];
           setState(() {});
         }
       } else {
@@ -445,10 +449,16 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                                 SizedBox(
                                   height: 16,
                                 ),
-                                Text(
-                                  language["Upload Bank Account Photo"] ??
-                                      "Upload Bank Account Photo",
-                                  style: FontConstants.subheadline2,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  child: Text(
+                                    language["Upload Bank Account Photo"] ??
+                                        "Upload Bank Account Photo",
+                                    textAlign: TextAlign.center,
+                                    style: FontConstants.subheadline2,
+                                  ),
                                 ),
                               ],
                             ),
@@ -616,7 +626,7 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                   padding: const EdgeInsets.only(
                     left: 16,
                     right: 16,
-                    bottom: 16,
+                    bottom: 4,
                   ),
                   child: CustomDropDown(
                     value: sellerRegistrationFeeDesc,
@@ -629,10 +639,29 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                       for (var data in sellerRegistrationFees) {
                         if (data["description"] == sellerRegistrationFeeDesc) {
                           sellerRegistrationFeeId = data["fee_id"];
+                          amount = data["amount"];
                         }
                       }
                     },
                     items: sellerRegistrationFeesDesc,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      formatter.format(amount),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: ColorConstants.greenColor,
+                      ),
+                    ),
                   ),
                 ),
                 GestureDetector(
@@ -678,11 +707,17 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                                 SizedBox(
                                   height: 16,
                                 ),
-                                Text(
-                                  language[
-                                          "Upload Monthly Fees Transaction Screenshot"] ??
-                                      "Upload Monthly Fees Transaction Screenshot",
-                                  style: FontConstants.subheadline2,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  child: Text(
+                                    language[
+                                            "Upload Monthly Fees Transaction Screenshot"] ??
+                                        "Upload Monthly Fees Transaction Screenshot",
+                                    textAlign: TextAlign.center,
+                                    style: FontConstants.subheadline2,
+                                  ),
                                 ),
                               ],
                             ),

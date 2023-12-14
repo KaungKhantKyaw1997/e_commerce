@@ -1621,11 +1621,17 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                       SizedBox(
                                         height: 16,
                                       ),
-                                      Text(
-                                        language[
-                                                "Upload Facebook Page Screenshot"] ??
-                                            "Upload Facebook Page Screenshot",
-                                        style: FontConstants.subheadline2,
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                        child: Text(
+                                          language[
+                                                  "Upload Facebook Page Screenshot"] ??
+                                              "Upload Facebook Page Screenshot",
+                                          textAlign: TextAlign.center,
+                                          style: FontConstants.subheadline2,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -1968,10 +1974,16 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                       SizedBox(
                                         height: 16,
                                       ),
-                                      Text(
-                                        language["Upload Front NRC"] ??
-                                            "Upload Front NRC",
-                                        style: FontConstants.subheadline2,
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                        child: Text(
+                                          language["Upload Front NRC"] ??
+                                              "Upload Front NRC",
+                                          textAlign: TextAlign.center,
+                                          style: FontConstants.subheadline2,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -2033,10 +2045,16 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                       SizedBox(
                                         height: 16,
                                       ),
-                                      Text(
-                                        language["Upload Back NRC"] ??
-                                            "Upload Back NRC",
-                                        style: FontConstants.subheadline2,
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                        child: Text(
+                                          language["Upload Back NRC"] ??
+                                              "Upload Back NRC",
+                                          textAlign: TextAlign.center,
+                                          style: FontConstants.subheadline2,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -2099,10 +2117,16 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                       SizedBox(
                                         height: 16,
                                       ),
-                                      Text(
-                                        language["Upload Passport"] ??
-                                            "Upload Passport",
-                                        style: FontConstants.subheadline2,
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                        child: Text(
+                                          language["Upload Passport"] ??
+                                              "Upload Passport",
+                                          textAlign: TextAlign.center,
+                                          style: FontConstants.subheadline2,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -2165,10 +2189,16 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                       SizedBox(
                                         height: 16,
                                       ),
-                                      Text(
-                                        language["Upload Driving Licence"] ??
-                                            "Upload Driving Licence",
-                                        style: FontConstants.subheadline2,
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                        child: Text(
+                                          language["Upload Driving Licence"] ??
+                                              "Upload Driving Licence",
+                                          textAlign: TextAlign.center,
+                                          style: FontConstants.subheadline2,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -2230,10 +2260,16 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                       SizedBox(
                                         height: 16,
                                       ),
-                                      Text(
-                                        language["Upload Signature"] ??
-                                            "Upload Signature",
-                                        style: FontConstants.subheadline2,
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                        child: Text(
+                                          language["Upload Signature"] ??
+                                              "Upload Signature",
+                                          textAlign: TextAlign.center,
+                                          style: FontConstants.subheadline2,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -2429,10 +2465,17 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                       SizedBox(
                                         height: 16,
                                       ),
-                                      Text(
-                                        language["Upload Bank Account Photo"] ??
-                                            "Upload Bank Account Photo",
-                                        style: FontConstants.subheadline2,
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                        child: Text(
+                                          language[
+                                                  "Upload Bank Account Photo"] ??
+                                              "Upload Bank Account Photo",
+                                          textAlign: TextAlign.center,
+                                          style: FontConstants.subheadline2,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -2678,11 +2721,17 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                       SizedBox(
                                         height: 16,
                                       ),
-                                      Text(
-                                        language[
-                                                "Upload Monthly Fees Transaction Screenshot"] ??
-                                            "Upload Monthly Fees Transaction Screenshot",
-                                        style: FontConstants.subheadline2,
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                        child: Text(
+                                          language[
+                                                  "Upload Monthly Fees Transaction Screenshot"] ??
+                                              "Upload Monthly Fees Transaction Screenshot",
+                                          textAlign: TextAlign.center,
+                                          style: FontConstants.subheadline2,
+                                        ),
                                       ),
                                     ],
                                   ),
