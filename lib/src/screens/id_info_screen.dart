@@ -2,17 +2,22 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:animated_button_bar/animated_button_bar.dart';
+import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
+import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
+import 'package:e_commerce/src/services/seller_agreement_contract_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 
 class IDInfoScreen extends StatefulWidget {
   const IDInfoScreen({super.key});
@@ -25,6 +30,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
   final crashlytic = new CrashlyticsService();
   final _formKey = GlobalKey<FormState>();
   final authService = AuthService();
+  final sellerAgreementContractService = SellerAgreementContractService();
   ScrollController _scrollController = ScrollController();
   AnimatedButtonController _buttonBarController = AnimatedButtonController();
   FocusNode _nrcFocusNode = FocusNode();
@@ -41,12 +47,14 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
   String drivingLicenceImage = '';
   XFile? signaturePickedFile;
   String signatureImage = '';
+  String filePath = "";
 
   var data = {};
 
   @override
   void initState() {
     super.initState();
+    getSellerAgreementContract();
     Future.delayed(Duration.zero, () {
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
@@ -61,6 +69,44 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  getSellerAgreementContract() async {
+    try {
+      final response =
+          await sellerAgreementContractService.getSellerAgreementContractData();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          setState(() {
+            filePath = response["data"];
+          });
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        }
+      }
+    }
   }
 
   Future<void> _pickImage(source, type) async {
@@ -104,6 +150,27 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
       }
     } catch (error) {
       print('Error uploading file: $error');
+    }
+  }
+
+  Future<void> _savePdf(url) async {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath =
+          '${directory.path}/SellerAgreementContract-${DateTime.now()}.pdf';
+      File file = File(filePath);
+      await file.writeAsBytes(response.bodyBytes);
+      print(filePath);
+      ToastUtil.showToast(
+          0,
+          language["Seller Agreement Contract has been saved to the file!"] ??
+              "Seller Agreement Contract has been saved to the file!");
+    } else {
+      ToastUtil.showToast(
+          0,
+          language["Saving Seller Agreement Contract failed!"] ??
+              "Saving Seller Agreement Contract failed!");
     }
   }
 
@@ -539,6 +606,78 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                             ),
                     ),
                   ),
+                Container(
+                  margin: EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 4,
+                  ),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      backgroundColor: Colors.white,
+                      side: BorderSide(
+                        color: Theme.of(context).primaryColor,
+                        width: 0.5,
+                      ),
+                    ),
+                    onPressed: () {
+                      _savePdf('${ApiConstants.baseUrl}${filePath}');
+                    },
+                    child: Text(
+                      language["Download for Seller Agreement Contract"] ??
+                          "Download for Seller Agreement Contract",
+                      style: FontConstants.button4,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 4,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      language["- Read the document and sign it."] ??
+                          "- Read the document and sign it.",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: ColorConstants.redColor,
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 4,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      language[
+                              "- To print the signature on a blank paper and upload a photo."] ??
+                          "- To print the signature on a blank paper and upload a photo.",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: ColorConstants.redColor,
+                      ),
+                    ),
+                  ),
+                ),
                 GestureDetector(
                   onTap: () {
                     _pickImage(ImageSource.gallery, "signature");

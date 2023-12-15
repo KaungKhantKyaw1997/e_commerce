@@ -75,6 +75,7 @@ dependencies:
   the_apple_sign_in: ^1.1.1
   share_extend: ^2.0.0
   animated_button_bar: ^1.0.0
+  file_picker: ^6.1.1
 
 dev_dependencies:
   flutter_test:
