@@ -38,6 +38,7 @@ import 'package:e_commerce/src/screens/profile_screen.dart';
 import 'package:e_commerce/src/screens/register_screen.dart';
 import 'package:e_commerce/src/screens/reviews_screen.dart';
 import 'package:e_commerce/src/screens/search_screen.dart';
+import 'package:e_commerce/src/screens/seller_agreement_contract_setup_screen.dart';
 import 'package:e_commerce/src/screens/seller_register_approval_screen.dart';
 import 'package:e_commerce/src/screens/seller_register_screen.dart';
 import 'package:e_commerce/src/screens/seller_registers_approval_screen.dart';
@@ -124,6 +125,8 @@ class Routes {
   static const String seller_register = '/seller_register';
   static const String seller_registers_approval = '/seller_registers_approval';
   static const String seller_register_approval = '/seller_register_approval';
+  static const String seller_agreement_contract_setup =
+      '/seller_agreement_contract_setup';
 
   static final Map<String, WidgetBuilder> routes = {
     splash: (BuildContext context) => const SplashScreen(),
@@ -198,5 +201,7 @@ class Routes {
         const SellerRegistersApprovalScreen(),
     seller_register_approval: (BuildContext context) =>
         const SellerRegisterApprovalScreen(),
+    seller_agreement_contract_setup: (BuildContext context) =>
+        const SellerAgreementContractSetupScreen(),
   };
 }

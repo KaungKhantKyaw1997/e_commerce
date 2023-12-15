@@ -182,7 +182,7 @@ class _SellerRegistrationFeeSetupScreenState
         Navigator.pop(context);
         Navigator.pushNamed(
           context,
-          Routes.seller_registration_fees,
+          Routes.seller_registration_fees_setup,
         );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -238,7 +238,7 @@ class _SellerRegistrationFeeSetupScreenState
         Navigator.pop(context);
         Navigator.pushNamed(
           context,
-          Routes.seller_registration_fees,
+          Routes.seller_registration_fees_setup,
         );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -283,7 +283,7 @@ class _SellerRegistrationFeeSetupScreenState
         Navigator.pop(context);
         Navigator.pushNamed(
           context,
-          Routes.seller_registration_fees,
+          Routes.seller_registration_fees_setup,
         );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
