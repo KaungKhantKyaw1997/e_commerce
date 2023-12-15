@@ -344,8 +344,6 @@ class _AccountInfoScreenState extends State<AccountInfoScreen>
         Navigator.pop(context);
         Navigator.pop(context);
         Navigator.pop(context);
-        Navigator.pop(context);
-        authService.logout(context);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
