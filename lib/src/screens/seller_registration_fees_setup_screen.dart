@@ -14,16 +14,16 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class SellerRegistrationFeesScreen extends StatefulWidget {
-  const SellerRegistrationFeesScreen({super.key});
+class SellerRegistrationFeesSetupScreen extends StatefulWidget {
+  const SellerRegistrationFeesSetupScreen({super.key});
 
   @override
-  State<SellerRegistrationFeesScreen> createState() =>
-      _SellerRegistrationFeesScreenState();
+  State<SellerRegistrationFeesSetupScreen> createState() =>
+      _SellerRegistrationFeesSetupScreenState();
 }
 
-class _SellerRegistrationFeesScreenState
-    extends State<SellerRegistrationFeesScreen> {
+class _SellerRegistrationFeesSetupScreenState
+    extends State<SellerRegistrationFeesSetupScreen> {
   final crashlytic = new CrashlyticsService();
   final sellerRegistrationFeeService = SellerRegistrationFeeService();
   TextEditingController search = TextEditingController(text: '');
@@ -239,7 +239,7 @@ class _SellerRegistrationFeesScreenState
                       onTap: () {
                         Navigator.pushNamedAndRemoveUntil(
                           context,
-                          Routes.seller_registration_fee,
+                          Routes.seller_registration_fee_setup,
                           arguments: {
                             "id": sellerRegistrationFees[index]["fee_id"],
                           },
@@ -278,7 +278,7 @@ class _SellerRegistrationFeesScreenState
         onPressed: () {
           Navigator.pushNamedAndRemoveUntil(
             context,
-            Routes.seller_registration_fee,
+            Routes.seller_registration_fee_setup,
             arguments: {
               "id": 0,
             },

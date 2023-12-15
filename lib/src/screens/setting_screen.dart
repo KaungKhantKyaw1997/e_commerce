@@ -1009,7 +1009,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             onTap: () {
                               Navigator.pushNamedAndRemoveUntil(
                                 context,
-                                Routes.seller_registration_fees,
+                                Routes.seller_registration_fees_setup,
                                 (route) => true,
                               );
                             },

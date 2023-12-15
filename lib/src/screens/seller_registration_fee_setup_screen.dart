@@ -13,16 +13,16 @@ import 'package:e_commerce/src/utils/toast.dart';
 import 'package:e_commerce/src/widgets/custom_autocomplete.dart';
 import 'package:flutter/material.dart';
 
-class SellerRegistrationFeeScreen extends StatefulWidget {
-  const SellerRegistrationFeeScreen({super.key});
+class SellerRegistrationFeeSetupScreen extends StatefulWidget {
+  const SellerRegistrationFeeSetupScreen({super.key});
 
   @override
-  State<SellerRegistrationFeeScreen> createState() =>
-      _SellerRegistrationFeeScreenState();
+  State<SellerRegistrationFeeSetupScreen> createState() =>
+      _SellerRegistrationFeeSetupScreenState();
 }
 
-class _SellerRegistrationFeeScreenState
-    extends State<SellerRegistrationFeeScreen> {
+class _SellerRegistrationFeeSetupScreenState
+    extends State<SellerRegistrationFeeSetupScreen> {
   final crashlytic = new CrashlyticsService();
   final ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
