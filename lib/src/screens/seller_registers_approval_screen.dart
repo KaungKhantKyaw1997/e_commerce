@@ -14,14 +14,16 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class UsersSetupScreen extends StatefulWidget {
-  const UsersSetupScreen({super.key});
+class SellerRegistersApprovalScreen extends StatefulWidget {
+  const SellerRegistersApprovalScreen({super.key});
 
   @override
-  State<UsersSetupScreen> createState() => _UsersSetupScreenState();
+  State<SellerRegistersApprovalScreen> createState() =>
+      _SellerRegistersApprovalScreenState();
 }
 
-class _UsersSetupScreenState extends State<UsersSetupScreen> {
+class _SellerRegistersApprovalScreenState
+    extends State<SellerRegistersApprovalScreen> {
   final crashlytic = new CrashlyticsService();
   final userService = UserService();
   TextEditingController search = TextEditingController(text: '');
@@ -48,7 +50,7 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
   getUsers() async {
     try {
       final response = await userService.getUsersData(
-          page: page, search: search.text, requestToAgent: false);
+          page: page, search: search.text, requestToAgent: true);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
 
@@ -169,6 +171,21 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
                     overflow: TextOverflow.ellipsis,
                     style: FontConstants.caption1,
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        users[index]["account_status"].toString(),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: users[index]["account_status"] == "active"
+                              ? const Color.fromARGB(255, 5, 141, 9)
+                              : const Color.fromARGB(255, 170, 104, 4),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -257,7 +274,7 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
                       onTap: () {
                         Navigator.pushNamedAndRemoveUntil(
                           context,
-                          Routes.user_setup,
+                          Routes.seller_register_approval,
                           arguments: {
                             "id": users[index]["user_id"],
                           },
@@ -290,23 +307,6 @@ class _UsersSetupScreenState extends State<UsersSetupScreen> {
               ],
             ),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            Routes.user_setup,
-            arguments: {
-              "id": 0,
-            },
-            (route) => true,
-          );
-        },
-        backgroundColor: Theme.of(context).primaryColor,
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
         ),
       ),
     );

@@ -829,6 +829,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                     context,
                     Routes.facebook_info,
                     arguments: {
+                      "type": "agent",
                       "username": email.text,
                       "email": email.text,
                       "password": password.text,
@@ -838,6 +839,12 @@ class _RegisterScreenState extends State<RegisterScreen>
                       "role": "agent",
                       "method": "password",
                       "token": "",
+                      "seller_information": {
+                        "company_name": "",
+                        "professional_title": "",
+                        "location": "",
+                        "offline_trader": false,
+                      },
                     },
                     (route) => true,
                   );

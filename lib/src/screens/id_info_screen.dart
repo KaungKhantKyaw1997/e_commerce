@@ -41,8 +41,8 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
   String drivingLicenceImage = '';
   XFile? signaturePickedFile;
   String signatureImage = '';
+
   var data = {};
-  var sellerInformation = {};
 
   @override
   void initState() {
@@ -52,8 +52,7 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
       if (arguments != null) {
-        data = arguments["data"];
-        sellerInformation = arguments["seller_information"];
+        data = arguments["data"] ?? {};
       }
     });
   }
@@ -122,7 +121,9 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
           elevation: 0,
           scrolledUnderElevation: 0,
           title: Text(
-            language["Register"] ?? "Register",
+            data["type"] == "agent"
+                ? language["Register"] ?? "Register"
+                : language["Seller Register"] ?? "Seller Register",
             style: FontConstants.title1,
           ),
           iconTheme: IconThemeData(
@@ -666,24 +667,23 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                 await uploadFile(signaturePickedFile, 'signature');
 
                 Navigator.pop(context);
-                sellerInformation["nrc"] =
+                data["seller_information"]["nrc"] =
                     _buttonBarController.index == 0 ? nrc.text : "";
-                sellerInformation["nrc_front_image"] =
+                data["seller_information"]["nrc_front_image"] =
                     _buttonBarController.index == 0 ? nrcFrontImage : "";
-                sellerInformation["nrc_back_image"] =
+                data["seller_information"]["nrc_back_image"] =
                     _buttonBarController.index == 0 ? nrcBackImage : "";
-                sellerInformation["passport_image"] =
+                data["seller_information"]["passport_image"] =
                     _buttonBarController.index == 1 ? passportImage : "";
-                sellerInformation["driving_licence_image"] =
+                data["seller_information"]["driving_licence_image"] =
                     _buttonBarController.index == 2 ? drivingLicenceImage : "";
-                sellerInformation["signature_image"] = signatureImage;
+                data["seller_information"]["signature_image"] = signatureImage;
 
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   Routes.account_info,
                   arguments: {
-                    "data": data,
-                    "seller_information": sellerInformation
+                    'data': data,
                   },
                   (route) => true,
                 );

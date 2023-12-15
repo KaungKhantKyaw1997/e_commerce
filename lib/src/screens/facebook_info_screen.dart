@@ -108,7 +108,9 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
           elevation: 0,
           scrolledUnderElevation: 0,
           title: Text(
-            language["Register"] ?? "Register",
+            data["type"] == "agent"
+                ? language["Register"] ?? "Register"
+                : language["Seller Register"] ?? "Seller Register",
             style: FontConstants.title1,
           ),
           iconTheme: IconThemeData(
@@ -473,19 +475,22 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
                 showLoadingDialog(context);
                 await uploadFile(facebookProfilePickedFile, 'facebookprofile');
                 await uploadFile(facebookPagePickedFile, 'facebookpage');
+
+                data["seller_information"]["facebook_profile_image"] =
+                    facebookProfileImage;
+                data["seller_information"]["facebook_page_image"] =
+                    facebookPageImage;
+                data["seller_information"]["shop_or_page_name"] =
+                    shopOrPageName.text;
+                data["seller_information"]["bussiness_phone"] =
+                    businessPhone.text;
+                data["seller_information"]["address"] = address.text;
                 Navigator.pop(context);
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   Routes.id_info,
                   arguments: {
-                    "data": data,
-                    "seller_information": {
-                      "facebook_profile_image": facebookProfileImage,
-                      "facebook_page_image": facebookPageImage,
-                      "shop_or_page_name": shopOrPageName.text,
-                      "bussiness_phone": businessPhone.text,
-                      "address": address.text,
-                    }
+                    'data': data,
                   },
                   (route) => true,
                 );

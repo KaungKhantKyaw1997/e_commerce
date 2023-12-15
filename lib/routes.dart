@@ -38,6 +38,9 @@ import 'package:e_commerce/src/screens/profile_screen.dart';
 import 'package:e_commerce/src/screens/register_screen.dart';
 import 'package:e_commerce/src/screens/reviews_screen.dart';
 import 'package:e_commerce/src/screens/search_screen.dart';
+import 'package:e_commerce/src/screens/seller_register_approval_screen.dart';
+import 'package:e_commerce/src/screens/seller_register_screen.dart';
+import 'package:e_commerce/src/screens/seller_registers_approval_screen.dart';
 import 'package:e_commerce/src/screens/seller_registration_fee_screen.dart';
 import 'package:e_commerce/src/screens/seller_registration_fees_screen.dart';
 import 'package:e_commerce/src/screens/seller_report_screen.dart';
@@ -116,6 +119,9 @@ class Routes {
   static const String facebook_info = '/facebook_info';
   static const String id_info = '/id_info';
   static const String account_info = '/account_info';
+  static const String seller_register = '/seller_register';
+  static const String seller_registers_approval = '/seller_registers_approval';
+  static const String seller_register_approval = '/seller_register_approval';
 
   static final Map<String, WidgetBuilder> routes = {
     splash: (BuildContext context) => const SplashScreen(),
@@ -185,5 +191,10 @@ class Routes {
     facebook_info: (BuildContext context) => const FacebookInfoScreen(),
     id_info: (BuildContext context) => const IDInfoScreen(),
     account_info: (BuildContext context) => const AccountInfoScreen(),
+    seller_register: (BuildContext context) => const SellerRegisterScreen(),
+    seller_registers_approval: (BuildContext context) =>
+        const SellerRegistersApprovalScreen(),
+    seller_register_approval: (BuildContext context) =>
+        const SellerRegisterApprovalScreen(),
   };
 }

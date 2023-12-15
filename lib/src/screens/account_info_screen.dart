@@ -4,11 +4,14 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
+import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
+import 'package:e_commerce/src/services/bank_account_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/seller_registration_fee_service.dart';
+import 'package:e_commerce/src/services/user_service.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:e_commerce/src/widgets/custom_dropdown.dart';
@@ -24,11 +27,15 @@ class AccountInfoScreen extends StatefulWidget {
   State<AccountInfoScreen> createState() => _AccountInfoScreenState();
 }
 
-class _AccountInfoScreenState extends State<AccountInfoScreen> {
+class _AccountInfoScreenState extends State<AccountInfoScreen>
+    with SingleTickerProviderStateMixin {
   final crashlytic = new CrashlyticsService();
   final _formKey = GlobalKey<FormState>();
+  late TabController _tabController;
   final authService = AuthService();
   final sellerRegistrationFeeService = SellerRegistrationFeeService();
+  final userService = UserService();
+  final bankAccountService = BankAccountService();
   ScrollController _scrollController = ScrollController();
   NumberFormat formatter = NumberFormat('###,###.00', 'en_US');
   FocusNode _bankCodeFocusNode = FocusNode();
@@ -50,20 +57,21 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
   int sellerRegistrationFeeId = 0;
   String sellerRegistrationFeeDesc = '';
   double amount = 0.0;
+  List bankaccounts = [];
   var data = {};
-  var sellerInformation = {};
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     getSellerRegistrationFees();
+    getBankAccounts('mbanking');
     Future.delayed(Duration.zero, () {
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
       if (arguments != null) {
-        data = arguments["data"];
-        sellerInformation = arguments["seller_information"];
+        data = arguments["data"] ?? {};
       }
     });
   }
@@ -71,6 +79,7 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -90,6 +99,49 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
           sellerRegistrationFeeId = sellerRegistrationFees[0]["fee_id"];
           sellerRegistrationFeeDesc = sellerRegistrationFees[0]["description"];
           amount = sellerRegistrationFees[0]["amount"];
+          setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getBankAccounts(accountType) async {
+    try {
+      setState(() {
+        bankaccounts = [];
+      });
+      final response = await bankAccountService.getBankAccountsData(
+          accountType: accountType);
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          bankaccounts = response["data"];
           setState(() {});
         }
       } else {
@@ -168,21 +220,26 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
         "method": data["method"],
         "token": data["token"],
         "seller_information": {
-          "company_name": "",
-          "professional_title": "",
-          "location": "",
-          "offline_trader": false,
-          "facebook_profile_image": sellerInformation["facebook_profile_image"],
-          "shop_or_page_name": sellerInformation["shop_or_page_name"],
-          "facebook_page_image": sellerInformation["facebook_page_image"],
-          "bussiness_phone": '959${sellerInformation["bussiness_phone"]}',
-          "address": sellerInformation["address"],
-          "nrc": sellerInformation["nrc"],
-          "nrc_front_image": sellerInformation["nrc_front_image"],
-          "nrc_back_image": sellerInformation["nrc_back_image"],
-          "passport_image": sellerInformation["passport_image"],
-          "driving_licence_image": sellerInformation["driving_licence_image"],
-          "signature_image": sellerInformation["signature_image"],
+          "company_name": data["seller_information"]["company_name"],
+          "professional_title": data["seller_information"]
+              ["professional_title"],
+          "location": data["seller_information"]["location"],
+          "offline_trader": data["seller_information"]["offline_trader"],
+          "facebook_profile_image": data["seller_information"]
+              ["facebook_profile_image"],
+          "shop_or_page_name": data["seller_information"]["shop_or_page_name"],
+          "facebook_page_image": data["seller_information"]
+              ["facebook_page_image"],
+          "bussiness_phone":
+              '959${data["seller_information"]["bussiness_phone"]}',
+          "address": data["seller_information"]["address"],
+          "nrc": data["seller_information"]["nrc"],
+          "nrc_front_image": data["seller_information"]["nrc_front_image"],
+          "nrc_back_image": data["seller_information"]["nrc_back_image"],
+          "passport_image": data["seller_information"]["passport_image"],
+          "driving_licence_image": data["seller_information"]
+              ["driving_licence_image"],
+          "signature_image": data["seller_information"]["signature_image"],
           "bank_code": bankCode.text,
           "bank_account": bankAccount.text,
           "bank_account_image": bankAccountImage,
@@ -202,10 +259,93 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
         Navigator.pop(context);
         Navigator.pop(context);
         Navigator.pop(context);
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      Navigator.pop(context);
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
         Navigator.pushNamed(
           context,
-          Routes.login,
+          Routes.connection_timeout,
         );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  updateUser() async {
+    try {
+      final body = {
+        "email": data["email"],
+        "password": data["password"],
+        "role": data["role"],
+        "name": data["name"],
+        "phone": '959${data["phone"]}',
+        "profile_image": data["profile_image"],
+        "account_status": data["account_status"],
+        "can_modify_order_status": data["can_modify_order_status"],
+        "can_view_address": data["can_view_address"],
+        "can_view_phone": data["can_view_phone"],
+        "request_to_agent": true,
+        "seller_information": {
+          "company_name": data["seller_information"]["company_name"],
+          "professional_title": data["seller_information"]
+              ["professional_title"],
+          "location": data["seller_information"]["location"],
+          "offline_trader": data["seller_information"]["offline_trader"],
+          "facebook_profile_image": data["seller_information"]
+              ["facebook_profile_image"],
+          "shop_or_page_name": data["seller_information"]["shop_or_page_name"],
+          "facebook_page_image": data["seller_information"]
+              ["facebook_page_image"],
+          "bussiness_phone":
+              '959${data["seller_information"]["bussiness_phone"]}',
+          "address": data["seller_information"]["address"],
+          "nrc": data["seller_information"]["nrc"],
+          "nrc_front_image": data["seller_information"]["nrc_front_image"],
+          "nrc_back_image": data["seller_information"]["nrc_back_image"],
+          "passport_image": data["seller_information"]["passport_image"],
+          "driving_licence_image": data["seller_information"]
+              ["driving_licence_image"],
+          "signature_image": data["seller_information"]["signature_image"],
+          "bank_code": bankCode.text,
+          "bank_account": bankAccount.text,
+          "bank_account_image": bankAccountImage,
+          "wallet_type": walletType.text,
+          "wallet_account": '959${walletAccount.text}',
+          "fee_id": sellerRegistrationFeeId,
+          "monthly_transaction_screenshot": monthlyTransactionImage,
+        }
+      };
+
+      final response = await userService.updateUserData(body, 0);
+      Navigator.pop(context);
+      if (response!["code"] == 200) {
+        ToastUtil.showToast(response["code"], response["message"]);
+        Navigator.pop(context);
+        Navigator.pop(context);
+        Navigator.pop(context);
+        Navigator.pop(context);
+        Navigator.pop(context);
+        authService.logout(context);
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -255,7 +395,9 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
           elevation: 0,
           scrolledUnderElevation: 0,
           title: Text(
-            language["Register"] ?? "Register",
+            data["type"] == "agent"
+                ? language["Register"] ?? "Register"
+                : language["Seller Register"] ?? "Seller Register",
             style: FontConstants.title1,
           ),
           iconTheme: IconThemeData(
@@ -664,12 +806,93 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                     ),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    bottom: 4,
+                  ),
+                  child: TabBar(
+                    controller: _tabController,
+                    indicatorColor: Theme.of(context).primaryColor,
+                    dividerColor: Colors.transparent,
+                    tabs: [
+                      Tab(
+                        child: Center(
+                          child: Text(
+                            "mBanking",
+                            style: FontConstants.subtitle1,
+                          ),
+                        ),
+                      ),
+                      Tab(
+                        child: Center(
+                          child: Text(
+                            "Wallet",
+                            style: FontConstants.subtitle1,
+                          ),
+                        ),
+                      ),
+                    ],
+                    onTap: (index) {
+                      if (index == 0) {
+                        getBankAccounts('mbanking');
+                      } else {
+                        getBankAccounts('wallet');
+                      }
+                    },
+                  ),
+                ),
+                ...bankaccounts.map((item) {
+                  return Card(
+                    elevation: 0,
+                    margin: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        10,
+                      ),
+                    ),
+                    color: ColorConstants.fillColor,
+                    child: ListTile(
+                      leading: item["bank_logo"].isNotEmpty
+                          ? ClipRRect(
+                              child: Image.network(
+                                '${ApiConstants.baseUrl}${item["bank_logo"]}',
+                                fit: BoxFit.cover,
+                                height: 60,
+                                width: 60,
+                              ),
+                            )
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.asset(
+                                'assets/images/logo.png',
+                                fit: BoxFit.cover,
+                                height: 60,
+                                width: 60,
+                              ),
+                            ),
+                      title: Text(
+                        "${item["account_number"]}",
+                        style: FontConstants.body1,
+                      ),
+                      subtitle: Text(
+                        "${item["account_holder_name"]}",
+                        style: FontConstants.caption2,
+                      ),
+                    ),
+                  );
+                }).toList(),
                 GestureDetector(
                   onTap: () {
                     _pickImage(ImageSource.gallery, "monthlytransaction");
                   },
                   child: Container(
                     margin: const EdgeInsets.only(
+                      top: 16,
                       left: 16,
                       right: 16,
                       bottom: 24,
@@ -767,7 +990,11 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                 await uploadFile(bankAccountPickedFile, 'bankaccount');
                 await uploadFile(
                     monthlyTransactionPickedFile, 'monthlytransaction');
-                register();
+                if (data["type"] == 'agent') {
+                  register();
+                } else {
+                  updateUser();
+                }
               }
             },
             child: Text(

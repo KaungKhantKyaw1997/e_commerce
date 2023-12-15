@@ -57,15 +57,18 @@ class UserService {
     return response.data;
   }
 
-  Future<Map<String, dynamic>?> getUsersData(
-      {int page = 1,
-      int perPage = 10,
-      String search = '',
-      String role = ''}) async {
+  Future<Map<String, dynamic>?> getUsersData({
+    int page = 1,
+    int perPage = 10,
+    String search = '',
+    String role = '',
+    bool requestToAgent = false,
+  }) async {
     var token = await storage.read(key: "token") ?? '';
     var url =
         '${ApiConstants.usersUrl}?page=$page&per_page=$perPage&search=$search';
     url = role.isNotEmpty ? '$url&role=$role' : url;
+    url = '$url&request_to_agent=$requestToAgent';
     final response = await dio.get(
       url,
       options: Options(

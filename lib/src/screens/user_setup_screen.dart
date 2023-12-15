@@ -2687,7 +2687,6 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                               borderRadius: BorderRadius.circular(10),
                               child: Image.file(
                                 File(monthlyTransactionPickedFile!.path),
-                                height: 180,
                                 fit: BoxFit.cover,
                               ),
                             )
@@ -2696,7 +2695,6 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                   borderRadius: BorderRadius.circular(10),
                                   child: Image.network(
                                     '${ApiConstants.baseUrl}$monthlyTransactionImage',
-                                    height: 180,
                                     fit: BoxFit.cover,
                                   ),
                                 )

@@ -426,6 +426,64 @@ class _SettingScreenState extends State<SettingScreen> {
                         ),
                       ),
                     ),
+                    role == 'user'
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                Routes.seller_register,
+                                (route) => true,
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                              ),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 16,
+                                      top: 16,
+                                      bottom: 16,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      "assets/icons/agent.svg",
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text:
+                                                  language["Seller Register"] ??
+                                                      "Seller Register",
+                                              style: FontConstants.caption2,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Container(),
                     role == 'admin'
                         ? GestureDetector(
                             onTap: () {
@@ -466,6 +524,64 @@ class _SettingScreenState extends State<SettingScreen> {
                                           children: [
                                             TextSpan(
                                               text: language["User"] ?? "User",
+                                              style: FontConstants.caption2,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    role == 'admin'
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                Routes.seller_registers_approval,
+                                (route) => true,
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                              ),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 16,
+                                      top: 16,
+                                      bottom: 16,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      "assets/icons/agent.svg",
+                                      width: 24,
+                                      height: 24,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        top: 16,
+                                        bottom: 16,
+                                      ),
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: language[
+                                                      "Seller Register Approval"] ??
+                                                  "Seller Register Approval",
                                               style: FontConstants.caption2,
                                             )
                                           ],
