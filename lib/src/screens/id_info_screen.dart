@@ -16,6 +16,7 @@ import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
@@ -172,9 +173,18 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
   Future<void> _savePdf(url) async {
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
-      final directory = await getApplicationDocumentsDirectory();
+      Directory? directory;
+
+      if (Platform.isAndroid) {
+        directory = await getExternalStorageDirectory();
+      } else if (Platform.isIOS) {
+        directory = await getLibraryDirectory();
+      } else {
+        return;
+      }
+
       final filePath =
-          '${directory.path}/SellerAgreementContract-${DateTime.now()}.pdf';
+          '${directory!.path}/SellerAgreementContract-${DateTime.now()}.pdf';
       File file = File(filePath);
       await file.writeAsBytes(response.bodyBytes);
       print(filePath);
@@ -182,6 +192,8 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
           0,
           language["Seller Agreement Contract has been saved to the file!"] ??
               "Seller Agreement Contract has been saved to the file!");
+
+      OpenFile.open(filePath);
     } else {
       ToastUtil.showToast(
           0,
