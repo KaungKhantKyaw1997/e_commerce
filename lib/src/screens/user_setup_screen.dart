@@ -115,7 +115,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
   ];
   String status = 'pending';
   double amount = 0.0;
-
+  bool checkSeller = false;
   int id = 0;
 
   @override
@@ -218,7 +218,12 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
           canViewAddress = response["data"]["can_view_address"] ?? false;
           canViewPhone = response["data"]["can_view_phone"] ?? false;
 
-          if (role == 'agent') {
+          if (response["data"]["seller_information"]["facebook_profile_image"]
+              .isNotEmpty) {
+            checkSeller = true;
+          }
+
+          if (checkSeller) {
             facebookProfileImage = response["data"]["seller_information"]
                     ["facebook_profile_image"] ??
                 "";
@@ -390,7 +395,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
         "can_view_phone": canViewPhone,
       };
 
-      if (role == 'agent') {
+      if (checkSeller) {
         body["seller_information"] = {
           "company_name": companyName.text,
           "professional_title": professionalTitle.text,
@@ -474,7 +479,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
         "can_view_phone": canViewPhone,
       };
 
-      if (role == 'agent') {
+      if (checkSeller) {
         body["seller_information"] = {
           "company_name": companyName.text,
           "professional_title": professionalTitle.text,
@@ -1434,7 +1439,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       ),
                     ],
                   ),
-                if (role == 'agent')
+                if (checkSeller)
                   Stack(
                     clipBehavior: Clip.none,
                     children: [
@@ -1510,7 +1515,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       ),
                     ],
                   ),
-                if (role == 'agent')
+                if (checkSeller)
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 16,
@@ -1526,7 +1531,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       ),
                     ),
                   ),
-                if (role == 'agent')
+                if (checkSeller)
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 16,
@@ -1570,7 +1575,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       },
                     ),
                   ),
-                if (role == 'agent')
+                if (checkSeller)
                   GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "facebookpage");
@@ -1642,7 +1647,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                 ),
                     ),
                   ),
-                if (role == 'agent')
+                if (checkSeller)
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 16,
@@ -1658,7 +1663,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       ),
                     ),
                   ),
-                if (role == 'agent')
+                if (checkSeller)
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 16,
@@ -1710,7 +1715,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       },
                     ),
                   ),
-                if (role == 'agent')
+                if (checkSeller)
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 16,
@@ -1725,7 +1730,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       ),
                     ),
                   ),
-                if (role == 'agent')
+                if (checkSeller)
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 16,
@@ -1768,7 +1773,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       },
                     ),
                   ),
-                if (role == 'agent')
+                if (checkSeller)
                   AnimatedButtonBar(
                     controller: _buttonBarController,
                     radius: 20,
@@ -1865,7 +1870,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       ),
                     ],
                   ),
-                if (role == 'agent' && _buttonBarController.index == 0)
+                if (checkSeller && _buttonBarController.index == 0)
                   Padding(
                     padding: const EdgeInsets.only(
                       top: 24,
@@ -1881,7 +1886,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       ),
                     ),
                   ),
-                if (role == 'agent' && _buttonBarController.index == 0)
+                if (checkSeller && _buttonBarController.index == 0)
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 16,
@@ -1923,7 +1928,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       },
                     ),
                   ),
-                if (role == 'agent' && _buttonBarController.index == 0)
+                if (checkSeller && _buttonBarController.index == 0)
                   GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "frontnrc");
@@ -1994,7 +1999,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                 ),
                     ),
                   ),
-                if (role == 'agent' && _buttonBarController.index == 0)
+                if (checkSeller && _buttonBarController.index == 0)
                   GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "backnrc");
@@ -2065,7 +2070,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                 ),
                     ),
                   ),
-                if (role == 'agent' && _buttonBarController.index == 1)
+                if (checkSeller && _buttonBarController.index == 1)
                   GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "passport");
@@ -2137,7 +2142,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                 ),
                     ),
                   ),
-                if (role == 'agent' && _buttonBarController.index == 2)
+                if (checkSeller && _buttonBarController.index == 2)
                   GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "drivinglicence");
@@ -2209,7 +2214,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                 ),
                     ),
                   ),
-                if (role == 'agent')
+                if (checkSeller)
                   GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "signature");
@@ -2280,7 +2285,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                 ),
                     ),
                   ),
-                if (role == 'agent')
+                if (checkSeller)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -2414,7 +2419,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       ),
                     ],
                   ),
-                if (role == 'agent')
+                if (checkSeller)
                   GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "bankaccount");
@@ -2486,7 +2491,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                 ),
                     ),
                   ),
-                if (role == 'agent')
+                if (checkSeller)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -2630,7 +2635,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       ),
                     ],
                   ),
-                if (role == 'agent')
+                if (checkSeller)
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 16,
@@ -2645,7 +2650,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       ),
                     ),
                   ),
-                if (role == 'agent')
+                if (checkSeller)
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 16,
@@ -2671,7 +2676,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       items: sellerRegistrationFeesDesc,
                     ),
                   ),
-                if (role == 'agent')
+                if (checkSeller)
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 16,
@@ -2690,7 +2695,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       ),
                     ),
                   ),
-                if (role == 'agent')
+                if (checkSeller)
                   GestureDetector(
                     onTap: () {
                       _pickImage(ImageSource.gallery, "monthlytransaction");
@@ -2785,43 +2790,42 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                   ),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      if (role == 'agent' &&
-                          facebookProfilePickedFile == null) {
+                      if (checkSeller && facebookProfilePickedFile == null) {
                         ToastUtil.showToast(
                             0,
                             language["Choose Facebook Profile"] ??
                                 "Choose Facebook Profile");
                         return;
                       }
-                      if (role == 'agent' && facebookPagePickedFile == null) {
+                      if (checkSeller && facebookPagePickedFile == null) {
                         ToastUtil.showToast(
                             0,
                             language["Choose Facebook Page Screenshot"] ??
                                 "Choose Facebook Page Screenshot");
                         return;
                       }
-                      if (role == 'agent' &&
+                      if (checkSeller &&
                           _buttonBarController.index == 0 &&
                           nrcFrontPickedFile == null) {
                         ToastUtil.showToast(0,
                             language["Choose Front NRC"] ?? "Choose Front NRC");
                         return;
                       }
-                      if (role == 'agent' &&
+                      if (checkSeller &&
                           _buttonBarController.index == 0 &&
                           nrcBackPickedFile == null) {
                         ToastUtil.showToast(0,
                             language["Choose Back NRC"] ?? "Choose Back NRC");
                         return;
                       }
-                      if (role == 'agent' &&
+                      if (checkSeller &&
                           _buttonBarController.index == 1 &&
                           passportPickedFile == null) {
                         ToastUtil.showToast(0,
                             language["Choose Passport"] ?? "Choose Passport");
                         return;
                       }
-                      if (role == 'agent' &&
+                      if (checkSeller &&
                           _buttonBarController.index == 2 &&
                           drivingLicencePickedFile == null) {
                         ToastUtil.showToast(
@@ -2830,20 +2834,19 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                 "Choose Driving Licence");
                         return;
                       }
-                      if (role == 'agent' && signaturePickedFile == null) {
+                      if (checkSeller && signaturePickedFile == null) {
                         ToastUtil.showToast(0,
                             language["Choose Signature"] ?? "Choose Signature");
                         return;
                       }
-                      if (role == 'agent' && bankAccountPickedFile == null) {
+                      if (checkSeller && bankAccountPickedFile == null) {
                         ToastUtil.showToast(
                             0,
                             language["Choose Bank Account Photo"] ??
                                 "Choose Bank Account Photo");
                         return;
                       }
-                      if (role == 'agent' &&
-                          monthlyTransactionPickedFile == null) {
+                      if (checkSeller && monthlyTransactionPickedFile == null) {
                         ToastUtil.showToast(
                             0,
                             language[
@@ -2856,7 +2859,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       if (pickedFile != null) {
                         await uploadFile(pickedFile, 'profile');
                       }
-                      if (role == 'agent') {
+                      if (checkSeller) {
                         await uploadFile(
                             facebookProfilePickedFile, 'facebookprofile');
                         await uploadFile(
@@ -2943,7 +2946,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                           ),
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              if (role == 'agent' &&
+                              if (checkSeller &&
                                   facebookProfilePickedFile == null &&
                                   facebookProfileImage.isEmpty) {
                                 ToastUtil.showToast(
@@ -2952,7 +2955,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                         "Choose Facebook Profile");
                                 return;
                               }
-                              if (role == 'agent' &&
+                              if (checkSeller &&
                                   facebookPagePickedFile == null &&
                                   facebookPageImage.isEmpty) {
                                 ToastUtil.showToast(
@@ -2962,7 +2965,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                         "Choose Facebook Page Screenshot");
                                 return;
                               }
-                              if (role == 'agent' &&
+                              if (checkSeller &&
                                   _buttonBarController.index == 0 &&
                                   nrcFrontPickedFile == null &&
                                   nrcFrontImage.isEmpty) {
@@ -2972,7 +2975,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                         "Choose Front NRC");
                                 return;
                               }
-                              if (role == 'agent' &&
+                              if (checkSeller &&
                                   _buttonBarController.index == 0 &&
                                   nrcBackPickedFile == null &&
                                   nrcBackImage.isEmpty) {
@@ -2982,7 +2985,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                         "Choose Back NRC");
                                 return;
                               }
-                              if (role == 'agent' &&
+                              if (checkSeller &&
                                   _buttonBarController.index == 1 &&
                                   passportPickedFile == null &&
                                   passportImage.isEmpty) {
@@ -2992,7 +2995,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                         "Choose Passport");
                                 return;
                               }
-                              if (role == 'agent' &&
+                              if (checkSeller &&
                                   _buttonBarController.index == 2 &&
                                   drivingLicencePickedFile == null &&
                                   drivingLicenceImage.isEmpty) {
@@ -3002,7 +3005,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                         "Choose Driving Licence");
                                 return;
                               }
-                              if (role == 'agent' &&
+                              if (checkSeller &&
                                   signaturePickedFile == null &&
                                   signatureImage.isEmpty) {
                                 ToastUtil.showToast(
@@ -3011,7 +3014,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                         "Choose Signature");
                                 return;
                               }
-                              if (role == 'agent' &&
+                              if (checkSeller &&
                                   bankAccountPickedFile == null &&
                                   bankAccountImage.isEmpty) {
                                 ToastUtil.showToast(
@@ -3020,7 +3023,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                                         "Choose Bank Account Photo");
                                 return;
                               }
-                              if (role == 'agent' &&
+                              if (checkSeller &&
                                   monthlyTransactionPickedFile == null &&
                                   monthlyTransactionImage.isEmpty) {
                                 ToastUtil.showToast(
@@ -3035,7 +3038,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                               if (pickedFile != null) {
                                 await uploadFile(pickedFile, 'profile');
                               }
-                              if (role == 'agent') {
+                              if (checkSeller) {
                                 if (facebookProfilePickedFile != null) {
                                   await uploadFile(facebookProfilePickedFile,
                                       'facebookprofile');
