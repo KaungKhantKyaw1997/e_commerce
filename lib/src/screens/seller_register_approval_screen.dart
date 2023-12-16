@@ -143,7 +143,6 @@ class _SellerRegisterApprovalScreenState
         setState(() {
           password.text = response["data"]["password"] ?? "";
           confirmpassword.text = response["data"]["password"] ?? "";
-          confirmpassword.text = response["data"]["password"] ?? "";
           role.text = response["data"]["role"] ?? "user";
           name.text = response["data"]["name"] ?? "";
           email.text = response["data"]["email"] ?? "";

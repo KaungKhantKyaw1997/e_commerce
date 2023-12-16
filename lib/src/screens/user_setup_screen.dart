@@ -193,7 +193,6 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
         setState(() {
           password.text = response["data"]["password"] ?? "";
           confirmpassword.text = response["data"]["password"] ?? "";
-          confirmpassword.text = response["data"]["password"] ?? "";
           role = response["data"]["role"] ?? "user";
           name.text = response["data"]["name"] ?? "";
           email.text = response["data"]["email"] ?? "";
