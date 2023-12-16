@@ -372,12 +372,12 @@ class _SellerRegisterScreenState extends State<SellerRegisterScreen> {
             backgroundColor: Theme.of(context).primaryColor,
           ),
           onPressed: () async {
-            if (pickedFile == null) {
-              ToastUtil.showToast(0, language["Take Photo"] ?? "Take Photo");
-              return;
-            }
+            // if (pickedFile == null) {
+            //   ToastUtil.showToast(0, language["Take Photo"] ?? "Take Photo");
+            //   return;
+            // }
             showLoadingDialog(context);
-            await uploadFile();
+            // await uploadFile();
             Navigator.pop(context);
             Navigator.pushNamedAndRemoveUntil(
               context,
