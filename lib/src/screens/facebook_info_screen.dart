@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
+import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/auth_service.dart';
@@ -49,6 +50,19 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
 
       if (arguments != null) {
         data = arguments;
+        if (data["type"] == "user") {
+          facebookProfileImage =
+              data["seller_information"]["facebook_profile_image"] ?? "";
+          facebookPageImage =
+              data["seller_information"]["facebook_page_image"] ?? "";
+          shopOrPageName.text =
+              data["seller_information"]["shop_or_page_name"] ?? "";
+          businessPhone.text =
+              data["seller_information"]["bussiness_phone"] ?? "";
+          businessPhone.text = businessPhone.text.replaceAll("959", "");
+          address.text = data["seller_information"]["address"] ?? "";
+          setState(() {});
+        }
       }
     });
   }
@@ -142,23 +156,32 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
                         onTap: () {
                           _pickImage(ImageSource.gallery, "facebookprofile");
                         },
-                        child: facebookProfilePickedFile == null
+                        child: facebookProfilePickedFile != null
                             ? ClipOval(
-                                child: Image.asset(
-                                  'assets/images/profile.png',
-                                  width: 100,
-                                  height: 100,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : ClipOval(
                                 child: Image.file(
                                   File(facebookProfilePickedFile!.path),
                                   width: 100,
                                   height: 100,
                                   fit: BoxFit.cover,
                                 ),
-                              ),
+                              )
+                            : facebookProfileImage.isNotEmpty
+                                ? ClipOval(
+                                    child: Image.network(
+                                      '${ApiConstants.baseUrl}$facebookProfileImage',
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : ClipOval(
+                                    child: Image.asset(
+                                      'assets/images/profile.png',
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                       ),
                     ),
                     Positioned(
@@ -274,41 +297,50 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
                               fit: BoxFit.cover,
                             ),
                           )
-                        : Container(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 48,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  "assets/icons/facebook_bw.svg",
-                                  width: 48,
-                                  height: 48,
-                                  colorFilter: const ColorFilter.mode(
-                                    Colors.grey,
-                                    BlendMode.srcIn,
-                                  ),
+                        : facebookPageImage.isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.network(
+                                  '${ApiConstants.baseUrl}$facebookPageImage',
+                                  height: 180,
+                                  fit: BoxFit.cover,
                                 ),
-                                SizedBox(
-                                  height: 16,
+                              )
+                            : Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 48,
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                  ),
-                                  child: Text(
-                                    language[
-                                            "Upload Facebook Page Screenshot"] ??
-                                        "Upload Facebook Page Screenshot",
-                                    textAlign: TextAlign.center,
-                                    style: FontConstants.subheadline2,
-                                  ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/icons/facebook_bw.svg",
+                                      width: 48,
+                                      height: 48,
+                                      colorFilter: const ColorFilter.mode(
+                                        Colors.grey,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 16,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                      ),
+                                      child: Text(
+                                        language[
+                                                "Upload Facebook Page Screenshot"] ??
+                                            "Upload Facebook Page Screenshot",
+                                        textAlign: TextAlign.center,
+                                        style: FontConstants.subheadline2,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
+                              ),
                   ),
                 ),
                 Padding(
@@ -458,14 +490,16 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                if (facebookProfilePickedFile == null) {
+                if (facebookProfilePickedFile == null &&
+                    facebookProfileImage.isEmpty) {
                   ToastUtil.showToast(
                       0,
                       language["Choose Facebook Profile"] ??
                           "Choose Facebook Profile");
                   return;
                 }
-                if (facebookPagePickedFile == null) {
+                if (facebookPagePickedFile == null &&
+                    facebookPageImage.isEmpty) {
                   ToastUtil.showToast(
                       0,
                       language["Choose Facebook Page Screenshot"] ??
@@ -473,8 +507,13 @@ class _FacebookInfoScreenState extends State<FacebookInfoScreen> {
                   return;
                 }
                 showLoadingDialog(context);
-                await uploadFile(facebookProfilePickedFile, 'facebookprofile');
-                await uploadFile(facebookPagePickedFile, 'facebookpage');
+                if (facebookProfilePickedFile != null) {
+                  await uploadFile(
+                      facebookProfilePickedFile, 'facebookprofile');
+                }
+                if (facebookPagePickedFile != null) {
+                  await uploadFile(facebookPagePickedFile, 'facebookpage');
+                }
 
                 data["seller_information"]["facebook_profile_image"] =
                     facebookProfileImage;

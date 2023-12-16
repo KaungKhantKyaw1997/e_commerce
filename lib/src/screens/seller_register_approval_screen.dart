@@ -190,6 +190,12 @@ class _SellerRegisterApprovalScreenState
               "";
           signatureImage =
               response["data"]["seller_information"]["signature_image"] ?? "";
+          int index = drivingLicenceImage.isNotEmpty
+              ? 2
+              : passportImage.isNotEmpty
+                  ? 1
+                  : 0;
+          _buttonBarController.setIndex(index);
 
           bankCode.text =
               response["data"]["seller_information"]["bank_code"] ?? "";
@@ -215,12 +221,6 @@ class _SellerRegisterApprovalScreenState
           monthlyTransactionImage = response["data"]["seller_information"]
                   ["monthly_transaction_screenshot"] ??
               "";
-          int index = nrc.text.isNotEmpty
-              ? 0
-              : passportImage.isNotEmpty
-                  ? 1
-                  : 2;
-          _buttonBarController.setIndex(index);
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);

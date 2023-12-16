@@ -439,7 +439,9 @@ class _RegisterScreenState extends State<RegisterScreen>
                             color: Theme.of(context).primaryColorLight,
                           ),
                           child: SvgPicture.asset(
-                            "assets/icons/gallery.svg",
+                            _buttonBarController.index == 0
+                                ? "assets/icons/gallery.svg"
+                                : "assets/icons/camera.svg",
                             width: 16,
                             height: 16,
                             colorFilter: ColorFilter.mode(

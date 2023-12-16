@@ -32,12 +32,8 @@ class _SellerRegisterScreenState extends State<SellerRegisterScreen> {
   TextEditingController confirmpassword = TextEditingController(text: '');
   TextEditingController name = TextEditingController(text: '');
   TextEditingController phone = TextEditingController(text: '');
-  TextEditingController companyName = TextEditingController(text: '');
-  TextEditingController professionalTitle = TextEditingController(text: '');
-  TextEditingController location = TextEditingController(text: '');
   String role = '';
   String status = '';
-  bool offlineTrader = false;
   bool modifyOrderStatus = false;
   bool canViewAddress = false;
   bool canViewPhone = false;
@@ -45,6 +41,8 @@ class _SellerRegisterScreenState extends State<SellerRegisterScreen> {
   final ImagePicker _picker = ImagePicker();
   XFile? pickedFile;
   String profileImage = '';
+
+  var sellerInformation = {};
 
   @override
   void initState() {
@@ -75,6 +73,7 @@ class _SellerRegisterScreenState extends State<SellerRegisterScreen> {
               response["data"]["can_modify_order_status"] ?? false;
           canViewAddress = response["data"]["can_view_address"] ?? false;
           canViewPhone = response["data"]["can_view_phone"] ?? false;
+          sellerInformation = response["data"]["seller_information"] ?? {};
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -208,7 +207,7 @@ class _SellerRegisterScreenState extends State<SellerRegisterScreen> {
                         color: Theme.of(context).primaryColorLight,
                       ),
                       child: SvgPicture.asset(
-                        "assets/icons/gallery.svg",
+                        "assets/icons/camera.svg",
                         width: 16,
                         height: 16,
                         colorFilter: ColorFilter.mode(
@@ -372,12 +371,12 @@ class _SellerRegisterScreenState extends State<SellerRegisterScreen> {
             backgroundColor: Theme.of(context).primaryColor,
           ),
           onPressed: () async {
-            // if (pickedFile == null) {
-            //   ToastUtil.showToast(0, language["Take Photo"] ?? "Take Photo");
-            //   return;
-            // }
+            if (pickedFile == null) {
+              ToastUtil.showToast(0, language["Take Photo"] ?? "Take Photo");
+              return;
+            }
             showLoadingDialog(context);
-            // await uploadFile();
+            await uploadFile();
             Navigator.pop(context);
             Navigator.pushNamedAndRemoveUntil(
               context,
@@ -394,12 +393,7 @@ class _SellerRegisterScreenState extends State<SellerRegisterScreen> {
                 "can_modify_order_status": modifyOrderStatus,
                 "can_view_address": canViewAddress,
                 "can_view_phone": canViewPhone,
-                "seller_information": {
-                  "company_name": companyName.text,
-                  "professional_title": professionalTitle.text,
-                  "location": location.text,
-                  "offline_trader": offlineTrader,
-                },
+                "seller_information": sellerInformation,
               },
               (route) => true,
             );

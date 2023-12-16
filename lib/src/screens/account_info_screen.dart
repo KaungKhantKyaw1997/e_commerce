@@ -64,14 +64,38 @@ class _AccountInfoScreenState extends State<AccountInfoScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    getSellerRegistrationFees();
     getBankAccounts('mbanking');
-    Future.delayed(Duration.zero, () {
+    Future.delayed(Duration.zero, () async {
+      await getSellerRegistrationFees();
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
       if (arguments != null) {
         data = arguments["data"] ?? {};
+        if (data["type"] == "user") {
+          bankCode.text = data["seller_information"]["bank_code"] ?? "";
+          bankAccount.text = data["seller_information"]["bank_account"] ?? "";
+          bankAccountImage =
+              data["seller_information"]["bank_account_image"] ?? "";
+          walletType.text = data["seller_information"]["wallet_type"] ?? "";
+          walletAccount.text =
+              data["seller_information"]["wallet_account"] ?? "";
+          walletAccount.text = walletAccount.text.replaceAll("959", "");
+          if (data["seller_information"]["fee_id"] != 0) {
+            sellerRegistrationFeeId = data["seller_information"]["fee_id"];
+            for (var data in sellerRegistrationFees) {
+              if (data["fee_id"] == sellerRegistrationFeeId) {
+                sellerRegistrationFeeDesc = data["description"];
+                break;
+              }
+            }
+          }
+
+          monthlyTransactionImage = data["seller_information"]
+                  ["monthly_transaction_screenshot"] ??
+              "";
+          setState(() {});
+        }
       }
     });
   }
@@ -569,40 +593,49 @@ class _AccountInfoScreenState extends State<AccountInfoScreen>
                               fit: BoxFit.cover,
                             ),
                           )
-                        : Container(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 48,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  "assets/icons/bank.svg",
-                                  width: 48,
-                                  height: 48,
-                                  colorFilter: const ColorFilter.mode(
-                                    Colors.grey,
-                                    BlendMode.srcIn,
-                                  ),
+                        : bankAccountImage.isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.network(
+                                  '${ApiConstants.baseUrl}$bankAccountImage',
+                                  height: 180,
+                                  fit: BoxFit.cover,
                                 ),
-                                SizedBox(
-                                  height: 16,
+                              )
+                            : Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 48,
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                  ),
-                                  child: Text(
-                                    language["Upload Bank Account Photo"] ??
-                                        "Upload Bank Account Photo",
-                                    textAlign: TextAlign.center,
-                                    style: FontConstants.subheadline2,
-                                  ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/icons/bank.svg",
+                                      width: 48,
+                                      height: 48,
+                                      colorFilter: const ColorFilter.mode(
+                                        Colors.grey,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 16,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                      ),
+                                      child: Text(
+                                        language["Upload Bank Account Photo"] ??
+                                            "Upload Bank Account Photo",
+                                        textAlign: TextAlign.center,
+                                        style: FontConstants.subheadline2,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
+                              ),
                   ),
                 ),
                 Row(
@@ -908,41 +941,49 @@ class _AccountInfoScreenState extends State<AccountInfoScreen>
                               fit: BoxFit.cover,
                             ),
                           )
-                        : Container(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 48,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  "assets/icons/percent.svg",
-                                  width: 48,
-                                  height: 48,
-                                  colorFilter: const ColorFilter.mode(
-                                    Colors.grey,
-                                    BlendMode.srcIn,
-                                  ),
+                        : monthlyTransactionImage.isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.network(
+                                  '${ApiConstants.baseUrl}$monthlyTransactionImage',
+                                  fit: BoxFit.cover,
                                 ),
-                                SizedBox(
-                                  height: 16,
+                              )
+                            : Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 48,
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                  ),
-                                  child: Text(
-                                    language[
-                                            "Upload Monthly Fees Transaction Screenshot"] ??
-                                        "Upload Monthly Fees Transaction Screenshot",
-                                    textAlign: TextAlign.center,
-                                    style: FontConstants.subheadline2,
-                                  ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/icons/percent.svg",
+                                      width: 48,
+                                      height: 48,
+                                      colorFilter: const ColorFilter.mode(
+                                        Colors.grey,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 16,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                      ),
+                                      child: Text(
+                                        language[
+                                                "Upload Monthly Fees Transaction Screenshot"] ??
+                                            "Upload Monthly Fees Transaction Screenshot",
+                                        textAlign: TextAlign.center,
+                                        style: FontConstants.subheadline2,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
+                              ),
                   ),
                 ),
               ],
@@ -970,14 +1011,15 @@ class _AccountInfoScreenState extends State<AccountInfoScreen>
             ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                if (bankAccountPickedFile == null) {
+                if (bankAccountPickedFile == null && bankAccountImage.isEmpty) {
                   ToastUtil.showToast(
                       0,
                       language["Choose Bank Account Photo"] ??
                           "Choose Bank Account Photo");
                   return;
                 }
-                if (monthlyTransactionPickedFile == null) {
+                if (monthlyTransactionPickedFile == null &&
+                    monthlyTransactionImage.isEmpty) {
                   ToastUtil.showToast(
                       0,
                       language["Choose Monthly Fees Transaction Screenshot"] ??
@@ -985,9 +1027,13 @@ class _AccountInfoScreenState extends State<AccountInfoScreen>
                   return;
                 }
                 showLoadingDialog(context);
-                await uploadFile(bankAccountPickedFile, 'bankaccount');
-                await uploadFile(
-                    monthlyTransactionPickedFile, 'monthlytransaction');
+                if (bankAccountPickedFile != null) {
+                  await uploadFile(bankAccountPickedFile, 'bankaccount');
+                }
+                if (monthlyTransactionPickedFile != null) {
+                  await uploadFile(
+                      monthlyTransactionPickedFile, 'monthlytransaction');
+                }
                 if (data["type"] == 'agent') {
                   register();
                 } else {

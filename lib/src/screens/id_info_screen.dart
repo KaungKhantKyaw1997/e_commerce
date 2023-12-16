@@ -61,6 +61,22 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
 
       if (arguments != null) {
         data = arguments["data"] ?? {};
+        if (data["type"] == "user") {
+          nrc.text = data["seller_information"]["nrc"] ?? "";
+          nrcFrontImage = data["seller_information"]["nrc_front_image"] ?? "";
+          nrcBackImage = data["seller_information"]["nrc_back_image"] ?? "";
+          passportImage = data["seller_information"]["passport_image"] ?? "";
+          drivingLicenceImage =
+              data["seller_information"]["driving_licence_image"] ?? "";
+          signatureImage = data["seller_information"]["signature_image"] ?? "";
+          int index = drivingLicenceImage.isNotEmpty
+              ? 2
+              : passportImage.isNotEmpty
+                  ? 1
+                  : 0;
+          _buttonBarController.setIndex(index);
+          setState(() {});
+        }
       }
     });
   }
@@ -385,40 +401,50 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                                 fit: BoxFit.cover,
                               ),
                             )
-                          : Container(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 48,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/icons/front_id.svg",
-                                    width: 48,
-                                    height: 48,
-                                    colorFilter: const ColorFilter.mode(
-                                      Colors.grey,
-                                      BlendMode.srcIn,
-                                    ),
+                          : nrcFrontImage.isNotEmpty
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    '${ApiConstants.baseUrl}$nrcFrontImage',
+                                    height: 180,
+                                    fit: BoxFit.cover,
                                   ),
-                                  SizedBox(
-                                    height: 16,
+                                )
+                              : Container(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 48,
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                    ),
-                                    child: Text(
-                                      language["Upload Front NRC"] ??
-                                          "Upload Front NRC",
-                                      textAlign: TextAlign.center,
-                                      style: FontConstants.subheadline2,
-                                    ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset(
+                                        "assets/icons/front_id.svg",
+                                        width: 48,
+                                        height: 48,
+                                        colorFilter: const ColorFilter.mode(
+                                          Colors.grey,
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 16,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                        child: Text(
+                                          language["Upload Front NRC"] ??
+                                              "Upload Front NRC",
+                                          textAlign: TextAlign.center,
+                                          style: FontConstants.subheadline2,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
+                                ),
                     ),
                   ),
                 if (_buttonBarController.index == 0)
@@ -446,40 +472,50 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                                 fit: BoxFit.cover,
                               ),
                             )
-                          : Container(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 48,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/icons/back_id.svg",
-                                    width: 48,
-                                    height: 48,
-                                    colorFilter: const ColorFilter.mode(
-                                      Colors.grey,
-                                      BlendMode.srcIn,
-                                    ),
+                          : nrcBackImage.isNotEmpty
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    '${ApiConstants.baseUrl}$nrcBackImage',
+                                    height: 180,
+                                    fit: BoxFit.cover,
                                   ),
-                                  SizedBox(
-                                    height: 16,
+                                )
+                              : Container(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 48,
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                    ),
-                                    child: Text(
-                                      language["Upload Back NRC"] ??
-                                          "Upload Back NRC",
-                                      textAlign: TextAlign.center,
-                                      style: FontConstants.subheadline2,
-                                    ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset(
+                                        "assets/icons/back_id.svg",
+                                        width: 48,
+                                        height: 48,
+                                        colorFilter: const ColorFilter.mode(
+                                          Colors.grey,
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 16,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                        child: Text(
+                                          language["Upload Back NRC"] ??
+                                              "Upload Back NRC",
+                                          textAlign: TextAlign.center,
+                                          style: FontConstants.subheadline2,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
+                                ),
                     ),
                   ),
                 if (_buttonBarController.index == 1)
@@ -508,40 +544,50 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                                 fit: BoxFit.cover,
                               ),
                             )
-                          : Container(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 48,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/icons/front_id.svg",
-                                    width: 48,
-                                    height: 48,
-                                    colorFilter: const ColorFilter.mode(
-                                      Colors.grey,
-                                      BlendMode.srcIn,
-                                    ),
+                          : passportImage.isNotEmpty
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    '${ApiConstants.baseUrl}$passportImage',
+                                    height: 180,
+                                    fit: BoxFit.cover,
                                   ),
-                                  SizedBox(
-                                    height: 16,
+                                )
+                              : Container(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 48,
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                    ),
-                                    child: Text(
-                                      language["Upload Passport"] ??
-                                          "Upload Passport",
-                                      textAlign: TextAlign.center,
-                                      style: FontConstants.subheadline2,
-                                    ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset(
+                                        "assets/icons/front_id.svg",
+                                        width: 48,
+                                        height: 48,
+                                        colorFilter: const ColorFilter.mode(
+                                          Colors.grey,
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 16,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                        child: Text(
+                                          language["Upload Passport"] ??
+                                              "Upload Passport",
+                                          textAlign: TextAlign.center,
+                                          style: FontConstants.subheadline2,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
+                                ),
                     ),
                   ),
                 if (_buttonBarController.index == 2)
@@ -570,40 +616,50 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                                 fit: BoxFit.cover,
                               ),
                             )
-                          : Container(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 48,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/icons/front_id.svg",
-                                    width: 48,
-                                    height: 48,
-                                    colorFilter: const ColorFilter.mode(
-                                      Colors.grey,
-                                      BlendMode.srcIn,
-                                    ),
+                          : drivingLicenceImage.isNotEmpty
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    '${ApiConstants.baseUrl}$drivingLicenceImage',
+                                    height: 180,
+                                    fit: BoxFit.cover,
                                   ),
-                                  SizedBox(
-                                    height: 16,
+                                )
+                              : Container(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 48,
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                    ),
-                                    child: Text(
-                                      language["Upload Driving Licence"] ??
-                                          "Upload Driving Licence",
-                                      textAlign: TextAlign.center,
-                                      style: FontConstants.subheadline2,
-                                    ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset(
+                                        "assets/icons/front_id.svg",
+                                        width: 48,
+                                        height: 48,
+                                        colorFilter: const ColorFilter.mode(
+                                          Colors.grey,
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 16,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                        child: Text(
+                                          language["Upload Driving Licence"] ??
+                                              "Upload Driving Licence",
+                                          textAlign: TextAlign.center,
+                                          style: FontConstants.subheadline2,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
+                                ),
                     ),
                   ),
                 Container(
@@ -702,40 +758,49 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
                               fit: BoxFit.cover,
                             ),
                           )
-                        : Container(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 48,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  "assets/icons/signature.svg",
-                                  width: 48,
-                                  height: 48,
-                                  colorFilter: const ColorFilter.mode(
-                                    Colors.grey,
-                                    BlendMode.srcIn,
-                                  ),
+                        : signatureImage.isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.network(
+                                  '${ApiConstants.baseUrl}$signatureImage',
+                                  height: 180,
+                                  fit: BoxFit.cover,
                                 ),
-                                SizedBox(
-                                  height: 16,
+                              )
+                            : Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 48,
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                  ),
-                                  child: Text(
-                                    language["Upload Signature"] ??
-                                        "Upload Signature",
-                                    textAlign: TextAlign.center,
-                                    style: FontConstants.subheadline2,
-                                  ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/icons/signature.svg",
+                                      width: 48,
+                                      height: 48,
+                                      colorFilter: const ColorFilter.mode(
+                                        Colors.grey,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 16,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                      ),
+                                      child: Text(
+                                        language["Upload Signature"] ??
+                                            "Upload Signature",
+                                        textAlign: TextAlign.center,
+                                        style: FontConstants.subheadline2,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
+                              ),
                   ),
                 ),
               ],
@@ -764,46 +829,61 @@ class _IDInfoScreenState extends State<IDInfoScreen> {
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 if (_buttonBarController.index == 0 &&
-                    nrcFrontPickedFile == null) {
+                    nrcFrontPickedFile == null &&
+                    nrcFrontImage.isEmpty) {
                   ToastUtil.showToast(
                       0, language["Choose Front NRC"] ?? "Choose Front NRC");
                   return;
                 }
                 if (_buttonBarController.index == 0 &&
-                    nrcBackPickedFile == null) {
+                    nrcBackPickedFile == null &&
+                    nrcBackImage.isEmpty) {
                   ToastUtil.showToast(
                       0, language["Choose Back NRC"] ?? "Choose Back NRC");
                   return;
                 }
                 if (_buttonBarController.index == 1 &&
-                    passportPickedFile == null) {
+                    passportPickedFile == null &&
+                    passportImage.isEmpty) {
                   ToastUtil.showToast(
                       0, language["Choose Passport"] ?? "Choose Passport");
                   return;
                 }
                 if (_buttonBarController.index == 2 &&
-                    drivingLicencePickedFile == null) {
+                    drivingLicencePickedFile == null &&
+                    drivingLicenceImage.isEmpty) {
                   ToastUtil.showToast(
                       0,
                       language["Choose Driving Licence"] ??
                           "Choose Driving Licence");
                   return;
                 }
-                if (signaturePickedFile == null) {
+                if (signaturePickedFile == null && signatureImage.isEmpty) {
                   ToastUtil.showToast(
                       0, language["Choose Signature"] ?? "Choose Signature");
                   return;
                 }
                 showLoadingDialog(context);
                 if (_buttonBarController.index == 0) {
-                  await uploadFile(nrcFrontPickedFile, 'frontnrc');
-                  await uploadFile(nrcBackPickedFile, 'backnrc');
+                  if (nrcFrontPickedFile != null) {
+                    await uploadFile(nrcFrontPickedFile, 'frontnrc');
+                  }
+                  if (nrcBackPickedFile != null) {
+                    await uploadFile(nrcBackPickedFile, 'backnrc');
+                  }
                 } else if (_buttonBarController.index == 1) {
-                  await uploadFile(passportPickedFile, 'passport');
+                  if (passportPickedFile != null) {
+                    await uploadFile(passportPickedFile, 'passport');
+                  }
                 } else if (_buttonBarController.index == 2) {
-                  await uploadFile(drivingLicencePickedFile, 'drivinglicence');
+                  if (drivingLicencePickedFile != null) {
+                    await uploadFile(
+                        drivingLicencePickedFile, 'drivinglicence');
+                  }
                 }
-                await uploadFile(signaturePickedFile, 'signature');
+                if (signaturePickedFile != null) {
+                  await uploadFile(signaturePickedFile, 'signature');
+                }
 
                 Navigator.pop(context);
                 data["seller_information"]["nrc"] =

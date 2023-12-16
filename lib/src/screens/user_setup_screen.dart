@@ -18,6 +18,7 @@ import 'package:e_commerce/src/widgets/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class UserSetupScreen extends StatefulWidget {
   const UserSetupScreen({super.key});
@@ -32,6 +33,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
   final _formKey = GlobalKey<FormState>();
   final userService = UserService();
   final sellerRegistrationFeeService = SellerRegistrationFeeService();
+  NumberFormat formatter = NumberFormat('###,###.00', 'en_US');
   AnimatedButtonController _buttonBarController = AnimatedButtonController();
   FocusNode _emailFocusNode = FocusNode();
   FocusNode _passwordFocusNode = FocusNode();
@@ -112,6 +114,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
     "active",
   ];
   String status = 'pending';
+  double amount = 0.0;
 
   int id = 0;
 
@@ -153,6 +156,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
           }
           sellerRegistrationFeeId = sellerRegistrationFees[0]["fee_id"];
           sellerRegistrationFeeDesc = sellerRegistrationFees[0]["description"];
+          amount = sellerRegistrationFees[0]["amount"];
           setState(() {});
         }
       } else {
@@ -242,6 +246,12 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                 "";
             signatureImage =
                 response["data"]["seller_information"]["signature_image"] ?? "";
+            int index = drivingLicenceImage.isNotEmpty
+                ? 2
+                : passportImage.isNotEmpty
+                    ? 1
+                    : 0;
+            _buttonBarController.setIndex(index);
 
             bankCode.text =
                 response["data"]["seller_information"]["bank_code"] ?? "";
@@ -260,18 +270,13 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
             for (var data in sellerRegistrationFees) {
               if (data["fee_id"] == sellerRegistrationFeeId) {
                 sellerRegistrationFeeDesc = data["description"];
+                amount = data["amount"];
                 break;
               }
             }
             monthlyTransactionImage = response["data"]["seller_information"]
                     ["monthly_transaction_screenshot"] ??
                 "";
-            int index = nrc.text.isNotEmpty
-                ? 0
-                : passportImage.isNotEmpty
-                    ? 1
-                    : 2;
-            _buttonBarController.setIndex(index);
           }
         });
       } else {
@@ -2645,7 +2650,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                     padding: const EdgeInsets.only(
                       left: 16,
                       right: 16,
-                      bottom: 16,
+                      bottom: 4,
                     ),
                     child: CustomDropDown(
                       value: sellerRegistrationFeeDesc,
@@ -2659,10 +2664,30 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                           if (data["description"] ==
                               sellerRegistrationFeeDesc) {
                             sellerRegistrationFeeId = data["fee_id"];
+                            amount = data["amount"];
                           }
                         }
                       },
                       items: sellerRegistrationFeesDesc,
+                    ),
+                  ),
+                if (role == 'agent')
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 16,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        formatter.format(amount),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: ColorConstants.greenColor,
+                        ),
+                      ),
                     ),
                   ),
                 if (role == 'agent')
