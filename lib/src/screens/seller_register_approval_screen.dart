@@ -10,6 +10,7 @@ import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/seller_registration_fee_service.dart';
 import 'package:e_commerce/src/services/user_service.dart';
+import 'package:e_commerce/src/utils/format_amount.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
@@ -70,6 +71,7 @@ class _SellerRegisterApprovalScreenState
   List sellerRegistrationFees = [];
   int sellerRegistrationFeeId = 0;
   double amount = 0.0;
+  String symbol = '';
 
   int id = 0;
 
@@ -215,6 +217,7 @@ class _SellerRegisterApprovalScreenState
             if (data["fee_id"] == sellerRegistrationFeeId) {
               sellerRegistrationFeeDesc.text = data["description"];
               amount = data["amount"];
+              symbol = data["symbol"];
               break;
             }
           }
@@ -1563,16 +1566,33 @@ class _SellerRegisterApprovalScreenState
                 right: 16,
                 bottom: 16,
               ),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  formatter.format(amount),
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: ColorConstants.greenColor,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    symbol.toString(),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
+                  FormattedAmount(
+                    amount: double.parse(amount.toString()),
+                    mainTextStyle: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
+                    decimalTextStyle: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
               ),
             ),
             Container(

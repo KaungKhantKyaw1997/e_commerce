@@ -12,6 +12,7 @@ import 'package:e_commerce/src/services/auth_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/seller_registration_fee_service.dart';
 import 'package:e_commerce/src/services/user_service.dart';
+import 'package:e_commerce/src/utils/format_amount.dart';
 import 'package:e_commerce/src/utils/loading.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:e_commerce/src/widgets/custom_dropdown.dart';
@@ -115,6 +116,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
   ];
   String status = 'pending';
   double amount = 0.0;
+  String symbol = '';
   bool checkSeller = false;
   int id = 0;
 
@@ -157,6 +159,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
           sellerRegistrationFeeId = sellerRegistrationFees[0]["fee_id"];
           sellerRegistrationFeeDesc = sellerRegistrationFees[0]["description"];
           amount = sellerRegistrationFees[0]["amount"];
+          symbol = sellerRegistrationFees[0]["symbol"];
           setState(() {});
         }
       } else {
@@ -276,6 +279,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
               if (data["fee_id"] == sellerRegistrationFeeId) {
                 sellerRegistrationFeeDesc = data["description"];
                 amount = data["amount"];
+                symbol = data["symbol"];
                 break;
               }
             }
@@ -2670,6 +2674,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                               sellerRegistrationFeeDesc) {
                             sellerRegistrationFeeId = data["fee_id"];
                             amount = data["amount"];
+                            symbol = data["symbol"];
                           }
                         }
                       },
@@ -2683,16 +2688,33 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
                       right: 16,
                       bottom: 16,
                     ),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        formatter.format(amount),
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: ColorConstants.greenColor,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Text(
+                          symbol.toString(),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
                         ),
-                      ),
+                        FormattedAmount(
+                          amount: double.parse(amount.toString()),
+                          mainTextStyle: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
+                          decimalTextStyle: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 if (checkSeller)
