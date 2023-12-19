@@ -307,6 +307,8 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
                             },
                             (route) => true,
                           );
+                        } else if (from == "product") {
+                          Navigator.of(context).pop(brands[index]);
                         } else {
                           Navigator.pushNamedAndRemoveUntil(
                             context,
@@ -346,7 +348,7 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
           ),
         ),
       ),
-      floatingActionButton: from != "shop"
+      floatingActionButton: from != "shop" && from != "product"
           ? FloatingActionButton(
               onPressed: () {
                 Navigator.pushNamedAndRemoveUntil(
