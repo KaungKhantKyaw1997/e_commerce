@@ -1382,7 +1382,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       .toLowerCase()
                       .replaceAll(" ", "-");
                   ShareExtend.share(
-                    '${ApiConstants.baseUrl}/products/$url',
+                    'http://www.watchvaultbydiggie.com/products/$url',
                     "text",
                   );
                 },
