@@ -262,7 +262,9 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        if (from != "product") {
+                        if (from == "product" || from == "discountrule") {
+                          Navigator.of(context).pop(categories[index]);
+                        } else {
                           Navigator.pushNamedAndRemoveUntil(
                             context,
                             Routes.category_setup,
@@ -271,8 +273,6 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
                             },
                             (route) => true,
                           );
-                        } else {
-                          Navigator.of(context).pop(categories[index]);
                         }
                       },
                       child: Column(

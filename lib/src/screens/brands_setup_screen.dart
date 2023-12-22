@@ -294,7 +294,9 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        if (from == "shop") {
+                        if (from == "product" || from == "discountrule") {
+                          Navigator.of(context).pop(brands[index]);
+                        } else if (from == "shop") {
                           Navigator.pushNamedAndRemoveUntil(
                             context,
                             Routes.products_setup,
@@ -307,8 +309,6 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
                             },
                             (route) => true,
                           );
-                        } else if (from == "product") {
-                          Navigator.of(context).pop(brands[index]);
                         } else {
                           Navigator.pushNamedAndRemoveUntil(
                             context,
