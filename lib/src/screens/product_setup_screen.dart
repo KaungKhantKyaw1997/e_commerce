@@ -3059,6 +3059,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                     child: CustomDropDown(
                       value: otherAccessoriesTypeDesc,
                       fillColor: ColorConstants.fillColor,
+                      itemWidth: 100,
                       onChanged: (newValue) {
                         setState(() {
                           otherAccessoriesTypeDesc =

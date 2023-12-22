@@ -7,6 +7,7 @@ class CustomDropDown extends StatelessWidget {
   final String value;
   final Color fillColor;
   final List<String> items;
+  final double itemWidth;
   final Function(String?)? onChanged;
 
   CustomDropDown({
@@ -14,6 +15,7 @@ class CustomDropDown extends StatelessWidget {
     required this.fillColor,
     required this.items,
     required this.onChanged,
+    this.itemWidth = 0.0,
   });
 
   @override
@@ -48,9 +50,16 @@ class CustomDropDown extends StatelessWidget {
           items: items.map((item) {
             return DropdownMenuItem<String>(
               value: item,
-              child: Text(
-                capitalizeByWord(item),
-                style: FontConstants.body1,
+              child: Container(
+                width: itemWidth != 0.0
+                    ? MediaQuery.of(context).size.width - itemWidth
+                    : null,
+                child: Text(
+                  capitalizeByWord(item),
+                  style: FontConstants.body1,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                ),
               ),
             );
           }).toList(),
