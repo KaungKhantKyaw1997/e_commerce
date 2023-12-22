@@ -8,6 +8,7 @@ import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/discount_rule_service.dart';
+import 'package:e_commerce/src/utils/capitalize_by_word.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
@@ -128,7 +129,8 @@ class _DiscountRulesSetupScreenState extends State<DiscountRulesSetupScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          discountrules[index]["discount_for"].toString(),
+                          capitalizeByWord(
+                              discountrules[index]["discount_for"].toString()),
                           overflow: TextOverflow.ellipsis,
                           style: FontConstants.body1,
                         ),
@@ -146,8 +148,8 @@ class _DiscountRulesSetupScreenState extends State<DiscountRulesSetupScreen> {
                     ],
                   ),
                   Text(
-                    discountrules[index]["discount_expiration"].toString(),
-                    maxLines: 3,
+                    discountrules[index]["discount_type"].toString(),
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: FontConstants.caption1,
                   ),

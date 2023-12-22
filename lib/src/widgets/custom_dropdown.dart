@@ -1,4 +1,5 @@
 import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/src/utils/capitalize_by_word.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -14,17 +15,6 @@ class CustomDropDown extends StatelessWidget {
     required this.items,
     required this.onChanged,
   });
-
-  capitalizeByWord(data) {
-    if (data.trim().isEmpty) {
-      return '';
-    }
-    return data
-        .split(' ')
-        .map((element) =>
-            "${element[0].toUpperCase()}${element.substring(1).toLowerCase()}")
-        .join(" ");
-  }
 
   @override
   Widget build(BuildContext context) {

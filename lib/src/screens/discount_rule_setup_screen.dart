@@ -5,6 +5,8 @@ import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
+import 'package:e_commerce/src/services/brand_service.dart';
+import 'package:e_commerce/src/services/category_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
 import 'package:e_commerce/src/services/discount_rule_service.dart';
 import 'package:e_commerce/src/services/product_service.dart';
@@ -31,6 +33,8 @@ class _DiscountRuleSetupScreenState extends State<DiscountRuleSetupScreen> {
   final _formKey = GlobalKey<FormState>();
   final productService = ProductService();
   final discountRuleService = DiscountRuleService();
+  final categoryService = CategoryService();
+  final brandService = BrandService();
   FocusNode _discountPriceFocusNode = FocusNode();
   FocusNode _discountPercentFocusNode = FocusNode();
   FocusNode _discountReasonFocusNode = FocusNode();
@@ -167,6 +171,9 @@ class _DiscountRuleSetupScreenState extends State<DiscountRuleSetupScreen> {
         setState(() {
           shopName.text = response["data"]["shop_name"] ?? "";
           shopId = response["data"]["shop_id"] ?? 0;
+          discountFor.text =
+              response["data"]["discount_for"] ?? discountFors[0];
+          discountForId = response["data"]["discount_for_id"] ?? 0;
           discountType.text = response["data"]["discount_type"] ?? "";
           discountExpiration.text =
               response["data"]["discount_expiration"] ?? "";
@@ -185,6 +192,88 @@ class _DiscountRuleSetupScreenState extends State<DiscountRuleSetupScreen> {
                 : "";
           }
           discountReason.text = response["data"]["discount_reason"] ?? "";
+        });
+
+        if (discountFor.text == 'category') {
+          getCategory(discountForId);
+        } else if (discountFor.text == 'brand') {
+          getBrand(discountForId);
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getCategory(id) async {
+    try {
+      final response = await categoryService.getCategoryData(id);
+      if (response!["code"] == 200) {
+        setState(() {
+          categoryName.text = response["data"]["name"] ?? "";
+        });
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getBrand(id) async {
+    try {
+      final response = await brandService.getBrandData(id);
+      if (response!["code"] == 200) {
+        setState(() {
+          brandName.text = response["data"]["name"] ?? "";
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
