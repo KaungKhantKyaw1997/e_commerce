@@ -111,51 +111,36 @@ class _DiscountRulesSetupScreenState extends State<DiscountRulesSetupScreen> {
         ),
         color: Colors.white,
       ),
-      child: Row(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.only(
-                left: 15,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  capitalizeByWord(
+                      discountrules[index]["discount_for"].toString()),
+                  overflow: TextOverflow.ellipsis,
+                  style: FontConstants.body1,
+                ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          capitalizeByWord(
-                              discountrules[index]["discount_for"].toString()),
-                          overflow: TextOverflow.ellipsis,
-                          style: FontConstants.body1,
-                        ),
-                      ),
-                      Text(
-                        Jiffy.parseFromDateTime(DateTime.parse(
-                                    discountrules[index]
-                                            ["discount_expiration"] +
-                                        "Z")
-                                .toLocal())
-                            .format(pattern: 'dd/MM/yyyy'),
-                        overflow: TextOverflow.ellipsis,
-                        style: FontConstants.caption1,
-                      ),
-                    ],
-                  ),
-                  Text(
-                    discountrules[index]["discount_type"].toString(),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: FontConstants.caption1,
-                  ),
-                ],
+              Text(
+                Jiffy.parseFromDateTime(DateTime.parse(
+                            discountrules[index]["discount_expiration"] + "Z")
+                        .toLocal())
+                    .format(pattern: 'dd/MM/yyyy'),
+                overflow: TextOverflow.ellipsis,
+                style: FontConstants.caption1,
               ),
-            ),
+            ],
+          ),
+          Text(
+            discountrules[index]["discount_type"].toString(),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: FontConstants.caption1,
           ),
         ],
       ),
@@ -243,7 +228,7 @@ class _DiscountRulesSetupScreenState extends State<DiscountRulesSetupScreen> {
                           context,
                           Routes.discount_rule_setup,
                           arguments: {
-                            "id": discountrules[index]["discount_for_id"],
+                            "id": discountrules[index]["rule_id"],
                           },
                           (route) => true,
                         );

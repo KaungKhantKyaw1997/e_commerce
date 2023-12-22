@@ -363,29 +363,24 @@ class _DiscountRuleSetupScreenState extends State<DiscountRuleSetupScreen> {
 
   addDiscountRule() async {
     try {
+      double price = discountPrice.text.isNotEmpty
+          ? double.parse(discountPrice.text.replaceAll(',', ''))
+          : 0.0;
+      double percent = discountPercent.text.isNotEmpty
+          ? double.parse(discountPercent.text.replaceAll(',', ''))
+          : 0.0;
       final body = {
         "shop_id": shopId,
         "discount_for": discountFor.text,
         "discount_for_id": discountForId,
         "discount_type": discountType.text,
+        "discount_expiration": DateFormat("yyyy-MM-dd")
+            .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
+            .toString(),
+        "discounted_price": price,
+        "discount_percent": percent,
+        "discount_reason": discountReason.text,
       };
-
-      if (discountType.text != 'No Discount') {
-        if (discountExpiration.text.isNotEmpty) {
-          body["discount_expiration"] = DateFormat("yyyy-MM-dd")
-              .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
-              .toString();
-        }
-        if (discountPrice.text.isNotEmpty) {
-          body["discounted_price"] =
-              double.parse(discountPrice.text.replaceAll(',', ''));
-        }
-        if (discountPercent.text.isNotEmpty) {
-          body["discount_percent"] =
-              double.parse(discountPercent.text.replaceAll(',', ''));
-        }
-        body["discount_reason"] = discountReason.text;
-      }
 
       final response = await discountRuleService.addDiscountRuleData(body);
       Navigator.pop(context);
@@ -431,29 +426,24 @@ class _DiscountRuleSetupScreenState extends State<DiscountRuleSetupScreen> {
 
   updateDiscountRule() async {
     try {
+      double price = discountPrice.text.isNotEmpty
+          ? double.parse(discountPrice.text.replaceAll(',', ''))
+          : 0.0;
+      double percent = discountPercent.text.isNotEmpty
+          ? double.parse(discountPercent.text.replaceAll(',', ''))
+          : 0.0;
       final body = {
         "shop_id": shopId,
         "discount_for": discountFor.text,
         "discount_for_id": discountForId,
         "discount_type": discountType.text,
+        "discount_expiration": DateFormat("yyyy-MM-dd")
+            .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
+            .toString(),
+        "discounted_price": price,
+        "discount_percent": percent,
+        "discount_reason": discountReason.text,
       };
-
-      if (discountType.text != 'No Discount') {
-        if (discountExpiration.text.isNotEmpty) {
-          body["discount_expiration"] = DateFormat("yyyy-MM-dd")
-              .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
-              .toString();
-        }
-        if (discountPrice.text.isNotEmpty) {
-          body["discounted_price"] =
-              double.parse(discountPrice.text.replaceAll(',', ''));
-        }
-        if (discountPercent.text.isNotEmpty) {
-          body["discount_percent"] =
-              double.parse(discountPercent.text.replaceAll(',', ''));
-        }
-        body["discount_reason"] = discountReason.text;
-      }
 
       final response =
           await discountRuleService.updateDiscountRuleData(body, id);
@@ -464,7 +454,7 @@ class _DiscountRuleSetupScreenState extends State<DiscountRuleSetupScreen> {
         Navigator.pop(context);
         Navigator.pushNamed(
           context,
-          Routes.seller_registration_fees_setup,
+          Routes.discount_rules_setup,
         );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -508,7 +498,7 @@ class _DiscountRuleSetupScreenState extends State<DiscountRuleSetupScreen> {
         Navigator.pop(context);
         Navigator.pushNamed(
           context,
-          Routes.seller_registration_fees_setup,
+          Routes.discount_rules_setup,
         );
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
