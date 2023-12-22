@@ -658,6 +658,12 @@ class _DiscountRuleSetupScreenState extends State<DiscountRuleSetupScreen> {
                           ),
                         ),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return language["Enter Shop"] ?? "Enter Shop";
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   Padding(
@@ -748,6 +754,13 @@ class _DiscountRuleSetupScreenState extends State<DiscountRuleSetupScreen> {
                             ),
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return language["Enter Category"] ??
+                                "Enter Category";
+                          }
+                          return null;
+                        },
                       ),
                     ),
                   if (discountFor.text == 'brand')
@@ -807,6 +820,12 @@ class _DiscountRuleSetupScreenState extends State<DiscountRuleSetupScreen> {
                             ),
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return language["Enter Brand"] ?? "Enter Brand";
+                          }
+                          return null;
+                        },
                       ),
                     ),
                   Padding(
