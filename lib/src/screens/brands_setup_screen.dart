@@ -348,25 +348,26 @@ class _BrandsSetupScreenState extends State<BrandsSetupScreen> {
           ),
         ),
       ),
-      floatingActionButton: from != "shop" && from != "product"
-          ? FloatingActionButton(
-              onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  Routes.brand_setup,
-                  arguments: {
-                    "id": 0,
+      floatingActionButton:
+          from != "shop" && from != "product" && from != "discountrule"
+              ? FloatingActionButton(
+                  onPressed: () {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      Routes.brand_setup,
+                      arguments: {
+                        "id": 0,
+                      },
+                      (route) => true,
+                    );
                   },
-                  (route) => true,
-                );
-              },
-              backgroundColor: Theme.of(context).primaryColor,
-              child: Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-            )
-          : null,
+                  backgroundColor: Theme.of(context).primaryColor,
+                  child: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  ),
+                )
+              : null,
     );
   }
 }

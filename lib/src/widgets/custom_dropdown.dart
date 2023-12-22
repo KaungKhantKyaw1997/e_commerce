@@ -15,6 +15,17 @@ class CustomDropDown extends StatelessWidget {
     required this.onChanged,
   });
 
+  capitalizeByWord(data) {
+    if (data.trim().isEmpty) {
+      return '';
+    }
+    return data
+        .split(' ')
+        .map((element) =>
+            "${element[0].toUpperCase()}${element.substring(1).toLowerCase()}")
+        .join(" ");
+  }
+
   @override
   Widget build(BuildContext context) {
     return InputDecorator(
@@ -48,7 +59,7 @@ class CustomDropDown extends StatelessWidget {
             return DropdownMenuItem<String>(
               value: item,
               child: Text(
-                item,
+                capitalizeByWord(item),
                 style: FontConstants.body1,
               ),
             );

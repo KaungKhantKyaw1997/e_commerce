@@ -16,6 +16,8 @@ import 'package:e_commerce/src/screens/chat_history_screen.dart';
 import 'package:e_commerce/src/screens/chat_screen.dart';
 import 'package:e_commerce/src/screens/connection_timeout_screen.dart';
 import 'package:e_commerce/src/screens/contactus_screen.dart';
+import 'package:e_commerce/src/screens/discount_rule_setup_screen.dart';
+import 'package:e_commerce/src/screens/discount_rules_setup_screen.dart';
 import 'package:e_commerce/src/screens/facebook_info_screen.dart';
 import 'package:e_commerce/src/screens/firebase_auth_register_screen.dart';
 import 'package:e_commerce/src/screens/forgot_password_screen.dart';
@@ -127,6 +129,8 @@ class Routes {
   static const String seller_register_approval = '/seller_register_approval';
   static const String seller_agreement_contract_setup =
       '/seller_agreement_contract_setup';
+  static const String discount_rules_setup = '/discount_rules_setup';
+  static const String discount_rule_setup = '/discount_rule_setup';
 
   static final Map<String, WidgetBuilder> routes = {
     splash: (BuildContext context) => const SplashScreen(),
@@ -203,5 +207,9 @@ class Routes {
         const SellerRegisterApprovalScreen(),
     seller_agreement_contract_setup: (BuildContext context) =>
         const SellerAgreementContractSetupScreen(),
+    discount_rules_setup: (BuildContext context) =>
+        const DiscountRulesSetupScreen(),
+    discount_rule_setup: (BuildContext context) =>
+        const DiscountRuleSetupScreen(),
   };
 }

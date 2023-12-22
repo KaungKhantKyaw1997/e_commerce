@@ -64,4 +64,6 @@ class ApiConstants {
       '$baseUrl/api/seller-registration-fees';
   static const String sellerAgreementContractUrl =
       '$baseUrl/api/seller-agreement-contract';
+  static const String discountRulesUrl = '$baseUrl/api/discount-rules';
+  static const String discountForsUrl = '$baseUrl/api/discount-fors';
 }

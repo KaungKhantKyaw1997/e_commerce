@@ -702,7 +702,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         if (response["data"].isNotEmpty) {
           List<dynamic> dynamicList = response["data"];
           discountTypes = dynamicList.map((item) => item.toString()).toList();
-          waterResistance.text = discountTypes[0];
           discountType.text = discountTypes[0];
           setState(() {});
         }

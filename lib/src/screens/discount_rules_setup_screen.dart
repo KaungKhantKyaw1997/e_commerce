@@ -4,47 +4,38 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/global.dart';
 import 'package:e_commerce/routes.dart';
-import 'package:e_commerce/src/constants/api_constants.dart';
 import 'package:e_commerce/src/constants/color_constants.dart';
 import 'package:e_commerce/src/constants/font_constants.dart';
-import 'package:e_commerce/src/services/category_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
+import 'package:e_commerce/src/services/discount_rule_service.dart';
 import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class CategoriesSetupScreen extends StatefulWidget {
-  const CategoriesSetupScreen({super.key});
+class DiscountRulesSetupScreen extends StatefulWidget {
+  const DiscountRulesSetupScreen({super.key});
 
   @override
-  State<CategoriesSetupScreen> createState() => _CategoriesSetupScreenState();
+  State<DiscountRulesSetupScreen> createState() =>
+      _DiscountRulesSetupScreenState();
 }
 
-class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
+class _DiscountRulesSetupScreenState extends State<DiscountRulesSetupScreen> {
   final crashlytic = new CrashlyticsService();
-  final categoryService = CategoryService();
+  final discountRuleService = DiscountRuleService();
   TextEditingController search = TextEditingController(text: '');
   final ScrollController _scrollController = ScrollController();
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-  List categories = [];
+  List discountrules = [];
   int page = 1;
   Timer? _debounce;
-  String from = "";
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
-      final arguments =
-          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
-
-      if (arguments != null) {
-        from = arguments["from"];
-      }
-    });
-    getCategories();
+    getDiscountRules();
   }
 
   @override
@@ -54,16 +45,16 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
     super.dispose();
   }
 
-  getCategories() async {
+  getDiscountRules() async {
     try {
-      final response = await categoryService.getCategoriesData(
+      final response = await discountRuleService.getDiscountRulesData(
           page: page, search: search.text);
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
 
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
-          categories += response["data"];
+          discountrules += response["data"];
           page++;
         }
         setState(() {});
@@ -100,7 +91,7 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
     }
   }
 
-  categoryCard(index) {
+  discountRuleCard(index) {
     return Container(
       padding: const EdgeInsets.only(
         left: 16,
@@ -112,8 +103,10 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(index == 0 ? 10 : 0),
           topRight: Radius.circular(index == 0 ? 10 : 0),
-          bottomLeft: Radius.circular(index == categories.length - 1 ? 10 : 0),
-          bottomRight: Radius.circular(index == categories.length - 1 ? 10 : 0),
+          bottomLeft:
+              Radius.circular(index == discountrules.length - 1 ? 10 : 0),
+          bottomRight:
+              Radius.circular(index == discountrules.length - 1 ? 10 : 0),
         ),
         color: Colors.white,
       ),
@@ -121,26 +114,6 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 75,
-            height: 75,
-            decoration: BoxDecoration(
-              image: categories[index]["cover_image"].isNotEmpty
-                  ? DecorationImage(
-                      image: NetworkImage(
-                          '${ApiConstants.baseUrl}${categories[index]["cover_image"].toString()}'),
-                      fit: BoxFit.cover,
-                    )
-                  : DecorationImage(
-                      image: AssetImage('assets/images/logo.png'),
-                      fit: BoxFit.cover,
-                    ),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: Colors.transparent,
-              ),
-            ),
-          ),
           Expanded(
             child: Container(
               margin: const EdgeInsets.only(
@@ -155,14 +128,16 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          categories[index]["name"].toString(),
+                          discountrules[index]["discount_for"].toString(),
                           overflow: TextOverflow.ellipsis,
                           style: FontConstants.body1,
                         ),
                       ),
                       Text(
                         Jiffy.parseFromDateTime(DateTime.parse(
-                                    categories[index]["created_at"] + "Z")
+                                    discountrules[index]
+                                            ["discount_expiration"] +
+                                        "Z")
                                 .toLocal())
                             .format(pattern: 'dd/MM/yyyy'),
                         overflow: TextOverflow.ellipsis,
@@ -171,7 +146,7 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
                     ],
                   ),
                   Text(
-                    categories[index]["description"].toString(),
+                    discountrules[index]["discount_expiration"].toString(),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                     style: FontConstants.caption1,
@@ -219,8 +194,8 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
             _debounce?.cancel();
             _debounce = Timer(Duration(milliseconds: 300), () {
               page = 1;
-              categories = [];
-              getCategories();
+              discountrules = [];
+              getDiscountRules();
             });
           },
         ),
@@ -239,11 +214,11 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
         enablePullUp: true,
         onRefresh: () async {
           page = 1;
-          categories = [];
-          await getCategories();
+          discountrules = [];
+          await getDiscountRules();
         },
         onLoading: () async {
-          await getCategories();
+          await getDiscountRules();
         },
         child: SingleChildScrollView(
           child: Container(
@@ -258,29 +233,25 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
                   controller: _scrollController,
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: categories.length,
+                  itemCount: discountrules.length,
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        if (from != "product") {
-                          Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            Routes.category_setup,
-                            arguments: {
-                              "id": categories[index]["category_id"],
-                            },
-                            (route) => true,
-                          );
-                        } else {
-                          Navigator.of(context).pop(categories[index]);
-                        }
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          Routes.discount_rule_setup,
+                          arguments: {
+                            "id": discountrules[index]["discount_for_id"],
+                          },
+                          (route) => true,
+                        );
                       },
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          categoryCard(index),
-                          index < categories.length - 1
+                          discountRuleCard(index),
+                          index < discountrules.length - 1
                               ? Container(
                                   padding: const EdgeInsets.only(
                                     left: 16,
@@ -303,25 +274,23 @@ class _CategoriesSetupScreenState extends State<CategoriesSetupScreen> {
           ),
         ),
       ),
-      floatingActionButton: from != "product" && from != "discountrule"
-          ? FloatingActionButton(
-              onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  Routes.category_setup,
-                  arguments: {
-                    "id": 0,
-                  },
-                  (route) => true,
-                );
-              },
-              backgroundColor: Theme.of(context).primaryColor,
-              child: Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-            )
-          : null,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            Routes.discount_rule_setup,
+            arguments: {
+              "id": 0,
+            },
+            (route) => true,
+          );
+        },
+        backgroundColor: Theme.of(context).primaryColor,
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+      ),
     );
   }
 }

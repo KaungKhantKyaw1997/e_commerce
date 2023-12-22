@@ -32,6 +32,8 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
   int page = 1;
   String status = 'Active';
   Timer? _debounce;
+  String from = "";
+  String role = "";
 
   @override
   void initState() {
@@ -42,7 +44,9 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
 
       if (arguments != null) {
         status = arguments["status"] ?? "Active";
-        getShops(status);
+        from = arguments["from"] ?? '';
+        role = arguments["role"] ?? '';
+        getShops();
       }
     });
   }
@@ -54,10 +58,13 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
     super.dispose();
   }
 
-  getShops(status) async {
+  getShops() async {
     try {
       final response = await shopService.getShopsData(
-          page: page, search: search.text, status: status);
+          page: page,
+          search: search.text,
+          status: status,
+          view: role == "agent" ? role : "");
       _refreshController.refreshCompleted();
       _refreshController.loadComplete();
 
@@ -237,7 +244,7 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
             _debounce = Timer(Duration(milliseconds: 300), () {
               page = 1;
               shops = [];
-              getShops(status);
+              getShops();
             });
           },
         ),
@@ -257,10 +264,10 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
         onRefresh: () async {
           page = 1;
           shops = [];
-          await getShops(status);
+          await getShops();
         },
         onLoading: () async {
-          await getShops(status);
+          await getShops();
         },
         child: SingleChildScrollView(
           child: Container(
@@ -279,15 +286,19 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          Routes.shop_setup,
-                          arguments: {
-                            "id": shops[index]["shop_id"],
-                            "status": shops[index]["status"],
-                          },
-                          (route) => true,
-                        );
+                        if (from != "discountrule") {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            Routes.shop_setup,
+                            arguments: {
+                              "id": shops[index]["shop_id"],
+                              "status": shops[index]["status"],
+                            },
+                            (route) => true,
+                          );
+                        } else {
+                          Navigator.of(context).pop(shops[index]);
+                        }
                       },
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -317,7 +328,7 @@ class _ShopsSetupScreenState extends State<ShopsSetupScreen> {
           ),
         ),
       ),
-      floatingActionButton: status == 'Active'
+      floatingActionButton: status == 'Active' && from != "discountrule"
           ? FloatingActionButton(
               onPressed: () {
                 Navigator.pushNamedAndRemoveUntil(
