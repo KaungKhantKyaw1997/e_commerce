@@ -369,14 +369,17 @@ class _DiscountRuleSetupScreenState extends State<DiscountRuleSetupScreen> {
       double percent = discountPercent.text.isNotEmpty
           ? double.parse(discountPercent.text.replaceAll(',', ''))
           : 0.0;
+      String date = discountExpiration.text.isNotEmpty
+          ? DateFormat("yyyy-MM-dd")
+              .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
+              .toString()
+          : '';
       final body = {
         "shop_id": shopId,
         "discount_for": discountFor.text,
         "discount_for_id": discountForId,
         "discount_type": discountType.text,
-        "discount_expiration": DateFormat("yyyy-MM-dd")
-            .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
-            .toString(),
+        "discount_expiration": date,
         "discounted_price": price,
         "discount_percent": percent,
         "discount_reason": discountReason.text,
@@ -432,14 +435,17 @@ class _DiscountRuleSetupScreenState extends State<DiscountRuleSetupScreen> {
       double percent = discountPercent.text.isNotEmpty
           ? double.parse(discountPercent.text.replaceAll(',', ''))
           : 0.0;
+      String date = discountExpiration.text.isNotEmpty
+          ? DateFormat("yyyy-MM-dd")
+              .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
+              .toString()
+          : '';
       final body = {
         "shop_id": shopId,
         "discount_for": discountFor.text,
         "discount_for_id": discountForId,
         "discount_type": discountType.text,
-        "discount_expiration": DateFormat("yyyy-MM-dd")
-            .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
-            .toString(),
+        "discount_expiration": date,
         "discounted_price": price,
         "discount_percent": percent,
         "discount_reason": discountReason.text,
@@ -928,6 +934,14 @@ class _DiscountRuleSetupScreenState extends State<DiscountRuleSetupScreen> {
                                       ),
                                     ),
                                   ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return language[
+                                              "Enter Discount Expiration"] ??
+                                          "Enter Discount Expiration";
+                                    }
+                                    return null;
+                                  },
                                 ),
                               ),
                             ],
