@@ -137,22 +137,24 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
     super.initState();
 
     Future.delayed(Duration.zero, () async {
-      getGenders();
-      getStrapMaterials();
-      getCaseMaterials();
-      getCaseDiameters();
-      getCaseDepths();
-      getCaseWidths();
-      getDialGlassTypes();
-      getConditions();
-      getMovementTypes();
-      getMovementCountries();
-      getCurrencies();
-      getStockQuantities();
-      getDiscountTypes();
-      getWaterResistances();
-      getWarrantyTypes();
-      getOtherAccessoriesTypes();
+      showLoadingDialog(context);
+      await getGenders();
+      await getStrapMaterials();
+      await getCaseMaterials();
+      await getCaseDiameters();
+      await getCaseDepths();
+      await getCaseWidths();
+      await getDialGlassTypes();
+      await getConditions();
+      await getMovementTypes();
+      await getMovementCountries();
+      await getCurrencies();
+      await getStockQuantities();
+      await getDiscountTypes();
+      await getWaterResistances();
+      await getWarrantyTypes();
+      await getOtherAccessoriesTypes();
+      Navigator.pop(context);
 
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
@@ -165,8 +167,6 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           shopName.text = arguments["shopName"] ?? '';
         }
         if (id != 0) {
-          showLoadingDialog(context);
-          await Future.delayed(Duration(milliseconds: 200));
           getProduct();
         }
       }
@@ -948,9 +948,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
-      Navigator.pop(context);
     } catch (e, s) {
-      Navigator.pop(context);
       if (e is DioException &&
           e.error is SocketException &&
           !isConnectionTimeout) {
