@@ -103,6 +103,8 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
   int sellerRegistrationFeeId = 0;
   String sellerRegistrationFeeDesc = '';
 
+  var sellerInformation = {};
+
   List<String> roles = [
     "user",
     "admin",
@@ -206,87 +208,64 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
           phone.text = response["data"]["phone"] ?? "";
           phone.text = phone.text.replaceAll("959", "");
           profileImage = response["data"]["profile_image"] ?? "";
-          companyName.text =
-              response["data"]["seller_information"]["company_name"] ?? "";
-          professionalTitle.text = response["data"]["seller_information"]
-                  ["professional_title"] ??
-              "";
-          location.text =
-              response["data"]["seller_information"]["location"] ?? "";
-          offlineTrader =
-              response["data"]["seller_information"]["offline_trader"] ?? false;
           status = response["data"]["account_status"] ?? "pending";
           modifyOrderStatus =
               response["data"]["can_modify_order_status"] ?? false;
           canViewAddress = response["data"]["can_view_address"] ?? false;
           canViewPhone = response["data"]["can_view_phone"] ?? false;
 
+          sellerInformation = response["data"]["seller_information"];
+
+          companyName.text = sellerInformation["company_name"] ?? "";
+          professionalTitle.text =
+              sellerInformation["professional_title"] ?? "";
+          location.text = sellerInformation["location"] ?? "";
+          offlineTrader = sellerInformation["offline_trader"] ?? false;
+
           if (response["data"]["seller_information"]["facebook_profile_image"]
               .isNotEmpty) {
             checkSeller = true;
           }
 
-          if (checkSeller) {
-            facebookProfileImage = response["data"]["seller_information"]
-                    ["facebook_profile_image"] ??
-                "";
-            facebookPageImage = response["data"]["seller_information"]
-                    ["facebook_page_image"] ??
-                "";
-            shopOrPageName.text = response["data"]["seller_information"]
-                    ["shop_or_page_name"] ??
-                "";
-            businessPhone.text =
-                response["data"]["seller_information"]["bussiness_phone"] ?? "";
-            businessPhone.text = businessPhone.text.replaceAll("959", "");
-            address.text =
-                response["data"]["seller_information"]["address"] ?? "";
+          facebookProfileImage =
+              sellerInformation["facebook_profile_image"] ?? "";
+          facebookPageImage = sellerInformation["facebook_page_image"] ?? "";
+          shopOrPageName.text = sellerInformation["shop_or_page_name"] ?? "";
+          businessPhone.text = sellerInformation["bussiness_phone"] ?? "";
+          businessPhone.text = businessPhone.text.replaceAll("959", "");
+          address.text = sellerInformation["address"] ?? "";
 
-            nrc.text = response["data"]["seller_information"]["nrc"] ?? "";
-            nrcFrontImage =
-                response["data"]["seller_information"]["nrc_front_image"] ?? "";
-            nrcBackImage =
-                response["data"]["seller_information"]["nrc_back_image"] ?? "";
-            passportImage =
-                response["data"]["seller_information"]["passport_image"] ?? "";
-            drivingLicenceImage = response["data"]["seller_information"]
-                    ["driving_licence_image"] ??
-                "";
-            signatureImage =
-                response["data"]["seller_information"]["signature_image"] ?? "";
-            int index = drivingLicenceImage.isNotEmpty
-                ? 2
-                : passportImage.isNotEmpty
-                    ? 1
-                    : 0;
-            _buttonBarController.setIndex(index);
+          nrc.text = sellerInformation["nrc"] ?? "";
+          nrcFrontImage = sellerInformation["nrc_front_image"] ?? "";
+          nrcBackImage = sellerInformation["nrc_back_image"] ?? "";
+          passportImage = sellerInformation["passport_image"] ?? "";
+          drivingLicenceImage =
+              sellerInformation["driving_licence_image"] ?? "";
+          signatureImage = sellerInformation["signature_image"] ?? "";
+          int index = drivingLicenceImage.isNotEmpty
+              ? 2
+              : passportImage.isNotEmpty
+                  ? 1
+                  : 0;
+          _buttonBarController.setIndex(index);
 
-            bankCode.text =
-                response["data"]["seller_information"]["bank_code"] ?? "";
-            bankAccount.text =
-                response["data"]["seller_information"]["bank_account"] ?? "";
-            bankAccountImage = response["data"]["seller_information"]
-                    ["bank_account_image"] ??
-                "";
-            walletType.text =
-                response["data"]["seller_information"]["wallet_type"] ?? "";
-            walletAccount.text =
-                response["data"]["seller_information"]["wallet_account"] ?? "";
-            walletAccount.text = walletAccount.text.replaceAll("959", "");
-            sellerRegistrationFeeId =
-                response["data"]["seller_information"]["fee_id"] ?? 0;
-            for (var data in sellerRegistrationFees) {
-              if (data["fee_id"] == sellerRegistrationFeeId) {
-                sellerRegistrationFeeDesc = data["description"];
-                amount = data["amount"];
-                symbol = data["symbol"];
-                break;
-              }
+          bankCode.text = sellerInformation["bank_code"] ?? "";
+          bankAccount.text = sellerInformation["bank_account"] ?? "";
+          bankAccountImage = sellerInformation["bank_account_image"] ?? "";
+          walletType.text = sellerInformation["wallet_type"] ?? "";
+          walletAccount.text = sellerInformation["wallet_account"] ?? "";
+          walletAccount.text = walletAccount.text.replaceAll("959", "");
+          sellerRegistrationFeeId = sellerInformation["fee_id"] ?? 0;
+          for (var data in sellerRegistrationFees) {
+            if (data["fee_id"] == sellerRegistrationFeeId) {
+              sellerRegistrationFeeDesc = data["description"];
+              amount = data["amount"];
+              symbol = data["symbol"];
+              break;
             }
-            monthlyTransactionImage = response["data"]["seller_information"]
-                    ["monthly_transaction_screenshot"] ??
-                "";
           }
+          monthlyTransactionImage =
+              sellerInformation["monthly_transaction_screenshot"] ?? "";
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -385,7 +364,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
 
   addUser() async {
     try {
-      final body = {
+      final Map<String, dynamic> body = {
         "username": email.text,
         "email": email.text,
         "password": password.text,
@@ -397,34 +376,14 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
         "can_modify_order_status": modifyOrderStatus,
         "can_view_address": canViewAddress,
         "can_view_phone": canViewPhone,
-      };
-
-      if (checkSeller) {
-        body["seller_information"] = {
+        "seller_information": {
           "company_name": companyName.text,
           "professional_title": professionalTitle.text,
           "location": location.text,
           "offline_trader": offlineTrader,
-          "facebook_profile_image": facebookProfileImage,
-          "shop_or_page_name": shopOrPageName.text,
-          "facebook_page_image": facebookPageImage,
-          "bussiness_phone": '959${businessPhone.text}',
-          "address": address.text,
-          "nrc": nrc.text,
-          "nrc_front_image": nrcFrontImage,
-          "nrc_back_image": nrcBackImage,
-          "passport_image": passportImage,
-          "driving_licence_image": drivingLicenceImage,
-          "signature_image": signatureImage,
-          "bank_code": bankCode.text,
-          "bank_account": bankAccount.text,
-          "bank_account_image": bankAccountImage,
-          "wallet_type": walletType.text,
-          "wallet_account": '959${walletAccount.text}',
-          "fee_id": sellerRegistrationFeeId,
-          "monthly_transaction_screenshot": monthlyTransactionImage,
-        };
-      }
+          "fee_id": 1,
+        }
+      };
 
       final response = await userService.addUserData(body);
       Navigator.pop(context);
@@ -470,7 +429,7 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
 
   updateUser() async {
     try {
-      final body = {
+      final Map<String, dynamic> body = {
         "email": email.text,
         "password": password.text,
         "role": role,
@@ -481,34 +440,36 @@ class _UserSetupScreenState extends State<UserSetupScreen> {
         "can_modify_order_status": modifyOrderStatus,
         "can_view_address": canViewAddress,
         "can_view_phone": canViewPhone,
+        "seller_information": sellerInformation,
       };
 
-      if (checkSeller) {
-        body["seller_information"] = {
-          "company_name": companyName.text,
-          "professional_title": professionalTitle.text,
-          "location": location.text,
-          "offline_trader": offlineTrader,
-          "facebook_profile_image": facebookProfileImage,
-          "shop_or_page_name": shopOrPageName.text,
-          "facebook_page_image": facebookPageImage,
-          "bussiness_phone": '959${businessPhone.text}',
-          "address": address.text,
-          "nrc": nrc.text,
-          "nrc_front_image": nrcFrontImage,
-          "nrc_back_image": nrcBackImage,
-          "passport_image": passportImage,
-          "driving_licence_image": drivingLicenceImage,
-          "signature_image": signatureImage,
-          "bank_code": bankCode.text,
-          "bank_account": bankAccount.text,
-          "bank_account_image": bankAccountImage,
-          "wallet_type": walletType.text,
-          "wallet_account": '959${walletAccount.text}',
-          "fee_id": sellerRegistrationFeeId,
-          "monthly_transaction_screenshot": monthlyTransactionImage,
-        };
-      }
+      body["seller_information"]["company_name"] = companyName.text;
+      body["seller_information"]["professional_title"] = professionalTitle.text;
+      body["seller_information"]["location"] = location.text;
+      body["seller_information"]["offline_trader"] = offlineTrader;
+      body["seller_information"]["facebook_profile_image"] =
+          facebookProfileImage;
+      body["seller_information"]["shop_or_page_name"] = shopOrPageName.text;
+      body["seller_information"]["facebook_page_image"] = facebookPageImage;
+      body["seller_information"]["bussiness_phone"] =
+          businessPhone.text.isNotEmpty ? '959${businessPhone.text}' : '';
+      body["seller_information"]["address"] = address.text;
+      body["seller_information"]["nrc"] = nrc.text;
+      body["seller_information"]["nrc_front_image"] = nrcFrontImage;
+      body["seller_information"]["nrc_back_image"] = nrcBackImage;
+      body["seller_information"]["passport_image"] = passportImage;
+      body["seller_information"]["driving_licence_image"] = drivingLicenceImage;
+      body["seller_information"]["signature_image"] = signatureImage;
+      body["seller_information"]["bank_code"] = bankCode.text;
+      body["seller_information"]["bank_account"] = bankAccount.text;
+      body["seller_information"]["bank_account_image"] = bankAccountImage;
+      body["seller_information"]["wallet_type"] = walletType.text;
+      body["seller_information"]["wallet_account"] =
+          walletAccount.text.isNotEmpty ? '959${walletAccount.text}' : '';
+      body["seller_information"]["fee_id"] =
+          sellerRegistrationFeeId == 0 ? 1 : sellerRegistrationFeeId;
+      body["seller_information"]["monthly_transaction_screenshot"] =
+          monthlyTransactionImage;
 
       final response = await userService.updateUserData(body, id);
       Navigator.pop(context);

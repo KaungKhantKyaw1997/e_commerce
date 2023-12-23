@@ -127,9 +127,9 @@ class _DiscountRulesSetupScreenState extends State<DiscountRulesSetupScreen> {
                 ),
               ),
               Text(
-                Jiffy.parseFromDateTime(DateTime.parse(
-                            discountrules[index]["discount_expiration"] + "Z")
-                        .toLocal())
+                Jiffy.parseFromDateTime(
+                        DateTime.parse(discountrules[index]["created_at"] + "Z")
+                            .toLocal())
                     .format(pattern: 'dd/MM/yyyy'),
                 overflow: TextOverflow.ellipsis,
                 style: FontConstants.caption1,

@@ -373,7 +373,7 @@ class _DiscountRuleSetupScreenState extends State<DiscountRuleSetupScreen> {
           ? DateFormat("yyyy-MM-dd")
               .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
               .toString()
-          : '';
+          : DateFormat("yyyy-MM-dd").format(DateTime.now()).toString();
       final body = {
         "shop_id": shopId,
         "discount_for": discountFor.text,
@@ -439,7 +439,7 @@ class _DiscountRuleSetupScreenState extends State<DiscountRuleSetupScreen> {
           ? DateFormat("yyyy-MM-dd")
               .format(DateFormat("dd/MM/yyyy").parse(discountExpiration.text))
               .toString()
-          : '';
+          : DateFormat("yyyy-MM-dd").format(DateTime.now()).toString();
       final body = {
         "shop_id": shopId,
         "discount_for": discountFor.text,
