@@ -32,10 +32,12 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
   FocusNode _nameFocusNode = FocusNode();
   FocusNode _descriptionFocusNode = FocusNode();
   FocusNode _addressFocusNode = FocusNode();
+  FocusNode _levelFocusNode = FocusNode();
 
   TextEditingController name = TextEditingController(text: '');
   TextEditingController description = TextEditingController(text: '');
   TextEditingController address = TextEditingController(text: '');
+  TextEditingController level = TextEditingController(text: '0');
 
   final ImagePicker _picker = ImagePicker();
   XFile? pickedFile;
@@ -60,6 +62,8 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
         status = arguments["status"] ?? "Active";
         if (id != 0) {
           getShop();
+        } else {
+          setState(() {});
         }
       }
     });
@@ -80,6 +84,9 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
           description.text = response["data"]["description"] ?? "";
           address.text = response["data"]["address"] ?? "";
           coverImage = response["data"]["cover_image"] ?? "";
+          level.text = response["data"]["level"] == 0
+              ? "0"
+              : response["data"]["level"].toString();
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -152,7 +159,8 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
         "email": "",
         "website_url": "",
         "operating_hours": "",
-        "status": "Active"
+        "status": "Active",
+        "level": level.text.isEmpty ? 0 : int.parse(level.text),
       };
 
       final response = await shopsService.addShopData(body);
@@ -215,7 +223,8 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
         "email": "",
         "website_url": "",
         "operating_hours": "",
-        "status": "Active"
+        "status": "Active",
+        "level": level.text.isEmpty ? 0 : int.parse(level.text),
       };
 
       final response = await shopsService.updateShopData(body, id);
@@ -317,6 +326,7 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
       onTap: () {
         _nameFocusNode.unfocus();
         _descriptionFocusNode.unfocus();
+        _levelFocusNode.unfocus();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -571,13 +581,13 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
                     padding: const EdgeInsets.only(
                       left: 16,
                       right: 16,
-                      bottom: 8,
+                      bottom: 16,
                     ),
                     child: TextFormField(
                       controller: address,
                       focusNode: _addressFocusNode,
                       keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.done,
+                      textInputAction: TextInputAction.next,
                       style: FontConstants.body1,
                       cursorColor: Colors.black,
                       maxLines: 2,
@@ -609,6 +619,57 @@ class _ShopSetupScreenState extends State<ShopSetupScreen> {
                       },
                     ),
                   ),
+                  if (role == 'admin')
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["Level"] ?? "Level",
+                          style: FontConstants.caption1,
+                        ),
+                      ),
+                    ),
+                  if (role == 'admin')
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      child: TextFormField(
+                        controller: level,
+                        focusNode: _levelFocusNode,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.done,
+                        style: FontConstants.body1,
+                        cursorColor: Colors.black,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: ColorConstants.fillColor,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),

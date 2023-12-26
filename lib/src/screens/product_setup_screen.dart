@@ -24,6 +24,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:share_extend/share_extend.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductSetupScreen extends StatefulWidget {
   const ProductSetupScreen({super.key});
@@ -53,6 +54,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   FocusNode _discountPriceFocusNode = FocusNode();
   FocusNode _discountPercentFocusNode = FocusNode();
   FocusNode _discountReasonFocusNode = FocusNode();
+  FocusNode _levelFocusNode = FocusNode();
 
   TextEditingController shopName = TextEditingController(text: '');
   int shopId = 0;
@@ -87,6 +89,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
   TextEditingController discountPrice = TextEditingController(text: '');
   TextEditingController discountExpiration = TextEditingController(text: '');
   TextEditingController discountReason = TextEditingController(text: '');
+  TextEditingController level = TextEditingController(text: '0');
   bool isTopModel = false;
   bool isPreorder = false;
   List productImages = [];
@@ -131,12 +134,16 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
 
   int id = 0;
   String from = '';
+  String role = '';
 
   @override
   void initState() {
     super.initState();
 
     Future.delayed(Duration.zero, () async {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      role = prefs.getString('role') ?? "";
+
       showLoadingDialog(context);
       await getGenders();
       await getStrapMaterials();
@@ -889,6 +896,9 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
           brandId = response["data"]["brand_id"] ?? 0;
           model.text = response["data"]["model"] ?? "";
           description.text = response["data"]["description"] ?? "";
+          level.text = response["data"]["level"] == 0
+              ? "0"
+              : response["data"]["level"].toString();
           genderDesc = response["data"]["gender_description"] ?? "";
           genderId = response["data"]["gender_id"] ?? 0;
           color.text = response["data"]["color"] ?? "";
@@ -1040,6 +1050,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "case_depth": caseDepth.text,
         "case_width": caseWidth.text,
         "discount_type": discountType.text,
+        "level": level.text.isEmpty ? 0 : int.parse(level.text),
       };
 
       if (discountType.text != 'No Discount') {
@@ -1145,6 +1156,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         "case_depth": caseDepth.text,
         "case_width": caseWidth.text,
         "discount_type": discountType.text,
+        "level": level.text.isEmpty ? 0 : int.parse(level.text),
       };
 
       if (discountType.text != 'No Discount') {
@@ -1348,6 +1360,7 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
         _discountPriceFocusNode.unfocus();
         _discountPercentFocusNode.unfocus();
         _discountReasonFocusNode.unfocus();
+        _levelFocusNode.unfocus();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -1727,6 +1740,57 @@ class _ProductSetupScreenState extends State<ProductSetupScreen> {
                       },
                     ),
                   ),
+                  if (role == 'admin')
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["Level"] ?? "Level",
+                          style: FontConstants.caption1,
+                        ),
+                      ),
+                    ),
+                  if (role == 'admin')
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      child: TextFormField(
+                        controller: level,
+                        focusNode: _levelFocusNode,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.done,
+                        style: FontConstants.body1,
+                        cursorColor: Colors.black,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: ColorConstants.fillColor,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                    ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

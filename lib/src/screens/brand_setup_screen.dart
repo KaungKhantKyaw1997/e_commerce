@@ -15,6 +15,7 @@ import 'package:e_commerce/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BrandSetupScreen extends StatefulWidget {
   const BrandSetupScreen({super.key});
@@ -30,20 +31,26 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
   final brandService = BrandService();
   FocusNode _nameFocusNode = FocusNode();
   FocusNode _descriptionFocusNode = FocusNode();
+  FocusNode _levelFocusNode = FocusNode();
 
   TextEditingController name = TextEditingController(text: '');
   TextEditingController description = TextEditingController(text: '');
+  TextEditingController level = TextEditingController(text: '0');
 
   final ImagePicker _picker = ImagePicker();
   XFile? pickedFile;
   String logoUrl = '';
 
   int id = 0;
+  String role = '';
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
+    Future.delayed(Duration.zero, () async {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      role = prefs.getString('role') ?? "";
+
       final arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
@@ -51,6 +58,8 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
         id = arguments["id"] ?? 0;
         if (id != 0) {
           getBrand();
+        } else {
+          setState(() {});
         }
       }
     });
@@ -70,6 +79,9 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
           name.text = response["data"]["name"] ?? "";
           description.text = response["data"]["description"] ?? "";
           logoUrl = response["data"]["logo_url"] ?? "";
+          level.text = response["data"]["level"] == 0
+              ? "0"
+              : response["data"]["level"].toString();
         });
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -133,6 +145,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
         "name": name.text,
         "description": description.text,
         "logo_url": logoUrl,
+        "level": level.text.isEmpty ? 0 : int.parse(level.text),
       };
 
       final response = await brandService.addBrandData(body);
@@ -183,6 +196,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
         "name": name.text,
         "description": description.text,
         "logo_url": logoUrl,
+        "level": level.text.isEmpty ? 0 : int.parse(level.text),
       };
 
       final response = await brandService.updateBrandData(body, id);
@@ -278,6 +292,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
       onTap: () {
         _nameFocusNode.unfocus();
         _descriptionFocusNode.unfocus();
+        _levelFocusNode.unfocus();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -448,6 +463,7 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
                     padding: const EdgeInsets.only(
                       left: 16,
                       right: 16,
+                      bottom: 16,
                     ),
                     child: TextFormField(
                       controller: description,
@@ -486,6 +502,57 @@ class _BrandSetupScreenState extends State<BrandSetupScreen> {
                       },
                     ),
                   ),
+                  if (role == 'admin')
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 4,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          language["Level"] ?? "Level",
+                          style: FontConstants.caption1,
+                        ),
+                      ),
+                    ),
+                  if (role == 'admin')
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      child: TextFormField(
+                        controller: level,
+                        focusNode: _levelFocusNode,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.done,
+                        style: FontConstants.body1,
+                        cursorColor: Colors.black,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: ColorConstants.fillColor,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
