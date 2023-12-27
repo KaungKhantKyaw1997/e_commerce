@@ -1046,8 +1046,9 @@ class _SettingScreenState extends State<SettingScreen> {
                                         TextSpan(
                                           children: [
                                             TextSpan(
-                                              text: language["Discount Rule"] ??
-                                                  "Discount Rule",
+                                              text: language[
+                                                      "Master Discount Rule"] ??
+                                                  "Master Discount Rule",
                                               style: FontConstants.caption2,
                                             )
                                           ],
