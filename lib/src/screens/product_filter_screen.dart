@@ -79,7 +79,7 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
 
   getBrands() async {
     try {
-      final response = await brandService.getBrandsData();
+      final response = await brandService.getBrandsData(perPage: 99999999);
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           setState(() {
@@ -120,7 +120,7 @@ class _ProductsFilterScreenState extends State<ProductsFilterScreen> {
 
   getModels() async {
     try {
-      final response = await modelService.getModelsData();
+      final response = await modelService.getModelsData(perPage: 99999999);
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           setState(() {
