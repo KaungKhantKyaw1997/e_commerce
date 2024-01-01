@@ -13,6 +13,7 @@ import 'package:e_commerce/src/providers/chats_provider.dart';
 import 'package:e_commerce/src/services/buyer_protection_service.dart';
 import 'package:e_commerce/src/services/chat_service.dart';
 import 'package:e_commerce/src/services/crashlytics_service.dart';
+import 'package:e_commerce/src/services/product_service.dart';
 import 'package:e_commerce/src/services/seller_report_service.dart';
 import 'package:e_commerce/src/services/shop_service.dart';
 import 'package:e_commerce/src/services/user_service.dart';
@@ -37,6 +38,7 @@ class ProductScreen extends StatefulWidget {
 class _ProductScreenState extends State<ProductScreen> {
   final crashlytic = new CrashlyticsService();
   ScrollController _scrollController = ScrollController();
+  final productService = ProductService();
   final buyerProtectionService = BuyerProtectionService();
   final chatService = ChatService();
   final userService = UserService();
@@ -60,6 +62,7 @@ class _ProductScreenState extends State<ProductScreen> {
   String reportSubjectDesc = '';
   String role = '';
   String from = '';
+  List products = [];
 
   @override
   void initState() {
@@ -79,6 +82,7 @@ class _ProductScreenState extends State<ProductScreen> {
       if (arguments != null) {
         product = arguments;
         getSellerInformation(product["creator_id"]);
+        getRecommandedProduct(product["product_id"]);
 
         setState(() {
           if (product["from"] == "details") {
@@ -139,6 +143,91 @@ class _ProductScreenState extends State<ProductScreen> {
         if (response["data"].isNotEmpty) {
           buyerProtections = response["data"];
           setState(() {});
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getRecommandedProduct(id) async {
+    try {
+      final response = await productService.getRecommandedProductData(id);
+      if (response!["code"] == 204) {
+        if (response["data"].isNotEmpty) {
+          getProducts(response["data"]);
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getProducts(data) async {
+    try {
+      final body = {
+        "products": data,
+        "page": 1,
+        "per_page": 10,
+        "view": "user"
+      };
+
+      final response = await productService.getProductsData(body);
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          setState(() {
+            products = response["data"];
+          });
         }
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
@@ -664,6 +753,148 @@ class _ProductScreenState extends State<ProductScreen> {
         }
       }
     }
+  }
+
+  productsCard(index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            height: 200,
+            decoration: BoxDecoration(
+              image: products[index]["product_images"].isNotEmpty
+                  ? DecorationImage(
+                      image: NetworkImage(
+                          '${ApiConstants.baseUrl}${products[index]["product_images"][0].toString()}'),
+                      fit: BoxFit.cover,
+                    )
+                  : DecorationImage(
+                      image: AssetImage('assets/images/logo.png'),
+                      fit: BoxFit.cover,
+                    ),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+              border: Border.all(
+                color: Colors.transparent,
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 8,
+              right: 8,
+              bottom: 4,
+            ),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                products[index]["brand_name"].toString(),
+                overflow: TextOverflow.ellipsis,
+                style: FontConstants.caption2,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 8,
+              right: 8,
+              bottom: 4,
+            ),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                products[index]["model"].toString(),
+                overflow: TextOverflow.ellipsis,
+                style: FontConstants.smallText1,
+              ),
+            ),
+          ),
+          if (products[index].isNotEmpty &&
+              products[index]["discount_type"] != 'No Discount' &&
+              products[index]["price"] != products[index]["discounted_price"])
+            Padding(
+              padding: EdgeInsets.only(
+                left: 8,
+                right: 8,
+                bottom: 4,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    products[index]["symbol"].toString(),
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey,
+                      decoration: TextDecoration.lineThrough,
+                      decorationColor: Colors.grey,
+                    ),
+                  ),
+                  products[index]["price"] != null
+                      ? FormattedAmount(
+                          amount:
+                              double.parse(products[index]["price"].toString()),
+                          mainTextStyle: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey,
+                            decoration: TextDecoration.lineThrough,
+                            decorationColor: Colors.grey,
+                          ),
+                          decimalTextStyle: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey,
+                            decoration: TextDecoration.lineThrough,
+                            decorationColor: Colors.grey,
+                          ),
+                        )
+                      : Text(""),
+                ],
+              ),
+            ),
+          Padding(
+            padding: EdgeInsets.only(
+              left: 8,
+              right: 8,
+              bottom: 4,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(
+                  products[index]["symbol"].toString(),
+                  style: FontConstants.caption2,
+                ),
+                products[index]["discounted_price"] != null
+                    ? FormattedAmount(
+                        amount: double.parse(
+                            products[index]["discounted_price"].toString()),
+                        mainTextStyle: FontConstants.caption2,
+                        decimalTextStyle: FontConstants.caption2,
+                      )
+                    : Text(""),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -1776,6 +2007,62 @@ class _ProductScreenState extends State<ProductScreen> {
                                 )
                               : Container(),
                         ],
+                      ),
+                    )
+                  : Container(),
+              products.isNotEmpty
+                  ? Container(
+                      padding: EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 16,
+                        bottom: 4,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            language["Similar Products"] ?? "Similar Products",
+                            style: FontConstants.body1,
+                          ),
+                        ],
+                      ),
+                    )
+                  : Container(),
+              products.isNotEmpty
+                  ? Container(
+                      margin: EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                      ),
+                      height: 290,
+                      width: double.infinity,
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () async {
+                              await Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                Routes.product,
+                                arguments: products[index],
+                                (route) => true,
+                              );
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                right: 8,
+                              ),
+                              child: productsCard(index),
+                            ),
+                          );
+                        },
+                        itemExtent: MediaQuery.of(context).size.width / 2 - 25,
                       ),
                     )
                   : Container(),

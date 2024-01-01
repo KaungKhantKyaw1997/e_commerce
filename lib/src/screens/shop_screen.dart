@@ -516,6 +516,7 @@ class _ShopScreenState extends State<ShopScreen> {
                         bottom: 24,
                       ),
                       height: 290,
+                      width: double.infinity,
                       child: ListView.builder(
                         controller: _scrollController,
                         shrinkWrap: true,

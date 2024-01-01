@@ -589,7 +589,7 @@ class _DiscountRuleSetupScreenState extends State<DiscountRuleSetupScreen> {
           elevation: 0,
           scrolledUnderElevation: 0,
           title: Text(
-            language["Master Discount Rule"] ?? "Master Discount Rule",
+            language["Master Discount"] ?? "Master Discount",
             style: FontConstants.title1,
           ),
           iconTheme: IconThemeData(

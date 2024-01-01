@@ -103,6 +103,22 @@ class ProductService {
     return response.data;
   }
 
+  Future<Map<String, dynamic>?> getRecommandedProductData(int id) async {
+    var token = await storage.read(key: "token") ?? '';
+    final response = await dio.get(
+      '${ApiConstants.productsUrl}/$id/recommended',
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ),
+      cancelToken: _cancelToken,
+    );
+
+    return response.data;
+  }
+
   Future<Map<String, dynamic>?> getDialGlassTypesData() async {
     var token = await storage.read(key: "token") ?? '';
     final response = await dio.get(

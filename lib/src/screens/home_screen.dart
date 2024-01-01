@@ -968,6 +968,7 @@ class _HomeScreenState extends State<HomeScreen>
                           products.isNotEmpty
                               ? Container(
                                   height: 290,
+                                  width: double.infinity,
                                   child: ListView.builder(
                                     controller: _scrollController,
                                     shrinkWrap: true,
@@ -1129,6 +1130,7 @@ class _HomeScreenState extends State<HomeScreen>
                           categories.isNotEmpty
                               ? Container(
                                   height: 200,
+                                  width: double.infinity,
                                   child: ListView.builder(
                                     controller: _scrollController,
                                     shrinkWrap: true,
