@@ -62,7 +62,8 @@ class _ProductScreenState extends State<ProductScreen> {
   String reportSubjectDesc = '';
   String role = '';
   String from = '';
-  List products = [];
+  List recommandedProducts = [];
+  List similarProducts = [];
 
   @override
   void initState() {
@@ -83,6 +84,7 @@ class _ProductScreenState extends State<ProductScreen> {
         product = arguments;
         getSellerInformation(product["creator_id"]);
         getRecommandedProduct(product["product_id"]);
+        getSimilarProduct(product["category_id"]);
 
         setState(() {
           if (product["from"] == "details") {
@@ -226,7 +228,54 @@ class _ProductScreenState extends State<ProductScreen> {
       if (response!["code"] == 200) {
         if (response["data"].isNotEmpty) {
           setState(() {
-            products = response["data"];
+            recommandedProducts = response["data"];
+          });
+        }
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      crashlytic.myGlobalErrorHandler(e, s);
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  getSimilarProduct(id) async {
+    try {
+      final body = {
+        "category_id": id,
+        "page": 1,
+        "per_page": 10,
+        "view": "user"
+      };
+
+      final response = await productService.getProductsData(body);
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          setState(() {
+            similarProducts = response["data"];
           });
         }
       } else {
@@ -755,7 +804,7 @@ class _ProductScreenState extends State<ProductScreen> {
     }
   }
 
-  productsCard(index) {
+  productsCard(products, index) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -2010,7 +2059,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       ),
                     )
                   : Container(),
-              products.isNotEmpty
+              similarProducts.isNotEmpty
                   ? Container(
                       padding: EdgeInsets.only(
                         left: 16,
@@ -2031,7 +2080,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       ),
                     )
                   : Container(),
-              products.isNotEmpty
+              similarProducts.isNotEmpty
                   ? Container(
                       margin: EdgeInsets.only(
                         left: 16,
@@ -2043,14 +2092,14 @@ class _ProductScreenState extends State<ProductScreen> {
                         controller: _scrollController,
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
-                        itemCount: products.length,
+                        itemCount: similarProducts.length,
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () async {
                               await Navigator.pushNamedAndRemoveUntil(
                                 context,
                                 Routes.product,
-                                arguments: products[index],
+                                arguments: similarProducts[index],
                                 (route) => true,
                               );
                             },
@@ -2058,7 +2107,64 @@ class _ProductScreenState extends State<ProductScreen> {
                               margin: EdgeInsets.only(
                                 right: 8,
                               ),
-                              child: productsCard(index),
+                              child: productsCard(similarProducts, index),
+                            ),
+                          );
+                        },
+                        itemExtent: MediaQuery.of(context).size.width / 2 - 25,
+                      ),
+                    )
+                  : Container(),
+              recommandedProducts.isNotEmpty
+                  ? Container(
+                      padding: EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 16,
+                        bottom: 4,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            language["Recommanded Products"] ??
+                                "Recommanded Products",
+                            style: FontConstants.body1,
+                          ),
+                        ],
+                      ),
+                    )
+                  : Container(),
+              recommandedProducts.isNotEmpty
+                  ? Container(
+                      margin: EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                      ),
+                      height: 290,
+                      width: double.infinity,
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: recommandedProducts.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () async {
+                              await Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                Routes.product,
+                                arguments: recommandedProducts[index],
+                                (route) => true,
+                              );
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                right: 8,
+                              ),
+                              child: productsCard(recommandedProducts, index),
                             ),
                           );
                         },
